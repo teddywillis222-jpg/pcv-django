@@ -1,0 +1,34 @@
+services:
+  # Service Web Principal
+  - type: web
+    name: prof-chez-vous
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "./start.sh"
+    healthCheckPath: /
+    
+    # Variables d'environnement par défaut
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.5
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: prof-chez-vous.onrender.com
+    
+    # Configuration de la base de données PostgreSQL
+    databases:
+      - name: prof-chez-vous-db
+        plan: free
+        
+# Configuration du service de base de données
+databases:
+  - name: prof-chez-vous-db
+    plan: free
+    databaseName: profchezvous
+    user: profchezvous
+
+# Configuration du dépôt Git
+repo: https://github.com/votre-username/prof-chez-vous.git
+region: oregon

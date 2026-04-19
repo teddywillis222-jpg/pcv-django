@@ -1,0 +1,222 @@
+<div class="teacher-profile" style="padding: 1rem;">
+    <!-- En-tête profil -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+        {% if teacher.photo_de_profil %}
+            <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #f0fdf4; margin-bottom: 1rem;">
+        {% else %}
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: #e2e8f0; border: 4px solid #f0fdf4; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #94a3b8; font-weight: bold;">
+                {{ teacher.prenom|first }}{{ teacher.nom|first }}
+            </div>
+        {% endif %}
+        
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem;">{{ teacher.prenom }} {{ teacher.nom }}</h2>
+        
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+            {% if teacher.est_certifie %}
+                <span class="badge badge-verified" style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Vérifié</span>
+            {% endif %}
+            <span class="badge badge-available" style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Disponible</span>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #64748b;">
+            <span class="stars" style="color: #fbbf24;">★★★★★</span>
+            <span>{{ teacher.moyenne_avis|default:"Nouveau" }} ({{ teacher.nombre_avis|default:"0" }} avis)</span>
+        </div>
+    </div>
+    
+    <!-- Boutons d'action -->
+    <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem;">
+        <button class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: all 0.3s;" 
+            onclick="openEngagementForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null)">
+            Proposer un engagement
+        </button>
+        
+        {% if is_side_panel %}
+        <a href="{% url 'professeur_detail' teacher.slug %}" style="text-align: center; color: #64748b; text-decoration: underline; font-weight: 500; margin-top: 0.5rem;">
+            Voir le profil complet
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Informations Détaillées -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Bio -->
+        <div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Présentation
+            </h3>
+            <div class="expandable-text-container" style="position: relative;">
+                <p class="expandable-text" style="color: #475569; line-height: 1.6; margin: 0; max-height: 4.8em; overflow: hidden; position: relative;">
+                    {{ teacher.presentation|default:"Aucune présentation."|linebreaksbr }}
+                </p>
+                <button class="expand-btn" onclick="toggleText(this)" style="background: none; border: none; color: var(--success-600); font-weight: 600; cursor: pointer; padding: 0.5rem 0; font-size: 0.9rem; display: none;">Voir plus</button>
+            </div>
+        </div>
+        
+        <!-- Méthodologie -->
+        <div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                Méthodologie
+            </h3>
+            <div class="expandable-text-container" style="position: relative;">
+                <p class="expandable-text" style="color: #475569; line-height: 1.6; margin: 0; max-height: 4.8em; overflow: hidden; position: relative;">
+                    {{ teacher.methodologie|default:"Non renseignée."|linebreaksbr }}
+                </p>
+                <button class="expand-btn" onclick="toggleText(this)" style="background: none; border: none; color: var(--success-600); font-weight: 600; cursor: pointer; padding: 0.5rem 0; font-size: 0.9rem; display: none;">Voir plus</button>
+            </div>
+        </div>
+
+        <!-- Spécialités & Modalités -->
+        <div class="info-grid-container" style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Matière</span>
+                    <span style="font-weight: 600; color: #0f172a;">{{ teacher.matiere_enseignee }}</span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Classes</span>
+                    <span style="font-weight: 600; color: #0f172a; display: block; overflow-wrap: break-word;">
+                        {% for c in readable_classes %}
+                            {{ c }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            Toutes
+                        {% endfor %}
+                    </span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Lieu</span>
+                    <span style="font-weight: 600; color: #0f172a;">{{ teacher.ville_quartier }}</span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Modes</span>
+                    <span style="font-weight: 600; color: #0f172a; display: block; overflow-wrap: break-word;">
+                        {% for m in readable_modes %}
+                            {{ m }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            Non défini
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Tarif horaire</span>
+                    <span style="font-weight: 800; color: #16a34a; font-size: 1.25rem;">{{ teacher.tarif_horaire|default:"A définir" }} FCFA</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Expérience</span>
+                    <span style="font-weight: 600; color: #0f172a;">{{ teacher.annees_d_experience }} ans</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Temps moyen de réponse</span>
+                    <span style="font-weight: 600; color: #0f172a;">
+                        {% if temps_moyen_reponse %}
+                            {% if temps_moyen_reponse < 60 %}
+                                ~{{ temps_moyen_reponse|floatformat:"0" }} minutes
+                            {% else %}
+                                ~1 heure(s)
+                            {% endif %}
+                        {% else %}
+                            Moins de 2h
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Engagements Actifs</span>
+                    <span style="font-weight: 600; color: #0f172a;">{{ engagements_actifs|default:"0" }} engagements</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Évaluations -->
+        <div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"/></svg>
+                    Avis des parents
+                </div>
+                <span style="font-size: 0.9rem; font-weight: normal; color: #64748b; background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 20px;">
+                    {{ teacher.evaluations_recues.count }} avis
+                </span>
+            </h3>
+            
+            {% if teacher.evaluations_recues.all %}
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    {% for eval in teacher.evaluations_recues.all|slice:":5" %}
+                    <div style="padding: 1rem; border-radius: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: #1e293b;">
+                                {% if eval.parent_evaluateur.parent %}
+                                    {{ eval.parent_evaluateur.parent.nom }}
+                                {% else %}
+                                    {{ eval.parent_evaluateur.first_name }}
+                                {% endif %}
+                            </span>
+                            <span style="color: #fbbf24; font-size: 0.9rem;">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= eval.note %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <p style="color: #475569; font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                            "{{ eval.commentaire|default:'Aucun commentaire détaillé.' }}"
+                        </p>
+                        <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.5rem; text-align: right;">
+                            {{ eval.date_evaluation|date:"d M Y" }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: #64748b; text-align: center; padding: 2rem; background: #f8fafc; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin: 0;">
+                    Ce professeur n'a pas encore reçu d'avis.
+                </p>
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+
+<style>
+/* Ajustements spécifiques pour le profil professeur */
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    .info-grid-container {
+        padding: 1rem !important;
+        margin: 0 -0.5rem; /* Augmente légèrement la largeur apparente */
+    }
+}
+</style>
+
+<script>
+// Initialiser les boutons "Voir plus" si le texte dépasse la hauteur
+document.querySelectorAll('.expandable-text').forEach(function(el) {
+    if (el.scrollHeight > el.clientHeight) {
+        const btn = el.nextElementSibling;
+        if (btn && btn.classList.contains('expand-btn')) {
+            btn.style.display = 'inline-block';
+        }
+    }
+});
+
+function toggleText(btn) {
+    const textEl = btn.previousElementSibling;
+    if (textEl.style.maxHeight === '4.8em') {
+        textEl.style.maxHeight = 'none';
+        btn.textContent = 'Voir moins';
+    } else {
+        textEl.style.maxHeight = '4.8em';
+        btn.textContent = 'Voir plus';
+    }
+}
+</script>

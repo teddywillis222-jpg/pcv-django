@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inscription - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-bg-shapes"></div>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Créer un compte</h2>
+                <p>Rejoignez <strong>Prof Chez Vous</strong> en quelques secondes.</p>
+            </div>
+
+            {% if form.errors %}
+            <div class="alert alert-error">
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <li>{{ field.label }} : {{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" class="auth-form" novalidate id="signupForm">
+                {% csrf_token %}
+
+                <!-- Role Selection -->
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label style="text-align: center; margin-bottom: 1rem; font-size: 1.05rem;">Je suis un... <span
+                            style="color: var(--error);">*</span></label>
+                    <div class="role-options-container">
+                        {% for radio in form.role %}
+                        <label class="role-option-card">
+                            {{ radio.tag }}
+                            <div class="role-card-content">
+                                {% if radio.choice_value == "PARENT" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                                </svg>
+                                <span>Parent</span>
+                                {% elif radio.choice_value == "APPRENANT" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                                </svg>
+                                <span>Apprenant</span>
+                                {% elif radio.choice_value == "PROF" %}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                </svg>
+                                <span>Professeur</span>
+                                {% else %}
+                                <span>{{ radio.choice_label }}</span>
+                                {% endif %}
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">Nom complet <span
+                            style="color: var(--error);">*</span></label>
+                    {{ form.first_name }}
+                    {% if form.first_name.help_text %}
+                    <small class="form-help" style="color: var(--text-muted); font-size: 0.85em;">
+                        {{ form.first_name.help_text }}
+                    </small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Adresse Email <span
+                            style="color: var(--error);">*</span></label>
+                    {{ form.email }}
+                </div>
+
+                <!-- Hidden Username field, generated locally/backend -->
+                <div class="django-hidden-input">
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">Mot de passe <span
+                            style="color: var(--error);">*</span></label>
+                    {{ form.password1 }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Confirmer le mot de passe <span
+                            style="color: var(--error);">*</span></label>
+                    {{ form.password2 }}
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                    En validant, vous acceptez nos <a href="{% url 'cgu' %}" target="_blank" style="color: var(--success-600); font-weight: 600; text-decoration: underline;">Conditions Générales d'Utilisation</a>.
+                </div>
+
+                <button type="submit" class="btn btn-auth">
+                    Valider mon inscription
+                </button>
+            </form>
+
+            
+            <div class="auth-footer">
+                Déjà un compte ? <a href="{% url 'login' %}">Se connecter</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Autofill username to prevent the HTML5 required attribute from blocking the form, if present.
+    // The actual username will be generated safely in the backend.
+    document.getElementById('signupForm').addEventListener('submit', function () {
+        const emailInput = document.getElementById('id_email');
+        const usernameInput = document.getElementById('id_username');
+        if (emailInput && usernameInput && !usernameInput.value) {
+            const baseName = emailInput.value.split('@')[0];
+            const rand = Math.floor(Math.random() * 9000) + 1000;
+            usernameInput.value = baseName + rand;
+        }
+    });
+
+    // Provide default required false so JS validation won't fail for the hidden input
+    const usernameInput = document.getElementById('id_username');
+    if (usernameInput) {
+        usernameInput.removeAttribute('required');
+    }
+</script>
+{% endblock %}

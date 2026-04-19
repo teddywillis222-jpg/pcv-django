@@ -1,0 +1,191 @@
+<div style="margin-bottom: 2rem; display: flex; gap: 1rem; border-bottom: 2px solid var(--border-color); overflow-x: auto;">
+    <button class="filter-btn {% if statut_actif == ValidationStatus.EN_ATTENTE %}active{% endif %}" onclick="loadProfesseurs('{{ ValidationStatus.EN_ATTENTE }}')">En attente</button>
+    <button class="filter-btn {% if statut_actif == ValidationStatus.VALIDE %}active{% endif %}" onclick="loadProfesseurs('{{ ValidationStatus.VALIDE }}')">Validé</button>
+    <button class="filter-btn {% if statut_actif == ValidationStatus.INCOMPLET %}active{% endif %}" onclick="loadProfesseurs('{{ ValidationStatus.INCOMPLET }}')">Incomplet</button>
+</div>
+
+<div class="grid grid-cols-3 gap-6">
+    {% for prof in professeurs %}
+    <div class="card" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+        {% if prof.photo_de_profil %}
+            <img src="{{ prof.photo_de_profil.url }}" alt="Photo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 2px solid var(--primary-green);">
+        {% else %}
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #e5e7eb; margin-bottom: 1rem; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size: 0.875rem;">Pas de photo</div>
+        {% endif %}
+        
+        <h3 style="margin: 0 0 0.5rem 0;">{{ prof.prenom }} {{ prof.nom }}</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0 0 1rem 0; word-break: break-all;">{{ prof.email }}</p>
+        
+        <div style="margin-top: auto; width: 100%;">
+            <button onclick="openModal('modal-prof-{{ prof.id }}')" class="btn btn-outline" style="width: 100%;">Voir les détails</button>
+        </div>
+    </div>
+
+    <!-- Modal Detail Prof -->
+    <div id="modal-prof-{{ prof.id }}" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding: 1rem;">
+        <div class="card" style="max-width:800px; width:100%; position:relative; max-height:90vh; overflow-y:auto; padding: 2rem;">
+            <button onclick="closeModal('modal-prof-{{ prof.id }}')" style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button>
+            
+            <div style="display:flex; align-items:center; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                {% if prof.photo_de_profil %}
+                    <img src="{{ prof.photo_de_profil.url }}" alt="Photo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-green);">
+                {% else %}
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: #e5e7eb; display:flex; align-items:center; justify-content:center; color:#9ca3af;">Sans Photo</div>
+                {% endif %}
+                <div>
+                    <h2 style="margin: 0;">{{ prof.prenom }} {{ prof.nom }}</h2>
+                    <p style="color: var(--text-muted); margin: 0.25rem 0 0 0;">{{ prof.email }}</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6" style="margin-bottom: 2rem;">
+                <div>
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Informations Académiques</h4>
+                    <p style="margin:0.25rem 0;"><strong>Matière enseignée :</strong> {{ prof.matiere_enseignee }}</p>
+                    <p style="margin:0.25rem 0;"><strong>Catégorie de soutien :</strong> {{ prof.categorie_de_soutien }}</p>
+                    <p style="margin:0.25rem 0;"><strong>Expérience :</strong> {{ prof.annees_d_experience }} ans</p>
+                    <p style="margin:0.25rem 0;"><strong>Ville / Quartier :</strong> {{ prof.ville_quartier }}</p>
+                    <p style="margin:0.25rem 0;"><strong>Téléphone :</strong> {{ prof.telephone_whatsapp }}</p>
+                </div>
+                <div>
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Pièces Jointes</h4>
+                    
+                    {% if prof.fichier_cni %}
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Carte d'Identité :</strong><br>
+                            <a href="{{ prof.fichier_cni.url }}" target="_blank" class="btn btn-outline" style="display:inline-block; margin-top: 0.5rem; text-decoration:none;">Ouvrir la CNI</a>
+                        </div>
+                    {% else %}
+                        <p style="color: var(--danger-color); font-size:0.875rem; font-weight:500;">Carte d'Identité Manquante</p>
+                    {% endif %}
+
+                    {% if prof.diplomes.all %}
+                        <div style="margin-top: 1rem;">
+                            <strong>Diplômes :</strong><br>
+                            <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                                {% for diplome in prof.diplomes.all %}
+                                <li>
+                                    {{ diplome.nom_diplome }}
+                                    {% if diplome.fichier_preuve %}
+                                        (<a href="{{ diplome.fichier_preuve.url }}" target="_blank" style="color:var(--primary-green);">Voir preuve</a>)
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <p style="color: var(--text-muted); font-size:0.875rem;">Aucun diplôme renseigné.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; display: flex; flex-direction: column; gap: 1rem; border: 1px solid var(--border-color);">
+                <h4 style="margin: 0; font-size:1rem;">Actions de Décision</h4>
+                
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    {% if prof.statut_de_validation != ValidationStatus.VALIDE %}
+                        <button onclick="actionProf({{ prof.id }}, 'valider')" class="btn btn-primary">Valider ce profil</button>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 250px;">
+                        <input type="text" id="raison-{{ prof.id }}" placeholder="Raison si incomplet..." style="flex:1; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-family:inherit;">
+                        <button onclick="actionProf({{ prof.id }}, 'incomplet')" class="btn btn-danger">Profil incomplet</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items:center;">
+                    <input type="number" id="note-{{ prof.id }}" placeholder="Note / 5" min="1" max="5" style="width: 100px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-family:inherit;">
+                    <button onclick="actionProf({{ prof.id }}, 'valider_note')" class="btn btn-outline">Enregistrer la note (Test)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted); background: var(--card-bg); border-radius: 0.5rem;">
+        Aucun professeur trouvé pour le statut "{{ statut_actif }}".
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .filter-btn {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .filter-btn:hover { color: var(--text-main); }
+    .filter-btn.active {
+        color: var(--primary-green);
+        border-bottom-color: var(--primary-green);
+    }
+</style>
+
+<script>
+    function loadProfesseurs(statut) {
+        document.getElementById('admin-content').innerHTML = '<div class="loader-container"><div class="spinner"></div></div>';
+        // Ajout d'un timestamp pour forcer le contournement du cache navigateur
+        fetch(`/debug-admin-pcv/api/professeurs/?statut=${statut}&t=${new Date().getTime()}`, { cache: 'no-store' })
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('admin-content').innerHTML = html;
+                const scripts = document.getElementById('admin-content').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.text = script.text;
+                    document.body.appendChild(newScript).parentNode.removeChild(newScript);
+                });
+            })
+            .catch(err => {
+                console.error('Erreur loadProfesseurs:', err);
+                alert("Erreur de chargement de la liste.");
+            });
+    }
+
+    function actionProf(id, action) {
+        const formData = new FormData();
+        formData.append('action', action);
+        
+        if(action === 'incomplet') {
+            const raison = document.getElementById(`raison-${id}`).value;
+            if(!raison) { alert('Veuillez saisir une raison pour ce statut incomplet.'); return; }
+            formData.append('raison', raison);
+        } else if(action === 'valider_note') {
+            const note = document.getElementById(`note-${id}`).value;
+            if(!note || note < 1 || note > 5) { alert('Veuillez saisir une note valide entre 1 et 5.'); return; }
+            formData.append('note', note);
+        }
+
+        // Requête sans CSRF car la vue Django a le décorateur @csrf_exempt
+        fetch(`/debug-admin-pcv/api/professeurs/${id}/action/`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => {
+            if(!res.ok) throw new Error("Erreur HTTP " + res.status);
+            return res.json();
+        })
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                closeModal(`modal-prof-${id}`);
+                // Recharger avec le statut courant
+                loadProfesseurs('{{ statut_actif }}');
+            } else {
+                alert('Erreur API: ' + data.error);
+            }
+        })
+        .catch(err => {
+            console.error('Erreur actionProf:', err);
+            alert("Impossible d'exécuter l'action. Vérifiez la console.");
+        });
+    }
+</script>

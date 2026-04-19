@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Espace apprenant - Prof Chez Vous{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary); margin-top: 0;">Ton espace apprenant</h2>
+
+    <h3 style="color: var(--secondary);">Ton profil</h3>
+    <p><strong>Nom :</strong> {{ apprenant.nom }}</p>
+    {% if apprenant.email_apprenant %}<p><strong>Email :</strong> {{ apprenant.email_apprenant }}</p>{% endif %}
+    {% if apprenant.telephone %}<p><strong>Téléphone :</strong> {{ apprenant.telephone }}</p>{% endif %}
+    {% if apprenant.niveau %}<p><strong>Niveau :</strong> {{ apprenant.get_niveau_display }}</p>{% endif %}
+    {% if apprenant.classe %}<p><strong>Classe :</strong> {{ apprenant.get_classe_display }}</p>{% endif %}
+
+    <p style="margin-top: 2rem; color: var(--text-muted); font-size: 0.875rem;">
+        Les recommandations de professeurs seront disponibles prochainement.
+    </p>
+</div>
+{% endblock %}

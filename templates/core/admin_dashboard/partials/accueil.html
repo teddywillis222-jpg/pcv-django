@@ -1,0 +1,97 @@
+<div class="grid grid-cols-3 gap-6" style="margin-bottom: 2rem;">
+    <!-- Utilisateurs -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Utilisateurs</h3>
+        <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">{{ total_users }}</div>
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
+            Parents: {{ total_parents }} | Apprentis: {{ total_apprenants }} | Profs: {{ total_professeurs }}
+        </div>
+    </div>
+
+    <!-- Engagements -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Engagements</h3>
+        <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">{{ total_engagements }}</div>
+        <div style="font-size: 0.875rem; color: var(--text-muted); display:flex; flex-wrap:wrap; gap:0.5rem;">
+            {% for status, count in dict_engagements.items %}
+                <span style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">{{ status }}: {{ count }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Evaluations -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Évaluations</h3>
+        <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0; color: var(--primary-green);">
+            {{ moyenne_generale|floatformat:1 }} / 5
+        </div>
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
+            Total avis: {{ total_evaluations }}
+        </div>
+    </div>
+</div>
+
+<h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--primary-green); padding-left: 0.5rem;">
+    Engagements Prioritaires (En attente, Délai > 30min, Premium)
+</h2>
+
+<div class="card" style="overflow-x: auto; padding:0;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead style="background: #f9fafb; border-bottom: 1px solid var(--border-color);">
+            <tr>
+                <th style="padding: 1rem; font-weight: 500;">Date</th>
+                <th style="padding: 1rem; font-weight: 500;">Parent/Apprenant</th>
+                <th style="padding: 1rem; font-weight: 500;">Matière</th>
+                <th style="padding: 1rem; font-weight: 500;">Professeur Cible</th>
+                <th style="padding: 1rem; font-weight: 500; text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for eng in engagements_prioritaires %}
+            <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 1rem; color: var(--danger-color); font-weight: 500;">
+                    Il y a {{ eng.date_creation|timesince }}
+                </td>
+                <td style="padding: 1rem; font-weight: 500;">
+                    {{ eng.parent_apprenant.username }}
+                </td>
+                <td style="padding: 1rem;">{{ eng.matiere }}</td>
+                <td style="padding: 1rem;">
+                    {% if eng.professeur %}
+                        {{ eng.professeur.prenom }} {{ eng.professeur.nom }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td style="padding: 1rem; text-align:right;">
+                    <div style="display: inline-flex; gap: 0.5rem;">
+                        <a href="https://wa.me/?text=Bonjour%20{{ eng.parent_apprenant.username }}" target="_blank" class="btn btn-primary" style="text-decoration:none; padding:0.25rem 0.5rem; font-size:0.875rem; background:#25D366; border-color:#25D366;">WhatsApp</a>
+                        <a href="tel:00000000" class="btn btn-outline" style="text-decoration:none; padding:0.25rem 0.5rem; font-size:0.875rem;">Appel</a>
+                        <button onclick="openModal('modal-eng-{{ eng.id }}')" class="btn btn-outline" style="padding:0.25rem 0.5rem; font-size:0.875rem;">Détails</button>
+                    </div>
+                </td>
+            </tr>
+            
+            <!-- Modal Engagement -->
+            <div id="modal-eng-{{ eng.id }}" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                <div class="card" style="max-width:600px; width:90%; position:relative; max-height:90vh; overflow-y:auto; text-align:left;">
+                    <button onclick="closeModal('modal-eng-{{ eng.id }}')" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button>
+                    <h2 style="margin-top:0; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">Détails de l'engagement #{{ eng.id }}</h2>
+                    <p><strong>Parent / Apprenant :</strong> {{ eng.parent_apprenant.username }}</p>
+                    <p><strong>Matière :</strong> {{ eng.matiere }}</p>
+                    <p><strong>Mode de cours :</strong> {{ eng.mode_de_cours }}</p>
+                    <p><strong>Localisation :</strong> {{ eng.localisation_option }}</p>
+                    <p><strong>Budget Convenu :</strong> {{ eng.budget_convenu|default:"Non spécifié" }}</p>
+                    <p><strong>Date de Création :</strong> {{ eng.date_creation }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                    Aucun engagement prioritaire en attente (délai > 30min et compte Access+ Premium).
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

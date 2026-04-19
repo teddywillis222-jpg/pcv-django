@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - Prof Chez Vous{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary); margin-top: 0;">Se connecter</h2>
+
+    {% if form.errors %}
+    <ul class="alert alert-error">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li>Identifiants incorrects. Veuillez réessayer.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Nom d'utilisateur ou email</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="id_password">Mot de passe</label>
+            {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            Se connecter
+        </button>
+    </form>
+
+    
+    <p class="footer-links" style="margin-top: 1.5rem;">
+        Pas encore de compte ? <a href="{% url 'signup' %}">Créer un compte</a>
+    </p>
+</div>
+{% endblock %}

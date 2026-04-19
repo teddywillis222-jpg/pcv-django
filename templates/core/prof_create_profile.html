@@ -1,0 +1,614 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vérification Dossier - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<!-- Plugin Select Multiple Moderne -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+<style>
+    :root {
+        --dash-bg: #f8fafc;
+        --card-bg: white;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --primary: #16a34a;
+        --primary-light: #dcfce7;
+        --input-bg: #f8fafc;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        background-color: var(--dash-bg);
+    }
+
+    .profil-container {
+        max-width: 850px;
+        margin: 3rem auto;
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    }
+
+    .profil-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .profil-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .profil-header p {
+        color: var(--text-gray);
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px dashed var(--border-color);
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .profil-container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .form-group input[readonly] {
+        background: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+    }
+
+    /* Fichiers Upload Modernes & Ajustés ! */
+    .file-upload-wrapper {
+        position: relative;
+        width: 100%;
+        height: 75px;
+        /* RÉDUIT POUR LE MOBILE */
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .file-upload-wrapper:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+    }
+
+    .file-upload-wrapper input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-upload-icon {
+        font-size: 1.2rem;
+        color: var(--text-gray);
+        margin-bottom: 0.2rem;
+    }
+
+    .file-upload-text {
+        font-size: 0.8rem;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+
+    .file-name-display {
+        font-size: 0.75rem;
+        color: var(--primary);
+        margin-top: 0.2rem;
+        font-weight: 600;
+        display: none;
+    }
+
+    /* Styles pour Select Choices.js Override */
+    .choices__inner {
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.4rem 0.5rem;
+    }
+
+    .choices.is-focused .choices__inner {
+        border-color: var(--primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px var(--primary-light);
+    }
+
+    .choices__list--multiple .choices__item {
+        background-color: var(--primary);
+        border: 1px solid var(--primary-dark);
+        border-radius: 6px;
+    }
+
+    /* Matières Select Logic */
+    .selected-matieres {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .matiere-badge {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .matiere-badge span {
+        cursor: pointer;
+        font-weight: 800;
+        color: #15803d;
+    }
+
+    /* Dynamic Diplomas */
+    .diplome-group {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+        transition: all 0.2s;
+    }
+
+    .remove-diplome {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 1.2rem;
+        border: none;
+        background: none;
+        font-weight: bold;
+    }
+
+    .btn-add-diplome {
+        background: #f8fafc;
+        color: var(--text-dark);
+        border: 1px solid #cbd5e1;
+        cursor: pointer;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 1.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-add-diplome:hover {
+        background: #e2e8f0;
+        border-color: #94a3b8;
+    }
+
+    /* Correspondance parfaite Input / File */
+    .match-height-input {
+        height: 50px !important;
+        box-sizing: border-box;
+    }
+
+    .match-height-file {
+        height: 50px !important;
+        flex-direction: row;
+        gap: 0.8rem;
+        padding: 0 1rem;
+        justify-content: flex-start;
+        margin-bottom: 0px;
+    }
+
+    .match-height-file .file-upload-icon {
+        margin-bottom: 0;
+    }
+
+    /* Consent Checkbox */
+    .consent-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 1rem 1.2rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .consent-box input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary);
+        cursor: pointer;
+        margin-top: 0.1rem;
+    }
+
+    .consent-box label {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        line-height: 1.4;
+        font-weight: 500;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .submit-btn {
+        background: var(--primary);
+        color: white;
+        width: 100%;
+        padding: 1.2rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 2rem;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(22, 163, 74, 0.2);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        background: #15803d;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        color: #b91c1c;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #dc2626;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Initialisation Choices JS pour les Listes Multipies (Classe, Modes)
+        const elClasses = document.getElementById('id_classes_enseignees');
+        if (elClasses) { new Choices(elClasses, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Sélectionnez vos classes", itemSelectText: "" }); }
+
+        const elModes = document.getElementById('id_modes_de_cours');
+        if (elModes) { new Choices(elModes, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Sélectionnez le mode de cours", itemSelectText: "" }); }
+
+        // Corriger le placeholder des select "categorie de soutien"
+        const catSelect = document.getElementById('id_categorie_de_soutien');
+        if (catSelect && catSelect.options[0]) {
+            catSelect.options[0].text = "Sélectionnez une catégorie...";
+            catSelect.options[0].disabled = true;
+        }
+
+        // Révélation de noms de fichiers UI moderne
+        function initFileInputs() {
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.removeEventListener('change', handleFileChange); // Prevent dupes
+                input.addEventListener('change', handleFileChange);
+            });
+        }
+        function handleFileChange(e) {
+            let fileName = e.target.files[0] ? e.target.files[0].name : "Aucun fichier choisi";
+            let displayNode = e.target.parentElement.querySelector('.file-name-display');
+            let textNode = e.target.parentElement.querySelector('.file-upload-text');
+
+            if (displayNode) {
+                displayNode.textContent = fileName;
+                displayNode.style.display = 'block';
+                if (textNode) textNode.style.display = 'none'; // Cacher le label par défaut si un displayNode existe
+            } else if (textNode) {
+                textNode.textContent = fileName; // Direct substitution si diplome
+            }
+        }
+        initFileInputs();
+
+        // MATIERES SELECTOR LOGIC (Max 3)
+        const matiereSelect = document.getElementById('matiere_custom_select');
+        const selectedContainer = document.getElementById('selected_matieres_badges');
+        const hiddenMatiereInput = document.getElementById('id_matiere_enseignee');
+        let selectedMatieres = [];
+
+        function renderMatieres() {
+            selectedContainer.innerHTML = '';
+            selectedMatieres.forEach(mat => {
+                const badge = document.createElement('div');
+                badge.className = 'matiere-badge';
+                badge.innerHTML = `${mat} <span onclick="removeMatiere('${mat}')">✕</span>`;
+                selectedContainer.appendChild(badge);
+            });
+            hiddenMatiereInput.value = selectedMatieres.join(', ');
+
+            if (selectedMatieres.length >= 3) {
+                matiereSelect.disabled = true;
+                matiereSelect.options[0].text = "Maximum (3) atteint";
+            } else {
+                matiereSelect.disabled = false;
+                matiereSelect.options[0].text = "Sélectionnez une matière...";
+            }
+        }
+
+        window.removeMatiere = function (mat) {
+            selectedMatieres = selectedMatieres.filter(m => m !== mat);
+            renderMatieres();
+        }
+
+        matiereSelect.addEventListener('change', function () {
+            let val = this.value;
+            if (val === "AUTRE") {
+                let customVal = prompt("Saisissez la matière :");
+                if (customVal && customVal.trim() !== '') val = customVal.trim();
+                else val = '';
+            }
+
+            if (val && val !== '' && !selectedMatieres.includes(val) && selectedMatieres.length < 3) {
+                selectedMatieres.push(val);
+                renderMatieres();
+            }
+            this.value = '';
+        });
+
+        // DIPLOMES DYNAMIC LOGIC
+        const diplomesWrapper = document.getElementById('diplomes-wrapper');
+        const btnAdd = document.getElementById('add-diplome-btn');
+
+        function createDiplomeNode() {
+            const div = document.createElement('div');
+            div.className = 'diplome-group';
+            div.innerHTML = `
+            <button type="button" class="remove-diplome" onclick="this.parentElement.remove()" title="Retirer">✕</button>
+            <div class="grid-2">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="color:#0f172a; font-weight:700;">Intitulé du Diplôme *</label>
+                    <input type="text" name="diplomes_noms" class="match-height-input" placeholder="Ex: Licence de Mathématiques" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="color:#0f172a; font-weight:700;">Preuve *</label>
+                    <div class="file-upload-wrapper match-height-file">
+                        <span class="file-upload-icon">📄</span>
+                        <span class="file-upload-text">Parcourir le fichier...</span>
+                        <input type="file" name="diplomes_fichiers" accept="image/*,.pdf" required>
+                    </div>
+                </div>
+            </div>
+        `;
+            return div;
+        }
+
+        diplomesWrapper.appendChild(createDiplomeNode());
+        btnAdd.addEventListener('click', () => {
+            diplomesWrapper.appendChild(createDiplomeNode());
+            initFileInputs(); // Rebind listeners
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="profil-container">
+    <div class="profil-header">
+        <h2>Dossier de Vérification</h2>
+        <p>Afin de garantir l'excellence sur ProfChezVous, ces informations resteront strictement professionnelles.
+            Complétez ce dossier (Étape 1).</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="alert-error">
+        <strong>Veuillez corriger les erreurs suivantes :</strong>
+        <ul style="margin-top: 0.5rem; padding-left: 1.2rem;">
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ field.label }} : {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- 1. IDENTITE -->
+        <div class="form-section">
+            <h3 class="section-title">👤 Mon Identité</h3>
+
+            <div class="form-group">
+                <label>{{ form.nom.label }}</label>
+                {{ form.nom }}
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>{{ form.email.label }}</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label>{{ form.telephone_whatsapp.label }} *</label>
+                    {{ form.telephone_whatsapp }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>{{ form.ville_quartier.label }} *</label>
+                {{ form.ville_quartier }}
+            </div>
+
+            <div class="grid-2" style="margin-top: 1.5rem;">
+                <div class="form-group">
+                    <label>{{ form.photo_de_profil.label }} *</label>
+                    <div class="file-upload-wrapper">
+                        <span class="file-upload-icon">📷</span>
+                        <span class="file-upload-text">Importer (Headshot)</span>
+                        <div class="file-name-display"></div>
+                        {{ form.photo_de_profil }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>{{ form.fichier_cni.label }} *</label>
+                    <div class="file-upload-wrapper">
+                        <span class="file-upload-icon">💳</span>
+                        <span class="file-upload-text">Passeport, CNI, CIP...</span>
+                        <div class="file-name-display"></div>
+                        {{ form.fichier_cni }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. EXPERTISE & LOGISTIQUE -->
+        <div class="form-section">
+            <h3 class="section-title">🎯 Mon Expertise & Logistique</h3>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>{{ form.categorie_de_soutien.label }} *</label>
+                    {{ form.categorie_de_soutien }}
+                </div>
+
+                <div class="form-group">
+                    <label>Matières enseignées (Max 3) *</label>
+                    <select id="matiere_custom_select">
+                        <option value="">Sélectionnez une matière...</option>
+                        <option value="Mathématiques">Mathématiques</option>
+                        <option value="Physique-Chimie">Physique-Chimie</option>
+                        <option value="SVT">SVT</option>
+                        <option value="Français">Français</option>
+                        <option value="Anglais">Anglais</option>
+                        <option value="Philosophie">Philosophie</option>
+                        <option value="Histoire-Géographie">Histoire-Géographie</option>
+                        <option value="AUTRE">+ Ajouter une autre matière...</option>
+                    </select>
+                    <div class="selected-matieres" id="selected_matieres_badges"></div>
+                    <!-- HIDDEN DEFAULT DJANGO FIELD -->
+                    {{ form.matiere_enseignee }}
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>{{ form.classes_enseignees.label }}</label>
+                {{ form.classes_enseignees }}
+            </div>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label>{{ form.modes_de_cours.label }}</label>
+                {{ form.modes_de_cours }}
+            </div>
+        </div>
+
+        <!-- 3. GESTION DES DIPLOMES -->
+        <div class="form-section">
+            <h3 class="section-title">🎓 Preuves & Diplômes</h3>
+            <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 1.5rem;">Attestez de votre niveau pour
+                rassurer les parents (Bac, Licence, Master ou Attestations).</p>
+
+            <div id="diplomes-wrapper"></div>
+
+            <button type="button" class="btn-add-diplome" id="add-diplome-btn">
+                <span>+</span> Ajouter un autre diplôme ou preuve
+            </button>
+        </div>
+
+        <!-- 4. CONSENTEMENT & SUBMIT -->
+        <div class="form-section" style="border: none;">
+            <div class="consent-box">
+                {{ form.autorisation_publicitaire }}
+                <label for="{{ form.autorisation_publicitaire.id_for_label }}">
+                    J'autorise ProfChezVous à valoriser mon profil (anonymisé) dans ses campagnes publiques pour attirer
+                    plus de parents intéressés par mes compétences. (Optionnel).
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" style="margin-top: 2rem;">
+                Transmettre au jury d'admission ➔
+            </button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

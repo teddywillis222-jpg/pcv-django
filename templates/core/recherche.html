@@ -1,0 +1,808 @@
+{% extends "base.html" %}
+
+{% block title %}Trouvez le meilleur répétiteur à domicile au Bénin | Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Page Recherche - SEO Optimisé */
+.search-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding: 2rem 0;
+}
+
+.search-header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.search-container {
+    max-width: 1400px; /* Un peu plus resserré que 1600 pour éviter d'être trop étalé sur les écrans géants, mais large */
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.search-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.search-subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+    max-width: 800px;
+}
+
+/* Filtres Principaux */
+.main-filters {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+    flex-wrap: nowrap; /* Row sur desktop */
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 300px; /* Plus large par défaut */
+}
+
+.filter-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-input {
+    width: 100%;
+    height: 3.5rem;
+    padding: 0 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-sizing: border-box;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--success-600);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.more-filters-btn {
+    background: transparent;
+    color: var(--success-600);
+    border: 2px solid var(--success-600);
+    height: 3.5rem;
+    padding: 0 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.more-filters-btn:hover {
+    background: var(--success-50);
+    border-color: var(--success-700);
+    color: var(--success-700);
+}
+
+/* Filtres Avancés */
+.advanced-filters {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    display: none;
+}
+
+.advanced-filters.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.advanced-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Cartes Professeur */
+.teachers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(335px, 1fr)); /* Min 335px */
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.teacher-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.teacher-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.teacher-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.teacher-photo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0fdf4;
+}
+
+.teacher-info {
+    flex: 1;
+}
+
+.teacher-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.25rem 0;
+}
+
+.teacher-subjects {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.teacher-location {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stars {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.teacher-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-trial {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.badge-available {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.badge-verified {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.teacher-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-view-profile {
+    flex: 1;
+    background: var(--success-600);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-view-profile:hover {
+    background: var(--success-700);
+    transform: translateY(-1px);
+}
+
+.btn-favorite {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+    border-color: var(--success-600);
+    background: var(--success-50);
+    color: var(--success-600);
+}
+
+.btn-favorite.active {
+    border-color: var(--success-600);
+    background: var(--success-50);
+    color: var(--success-600);
+}
+
+/* Side Panel */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 50%;
+    max-width: 600px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.side-panel.active {
+    right: 0;
+}
+
+.side-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.side-panel-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.side-panel-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.side-panel-close {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.side-panel-close:hover {
+    background: #f3f4f6;
+}
+
+.side-panel-content {
+    padding: 1.5rem;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .search-title {
+        font-size: 1.75rem;
+    }
+    
+    .search-subtitle {
+        font-size: 1rem;
+    }
+
+    .search-header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+    
+    .main-filters {
+        flex-direction: column;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .teachers-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .side-panel {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        padding: 0 10px;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
+    
+    .teachers-grid {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+    }
+    
+    .teacher-card {
+        margin: 0;
+        width: 100%;
+        min-width: 335px; /* Appliquer aussi sur mobile selon demande */
+        box-sizing: border-box;
+        padding: 1rem;
+    }
+    
+    /* Side Panel Mobile Adjustments */
+    .side-panel {
+        width: 100% !important;
+        right: -100% !important;
+    }
+    .side-panel.active {
+        right: 0 !important;
+    }
+    .side-panel-header {
+        padding: 0.75rem 1rem !important;
+    }
+    .side-panel-header h3 {
+        font-size: 1.1rem !important;
+    }
+    
+    .teacher-photo {
+        width: 65px;
+        height: 65px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Recherche -->
+<div class="search-page">
+    <!-- Header SEO -->
+    <div class="search-header">
+        <div class="search-container">
+            <h1 class="search-title">Trouvez le meilleur répétiteur à domicile au Bénin</h1>
+            <p class="search-subtitle">
+                Des professeurs certifiés et vérifiés dans toutes les matières, du primaire au supérieur, disponibles à Cotonou, Abomey-Calavi et dans tous les quartiers du Bénin.
+            </p>
+            
+            <!-- Formulaire de recherche -->
+            <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
+                <!-- Filtres Principaux -->
+                <div class="main-filters">
+                    <div class="filter-group">
+                        <label class="filter-label" for="matiere">Matière</label>
+                        <input 
+                            type="text" 
+                            id="matiere" 
+                            name="matiere"
+                            value="{{ matiere }}"
+                            class="filter-input" 
+                            placeholder="Ex: Mathématiques, Français..."
+                            list="matieres-list"
+                        >
+                        <datalist id="matieres-list">
+                            <option value="Mathématiques">
+                            <option value="Français">
+                            <option value="Physique-Chimie">
+                            <option value="SVT">
+                            <option value="Histoire-Géographie">
+                            <option value="Anglais">
+                            <option value="Espagnol">
+                            <option value="Philosophie">
+                            <option value="Économie">
+                        </datalist>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label" for="localisation">Quartier / Ville</label>
+                        <select id="localisation" name="localisation" class="filter-input">
+                            <option value="">Tous les quartiers</option>
+                            <option value="Cotonou" {% if localisation == 'Cotonou' %}selected{% endif %}>Cotonou</option>
+                            <option value="Abomey-Calavi" {% if localisation == 'Abomey-Calavi' %}selected{% endif %}>Abomey-Calavi</option>
+                            <option value="Akpakpa" {% if localisation == 'Akpakpa' %}selected{% endif %}>Akpakpa</option>
+                            <option value="Fidjrossè" {% if localisation == 'Fidjrossè' %}selected{% endif %}>Fidjrossè</option>
+                            <option value="Gbegamey" {% if localisation == 'Gbegamey' %}selected{% endif %}>Gbegamey</option>
+                            <option value="Saint-Michel" {% if localisation == 'Saint-Michel' %}selected{% endif %}>Saint-Michel</option>
+                            <option value="Zogbo" {% if localisation == 'Zogbo' %}selected{% endif %}>Zogbo</option>
+                            <option value="Jéricho" {% if localisation == 'Jéricho' %}selected{% endif %}>Jéricho</option>
+                            <option value="Missebo" {% if localisation == 'Missebo' %}selected{% endif %}>Missebo</option>
+                            <option value="Agla" {% if localisation == 'Agla' %}selected{% endif %}>Agla</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
+                        Plus de filtres
+                    </button>
+                    <!-- Fallback pour soumettre si JS est désactivé -->
+                    <noscript>
+                        <button type="submit" class="more-filters-btn" style="background: var(--success-600); color: white;">Rechercher</button>
+                    </noscript>
+                </div>
+                
+                <!-- Filtres Avancés -->
+                <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode or soutien %}style="display:block;"{% endif %}>
+                    <div class="advanced-filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label" for="classe">Classe</label>
+                            <select id="classe" name="classe" class="filter-input">
+                                <option value="">Toutes les classes</option>
+                                <option value="CP" {% if classe == 'CP' %}selected{% endif %}>CP</option>
+                                <option value="CE1" {% if classe == 'CE1' %}selected{% endif %}>CE1</option>
+                                <option value="CE2" {% if classe == 'CE2' %}selected{% endif %}>CE2</option>
+                                <option value="CM1" {% if classe == 'CM1' %}selected{% endif %}>CM1</option>
+                                <option value="CM2" {% if classe == 'CM2' %}selected{% endif %}>CM2</option>
+                                <option value="6ème" {% if classe == '6ème' %}selected{% endif %}>6ème</option>
+                                <option value="5ème" {% if classe == '5ème' %}selected{% endif %}>5ème</option>
+                                <option value="4ème" {% if classe == '4ème' %}selected{% endif %}>4ème</option>
+                                <option value="3ème" {% if classe == '3ème' %}selected{% endif %}>3ème</option>
+                                <option value="Seconde" {% if classe == 'Seconde' %}selected{% endif %}>Seconde</option>
+                                <option value="Première" {% if classe == 'Première' %}selected{% endif %}>Première</option>
+                                <option value="Terminale" {% if classe == 'Terminale' %}selected{% endif %}>Terminale</option>
+                                <option value="Supérieur" {% if classe == 'Supérieur' %}selected{% endif %}>Supérieur</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="prix">Prix par heure</label>
+                            <select id="prix" name="prix" class="filter-input">
+                                <option value="">Tous les prix</option>
+                                <option value="0-2000" {% if prix == '0-2000' %}selected{% endif %}>Moins de 2000 FCFA</option>
+                                <option value="2000-5000" {% if prix == '2000-5000' %}selected{% endif %}>2000 - 5000 FCFA</option>
+                                <option value="5000-10000" {% if prix == '5000-10000' %}selected{% endif %}>5000 - 10000 FCFA</option>
+                                <option value="10000+" {% if prix == '10000+' %}selected{% endif %}>Plus de 10000 FCFA</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="mode">Mode de cours</label>
+                            <select id="mode" name="mode" class="filter-input">
+                                <option value="">Tous les modes</option>
+                                <option value="domicile" {% if mode == 'domicile' %}selected{% endif %}>À domicile</option>
+                                <option value="enligne" {% if mode == 'enligne' %}selected{% endif %}>En ligne</option>
+                                <option value="mixte" {% if mode == 'mixte' %}selected{% endif %}>Mixte</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="soutien">Type de soutien</label>
+                            <select id="soutien" name="soutien" class="filter-input">
+                                <option value="">Tous les types</option>
+                                <option value="scolaire" {% if soutien == 'scolaire' %}selected{% endif %}>Soutien scolaire</option>
+                                <option value="examen" {% if soutien == 'examen' %}selected{% endif %}>Préparation examen</option>
+                                <option value="remise-a-niveau" {% if soutien == 'remise-a-niveau' %}selected{% endif %}>Remise à niveau</option>
+                                <option value="loisir" {% if soutien == 'loisir' %}selected{% endif %}>Loisir</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+    
+    <!-- Résultats de Recherche -->
+    <div class="search-container">
+        <div class="teachers-grid" id="teachersGrid">
+            {% for teacher in professeurs %}
+            <div class="teacher-card" onclick="openTeacherProfile('{{ teacher.slug }}')">
+                <div class="teacher-header">
+                    {% if teacher.photo_de_profil %}
+                    <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}" class="teacher-photo" style="object-fit: cover;">
+                    {% else %}
+                    <div class="teacher-photo" style="display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #94a3b8; font-weight: bold; font-size: 1.5rem;">
+                        {{ teacher.prenom|first }}{{ teacher.nom|first }}
+                    </div>
+                    {% endif %}
+                    <div class="teacher-info">
+                        <h3 class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</h3>
+                        <p class="teacher-subjects">{{ teacher.matiere_enseignee }}</p>
+                        <p class="teacher-location">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            {{ teacher.ville_quartier }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="rating-stars">
+                    <span class="stars">★★★★★</span>
+                    <span class="rating-text">{{ teacher.moyenne_avis|default:"Nouveau" }} ({{ teacher.nombre_avis|default:"0" }} avis)</span>
+                </div>
+                
+                <div class="teacher-badges">
+                    {% if teacher.est_certifie %}
+                    <span class="badge badge-verified">Vérifié</span>
+                    {% endif %}
+                    <span class="badge badge-available">Disponible</span>
+                    {% if teacher.essai_gratuit_actif %}
+                    <span class="badge badge-trial">Essai possible</span>
+                    {% endif %}
+                    {% if teacher.annees_d_experience %}
+                    <span class="badge" style="background: #f1f5f9; color: #475569;">{{ teacher.annees_d_experience }} ans d'exp.</span>
+                    {% endif %}
+                </div>
+                
+                <div class="teacher-actions">
+                    <button class="btn-view-profile" onclick="event.stopPropagation(); openTeacherProfile('{{ teacher.slug }}')">
+                        Consulter
+                    </button>
+                    <button class="btn-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 1rem; margin-left: auto; margin-right: auto; display: block;">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <h3 style="font-size: 1.25rem; color: #1e293b; margin-bottom: 0.5rem;">Aucun professeur trouvé</h3>
+                <p style="color: #64748b;">Essayez de modifier vos critères de recherche.</p>
+                <a href="{% url 'recherche' %}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">Réinitialiser les filtres</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Side Panel Overlay -->
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h2>Profil du professeur</h2>
+        <button class="side-panel-close" onclick="closeSidePanel()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent">
+        <!-- Le contenu du profil sera chargé dynamiquement ici -->
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    </div>
+</div>
+
+{% include 'core/components/engagement_modal.html' %}
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Gestion des filtres avancés
+function toggleAdvancedFilters() {
+    const filters = document.getElementById('advancedFilters');
+    const btn = document.querySelector('.more-filters-btn');
+    
+    if (filters.classList.contains('active')) {
+        filters.classList.remove('active');
+        btn.textContent = 'Plus de filtres';
+    } else {
+        filters.classList.add('active');
+        btn.textContent = 'Moins de filtres';
+    }
+}
+
+// Variables globales pour le modal d'engagement
+window.currentChildren = {{ parent_children_json|safe }};
+window.currentExistingEngagement = null;
+
+// Gestion du Side Panel
+function openTeacherProfile(teacherSlug) {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    // Mettre à jour l'URL sans recharger
+    history.pushState({ teacher: teacherSlug }, '', `/professeur/${teacherSlug}`);
+    
+    // Afficher le panneau
+    sidePanel.classList.add('active');
+    overlay.classList.add('active');
+    
+    // Charger le contenu du profil
+    loadTeacherProfile(teacherSlug);
+}
+
+function closeSidePanel() {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    sidePanel.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Réinitialiser l'URL
+    history.pushState({}, '', '/recherche/');
+}
+
+async function loadTeacherProfile(teacherSlug) {
+    const content = document.getElementById('sidePanelContent');
+    
+    // Afficher le loader
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    `;
+    
+    try {
+        // Appel API pour récupérer les données du professeur
+        const response = await fetch(`/api/teacher-profile/${teacherSlug}/`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors du chargement du profil');
+        }
+        
+        // Mise à jour des données globales pour le modal
+        window.currentChildren = data.parent_children || [];
+        window.currentExistingEngagement = data.existing_engagement || null;
+        
+        // Utiliser le composant HTML renvoyé par Django
+        content.innerHTML = data.html;
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #ef4444; font-weight: 600;">Oups !</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">${error.message}</p>
+                <button onclick="loadTeacherProfile('${teacherSlug}')" style="padding: 0.5rem 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    Réessayer
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Gestion des favoris
+function toggleFavorite(btn) {
+    requireAuth(() => {
+        btn.classList.toggle('active');
+        
+        if (btn.classList.contains('active')) {
+            btn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            `;
+        } else {
+            btn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            `;
+        }
+    });
+}
+
+// Formulaire d'engagement
+// Retiré car désormais inclus via engagement_modal.html
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Gestion du retour arrière
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.teacher) {
+        openTeacherProfile(event.state.teacher);
+    } else {
+        closeSidePanel();
+    }
+});
+</script>
+{% endblock %}

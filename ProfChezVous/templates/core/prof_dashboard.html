@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Espace Professeur - Prof Chez Vous{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 2rem;">
+    <h1 style="color: var(--primary); margin-top: 0;">Bienvenue {{ teacher.prenom }} !</h1>
+    <p class="text-muted">Statut de validation : <strong>{{ teacher.get_statut_de_validation_display }}</strong></p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div class="card">
+        <h3 style="margin-top: 0; color: var(--secondary);">Mes Informations</h3>
+        <p><strong>Matière principale :</strong> {{ teacher.matiere_enseignee }}</p>
+        <p><strong>Années d'expérience :</strong> {{ teacher.annees_d_experience }} ans</p>
+        <p><strong>Catégorie :</strong> {{ teacher.get_categorie_de_soutien_display }}</p>
+        <a href="{% url 'prof_create_profile' %}" class="btn btn-outline" style="display: inline-block; margin-top: 1rem;">Modifier mon profil</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top: 0; color: var(--secondary);">Mes statistiques</h3>
+        <p><strong>Vues du profil :</strong> {{ teacher.nb_vues_total|default:"0" }} vues</p>
+        <p><strong>Cours donnés :</strong> {{ teacher.nb_engagements_termines }}</p>
+    </div>
+</div>
+{% endblock %}
