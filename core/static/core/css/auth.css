@@ -6,32 +6,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-    /* Brand Colors - Emerald Focus */
-    --brand-50: #ecfdf5;
-    --brand-100: #d1fae5;
-    --brand-500: #10b981;
-    --brand-600: #059669;
-    --brand-700: #047857;
+    /* Brand Colors - Synced with base.css */
+    --brand-50: #dcfce7;
+    --brand-500: #15803d;
+    --brand-600: #166534;
+    --brand-700: #14532d;
     
-    /* Neutrals - Clean & Modern */
+    /* Neutrals - Pure Minimalist */
     --bg-main: #ffffff;
-    --bg-subtle: #f8fafc;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --border-hover: #cbd5e1;
+    --bg-subtle: #fafafa;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --border-hover: #d1d5db;
     
     /* Functional */
-    --error: #ef4444;
+    --error: #dc2626;
     --error-bg: #fef2f2;
     --white: #ffffff;
-    --glass: rgba(255, 255, 255, 0.8);
     
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
 }
 
 * {
@@ -42,90 +37,67 @@
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg-main);
+    background-color: var(--white);
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
 }
 
 /* 
    Main Wrapper 
-   Uses dvh (dynamic viewport height) to prevent mobile scroll jumps
+   Clean white background, no gradients.
 */
 .auth-page-wrapper {
     min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at top right, var(--brand-50), transparent 40%),
-                radial-gradient(circle at bottom left, #f1f5f9, transparent 40%);
-    background-color: var(--bg-main);
-    padding: 2rem 1.25rem;
+    background-color: var(--white);
+    padding: 1.5rem 0; /* Reduced vertical padding */
     position: relative;
-    overflow-x: hidden;
 }
 
-/* Abstract shapes for depth without being "old green background" */
+/* Disabled shapes as requested */
 .auth-bg-shapes {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-}
-
-.auth-bg-shapes::before {
-    content: '';
-    position: absolute;
-    top: -10%;
-    right: -5%;
-    width: 40%;
-    height: 40%;
-    background: var(--brand-100);
-    filter: blur(100px);
-    border-radius: 50%;
+    display: none;
 }
 
 .auth-container {
     width: 100%;
     max-width: 480px;
-    position: relative;
-    z-index: 1;
 }
 
 .auth-card {
     background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 3rem 2.5rem;
-    box-shadow: var(--shadow-xl);
-    transition: transform 0.3s ease;
+    border: none; /* Removed border for a cleaner look if requested, or keep very subtle */
+    border-radius: 0; /* Will be adjusted on desktop */
+    padding: 2rem 1.5rem; /* Reduced padding */
 }
 
 .auth-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem; /* Reduced margin */
 }
 
 .auth-header h2 {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 800;
     color: var(--text-main);
     letter-spacing: -0.02em;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .auth-header p {
     color: var(--text-muted);
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.4;
 }
 
-/* Role Selector - Modern Grid */
+/* Role Selector - Ultra Slim */
 .role-options-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 2rem;
+    gap: 0.5rem; /* Tightened gap */
+    margin-bottom: 1.25rem; /* Reduced margin */
 }
 
 .role-option-card {
@@ -144,88 +116,74 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1rem 0.5rem;
+    padding: 0.75rem 0.25rem;
     background: var(--bg-subtle);
-    border: 2px solid transparent;
-    border-radius: 16px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border); /* Thinner border */
+    border-radius: 12px;
+    transition: border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s ease;
     text-align: center;
 }
 
 .role-card-content svg {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 0.75rem;
+    width: 22px; /* Smaller icons */
+    height: 22px;
+    margin-bottom: 0.4rem;
     color: var(--text-muted);
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .role-card-content span {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-muted);
 }
 
-/* States */
-.role-option-card:hover .role-card-content {
-    background: var(--white);
-    border-color: var(--border);
-    transform: translateY(-2px);
-}
-
+/* Smoother transitions for role selection */
 .role-radio-input:checked + .role-card-content {
-    background: var(--white);
+    background: var(--brand-50);
     border-color: var(--brand-500);
-    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1);
 }
 
 .role-radio-input:checked + .role-card-content svg {
     color: var(--brand-600);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .role-radio-input:checked + .role-card-content span {
     color: var(--brand-700);
 }
 
-/* Form Styling */
+/* Form Styling - Compact */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Tightened vertical space */
 }
 
 .form-group label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.8125rem; /* Slightly smaller labels */
     font-weight: 600;
     color: var(--text-main);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.875rem; /* More compact inputs */
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-main);
     background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     transition: all 0.2s ease;
 }
 
 .form-group input:focus {
     outline: none;
     border-color: var(--brand-500);
-    box-shadow: 0 0 0 4px var(--brand-50);
-}
-
-.form-group input::placeholder {
-    color: var(--text-muted);
-    opacity: 0.5;
-}
-
-.django-hidden-input {
-    display: none !important;
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1);
 }
 
 /* Actions */
@@ -234,115 +192,55 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 0.875rem 1.5rem;
-    background: var(--brand-600);
+    padding: 0.75rem 1.25rem; /* More compact button */
+    background: var(--brand-500);
     color: var(--white);
     border: none;
-    border-radius: 14px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
 }
 
 .btn-auth:hover {
-    background: var(--brand-700);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
-}
-
-.btn-auth:active {
-    transform: translateY(0);
+    background: var(--brand-600);
 }
 
 .auth-footer {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     text-align: center;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--text-muted);
 }
 
 .auth-footer a {
-    color: var(--brand-600);
+    color: var(--brand-500);
     text-decoration: none;
     font-weight: 700;
     margin-left: 0.25rem;
-    transition: color 0.2s;
 }
 
-.auth-footer a:hover {
-    color: var(--brand-700);
-    text-decoration: underline;
-}
-
-/* Error Alerts */
-.alert-error {
-    background: var(--error-bg);
-    border: 1px solid #fee2e2;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 2rem;
-}
-
-.alert-error ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.alert-error li {
-    color: #991b1b;
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.alert-error li::before {
-    content: '•';
-    color: var(--error);
-}
-
-/* Mobile Optimizations */
+/* Mobile Full Width & Optimization */
 @media (max-width: 640px) {
     .auth-page-wrapper {
-        padding: 1rem;
-        align-items: flex-start;
+        padding: 0;
+        align-items: flex-start; /* Start from top on mobile */
+    }
+    
+    .auth-container {
+        max-width: 100%;
     }
     
     .auth-card {
-        padding: 2.5rem 1.5rem;
-        border-radius: 20px;
+        padding: 1.5rem 1rem;
+        border-radius: 0; /* Eat all width */
+        min-height: 100dvh;
     }
     
     .auth-header h2 {
-        font-size: 1.75rem;
-    }
-    
-    .role-options-container {
-        gap: 0.5rem;
-    }
-    
-    .role-card-content {
-        padding: 0.875rem 0.25rem;
-    }
-    
-    .role-card-content svg {
-        width: 24px;
-        height: 24px;
-    }
-    
-    .role-card-content span {
-        font-size: 0.75rem;
+        font-size: 1.5rem;
     }
 }
-
-/* Touch Device Refinements */
-@media (hover: none) {
-    .role-option-card:hover .role-card-content,
-    .btn-auth:hover {
-        transform: none;
-    }
-}
+
