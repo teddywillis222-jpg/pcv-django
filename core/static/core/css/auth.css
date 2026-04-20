@@ -1,81 +1,104 @@
-/* Styles Premium - Thème Vert pour Authentification */
+/* 
+   Auth System - Prof Chez Vous
+   Modern Premium Design - Minimalist & Mobile-First
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --green-50: #f0fdf4;
-    --green-100: #dcfce7;
-    --green-200: #bbf7d0;
-    --green-300: #86efac;
-    --green-400: #4ade80;
-    --green-500: #22c55e;
-    --green-600: #16a34a;
-    --green-700: #15803d;
-    --green-800: #166534;
-    --green-900: #14532d;
-    --background: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.95);
+    /* Brand Colors - Emerald Focus */
+    --brand-50: #ecfdf5;
+    --brand-100: #d1fae5;
+    --brand-500: #10b981;
+    --brand-600: #059669;
+    --brand-700: #047857;
+    
+    /* Neutrals - Clean & Modern */
+    --bg-main: #ffffff;
+    --bg-subtle: #f8fafc;
     --text-main: #0f172a;
     --text-muted: #64748b;
-    --border-color: #e2e8f0;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+    
+    /* Functional */
     --error: #ef4444;
+    --error-bg: #fef2f2;
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.8);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Auth Page Layout - Premium Green Gradient Background */
+/* 
+   Main Wrapper 
+   Uses dvh (dynamic viewport height) to prevent mobile scroll jumps
+*/
 .auth-page-wrapper {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--green-50) 0%, var(--green-100) 50%, var(--green-200) 100%);
+    background: radial-gradient(circle at top right, var(--brand-50), transparent 40%),
+                radial-gradient(circle at bottom left, #f1f5f9, transparent 40%);
+    background-color: var(--bg-main);
+    padding: 2rem 1.25rem;
     position: relative;
-    overflow: hidden;
-    margin: -2rem;
-    /* Compensate base.html padding if needed */
-    padding: 3rem 1rem;
+    overflow-x: hidden;
 }
 
-/* Decorative background elements */
-.auth-bg-shapes::before,
-.auth-bg-shapes::after {
-    content: '';
+/* Abstract shapes for depth without being "old green background" */
+.auth-bg-shapes {
     position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--green-300) 0%, var(--green-400) 100%);
-    opacity: 0.15;
-    filter: blur(60px);
+    inset: 0;
+    pointer-events: none;
     z-index: 0;
+    opacity: 0.4;
 }
 
 .auth-bg-shapes::before {
-    top: -200px;
-    left: -100px;
-}
-
-.auth-bg-shapes::after {
-    bottom: -200px;
-    right: -100px;
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 40%;
+    height: 40%;
+    background: var(--brand-100);
+    filter: blur(100px);
+    border-radius: 50%;
 }
 
 .auth-container {
-    max-width: 520px;
     width: 100%;
+    max-width: 480px;
     position: relative;
-    z-index: 10;
+    z-index: 1;
 }
 
 .auth-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(21, 128, 61, 0.1);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
     padding: 3rem 2.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-xl);
+    transition: transform 0.3s ease;
 }
 
 .auth-header {
@@ -84,28 +107,28 @@ body {
 }
 
 .auth-header h2 {
-    color: var(--green-800);
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin: 0 0 0.5rem 0;
-    letter-spacing: -0.025em;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
 }
 
 .auth-header p {
     color: var(--text-muted);
-    font-size: 1.05rem;
-    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
-/* Role Selector Styles */
+/* Role Selector - Modern Grid */
 .role-options-container {
-    display: flex;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
     margin-bottom: 2rem;
 }
 
 .role-option-card {
-    flex: 1;
     position: relative;
     cursor: pointer;
 }
@@ -121,297 +144,205 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 1.25rem 0.5rem;
-    background: white;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-muted);
+    padding: 1rem 0.5rem;
+    background: var(--bg-subtle);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
 }
 
 .role-card-content svg {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 0.5rem;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 0.75rem;
     color: var(--text-muted);
-    transition: all 0.3s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .role-card-content span {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-muted);
 }
 
-/* Checked state */
-.role-radio-input:checked+.role-card-content {
-    border-color: var(--green-500);
-    background: var(--green-50);
-    color: var(--green-800);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
-}
-
-.role-radio-input:checked+.role-card-content svg {
-    color: var(--green-600);
-}
-
+/* States */
 .role-option-card:hover .role-card-content {
-    border-color: var(--green-300);
+    background: var(--white);
+    border-color: var(--border);
+    transform: translateY(-2px);
 }
 
-/* Form Groups */
+.role-radio-input:checked + .role-card-content {
+    background: var(--white);
+    border-color: var(--brand-500);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1);
+}
+
+.role-radio-input:checked + .role-card-content svg {
+    color: var(--brand-600);
+    transform: scale(1.1);
+}
+
+.role-radio-input:checked + .role-card-content span {
+    color: var(--brand-700);
+}
+
+/* Form Styling */
 .form-group {
     margin-bottom: 1.5rem;
-    position: relative;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-main);
+    margin-bottom: 0.5rem;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.85rem 1.25rem;
-    font-size: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    background-color: white;
-    transition: all 0.3s ease;
-    color: var(--text-main);
-    box-sizing: border-box;
+    padding: 0.75rem 1rem;
     font-family: inherit;
+    font-size: 1rem;
+    color: var(--text-main);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--green-500);
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 4px var(--brand-50);
 }
 
-/* Hidden inputs */
+.form-group input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
 .django-hidden-input {
     display: none !important;
 }
 
-/* Main Auth Button */
+/* Actions */
 .btn-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 0.85rem 1.5rem;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: white;
-    background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
+    padding: 0.875rem 1.5rem;
+    background: var(--brand-600);
+    color: var(--white);
     border: none;
-    border-radius: 10px;
-    margin-top: 1rem;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
-    font-family: inherit;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.2);
 }
 
 .btn-auth:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(22, 163, 74, 0.35);
-    background: linear-gradient(135deg, var(--green-400) 0%, var(--green-500) 100%);
+    background: var(--brand-700);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.3);
 }
 
 .btn-auth:active {
     transform: translateY(0);
 }
 
-/* Divider */
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 2rem 0;
-    color: var(--text-muted);
-}
-
-.divider::before,
-.divider::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.divider span {
-    padding: 0 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-/* Social Button */
-.btn-social {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.85rem 1.5rem;
-    background-color: white;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 1.05rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    text-decoration: none;
-    font-family: inherit;
-}
-
-.btn-social:hover {
-    background-color: var(--green-50);
-    border-color: var(--green-300);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.btn-social svg {
-    width: 24px;
-    height: 24px;
-}
-
 .auth-footer {
-    text-align: center;
     margin-top: 2rem;
-    font-size: 1rem;
+    text-align: center;
+    font-size: 0.9375rem;
     color: var(--text-muted);
 }
 
 .auth-footer a {
-    font-weight: 700;
-    color: var(--green-600);
+    color: var(--brand-600);
     text-decoration: none;
-    transition: color 0.3s;
+    font-weight: 700;
+    margin-left: 0.25rem;
+    transition: color 0.2s;
 }
 
 .auth-footer a:hover {
-    color: var(--green-500);
+    color: var(--brand-700);
     text-decoration: underline;
 }
 
-/* Errors */
+/* Error Alerts */
 .alert-error {
-    background-color: #fef2f2;
-    border-left: 4px solid var(--error);
+    background: var(--error-bg);
+    border: 1px solid #fee2e2;
+    border-radius: 12px;
     padding: 1rem;
-    border-radius: 4px;
     margin-bottom: 2rem;
-    color: #991b1b;
-    font-weight: 500;
-    font-size: 0.95rem;
 }
 
-/* Responsive Mobile - Optimisé pour le marché béninois */
+.alert-error ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alert-error li {
+    color: #991b1b;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-error li::before {
+    content: '•';
+    color: var(--error);
+}
+
+/* Mobile Optimizations */
 @media (max-width: 640px) {
     .auth-page-wrapper {
-        margin: -1rem;
-        padding: 1rem 0.5rem;
-    }
-    
-    .auth-container {
-        max-width: 100%;
-        padding: 0 0.5rem;
+        padding: 1rem;
+        align-items: flex-start;
     }
     
     .auth-card {
-        padding: 2rem 1.5rem;
-        border-radius: 16px;
-        margin: 0.5rem;
+        padding: 2.5rem 1.5rem;
+        border-radius: 20px;
     }
     
     .auth-header h2 {
         font-size: 1.75rem;
-        font-weight: 700;
-    }
-    
-    .auth-header p {
-        font-size: 0.95rem;
     }
     
     .role-options-container {
-        flex-direction: column;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
+        gap: 0.5rem;
     }
     
     .role-card-content {
-        padding: 1rem 0.75rem;
-        flex-direction: row;
-        justify-content: flex-start;
-        gap: 0.75rem;
+        padding: 0.875rem 0.25rem;
     }
     
     .role-card-content svg {
         width: 24px;
         height: 24px;
-        margin-bottom: 0;
     }
     
     .role-card-content span {
-        font-size: 0.9rem;
-    }
-    
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
-    
-    .form-group label {
-        font-size: 0.9rem;
-        margin-bottom: 0.4rem;
-    }
-    
-    .form-group input {
-        padding: 0.75rem 1rem;
-        font-size: 0.95rem;
-        border-radius: 8px;
-    }
-    
-    .btn-auth {
-        padding: 0.75rem 1.25rem;
-        font-size: 1rem;
-        font-weight: 600;
-        margin-top: 0.75rem;
-    }
-    
-    .auth-footer {
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    .alert-error {
-        padding: 0.75rem;
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+        font-size: 0.75rem;
     }
 }
 
-/* Très petits écrans (feature phones courants au Bénin) */
-@media (max-width: 360px) {
-    .auth-card {
-        padding: 1.5rem 1rem;
-        margin: 0.25rem;
+/* Touch Device Refinements */
+@media (hover: none) {
+    .role-option-card:hover .role-card-content,
+    .btn-auth:hover {
+        transform: none;
     }
-    
-    .auth-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .form-group input {
-        padding: 0.65rem 0.85rem;
-        font-size: 0.9rem;
-    }
-    
-    .btn-auth {
-        padding: 0.65rem 1rem;
-        font-size: 0.95rem;
-    }
-}
+}
