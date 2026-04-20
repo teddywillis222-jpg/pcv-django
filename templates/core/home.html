@@ -709,7 +709,12 @@ main.container {
     <!-- CTA Final -->
     <div class="cta-final">
         <h2>Prêt à trouver le professeur idéal ?</h2>
-        <a href="{% url 'recherche' %}" class="btn-white">Rechercher maintenant</a>
+        <div style="margin-bottom: 2rem;">
+            <a href="{% url 'recherche' %}" class="btn-white">Rechercher maintenant</a>
+        </div>
+        <p style="font-size: 0.95rem; opacity: 0.9;">
+            Encore des questions ? <a href="{% url 'faq' %}" style="color: white; font-weight: 700; text-decoration: underline;">Consultez notre FAQ</a> ou contactez le <a href="https://wa.me/message/QROCDDNKZIXAE1" target="_blank" style="color: white; font-weight: 700; text-decoration: underline;">Support</a>.
+        </p>
     </div>
 </section>
 

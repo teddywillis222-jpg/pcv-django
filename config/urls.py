@@ -45,6 +45,7 @@ urlpatterns = [
     path("messagerie/", core_views.messagerie, name="messagerie"),
     path("recherche/", core_views.recherche, name="recherche"),
     path("cgu/", core_views.cgu, name="cgu"),
+    path("politique-confidentialite/", core_views.politique_confidentialite, name="politique_confidentialite"),
     
     # URLs pour le système de recherche et profils (SEO + SPA)
     path("professeur/<slug:teacher_slug>/", core_views.professeur_detail, name="professeur_detail"),

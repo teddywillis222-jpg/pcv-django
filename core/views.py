@@ -37,6 +37,10 @@ def cgu(request):
     """Page des Conditions Générales d'Utilisation"""
     return render(request, "core/cgu.html")
 
+def politique_confidentialite(request):
+    """Page de la Politique de Confidentialité"""
+    return render(request, "core/politique_confidentialite.html")
+
 def messagerie(request):
     """Page Messagerie - Communication entre utilisateurs"""
     if not request.user.is_authenticated:

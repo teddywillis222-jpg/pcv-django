@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Politique de Confidentialité - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 1.25rem;
+        background: #ffffff;
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .legal-header h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+    
+    .legal-content {
+        line-height: 1.8;
+        color: #334155;
+        font-size: 1.05rem;
+    }
+    
+    .legal-content h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 2.5rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .legal-content h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 1.5rem 0 0.75rem;
+    }
+    
+    .legal-content p {
+        margin-bottom: 1.25rem;
+    }
+    
+    .legal-content ul {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+    }
+    
+    .legal-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .legal-content strong {
+        color: #0f172a;
+    }
+    
+    .contact-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 3rem;
+    }
+    
+    @media (max-width: 640px) {
+        .legal-header h1 { font-size: 1.75rem; }
+        .legal-content h2 { font-size: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-wrapper">
+    <header class="legal-header">
+        <h1>Politique de Confidentialité</h1>
+        <p>Dernière mise à jour : 20 Avril 2026</p>
+    </header>
+
+    <div class="legal-content">
+        <p>La présente politique de confidentialité décrit la manière dont <strong>Prof Chez Vous</strong> collecte, utilise, conserve et protège les données personnelles de ses utilisateurs (professeurs, parents, apprenants). En utilisant l’application, vous acceptez les termes de cette politique.</p>
+
+        <h2>1. Collecte des données</h2>
+        <p>Lors de l’utilisation de notre plateforme, nous collectons uniquement les informations nécessaires pour assurer le bon fonctionnement du service et répondre aux besoins éducatifs des différents profils d’utilisateurs :</p>
+        
+        <h3>Professeurs</h3>
+        <ul>
+            <li><strong>Informations personnelles :</strong> nom, prénom, adresse e‑mail, numéro de téléphone, ville/quartier.</li>
+            <li><strong>Informations professionnelles et académiques :</strong> matières enseignées, classes concernées, description, expérience, diplômes, certifications et preuves associées.</li>
+        </ul>
+
+        <h3>Parents</h3>
+        <ul>
+            <li><strong>Informations personnelles :</strong> nom, prénom, adresse e‑mail, numéro de téléphone, ville/quartier.</li>
+            <li><strong>Informations complémentaires :</strong> profession, besoins scolaires exprimés pour leurs enfants.</li>
+        </ul>
+
+        <h3>Enfants des parents</h3>
+        <ul>
+            <li><strong>Informations scolaires et personnelles :</strong> prénom, date de naissance, localisation, classe, niveau scolaire, niveau actuel perçu, objectif éducatif.</li>
+        </ul>
+
+        <h3>Apprenants (inscrits directement)</h3>
+        <ul>
+            <li><strong>Informations scolaires et personnelles :</strong> nom complet, localisation, classe, niveau scolaire, niveau de compétence, objectif éducatif, besoin prioritaire. (similaire aux enfants des parents, mais sans la date de naissance)</li>
+        </ul>
+
+        <h3>Données financières</h3>
+        <p>Lorsqu’un paiement est effectué via la plateforme (par exemple à travers FedaPay), nous collectons les informations liées à la transaction : montant, référence, statut.</p>
+        <p>Les données sensibles (numéro de carte, compte mobile money) sont traitées directement par <strong>FedaPay</strong> et ne sont jamais stockées sur nos serveurs.</p>
+
+        <h3>Données techniques</h3>
+        <p>Adresse IP, identifiants de connexion, données de navigation nécessaires au bon fonctionnement de l’application.</p>
+
+        <h2>2. Finalités de la collecte</h2>
+        <p>Les données sont utilisées uniquement pour :</p>
+        <ul>
+            <li>Mettre en relation les parents et les professeurs.</li>
+            <li>Faciliter la communication via les fonctionnalités intégrées (ex. engagement, messagerie).</li>
+            <li>Améliorer le fonctionnement de l’application et l’expérience utilisateur.</li>
+            <li>Assurer le respect de nos Conditions Générales d’Utilisation (CGU).</li>
+        </ul>
+
+        <h2>3. Partage des données</h2>
+        <p>Les données personnelles ne sont jamais vendues ni cédées à des tiers. Elles sont partagées uniquement dans le cadre de la mise en relation entre les utilisateurs concernés (par exemple, lorsqu’un parent envoie une demande à un professeur, ce dernier reçoit les informations nécessaires pour répondre).</p>
+        <p>Dans le cas des paiements effectués via la plateforme, certaines données financières liées à la transaction (montant, référence, statut) sont partagées avec notre prestataire de paiement <strong>FedaPay</strong>, uniquement afin d’assurer l’exécution et la traçabilité des opérations. Les données sensibles (numéro de carte, compte mobile money) sont traitées directement par FedaPay et ne sont jamais stockées sur nos serveurs.</p>
+        <p>Enfin, nous pouvons être amenés à divulguer certaines informations si la loi l’exige, notamment auprès des autorités judiciaires ou administratives.</p>
+
+        <h2>4. Conservation des données</h2>
+        <p>Les données sont conservées tant que le compte utilisateur est actif. En cas de suppression de compte, nous supprimons ou anonymisons vos données dans un délai raisonnable (maximum 90 jours), sauf obligation légale de conservation.</p>
+        <p>Actuellement, l’option de suppression automatique n’est pas disponible dans l’application. Toutefois, si vous souhaitez que votre compte soit supprimé, vous pouvez en faire la demande et nous procéderons manuellement à la suppression de vos données conformément à cette politique.</p>
+
+        <h2>5. Sécurité des données</h2>
+        <p>Nous mettons en place des mesures techniques et organisationnelles pour protéger vos données contre l’accès non autorisé, la perte ou la divulgation.</p>
+        <p>Toutefois, aucun système n’étant totalement sécurisé, l’utilisateur reste responsable de la confidentialité de ses identifiants et de l’accès à son compte.</p>
+
+        <h2>6. Vos droits</h2>
+        <p>Conformément à la réglementation applicable, vous disposez des droits suivants :</p>
+        <ul>
+            <li>Accéder à vos données personnelles.</li>
+            <li>Rectifier ou mettre à jour vos informations.</li>
+            <li>Supprimer votre compte et vos données associées.</li>
+            <li>Limiter ou vous opposer à certains traitements.</li>
+            <li>Demander la portabilité de vos données, c’est‑à‑dire recevoir vos informations dans un format structuré pour les transmettre à un autre service.</li>
+        </ul>
+
+        <div class="contact-card">
+            <p>Pour exercer ces droits, vous pouvez nous contacter au <strong>+229 01 47 52 88 39</strong>. Nous nous engageons à répondre à vos demandes dans un délai raisonnable (maximum 30 jours).</p>
+        </div>
+
+        <h2>7. Évolution de la politique</h2>
+        <p>Cette politique de confidentialité peut être mise à jour afin de suivre les évolutions légales, techniques ou fonctionnelles de la plateforme.</p>
+        <p>En cas de modification importante (par exemple concernant les types de données collectées, leur utilisation ou leur partage), les utilisateurs seront informés de manière claire avant l’entrée en vigueur des changements.</p>
+        <p>Nous encourageons chaque utilisateur à consulter régulièrement cette politique afin de rester informé de la manière dont ses données personnelles sont protégées et utilisées.</p>
+    </div>
+</div>
+{% endblock %}

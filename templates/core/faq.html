@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Questions Fréquentes - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/faq.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="faq-wrapper">
+    <header class="faq-header">
+        <h1>Centre d'aide</h1>
+        <p>Tout ce que vous devez savoir pour réussir votre expérience sur <strong>Prof Chez Vous</strong>.</p>
+    </header>
+
+    <!-- Tab Selection -->
+    <div class="faq-tabs">
+        <button class="faq-tab-btn active" onclick="switchFaqTab(this, 'section-parent')">Parents & Apprenants</button>
+        <button class="faq-tab-btn" onclick="switchFaqTab(this, 'section-prof')">Professeurs</button>
+    </div>
+
+    <!-- Section: Parent/Apprenant -->
+    <div id="section-parent" class="faq-section active">
+        <!-- Q1 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment inscrire mon enfant sur Prof Chez Vous ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Pour inscrire votre enfant, il suffit de créer un profil parent via la page Inscription. Vous renseignez vos informations personnelles ainsi que celles de votre enfant (nom, âge, niveau scolaire). Une fois le profil créé, vous pouvez immédiatement rechercher un professeur correspondant aux besoins de votre enfant et envoyer une proposition d’engagement. Aucune validation n’est requise pour les parents ou les apprenants : l’accès est direct et sécurisé. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment m’inscrire sur Prof Chez Vous en tant qu’apprenant ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Pour vous inscrire en tant qu’apprenant indépendant, il suffit de créer un profil via la page Inscription. Vous renseignez vos informations personnelles (nom, âge, niveau scolaire ou académique) afin que les professeurs puissent comprendre vos besoins. Une fois le profil créé, vous pouvez immédiatement rechercher un professeur et envoyer une proposition d’engagement. Aucune validation n’est requise pour les apprenants : l’accès est direct et sécurisé. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment trouver un professeur adapté aux besoins de mon enfant ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Une fois votre profil parent créé, vous pouvez rechercher un professeur directement depuis la plateforme. Le moteur de recherche vous permet de filtrer les enseignants selon plusieurs critères : matière, niveau scolaire, disponibilité et localisation. Vous pouvez consulter les profils détaillés des professeurs, leurs diplômes, leurs expériences ainsi que les avis laissés par d’autres familles. Cela vous aide à choisir un enseignant correspondant parfaitement aux besoins de votre enfant avant d’envoyer une proposition d’engagement. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment envoyer une proposition d’engagement à un professeur ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Une fois que vous avez trouvé un professeur correspondant aux besoins de votre enfant, vous pouvez lui envoyer une proposition d’engagement directement depuis son profil. Il vous suffit de cliquer sur le bouton Envoyer une proposition et de préciser vos attentes (matière, horaires, durée des cours). Le professeur reçoit immédiatement votre demande dans son espace dédié et peut l’accepter ou la refuser. Cette étape marque le début du processus d’engagement encadré par la plateforme. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Que se passe‑t‑il après l’acceptation d’une proposition d’engagement ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Après l’acceptation par le professeur, vous devez finaliser l’accord pour activer l’engagement. Deux options s’offrent à vous : régler les frais d’accès de 2000 F CFA pour cet engagement confirmé, ou souscrire à l’abonnement mensuel à 5000 F CFA qui supprime ces frais uniques par engagement et offre des avantages supplémentaires. Tant que le paiement n’est pas effectué, l’accès à la messagerie reste bloqué et les échanges s’arrêtent à la confirmation. Une fois payé, le contrat numérique est établi et vous pouvez communiquer librement avec le professeur via la messagerie intégrée. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Qu’inclut l’abonnement à 5000 F CFA/mois et comment y souscrire ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « L’abonnement mensuel à 5000 F CFA vous permet d’éliminer les frais uniques de 2000 F CFA par engagement confirmé. En plus de cette simplification, les abonnés ont le droit de bénéficier des séances d’essai gratuites proposées par les professeurs (lorsqu’ils en offrent). Vous gardez un contrôle total sur vos fonds : Prof Chez Vous ne prélève rien automatiquement et vous pouvez arrêter l’abonnement à tout moment depuis votre espace parent. Pour y souscrire, il vous suffit de sélectionner l’option Abonnement mensuel lors de la finalisation d’un engagement ou directement dans votre espace parent. Le paiement est sécurisé et renouvelé chaque mois tant que vous le souhaitez »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment utiliser la messagerie pour échanger avec le professeur ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « La messagerie intégrée à Prof Chez Vous vous permet de communiquer directement avec le professeur une fois votre engagement confirmé. Tant que les frais d’accès (2000 F CFA par engagement ou l’abonnement mensuel à 5000 F CFA) ne sont pas réglés, l’accès à la messagerie reste bloqué et les échanges s’arrêtent à la confirmation. Dès que le paiement est effectué, vous pouvez envoyer et recevoir des messages en temps réel, partager des informations sur les cours et clarifier vos attentes. La messagerie est sécurisée et encadrée par la plateforme afin de garantir une communication transparente et professionnelle. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Puis‑je changer de professeur après l’avoir engagé ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Oui, il est possible de changer de professeur même après avoir confirmé un engagement. Si vous constatez que le professeur ne correspond pas aux attentes de votre enfant ou que vos disponibilités évoluent, vous pouvez mettre fin à l’engagement en cours et en créer un nouveau avec un autre enseignant. Chaque nouvel engagement suit la même procédure : proposition, acceptation et paiement des frais d’accès (2000 F CFA par engagement ou abonnement mensuel à 5000 F CFA).<br><br>Il est néanmoins conseillé d’avoir une discussion en amont avec le professeur afin de s’entendre sur la situation. La rupture du contrat doit se faire de manière claire et transparente, de façon à ce que personne ne se sente trompé ou utilisé. Cette démarche garantit une relation respectueuse et une continuité pédagogique saine. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment suis‑je informé de l’acceptation ou du refus d’une demande par un professeur ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Lorsque vous envoyez une proposition d’engagement à un professeur, celui‑ci reçoit la demande dans son espace dédié. Dès qu’il accepte ou refuse, vous êtes automatiquement notifié dans votre espace parent. En cas de refus, vous pouvez immédiatement rechercher un autre professeur et envoyer une nouvelle proposition. En cas d’acceptation, vous accédez ensuite à la messagerie pour communiquer librement avec le professeur et organiser les cours. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Que faire si un professeur ne respecte pas l’engagement ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Si vous constatez qu’un professeur ne respecte pas les termes de l’engagement (absences répétées, non‑respect des horaires ou du contenu convenu), vous pouvez signaler la situation via votre espace parent. La plateforme analyse le cas et peut mettre fin au contrat si nécessaire. Cette démarche garantit que les engagements restent transparents et respectueux. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q11 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Puis‑je demander une séance d’essai gratuite ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Oui, certains professeurs proposent des séances d’essai gratuites pour permettre aux familles de tester leur méthode avant de confirmer un engagement. Si vous êtes abonné, vous avez le droit de bénéficier de ces séances lorsqu’elles sont offertes. Cela vous aide à choisir un professeur en toute confiance »
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Professeur -->
+    <div id="section-prof" class="faq-section">
+        <!-- Q1 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment devenir professeur sur Prof Chez Vous ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Pour devenir professeur sur Prof Chez Vous, il suffit de créer un profil enseignant via la page Inscription. Vous devrez renseigner vos informations personnelles, vos diplômes ou certifications, ainsi que vos disponibilités. Notre équipe vérifie vos documents afin de garantir la qualité des cours proposés. Une fois validé, vous pouvez commencer à recevoir des demandes de cours et gérer vos engagements directement depuis votre espace professeur. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Quels documents sont nécessaires pour valider mon profil ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Pour valider votre profil de professeur, vous devez fournir vos diplômes ou certifications, ainsi qu’une pièce d’identité officielle. Ces documents sont vérifiés par l’équipe Prof Chez Vous afin de garantir la qualité et la fiabilité des cours proposés. Sans validation, vous ne pourrez pas recevoir de demandes de cours. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Combien de temps prend la validation du profil ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « La validation de votre profil enseignant prend généralement entre 24 et 48 heures. Notre équipe vérifie vos diplômes et votre pièce d’identité afin de garantir la qualité des cours proposés. Vous serez informé par e‑mail dès que votre profil est validé et prêt à recevoir des demandes de cours. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment recevoir une demande ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Une fois votre profil validé, vous pouvez recevoir des demandes de cours directement depuis la plateforme. Les parents ou apprenants consultent votre profil et vous envoient une demande en fonction de vos disponibilités. Vous serez notifié dans votre espace professeur et par e‑mail. Vous pourrez ensuite accepter ou refuser la demande selon vos préférences. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Dois-je payer pour être référencé ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Non, le référencement de votre profil professeur sur Prof Chez Vous est gratuit. Une fois votre profil validé, il sera automatiquement visible par les parents et apprenants qui recherchent un enseignant. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Que se passe‑t‑il après confirmation d’une proposition d’engagement ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Après avoir confirmé une proposition d’engagement, celle‑ci devient officielle et apparaît dans votre espace professeur. Vous pouvez alors gérer les détails du cours (horaires, suivi, paiements) directement depuis votre tableau de bord. L’apprenant ou le parent est notifié de votre confirmation et l’engagement est ajouté à votre historique. Cette étape marque le début de votre relation pédagogique encadrée par Prof Chez Vous. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment gérer mes engagements une fois confirmés ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Après confirmation d’un engagement, il est essentiel de communiquer clairement avec le parent ou l’apprenant afin de finaliser officiellement les accords. Cette étape permet l’établissement du contrat numérique qui encadre la relation pédagogique. Vous disposez ensuite des outils intégrés dans votre espace professeur pour suivre vos engagements, organiser vos cours et assurer une gestion transparente. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment utiliser la messagerie pour communiquer avec les familles ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « La messagerie intégrée à Prof Chez Vous vous permet d’échanger directement avec les parents et les apprenants. Une fois connecté à votre espace professeur, vous accédez à la liste de vos conversations depuis l’onglet Discussions. Vous pouvez envoyer et recevoir des messages en temps réel, partager des informations sur les cours et clarifier les engagements. La messagerie est sécurisée et encadrée par la plateforme afin de garantir une communication transparente et professionnelle. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Puis-je refuser une demande ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Oui, vous avez la possibilité de refuser une demande de cours. Lorsque vous recevez une demande dans votre espace professeur, vous pouvez choisir d’accepter ou de refuser selon vos disponibilités et vos préférences. Le refus est notifié automatiquement au parent ou à l’apprenant, ce qui garantit une communication claire et transparente. Cette flexibilité vous permet de gérer vos engagements en toute autonomie. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Comment suis‑je évalué ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « En tant que professeur sur Prof Chez Vous, votre évaluation repose sur la satisfaction des parents et des apprenants. Après chaque cours ou engagement, les familles peuvent laisser un avis et une note directement sur votre profil. Ces retours permettent de valoriser la qualité de votre enseignement et d’améliorer votre visibilité sur la plateforme. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q11 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Que faire si un parent ne paie pas les frais d’accès à l’engagement ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Si un parent ne règle pas les frais d’accès de 2000 F CFA liés à un engagement, celui‑ci n’est pas considéré comme valide. Vous ne devez pas commencer les cours tant que le paiement n’a pas été confirmé par la plateforme. Tant que ces frais ne sont pas réglés, l’accès à la messagerie est bloqué : les échanges s’arrêtent donc à l’envoi de la proposition par le parent et à sa confirmation par le professeur. Prof Chez Vous vous protège ainsi en garantissant que chaque engagement est sécurisé et que votre travail est rémunéré dans un cadre clair et transparent. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q12 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Puis‑je enseigner en ligne et à domicile ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Oui, en tant que professeur sur Prof Chez Vous, vous avez la possibilité de proposer des cours en ligne et/ou à domicile. Lors de la création de votre profil, vous pouvez préciser vos modalités d’enseignement (visioconférence, déplacement chez l’apprenant, accueil à votre domicile). Cette flexibilité vous permet d’adapter vos cours aux besoins des familles et d’élargir vos opportunités pédagogiques. »
+                </div>
+            </div>
+        </div>
+
+        <!-- Q13 -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <h3>Prof Chez Vous est elle une école d’enseignants ?</h3>
+                <div class="faq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    « Prof Chez Vous n’est pas une école de formation pour enseignants. La plateforme met en relation des professeurs déjà qualifiés avec des parents et des apprenants. Notre rôle est de faciliter la gestion des engagements, la communication. L’acquisition des compétences d’enseignement reste de votre responsabilité. »
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFaq(btn) {
+        const item = btn.parentElement;
+        const isOpen = item.classList.contains('open');
+        
+        // Close all other items
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        
+        // Toggle current item
+        if (!isOpen) {
+            item.classList.add('open');
+        }
+    }
+
+    function switchFaqTab(btn, sectionId) {
+        // Deactivate tabs
+        document.querySelectorAll('.faq-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Switch sections
+        document.querySelectorAll('.faq-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+
+        // Close all accordions when switching tabs
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    }
+</script>
+{% endblock %}
