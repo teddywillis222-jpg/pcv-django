@@ -251,7 +251,8 @@ def prof_create_profile(request):
         if form.is_valid():
             teacher = form.save(commit=False)
             teacher.user = request.user
-            teacher.prenom = ""
+            teacher.prenom = request.user.first_name
+            teacher.nom = request.user.last_name
             teacher.statut_de_validation = ValidationStatus.EN_ATTENTE
             teacher.save()
             
@@ -298,27 +299,51 @@ def prof_attente_dashboard(request):
         if exp: teacher_instance.annees_d_experience = exp
         tarif = request.POST.get("tarif_horaire")
         if tarif: teacher_instance.tarif_horaire = tarif
-        
-        dispos = request.POST.getlist("disponibilites")
-        if dispos:
-            teacher_instance.grille_disponibilites = dispos
-            
         teacher_instance.save()
         return redirect("prof_attente_dashboard")
 
-    # Calcul pourcentage complétion 
-    completion = 50
-    if teacher_instance.presentation: completion += 20
-    if teacher_instance.methodologie: completion += 15
-    if teacher_instance.tarif_horaire: completion += 5
-    if teacher_instance.grille_disponibilites: completion += 10
-
+    # Calcul pourcentage complétion
+    completion = teacher_instance.completion_percentage
     jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+    
     return render(request, "core/prof_attente_dashboard.html", {
         "teacher": teacher_instance,
         "completion": completion,
         "jours": jours
     })
+
+
+@login_required
+def prof_edit_profile(request):
+    """Page d'édition du profil pour le professeur (Champs restreints)"""
+    try:
+        profile = request.user.profile
+        teacher = request.user.teacher_profile
+    except (Profile.DoesNotExist, TeacherProfile.DoesNotExist):
+        return redirect("home")
+
+    if profile.role != Profile.ROLE_PROF:
+        return redirect("home")
+
+    if request.method == "POST":
+        teacher.presentation = request.POST.get("presentation", teacher.presentation)
+        teacher.methodologie = request.POST.get("methodologie", teacher.methodologie)
+        teacher.ville_quartier = request.POST.get("ville_quartier", teacher.ville_quartier)
+        teacher.tarif_horaire = request.POST.get("tarif_horaire", teacher.tarif_horaire)
+        teacher.telephone_whatsapp = request.POST.get("telephone_whatsapp", teacher.telephone_whatsapp)
+        
+        # Pour les listes (JSONField)
+        teacher.classes_enseignees = request.POST.getlist("classes_enseignees")
+        teacher.modes_de_cours = request.POST.getlist("modes_de_cours")
+
+        if request.FILES.get("photo_de_profil"):
+            teacher.photo_de_profil = request.FILES.get("photo_de_profil")
+
+        teacher.save()
+        return redirect("prof_dashboard")
+
+    return render(request, "core/prof_edit_profile.html", {"teacher": teacher})
+
 
 @login_required
 def prof_dashboard(request):

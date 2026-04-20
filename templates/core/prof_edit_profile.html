@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Modifier mon profil - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--dash-shadow);
+        border: 1px solid var(--dash-border);
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--dash-text);
+        margin-bottom: 0.5rem;
+    }
+    .form-input, .form-textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--dash-border);
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus {
+        outline: none;
+        border-color: var(--dash-accent);
+    }
+    .form-input[readonly] {
+        background: #f1f5f9;
+        cursor: not-allowed;
+    }
+    .help-text {
+        font-size: 0.75rem;
+        color: var(--dash-text-muted);
+        margin-top: 0.25rem;
+    }
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.75rem;
+    }
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-main" style="padding-bottom: 2rem;">
+    <div class="edit-container">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+            <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <h1 style="font-size: 1.5rem; font-weight: 800;">Modifier mon profil</h1>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Section: Identité (Lecture seule) -->
+            <div style="padding: 1rem; background: #f8fafc; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--dash-border);">
+                <h3 style="font-size: 0.875rem; color: var(--dash-accent); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Informations d'identité (Non modifiables)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Nom complet</label>
+                        <input type="text" class="form-input" value="{{ teacher.prenom }} {{ teacher.nom }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-input" value="{{ teacher.email }}" readonly>
+                    </div>
+                </div>
+                <p class="help-text">Contactez le support pour modifier ces informations ou vos diplômes/CNI.</p>
+            </div>
+
+            <!-- Section: Photo -->
+            <div class="form-group">
+                <label class="form-label">Photo de profil</label>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    {% if teacher.photo_de_profil %}
+                    <img src="{{ teacher.photo_de_profil.url }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                    {% endif %}
+                    <input type="file" name="photo_de_profil" accept="image/*">
+                </div>
+            </div>
+
+            <!-- Section: Infos Public -->
+            <div class="form-group">
+                <label class="form-label">Téléphone / WhatsApp</label>
+                <input type="text" name="telephone_whatsapp" class="form-input" value="{{ teacher.telephone_whatsapp }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ville & Quartier</label>
+                <input type="text" name="ville_quartier" class="form-input" value="{{ teacher.ville_quartier }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tarif horaire (FCFA)</label>
+                <input type="number" name="tarif_horaire" class="form-input" value="{{ teacher.tarif_horaire|floatformat:0 }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ma présentation</label>
+                <textarea name="presentation" class="form-textarea" rows="5">{{ teacher.presentation }}</textarea>
+                <p class="help-text">Décrivez votre parcours et ce qui fait de vous un bon prof.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ma méthodologie</label>
+                <textarea name="methodologie" class="form-textarea" rows="5">{{ teacher.methodologie }}</textarea>
+                <p class="help-text">Comment se déroule une séance avec vous ?</p>
+            </div>
+
+            <!-- Section: Classes & Modes (Simplified for this version) -->
+            <div class="form-group">
+                <label class="form-label">Matière enseignée</label>
+                <input type="text" class="form-input" value="{{ teacher.matiere_enseignee }}" readonly>
+                <p class="help-text">Contactez le support pour changer de matière principale.</p>
+            </div>
+
+            <div style="margin-top: 3rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn-dash btn-dash-primary" style="flex: 2; height: 50px; font-size: 1rem;">Sauvegarder les modifications</button>
+                <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 50px; font-size: 1rem;">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

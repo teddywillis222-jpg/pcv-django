@@ -33,6 +33,7 @@ urlpatterns = [
     path("prof/create-profile/", core_views.prof_create_profile, name="prof_create_profile"),
     path("prof/attente/", core_views.prof_attente_dashboard, name="prof_attente_dashboard"),
     path("prof/dashboard/", core_views.prof_dashboard, name="prof_dashboard"),
+    path("prof/edit-profile/", core_views.prof_edit_profile, name="prof_edit_profile"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
     path("parent/dashboard/", core_views.parent_dashboard, name="parent_dashboard"),
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),
