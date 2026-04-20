@@ -191,16 +191,27 @@ def finalisation_compte(request):
 
 
 def post_signup_redirect(request):
+    """
+    Redirection intelligente après connexion ou inscription.
+    Vérifie l'existence du profil métier (Prof, Parent, Apprenant) pour orienter l'utilisateur.
+    """
     if not request.user.is_authenticated:
         return redirect("home")
 
-    # On récupère ou crée le profil sans rôle par défaut
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    # 1. Staff / Admin
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect("/admin/")
 
-    # SI PAS DE RÔLE OU PAS DE NOM : Direction l'accueil avec un paramètre spécial
-    if not profile.role or not request.user.first_name:
-        return redirect('/?show_finalisation_popup=true')
+    # 2. Récupération du profil de base
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        # Cas rare si le signal n'a pas fonctionné
+        return redirect("home")
 
+    # 3. Logique de redirection directe par rôle
+    
+    # --- RÔLE : PROFESSEUR ---
     if profile.role == Profile.ROLE_PROF:
         teacher = getattr(request.user, "teacher_profile", None)
         if teacher:
@@ -209,17 +220,25 @@ def post_signup_redirect(request):
                 return redirect("prof_dashboard")
             return redirect("prof_attente_dashboard")
         return redirect("prof_intro")
+
+    # --- RÔLE : PARENT ---
     elif profile.role == Profile.ROLE_PARENT:
         parent = getattr(request.user, "parent", None)
+        # Si le parent existe et a au moins un enfant, dashboard direct
         if parent and parent.enfants.exists():
             return redirect("parent_dashboard")
+        # Sinon, création de profil (Parent + Premier enfant)
         return redirect("parent_create_profile")
+
+    # --- RÔLE : APPRENANT (Élève autonome) ---
     elif profile.role == Profile.ROLE_APPRENANT:
         apprenant = getattr(request.user, "apprenant", None)
+        # Si le profil métier existe, dashboard direct
         if apprenant:
             return redirect("apprenant_dashboard")
         return redirect("apprenant_create_profile")
 
+    # Par défaut
     return redirect("home")
 
 

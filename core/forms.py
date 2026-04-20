@@ -111,7 +111,19 @@ class SignUpForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         label="Nom d'utilisateur ou email",
-        widget=forms.TextInput(attrs={"placeholder": "Nom d'utilisateur ou email"}),
+        widget=forms.TextInput(attrs={
+            "placeholder": "Votre identifiant",
+            "class": "auth-input",
+            "required": True
+        }),
+    )
+    password = forms.CharField(
+        label="Mot de passe",
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Votre mot de passe",
+            "class": "auth-input",
+            "required": True
+        }),
     )
 
 
