@@ -17,7 +17,7 @@ from .forms import (
     SignUpForm,
 )
 from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus
-from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement
+from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message
 from django.db.models import Q
 from django.template.loader import render_to_string
 
@@ -332,10 +332,52 @@ def prof_dashboard(request):
         
     try:
         teacher = request.user.teacher_profile
-    except:
+    except TeacherProfile.DoesNotExist:
         return redirect("prof_create_profile")
 
-    return render(request, "core/prof_dashboard.html", {"teacher": teacher})
+    # 1. Gestion des Engagements par onglets
+    engagements = teacher.engagements.all().order_by("-date_creation")
+    
+    # Demandes reçues (En attente)
+    engs_en_cours = engagements.filter(statut_general=StatutGeneral.EN_ATTENTE)
+    
+    # Contrats actifs (Confirmé, En cours, Finalisé)
+    engs_actifs = engagements.filter(
+        statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE]
+    )
+    
+    # Historique (Terminé, Refusé, Annulé)
+    engs_termines = engagements.filter(
+        statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.REFUSE, StatutGeneral.ANNULE]
+    )
+    
+    # Séances d'essai
+    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
+
+    # 2. Statistiques et Analytics
+    # (Les champs de base sont déjà dans le modèle teacher)
+    
+    # 3. Centre de Notifications (Messages non lus)
+    unread_messages_count = Message.objects.filter(
+        destinataire=request.user,
+        lu=False
+    ).count()
+
+    # 4. Parents Favoris
+    parents_favoris = teacher.parents_favoris.all()
+
+    context = {
+        "teacher": teacher,
+        "engs_en_cours": engs_en_cours,
+        "engs_actifs": engs_actifs,
+        "engs_termines": engs_termines,
+        "engs_essais": engs_essais,
+        "unread_count": unread_messages_count,
+        "parents_favoris": parents_favoris,
+        "completion": teacher.completion_percentage,
+    }
+
+    return render(request, "core/prof_dashboard.html", context)
 
 
 @login_required

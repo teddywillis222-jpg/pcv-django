@@ -1,26 +1,328 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Mon Espace Professeur - Prof Chez Vous{% endblock %}
+{% block title %}Centre de Contrôle - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+<style>
+    /* Correction pour le bouton "Copier mon lien" */
+    .copy-link-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+    .copy-link-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="card" style="margin-bottom: 2rem;">
-    <h1 style="color: var(--primary); margin-top: 0;">Bienvenue {{ teacher.prenom }} !</h1>
-    <p class="text-muted">Statut de validation : <strong>{{ teacher.get_statut_de_validation_display }}</strong></p>
+<div class="dashboard-wrapper">
+    <!-- Sidebar (Desktop only) -->
+    <aside class="dash-sidebar">
+        <div class="dash-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+            <span>ProfChezVous</span>
+        </div>
+        
+        <nav class="dash-nav">
+            <a href="#" class="dash-nav-link active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a>
+            <a href="{% url 'prof_create_profile' %}" class="dash-nav-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Mon Profil
+            </a>
+            <a href="#" class="dash-nav-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Messages
+                {% if unread_count %}
+                <span class="badge badge-pending" style="margin-left: auto;">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+        </nav>
+
+        <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--dash-border);">
+            <p style="font-size: 0.75rem; color: var(--dash-text-muted); margin-bottom: 1rem;">ID Professeur: #{{ teacher.id }}</p>
+            <a href="{% url 'logout' %}" style="color: #ef4444; font-weight: 700; text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+        <header class="dash-header">
+            <div class="dash-title">
+                <h1>Bonjour, {{ teacher.prenom }} !</h1>
+                <p>Voici l'état de votre activité aujourd'hui.</p>
+            </div>
+            <div class="dash-actions">
+                <button class="btn-dash btn-dash-outline" onclick="copyProfileLink('{{ request.build_absolute_uri|slice:':-1' }}{% url 'professeur_detail' teacher.slug %}')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    Copier mon lien
+                </button>
+                <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" class="btn-dash btn-dash-primary">
+                    Voir mon profil public
+                </a>
+            </div>
+        </header>
+
+        <!-- Completion Widget -->
+        <section class="completion-widget">
+            <div class="completion-info">
+                <h3>Votre profil est rempli à {{ completion }}%</h3>
+                <p style="font-size: 0.875rem; opacity: 0.9;">Un profil complet attire 3x plus de parents.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: {{ completion }}%;"></div>
+                </div>
+                {% if completion < 100 %}
+                <a href="{% url 'prof_create_profile' %}" class="copy-link-btn">Compléter</a>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </div>
+                    <span class="badge badge-active">+12%</span>
+                </div>
+                <div class="stat-value">{{ teacher.nb_vues_total }}</div>
+                <div class="stat-label">Vues du profil</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" style="background: #e0f2fe; color: #0ea5e9;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                    </div>
+                </div>
+                <div class="stat-value">{{ teacher.nb_engagements_confirmes }}</div>
+                <div class="stat-label">Contrats confirmés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                    </div>
+                </div>
+                <div class="stat-value">{{ teacher.nb_engagements_termines }}</div>
+                <div class="stat-label">Cours terminés</div>
+            </div>
+        </div>
+
+        <!-- Engagements Tabs -->
+        <section class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-en-cours')">
+                    Demandes reçues ({{ engs_en_cours.count }})
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-actifs')">
+                    Contrats actifs ({{ engs_actifs.count }})
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-essais')">
+                    Essais ({{ engs_essais.count }})
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-history')">
+                    Historique
+                </button>
+            </div>
+
+            <!-- Tab: En cours -->
+            <div id="tab-en-cours" class="tab-content active">
+                {% if engs_en_cours %}
+                    {% for eng in engs_en_cours %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="parent-avatar">
+                                {% if eng.parent_apprenant.parent.photo_profil %}
+                                <img src="{{ eng.parent_apprenant.parent.photo_profil.url }}" alt="Parent">
+                                {% else %}
+                                {{ eng.parent_apprenant.first_name|slice:":1" }}
+                                {% endif %}
+                            </div>
+                            <div class="eng-details">
+                                <h4>{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username }}</h4>
+                                <div class="eng-meta">
+                                    <span class="badge badge-pending">{{ eng.matiere }}</span>
+                                    <span>• Reçu le {{ eng.date_creation|date:"d/m" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eng-actions">
+                            <button class="btn-dash btn-dash-outline" onclick="openEngModal({{ eng.id }})">Détails</button>
+                            <button class="btn-dash btn-dash-primary" onclick="quickAction({{ eng.id }}, 'confirm')">Confirmer</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 3rem; color: var(--dash-text-muted);">
+                        <p>Aucune nouvelle demande pour le moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Actifs -->
+            <div id="tab-actifs" class="tab-content">
+                {% if engs_actifs %}
+                    {% for eng in engs_actifs %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="parent-avatar" style="background: var(--dash-accent-soft); color: var(--dash-accent);">
+                                {{ eng.parent_apprenant.first_name|slice:":1" }}
+                            </div>
+                            <div class="eng-details">
+                                <h4>{{ eng.parent_apprenant.get_full_name }}</h4>
+                                <div class="eng-meta">
+                                    <span class="badge badge-active">Actif</span>
+                                    <span>• {{ eng.matiere }} • {{ eng.classe }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eng-actions">
+                            <a href="#" class="btn-dash btn-dash-outline">Journal de séance</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 3rem; color: var(--dash-text-muted);">
+                        <p>Vous n'avez pas encore de contrats actifs.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Essais -->
+            <div id="tab-essais" class="tab-content">
+                {% if engs_essais %}
+                    {% for eng in engs_essais %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="stat-icon" style="width: 50px; height: 50px; border-radius: 50%;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="eng-details">
+                                <h4>Essai avec {{ eng.parent_apprenant.get_full_name }}</h4>
+                                <p class="eng-meta">Prévu le : <strong>{{ eng.date_heure_essai|date:"d/m à H:i"|default:"À définir" }}</strong></p>
+                            </div>
+                        </div>
+                        <div class="eng-actions">
+                            <button class="btn-dash btn-dash-primary">Lancer l'essai</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 3rem; color: var(--dash-text-muted);">
+                        <p>Aucun cours d'essai programmé.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Historique -->
+            <div id="tab-history" class="tab-content">
+                {% if engs_termines %}
+                    {% for eng in engs_termines %}
+                    <div class="eng-card" style="opacity: 0.7;">
+                        <div class="eng-info">
+                            <div class="eng-details">
+                                <h4>Engagement #{{ eng.id }}</h4>
+                                <p class="eng-meta">{{ eng.matiere }} • Terminé le {{ eng.date_cloture|date:"d/m/Y"|default:"-" }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="badge" style="background: #f1f5f9; color: #475569;">{{ eng.get_statut_general_display }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 3rem; color: var(--dash-text-muted);">
+                        <p>L'historique est vide.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-    <div class="card">
-        <h3 style="margin-top: 0; color: var(--secondary);">Mes Informations</h3>
-        <p><strong>Matière principale :</strong> {{ teacher.matiere_enseignee }}</p>
-        <p><strong>Années d'expérience :</strong> {{ teacher.annees_d_experience }} ans</p>
-        <p><strong>Catégorie :</strong> {{ teacher.get_categorie_de_soutien_display }}</p>
-        <a href="{% url 'prof_create_profile' %}" class="btn btn-outline" style="display: inline-block; margin-top: 1rem;">Modifier mon profil</a>
-    </div>
-
-    <div class="card">
-        <h3 style="margin-top: 0; color: var(--secondary);">Mes statistiques</h3>
-        <p><strong>Vues du profil :</strong> {{ teacher.nb_vues_total|default:"0" }} vues</p>
-        <p><strong>Cours donnés :</strong> {{ teacher.nb_engagements_termines }}</p>
+<!-- Modal Placeholder (Simplified for demo) -->
+<div id="engModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div class="card" style="max-width:500px; width:90%; position:relative;">
+        <button onclick="closeEngModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:none; cursor:pointer;">✕</button>
+        <div id="modalContent">
+            <!-- Dynamically loaded -->
+            <h3>Détails de la demande</h3>
+            <p>Chargement...</p>
+        </div>
     </div>
 </div>
+
+<script>
+    function switchTab(evt, tabId) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    function copyProfileLink(link) {
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Lien de profil copié !");
+        });
+    }
+
+    function openEngModal(id) {
+        document.getElementById('engModal').style.display = 'flex';
+        // Simulation de chargement Ajax
+        setTimeout(() => {
+            document.getElementById('modalContent').innerHTML = `
+                <h3 style="margin-bottom:1rem;">Détails Engagement #${id}</h3>
+                <div style="font-size:0.9rem; line-height:1.6; margin-bottom:1.5rem;">
+                    <p><strong>Matière:</strong> Mathématiques</p>
+                    <p><strong>Niveau:</strong> Terminale S</p>
+                    <p><strong>Fréquence:</strong> 2 séances / semaine</p>
+                    <p><strong>Localisation:</strong> Cotonou, Calavi</p>
+                    <p><strong>Message du parent:</strong> "Mon fils a besoin d'aide pour préparer son BAC."</p>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <button class="btn-dash btn-dash-primary" style="flex:1">Accepter la demande</button>
+                    <button class="btn-dash btn-dash-outline" style="flex:1; border-color:#ef4444; color:#ef4444;">Refuser</button>
+                </div>
+            `;
+        }, 300);
+    }
+
+    function closeEngModal() {
+        document.getElementById('engModal').style.display = 'none';
+    }
+
+    function quickAction(id, action) {
+        if(confirm(`Êtes-vous sûr de vouloir ${action == 'confirm' ? 'confirmer' : 'refuser'} cette demande ?`)) {
+            // Ici, appel Fetch vers ton backend
+            alert("Action enregistrée ! (Simulation)");
+        }
+    }
+</script>
 {% endblock %}

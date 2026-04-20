@@ -449,11 +449,41 @@ class TeacherProfile(models.Model):
     nb_vues_jour = models.PositiveIntegerField(default=0)
     nb_vues_semaine = models.PositiveIntegerField(default=0)
     nb_vues_mois = models.PositiveIntegerField(default=0)
+    nb_vues_total = models.PositiveIntegerField(default=0)
     # evaluations_recues : relation inverse depuis Evaluation.professeur_evalue
     nb_engagements_confirmes = models.PositiveIntegerField(default=0)
     nb_engagements_finalises = models.PositiveIntegerField(default=0)
     nb_engagements_termines = models.PositiveIntegerField(default=0)
     nb_engagements_total = models.PositiveIntegerField(default=0)
+
+    parents_favoris = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name="professeurs_favoris",
+        help_text="Liste des parents marqués comme favoris par ce professeur"
+    )
+
+    @property
+    def completion_percentage(self):
+        """Calcule le pourcentage de complétion du profil professeur."""
+        fields_to_check = [
+            'photo_de_profil', 'presentation', 'methodologie', 
+            'annees_d_experience', 'classes_enseignees', 'modes_de_cours',
+            'ville_quartier', 'tarif_horaire', 'telephone_whatsapp'
+        ]
+        filled = 0
+        for field in fields_to_check:
+            val = getattr(self, field)
+            if val:
+                if isinstance(val, (list, dict)) and not val:
+                    continue
+                filled += 1
+        
+        # On ajoute des points pour les diplômes
+        if self.diplomes.exists():
+            filled += 1
+            
+        return int((filled / (len(fields_to_check) + 1)) * 100)
 
     # 7. Paramètres et consentement
     autorisation_publicitaire = models.BooleanField(default=False)
