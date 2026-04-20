@@ -1,0 +1,364 @@
+<!-- Modal Engagement Dynamique -->
+<div id="engagementModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 4000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Proposer un engagement</h3>
+            <button type="button" onclick="closeEngagementModal()" style="background: none; border: none; cursor: pointer; color: #64748b;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        
+        <!-- Bannière dynamique (gérée par JS) -->
+        <div id="eng_banner" style="display: none; padding: 1rem 1.5rem; background: var(--success-50); border-bottom: 1px solid var(--success-200); font-size: 0.9rem; color: var(--success-700);">
+            <p id="eng_banner_text" style="margin: 0; line-height: 1.5;"></p>
+            <a id="eng_banner_btn" href="#" style="display: none; margin-top: 0.5rem; font-weight: bold; text-decoration: underline; color: var(--success-700);">Gérer mon plan</a>
+        </div>
+
+        <form id="engagementForm" onsubmit="submitEngagement(event)" style="padding: 1.5rem;">
+            <input type="hidden" id="eng_teacher_id" name="teacher_id">
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Type d'engagement</label>
+                <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc;" required>
+                    <option value="standard">Engagement Standard</option>
+                    <option value="essai">Engagement d'Essai</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Professeur</label>
+                <input type="text" id="eng_teacher_name" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; color: #64748b;">
+            </div>
+            
+            <!-- Champs Communs -->
+            <div id="eng_field_enfants" style="margin-bottom: 1rem; display: none;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Enfant concerné <span style="color:#ef4444">*</span></label>
+                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+                    <!-- Rempli par JS -->
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Matière ciblée <span style="color:#ef4444">*</span></label>
+                <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+                    <!-- Rempli par JS -->
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Mode de cours <span style="color:#ef4444">*</span></label>
+                <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+                    <option value="domicile">À domicile</option>
+                    <option value="enligne">En ligne</option>
+                    <option value="mixte">Mixte</option>
+                </select>
+            </div>
+
+            <div id="eng_field_localisation" style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
+                <select id="eng_localisation" name="localisation" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+                    <option value="">Sélectionnez un quartier-ville</option>
+                    <option value="Cotonou - Akpakpa">Cotonou - Akpakpa</option>
+                    <option value="Cotonou - Haie Vive">Cotonou - Haie Vive</option>
+                    <option value="Cotonou - Fidjrossè">Cotonou - Fidjrossè</option>
+                    <option value="Cotonou - Cadjèhoun">Cotonou - Cadjèhoun</option>
+                    <option value="Cotonou - Agla">Cotonou - Agla</option>
+                    <option value="Abomey-Calavi - Arimbo">Abomey-Calavi - Arimbo</option>
+                    <option value="Abomey-Calavi - Zoca">Abomey-Calavi - Zoca</option>
+                    <option value="Abomey-Calavi - Godomey">Abomey-Calavi - Godomey</option>
+                    <option value="Porto-Novo - Centre">Porto-Novo - Centre</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+
+            <div id="eng_field_visio" style="margin-bottom: 1rem; display: none;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Plateforme visio préférée</label>
+                <select name="plateforme_visio" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                    <option value="">Sélectionnez une plateforme</option>
+                    <option value="zoom">Zoom</option>
+                    <option value="google_meet">Google Meet</option>
+                    <option value="teams">Microsoft Teams</option>
+                    <option value="whatsapp">WhatsApp Visio</option>
+                </select>
+            </div>
+
+            <!-- Champs Spécifiques STANDARD -->
+            <div id="eng_group_standard">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Fréquence <span style="color:#ef4444">*</span></label>
+                        <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                            <option value="1">1 fois / semaine</option>
+                            <option value="2">2 fois / semaine</option>
+                            <option value="3">3 fois / semaine</option>
+                            <option value="4">4 fois / semaine</option>
+                            <option value="5">5 fois / semaine</option>
+                            <option value="6">6 fois / semaine</option>
+                            <option value="7">7 fois / semaine</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Durée par séance <span style="color:#ef4444">*</span></label>
+                        <select id="eng_duree" name="duree_seance" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                            <option value="1">1h</option>
+                            <option value="1.5">1h30</option>
+                            <option value="2">2h</option>
+                            <option value="2.5">2h30</option>
+                            <option value="3">3h</option>
+                            <option value="3.5">3h30</option>
+                            <option value="4">4h</option>
+                            <option value="4.5">4h30</option>
+                            <option value="5">5h</option>
+                            <option value="5.5">5h30</option>
+                            <option value="6">6h</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Date de début souhaitée <span style="color:#ef4444">*</span></label>
+                        <input type="date" name="date_debut" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Durée totale (mois)</label>
+                        <input type="number" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Budget proposé (FCFA / heure)</label>
+                    <input type="number" name="budget" placeholder="Laissez vide pour accepter le tarif du prof" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                </div>
+            </div>
+
+            <!-- Champs Spécifiques ESSAI -->
+            <div id="eng_group_essai" style="display: none; background: #fafafa; padding: 1rem; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin-bottom: 1.5rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Date et Heure de l'essai souhaitée <span style="color:#ef4444">*</span></label>
+                    <input type="datetime-local" id="eng_date_essai" name="date_essai" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Description détaillée (Lieu ou lien provisoire)</label>
+                    <textarea name="description_essai" rows="3" placeholder="Précisez un lieu de rencontre ou une adresse exacte si à domicile..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; resize: vertical;"></textarea>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" onclick="closeEngagementModal()" style="flex: 1; padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                    Annuler
+                </button>
+                <button type="submit" id="eng_submit_btn" style="flex: 2; padding: 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                    Envoyer la proposition
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Logic for engagement modal (used in both search and detail pages)
+let currentTeacherData = {};
+
+function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null) {
+    requireAuth(() => {
+        document.getElementById('eng_teacher_id').value = teacherId;
+        document.getElementById('eng_teacher_name').value = teacherName;
+        
+        currentTeacherData = { 
+            is_parent: isParent, 
+            is_premium: isPremium, 
+            essai_actif: essaiActif,
+            children: children,
+            existing_engagement: existingEng
+        };
+
+        // Gérer le dropdown des enfants
+        const enfantSelect = document.getElementById('eng_enfant_id');
+        enfantSelect.innerHTML = '';
+        if (children && children.length > 0) {
+            document.getElementById('eng_field_enfants').style.display = 'block';
+            if (children.length === 1) {
+                const opt = new Option(children[0].prenom, children[0].id, true, true);
+                enfantSelect.add(opt);
+                enfantSelect.disabled = true;
+                enfantSelect.style.backgroundColor = '#f8fafc';
+            } else {
+                enfantSelect.add(new Option('Sélectionnez un enfant', ''));
+                children.forEach(c => enfantSelect.add(new Option(c.prenom, c.id)));
+                enfantSelect.disabled = false;
+                enfantSelect.style.backgroundColor = 'white';
+            }
+        } else {
+            document.getElementById('eng_field_enfants').style.display = 'none';
+        }
+
+        // Gérer le dropdown des matières
+        const matiereSelect = document.getElementById('eng_matiere');
+        matiereSelect.innerHTML = '';
+        const matList = matiere.split(',').map(s => s.trim()).filter(s => s !== '');
+        if (matList.length === 1) {
+            matiereSelect.add(new Option(matList[0], matList[0], true, true));
+            matiereSelect.disabled = true;
+            matiereSelect.style.backgroundColor = '#f8fafc';
+        } else {
+            matiereSelect.add(new Option('Sélectionnez une matière', ''));
+            matList.forEach(m => matiereSelect.add(new Option(m, m)));
+            matiereSelect.disabled = false;
+            matiereSelect.style.backgroundColor = 'white';
+        }
+
+        document.getElementById('engagementForm').reset();
+        
+        // Pré-remplissage si un engagement existe déjà
+        if (existingEng) {
+            document.getElementById('eng_type').value = existingEng.type || 'standard';
+            matiereSelect.value = existingEng.matiere;
+            document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'domicile';
+            if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
+            if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1';
+            
+            document.getElementById('eng_submit_btn').textContent = 'Modifier ma proposition';
+        } else {
+            document.getElementById('eng_type').value = 'standard';
+            document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
+        }
+
+        // Verrouillage du type si conditions non remplies
+        const typeSelect = document.getElementById('eng_type');
+        if (!essaiActif || !isPremium) {
+            typeSelect.value = 'standard';
+            // On désactive l'option essai si elle est présente
+            for(let i=0; i<typeSelect.options.length; i++) {
+                if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
+            }
+        } else {
+            for(let i=0; i<typeSelect.options.length; i++) {
+                typeSelect.options[i].disabled = false;
+            }
+        }
+
+        toggleEngagementFields();
+        document.getElementById('engagementModal').style.display = 'flex';
+    });
+}
+
+function closeEngagementModal() {
+    document.getElementById('engagementModal').style.display = 'none';
+}
+
+function toggleModeFields() {
+    const mode = document.getElementById('eng_mode').value;
+    document.getElementById('eng_field_visio').style.display = mode === 'enligne' ? 'block' : 'none';
+    document.getElementById('eng_field_localisation').style.display = mode === 'enligne' ? 'none' : 'block';
+}
+
+function toggleEngagementFields() {
+    const type = document.getElementById('eng_type').value;
+    const stdGroup = document.getElementById('eng_group_standard');
+    const essaiGroup = document.getElementById('eng_group_essai');
+    const banner = document.getElementById('eng_banner');
+    const bannerText = document.getElementById('eng_banner_text');
+    const bannerBtn = document.getElementById('eng_banner_btn');
+    const submitBtn = document.getElementById('eng_submit_btn');
+
+    stdGroup.querySelectorAll('input, select').forEach(el => el.required = false);
+    document.getElementById('eng_date_essai').required = false;
+
+    if (type === 'essai') {
+        stdGroup.style.display = 'none';
+        essaiGroup.style.display = 'block';
+        document.getElementById('eng_date_essai').required = true;
+        
+        banner.style.display = 'block';
+        if (currentTeacherData.essai_actif) {
+            if (currentTeacherData.is_premium) {
+                bannerText.textContent = "Ce professeur propose un essai gratuit, vous pouvez opter pour un engagement de type essai pour en programmer un.";
+                banner.style.background = "var(--success-50)";
+                banner.style.color = "var(--success-700)";
+                bannerBtn.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                bannerText.textContent = "Ce professeur propose un essai gratuit. Passez à un abonnement access+premium pour pouvoir programmer un essai et plus encore.";
+                banner.style.background = "#fffbeb";
+                banner.style.color = "#b45309";
+                bannerBtn.style.display = "inline-block";
+                bannerBtn.href = "#";
+                submitBtn.disabled = true;
+            }
+        } else {
+            bannerText.textContent = "Ce professeur ne propose pas d'essai gratuit actuellement.";
+            banner.style.background = "#fef2f2";
+            banner.style.color = "#b91c1c";
+            bannerBtn.style.display = "none";
+            submitBtn.disabled = true;
+        }
+
+    } else {
+        stdGroup.style.display = 'block';
+        essaiGroup.style.display = 'none';
+        
+        document.querySelector('select[name="frequence"]').required = true;
+        document.querySelector('select[name="duree_seance"]').required = true;
+        document.querySelector('input[name="date_debut"]').required = true;
+        
+        banner.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+    toggleModeFields();
+}
+
+async function submitEngagement(event) {
+    event.preventDefault();
+    const btn = document.getElementById('eng_submit_btn');
+    if (btn.disabled) return;
+    
+    btn.disabled = true;
+    btn.textContent = 'Envoi...';
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch('/api/engagement/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            alert(result.message || 'Engagement soumis avec succès !');
+            closeEngagementModal();
+            if (typeof closeSidePanel === 'function') closeSidePanel();
+        } else {
+            alert(result.error || 'Erreur lors de l\'envoi');
+        }
+    } catch(e) {
+        alert('Erreur de connexion réseau. Veuillez réessayer.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Envoyer la proposition';
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>

@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}{{ teacher.prenom }} {{ teacher.nom }} - Professeur de {{ teacher.matiere_enseignee }} à {{ teacher.ville_quartier }} | Prof Chez Vous{% endblock %}
+
+{% block meta_seo %}
+<meta name="description" content="Découvrez le profil de {{ teacher.prenom }} {{ teacher.nom }}, professeur de {{ teacher.matiere_enseignee }} sur Prof Chez Vous. {{ teacher.presentation|truncatewords:25 }}">
+<meta name="keywords" content="professeur {{ teacher.matiere_enseignee }}, cours à domicile {{ teacher.ville_quartier }}, {{ teacher.prenom }} {{ teacher.nom }}, Prof Chez Vous">
+<meta property="og:title" content="{{ teacher.prenom }} {{ teacher.nom }} - Professeur sur Prof Chez Vous">
+<meta property="og:description" content="Réservez un cours avec {{ teacher.prenom }} {{ teacher.nom }}. Expertise en {{ teacher.matiere_enseignee }}.">
+<meta property="og:image" content="{% if teacher.photo_de_profil %}{{ teacher.photo_de_profil.url }}{% endif %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Page Profil Professeur - SEO Optimisé */
+.teacher-profile-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding: 2rem 0;
+}
+
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.profile-header {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.profile-header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.profile-photo-section {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #f0fdf4;
+    margin-bottom: 1rem;
+}
+
+.profile-info-section {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.info-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-card h3 svg {
+    width: 24px;
+    height: 24px;
+    color: var(--success-600);
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.info-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--success-600);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.info-item-content {
+    flex: 1;
+}
+
+.info-item-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.info-item-value {
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.reviews-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.review-card {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.review-card:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.review-author {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.review-date {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.review-rating {
+    color: #fbbf24;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.review-text {
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    background: var(--success-600);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    background: var(--success-700);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--success-600);
+    border: 2px solid var(--success-600);
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: var(--success-50);
+    border-color: var(--success-700);
+    color: var(--success-700);
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .profile-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-actions {
+        justify-content: center;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 0 1rem;
+    }
+    
+    .profile-header {
+        padding: 1.5rem;
+    }
+    
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="teacher-profile-page">
+    <div class="profile-container">
+        <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2rem;">
+            {% include 'core/components/teacher_profile.html' with teacher=teacher is_side_panel=False %}
+        </div>
+    </div>
+</div>
+
+{% include 'core/components/engagement_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables globales pour le modal d'engagement
+window.currentChildren = {{ parent_children_json|safe }};
+window.currentExistingEngagement = {{ existing_engagement_json|safe }};
+
+window.addEventListener('popstate', function(event) {
+    if (document.getElementById('engagementModal').style.display === 'flex') {
+        closeEngagementModal();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Devenez Professeur - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variables existantes potentiellement héritées, mais sécurisées */
+    :root {
+        --primary: #16a34a;
+        --primary-dark: #15803d;
+        --primary-light: #dcfce7;
+        --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --card-bg: #ffffff;
+    }
+
+    body {
+        background-color: #f8fafc;
+        /* dash-bg par défaut */
+    }
+
+    /* Override du conteneur de base pour une Landing Page percutante */
+    main.container {
+        max-width: 1200px !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+
+    @media (max-width: 768px) {
+        main.container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
+
+    .intro-wrapper {
+        background: var(--card-bg);
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: var(--bg-gradient);
+        padding: 5rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: var(--card-bg);
+        transform: skewY(-2deg);
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        margin: 0 0 1rem 0;
+        line-height: 1.2;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title span {
+        color: var(--primary);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-gray);
+        max-width: 700px;
+        margin: 0 auto 2.5rem auto;
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-cta {
+        display: inline-block;
+        background: var(--primary);
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 700;
+        padding: 1.2rem 2.5rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(22, 163, 74, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-cta:hover {
+        transform: translateY(-3px);
+        background: var(--primary-dark);
+        box-shadow: 0 15px 30px rgba(22, 163, 74, 0.5);
+        color: #fff;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 4rem 2rem;
+        background: var(--card-bg);
+        text-align: center;
+    }
+
+    .section-heading {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 3rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        padding: 2rem;
+        background: #f8fafc;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        border-color: var(--primary-light);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        background: var(--primary-light);
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        border-radius: 50%;
+    }
+
+    .feature-card h3 {
+        font-size: 1.25rem;
+        color: var(--text-dark);
+        margin-bottom: 0.8rem;
+        font-weight: 700;
+    }
+
+    .feature-card p {
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* Process Section */
+    .process-section {
+        padding: 2rem 2rem 5rem 2rem;
+        background: var(--card-bg);
+    }
+
+    .process-steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .process-steps::before {
+        content: '';
+        position: absolute;
+        top: 30px;
+        left: 10%;
+        right: 10%;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+
+    .step-item {
+        text-align: center;
+        width: 30%;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        background: #fff;
+        border: 4px solid var(--primary);
+        color: var(--primary);
+        font-size: 1.5rem;
+        font-weight: 900;
+        border-radius: 50%;
+        margin: 0 auto 1rem auto;
+        box-shadow: 0 0 0 5px var(--card-bg);
+    }
+
+    .step-item h4 {
+        color: var(--text-dark);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .step-item p {
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    /* Final Banner */
+    .final-banner {
+        background: #0f172a;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .final-banner h2 {
+        color: #fff;
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .final-banner p {
+        color: #94a3b8;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .process-steps {
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .process-steps::before {
+            display: none;
+        }
+
+        .step-item {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            text-align: left;
+            gap: 1.5rem;
+        }
+
+        .step-number {
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .hero-title {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="intro-wrapper">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <h1 class="hero-title">Partagez votre savoir.<br><span>Générez des revenus.</span></h1>
+        <p class="hero-subtitle">
+            Rejoignez la communauté d'excellence Prof Chez Vous. Fixez vos propres règles, inspirez la prochaine
+            génération et transformez votre passion pour l'enseignement en une activité valorisante.
+        </p>
+        <a href="{% url 'prof_create_profile' %}" class="hero-cta">Créer mon profil professionnel ➔</a>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features-section">
+        <h2 class="section-heading">Pourquoi enseigner avec nous ?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💸</div>
+                <h3>Rémunération maîtrisée</h3>
+                <p>Définissez vos propres tarifs horaires selon votre niveau d'expertise. Les paiements sont sécurisés
+                    et transparents.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗓️</div>
+                <h3>Autonomie totale</h3>
+                <p>Acceptez ou refusez les demandes de cours selon votre emploi du temps réel. Restez maître absolu de
+                    votre calendrier.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Impact concret</h3>
+                <p>Mettez en relation votre pédagogie avec des parents rigoureux et des profils d'apprenants divers,
+                    afin d'assurer l'excellence.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS SECTION -->
+    <section class="process-section">
+        <h2 class="section-heading" style="text-align:center;">Prêt à donner votre premier cours ?</h2>
+        <div class="process-steps">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div>
+                    <h4>Remplissez le tunnel</h4>
+                    <p>Enregistrez vos diplômes, votre matière de prédilection et vos méthodes d'enseignement pour
+                        séduire les parents.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div>
+                    <h4>Vérification d'équipe</h4>
+                    <p>Notre équipe valide l'authenticité de votre profil dans un délai très court pour vous propulser
+                        sur le marché.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div>
+                    <h4>Votre premier élève</h4>
+                    <p>Apparaissez sur les tableaux de recommandation des parents et acceptez votre tout premier
+                        engagement officiel.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL BANNER -->
+    <section class="final-banner">
+        <h2>Passez à la prochaine étape !</h2>
+        <p>Prenez 3 minutes pour configurer votre vitrine en ligne, c'est gratuit.</p>
+        <a href="{% url 'prof_create_profile' %}" class="hero-cta" style="box-shadow: none;">Je crée mon profil
+            maintenant</a>
+    </section>
+</div>
+{% endblock %}

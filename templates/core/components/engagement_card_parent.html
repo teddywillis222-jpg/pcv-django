@@ -1,0 +1,82 @@
+<div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
+    <!-- En-tête : Professeur et Statut -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--text-dark);">
+                {% if eng.professeur %}
+                    Prof. {{ eng.professeur.prenom }} {{ eng.professeur.nom }}
+                {% else %}
+                    Affectation en cours...
+                {% endif %}
+            </h4>
+            <p style="margin: 2px 0 0; font-size: 0.85rem; color: var(--text-gray);">
+                {{ eng.matiere }} • {{ eng.get_classe_display }}
+            </p>
+        </div>
+        <span class="eng-status-badge {{ status_class }}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
+            {{ eng.get_statut_general_display }}
+        </span>
+    </div>
+
+    <!-- Détails de l'engagement -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-gray);">
+        <div>
+            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Quartier</span>
+            <span style="color: var(--text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
+        </div>
+        <div>
+            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
+            <span style="color: var(--text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
+        </div>
+    </div>
+
+    <!-- Footer : Bouton principal et Options -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+        <a href="#" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; margin-right: 0.75rem;">
+            Accéder à l'espace
+        </a>
+        
+        <div style="position: relative;">
+            <button class="options-btn" onclick="toggleOptions(this)" style="background: #f1f5f9; border: none; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-gray);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+            
+            <div class="options-menu" style="display: none; position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
+                <!-- Messagerie -->
+                <a href="{% url 'messagerie' %}?conv_id={{ eng.conversation.id }}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                    💬 Rejoindre la messagerie
+                </a>
+
+                <!-- Actions de gestion (Seulement si Finalisé) -->
+                {% if eng.statut_general == 'FINALISE' %}
+                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                    ✅ Terminer l'engagement
+                </a>
+                <a href="#" class="menu-item danger" style="display: block; padding: 0.85rem 1rem; color: #ef4444; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                    🚫 Annuler l'engagement
+                </a>
+                {% endif %}
+
+                <!-- Avis / Note -->
+                {% if eng.statut_general == 'FINALISE' or eng.statut_general == 'TERMINE' or eng.statut_general == 'ANNULE' %}
+                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                    {% if eng.evaluation_liee %}
+                    ⭐ Modifier votre avis
+                    {% else %}
+                    ⭐ Noter ce prof
+                    {% endif %}
+                </a>
+                {% endif %}
+
+                <!-- Masquer (Toujours visible) -->
+                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-gray); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                    🗑️ Masquer
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

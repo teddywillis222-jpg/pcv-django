@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Conditions Générales d'Utilisation - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --accent-green: #16a34a;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        min-height: 100vh;
+    }
+
+    .cgu-hero {
+        padding: 3rem 1rem;
+        text-align: center;
+        background: linear-gradient(to bottom, #ffffff, transparent);
+        margin-bottom: 1.5rem;
+    }
+
+    .cgu-hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.025em;
+        margin-bottom: 1rem;
+    }
+
+    .cgu-hero p {
+        color: var(--text-muted);
+        font-size: 1.125rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cgu-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        padding: 0 1rem 3rem;
+    }
+
+    /* Sidebar Navigation */
+    .cgu-sidebar {
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+    }
+
+    .cgu-nav {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    .cgu-nav h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-main);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .cgu-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cgu-nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    .cgu-nav a {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+    }
+
+    .cgu-nav a:hover {
+        background: #f1f5f9;
+        color: var(--accent-green);
+    }
+
+    .cgu-nav a.active {
+        background: #f0fdf4;
+        color: var(--accent-green);
+        font-weight: 600;
+    }
+
+    /* Content Area */
+    .cgu-content {
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .cgu-section {
+        margin-bottom: 2.5rem;
+        scroll-margin-top: 100px;
+    }
+
+    .cgu-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .cgu-section h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .cgu-section h2 span {
+        color: var(--accent-green);
+        font-family: serif;
+        font-style: italic;
+    }
+
+    .cgu-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 1.5rem 0 0.75rem;
+    }
+
+    .cgu-section p {
+        color: #475569;
+        line-height: 1.75;
+        margin-bottom: 1.25rem;
+        font-size: 1.0625rem;
+    }
+
+    .cgu-section ul {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+
+    .cgu-section ul li {
+        color: #475569;
+        line-height: 1.75;
+        margin-bottom: 0.5rem;
+        position: relative;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+        background: #f8fafc;
+        border-left: 4px solid var(--accent-green);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin: 2rem 0;
+    }
+
+    .highlight-box p {
+        margin-bottom: 0;
+        font-style: italic;
+        font-weight: 500;
+        color: var(--text-main);
+    }
+
+    .important-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #fef2f2;
+        color: #dc2626;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 9999px;
+        margin-bottom: 0.5rem;
+    }
+
+    .frais-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .frais-card {
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .frais-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-green);
+    }
+
+    .frais-card h4 {
+        color: var(--text-main);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .frais-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-green);
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .cgu-container {
+            grid-template-columns: 1fr;
+        }
+
+        .cgu-sidebar {
+            display: none; /* Cache la sidebar sur tablette/mobile pour simplifier */
+        }
+
+        .cgu-content {
+            padding: 2.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .cgu-hero {
+            text-align: left;
+            padding: 2rem 0.5rem;
+        }
+        .cgu-hero h1 {
+            font-size: 1.85rem;
+        }
+        .cgu-hero p {
+            margin: 0;
+            font-size: 1rem;
+        }
+        .cgu-container {
+            padding: 0 0.5rem 3rem;
+        }
+        .cgu-content {
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="cgu-hero">
+    <h1>Conditions Générales d'Utilisation</h1>
+    <p>Dernière mise à jour : 19 Avril 2026. Merci de lire attentivement ces conditions avant d'utiliser notre plateforme.</p>
+</section>
+
+<div class="cgu-container">
+    <!-- Sidebar -->
+    <aside class="cgu-sidebar">
+        <nav class="cgu-nav">
+            <h3>Sommaire</h3>
+            <ul>
+                <li><a href="#dispositions" class="active">I. Dispositions Générales</a></li>
+                <li><a href="#acces">II. Accès et Statut</a></li>
+                <li><a href="#fonctionnement">III. Fonctionnement et Frais</a></li>
+                <li><a href="#suivi">IV. Suivi Pédagogique</a></li>
+                <li><a href="#messagerie">V. Messagerie et Contournement</a></li>
+                <li><a href="#paiement">VI. Paiement des Cours</a></li>
+                <li><a href="#responsabilite">VII. Responsabilité</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="cgu-content">
+        <!-- Section I -->
+        <section id="dispositions" class="cgu-section">
+            <h2><span>I.</span> Dispositions Générales</h2>
+            <p><strong>Objet :</strong> Les présentes CGU régissent l'accès et l'utilisation de l'application <strong>Prof Chez Vous</strong> (la "Plateforme"), plateforme d'intermédiation numérique destinée à la mise en relation entre les Professeurs Certifiés et les Utilisateurs (parents/apprenants) recherchant un soutien scolaire.</p>
+            
+            <h3>Définitions Clés</h3>
+            <ul>
+                <li><strong>Professeur Certifié :</strong> Tout utilisateur ayant validé le processus de vérification et de qualification rigoureux de la Plateforme (diplômes, MGA, identité).</li>
+                <li><strong>Service d'Intermédiation :</strong> Le service de mise en relation fourni par la Plateforme, notamment la consultation des profils vérifiés et l'activation de la messagerie.</li>
+                <li><strong>Acceptation :</strong> L'accès et l'utilisation de la Plateforme impliquent l'acceptation pleine et entière des présentes CGU par l'Utilisateur.</li>
+            </ul>
+            <p>Le traitement des données personnelles est régi par notre Politique de Confidentialité, accessible à tout moment sur la plateforme.</p>
+        </section>
+
+        <!-- Section II -->
+        <section id="acces" class="cgu-section">
+            <h2><span>II.</span> Accès et Statut du Professeur</h2>
+            <ol>
+                <li><strong>Conditions d'Accès :</strong> L'accès à la Plateforme est réservé aux personnes physiques majeures (18 ans ou plus) capables de contracter légalement.</li>
+                <li><strong>Statut du Professeur :</strong> Le Professeur Certifié agit en tant que travailleur indépendant et entrepreneur. Prof Chez Vous n'est ni l'employeur ni l'agence du Professeur Certifié.</li>
+                <li><strong>Processus de Certification :</strong> Le statut est conditionné par la réussite du processus de vérification. La Plateforme se réserve le droit de retirer cette certification en cas de manquement.</li>
+            </ol>
+            <div class="highlight-box" style="border-color: #ef4444; background: #fef2f2;">
+                <span class="important-badge">Avertissement</span>
+                <p style="color: #991b1b;">Toute falsification de documents entraîne l'exclusion définitive et immédiate de la plateforme.</p>
+            </div>
+        </section>
+
+        <!-- Section III -->
+        <section id="fonctionnement" class="cgu-section">
+            <h2><span>III.</span> Fonctionnement et Frais</h2>
+            <p>L'accès aux profils des professeurs référencés et vérifiés sur Prof Chez Vous est <strong>entièrement libre et gratuit</strong>.</p>
+            
+            <div class="frais-grid">
+                <div class="frais-card">
+                    <h4>Plan Standard</h4>
+                    <div class="frais-price">2 000 F CFA</div>
+                    <p style="font-size: 0.9rem;">Frais fixes par engagement confirmé. Non remboursable.</p>
+                </div>
+                <div class="frais-card">
+                    <h4>Plans Access+</h4>
+                    <div class="frais-price">Abonnement</div>
+                    <p style="font-size: 0.9rem;">Propositions illimitées ou forfaitaires selon le plan choisi.</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p>👉 Le service est considéré comme rendu dès que le professeur confirme la proposition d’engagement, indépendamment de l’issue des négociations.</p>
+            </div>
+
+            <h3>Séance d’Essai Gratuite</h3>
+            <p>Le Professeur Certifié peut proposer une séance d’essai gratuite (facultative et unique). La plateforme n’assume aucune responsabilité quant au déroulement de cette séance.</p>
+
+            <h3>Rupture anticipée</h3>
+            <p>Chaque partie reste libre d’interrompre la collaboration à tout moment. Toute séance effectuée doit être réglée directement au professeur.</p>
+        </section>
+
+        <!-- Section IV -->
+        <section id="suivi" class="cgu-section">
+            <h2><span>IV.</span> Suivi Pédagogique</h2>
+            <ul>
+                <li><strong>Journal de Séance :</strong> Obligation pour le professeur de documenter chaque session.</li>
+                <li><strong>Droit de Consultation :</strong> Le parent dispose du droit de consulter ce journal à tout moment.</li>
+                <li><strong>Notation :</strong> L'Utilisateur s'engage à évaluer le Professeur après la fin de l'engagement.</li>
+            </ul>
+        </section>
+
+        <!-- Section V -->
+        <section id="messagerie" class="cgu-section">
+            <h2><span>V.</span> Messagerie et Contournement</h2>
+            <p>La Messagerie Intégrée est l'outil officiel de la Plateforme. <strong>L'interdiction de contournement</strong> est stricte : l'échange de coordonnées personnelles pour délaisser la Plateforme est interdit car il affecte la traçabilité et les outils de suivi (Journal de Séance).</p>
+        </section>
+
+        <!-- Section VI -->
+        <section id="paiement" class="cgu-section">
+            <h2><span>VI.</span> Paiement des Cours</h2>
+            <p>Le Professeur Certifié est libre de déterminer ses propres tarifs. <strong>La Plateforme ne gère pas le paiement des cours</strong>. Le paiement doit être effectué directement par l'Utilisateur au Professeur.</p>
+        </section>
+
+        <!-- Section VII -->
+        <section id="responsabilite" class="cgu-section">
+            <h2><span>VII.</span> Responsabilité et Droit Applicable</h2>
+            <p>La responsabilité de Prof Chez Vous est strictement limitée à son rôle d'intermédiaire. Les présentes CGU sont régies par le droit en vigueur en <strong>République du Bénin</strong>.</p>
+        </section>
+    </main>
+</div>
+
+<script>
+    // Script pour activer les liens du sommaire au scroll
+    document.addEventListener('DOMContentLoaded', function() {
+        const sections = document.querySelectorAll('.cgu-section');
+        const navLinks = document.querySelectorAll('.cgu-nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

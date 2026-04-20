@@ -1,0 +1,620 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Création Profil Parent - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stepper & Onboarding Styles */
+    .onboarding-page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+        padding: 3rem 1rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        margin: -2rem;
+        /* compensate base padding */
+    }
+
+    .onboarding-container {
+        max-width: 600px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(21, 128, 61, 0.1);
+        padding: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .onboarding-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .onboarding-header h2 {
+        color: #166534;
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.025em;
+    }
+
+    .onboarding-header p {
+        color: #64748b;
+        font-size: 1.05rem;
+    }
+
+    /* Stepper Progress */
+    .stepper-progress {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 3rem;
+        gap: 1rem;
+    }
+
+    .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .step-indicator.active .step-number {
+        background: #22c55e;
+        color: white;
+        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+    }
+
+    .step-indicator.completed .step-number {
+        background: #166534;
+        color: white;
+    }
+
+    .stepper-line {
+        flex: 1;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .stepper-line.active {
+        background: #22c55e;
+    }
+
+    .step-content {
+        display: none;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    .step-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Form inputs styling */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        font-size: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        background-color: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        box-sizing: border-box;
+        color: #0f172a;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #22c55e;
+        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+    }
+
+    .form-group input[readonly] {
+        background-color: #f1f5f9;
+        color: #475569;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+    }
+
+    /* Checkboxes for Objectifs & Difficultes - PILLS STYLE */
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 0.5rem;
+    }
+
+    .checkbox-group div {
+        display: inline-block;
+        margin-bottom: 0.6rem;
+        margin-right: 0.6rem;
+    }
+
+    .checkbox-group label {
+        display: inline-block;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #334155;
+        background: #f8fafc;
+        padding: 0.6rem 1.2rem;
+        border-radius: 9999px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin: 0.4rem 0.5rem 0.5rem 0;
+    }
+
+    .checkbox-group label.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+    }
+
+    .checkbox-group label:hover:not(.disabled) {
+        border-color: #94a3b8;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        display: none;
+    }
+
+    /* Style active injecté via JS pour max compatibilité avec Django structure */
+
+    .btn-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 0.85rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-primary:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(22, 163, 74, 0.35);
+    }
+
+    .btn-primary:disabled {
+        background: #cbd5e1;
+        color: #64748b;
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+    }
+
+    .django-help {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .errors-container {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 2rem;
+        color: #991b1b;
+    }
+
+    @media (max-width: 600px) {
+        .onboarding-container {
+            padding: 2rem 1.5rem;
+        }
+
+        .checkbox-group {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-page-wrapper">
+    <div class="onboarding-container">
+
+        <!-- Progress Bar -->
+        <div class="stepper-progress">
+            <div class="step-indicator active" id="indicator1">
+                <div class="step-number">1</div>
+            </div>
+            <div class="stepper-line" id="line1"></div>
+            <div class="step-indicator" id="indicator2">
+                <div class="step-number">2</div>
+            </div>
+        </div>
+
+        {% if parent_form.errors or enfant_form.errors %}
+        <div class="errors-container">
+            Veuillez corriger les erreurs dans le formulaire ci-dessous.
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="onboardingForm">
+            {% csrf_token %}
+
+            <!-- ÉTAPE 1 : PROFIL PARENT -->
+            <div class="step-content active" id="step1">
+                <div class="onboarding-header">
+                    <h2>Parlez-nous de vous, {{ request.user.first_name|default:"Parent" }} !</h2>
+                    <p>Pour commencer, créez votre profil parental sécurisé.</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom complet <span style="color: #ef4444;">*</span></label>
+                    {{ parent_form.nom }}
+                    {{ parent_form.nom.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Numéro WhatsApp <span style="color: #ef4444;">*</span></label>
+                    {{ parent_form.numero_whatsapp }}
+                    {{ parent_form.numero_whatsapp.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Quartier - Ville <span style="color: #ef4444;">*</span></label>
+                    {{ parent_form.quartier_ville }}
+                    {{ parent_form.quartier_ville.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Photo de profil (Optionnel)</label>
+                    {{ parent_form.photo_profil }}
+                    {{ parent_form.photo_profil.errors }}
+                </div>
+
+                <div class="btn-wrapper">
+                    <button type="button" class="btn-action btn-primary" id="btnNext" disabled>Suivant : Mon
+                        Enfant</button>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 2 : PROFIL DE L'ENFANT -->
+            <div class="step-content" id="step2">
+                <div class="onboarding-header">
+                    <h2>Et si on faisait connaissance avec votre premier enfant ?</h2>
+                    <p>Définissez ses besoins pour qu'on trouve le meilleur profil de professeur !</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Prénom de l'enfant <span style="color: #ef4444;">*</span></label>
+                    {{ enfant_form.prenom }}
+                    {{ enfant_form.prenom.errors }}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Classe (Niveau actuel) <span style="color: #ef4444;">*</span></label>
+                        {{ enfant_form.classe }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Quartier - Ville de l'enfant (Hérité) <span style="color: #ef4444;">*</span></label>
+                    {{ enfant_form.quartier_ville }}
+                </div>
+
+                <div class="form-group">
+                    <label>Mode de cours préféré <span style="color: #ef4444;">*</span></label>
+                    {{ enfant_form.mode_de_cours }}
+                </div>
+
+                <div class="form-group">
+                    <label>Matières nécessitant un appui <span style="color: #ef4444;">*</span></label>
+                    <div class="checkbox-group" style="margin-bottom: 0.75rem;">
+                        {{ enfant_form.matieres_predefinies }}
+                    </div>
+
+                    <!-- Ajout Personnalisé -->
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.75rem;">
+                        <input type="text" id="customMatiereInput" placeholder="Autres matières..."
+                            style="flex:1; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 8px;">
+                        <button type="button" id="btnAddMatiere"
+                            style="padding: 0.55rem 1.2rem; background: #16a34a; color: white; border: none; border-radius:8px; font-weight:600; cursor:pointer;">Ajouter</button>
+                    </div>
+                    <div id="customMatieresContainer"
+                        style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem;"></div>
+                    {{ enfant_form.matieres_autre }}
+
+                    {% if enfant_form.matieres_predefinies.errors %}<div
+                        style="color:var(--error);font-size:0.85em;margin-top:0.25rem;">{{
+                        enfant_form.matieres_predefinies.errors }}</div>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>Difficultés principales observées <span style="color: #ef4444;">*</span></label>
+                    <div class="checkbox-group">
+                        {{ enfant_form.difficultes_predefinies }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Objectifs & Motivations <span style="color: #ef4444;">*</span></label>
+                    <div class="checkbox-group">
+                        {{ enfant_form.objectifs_motivations }}
+                    </div>
+                </div>
+
+                <div class="btn-wrapper">
+                    <button type="button" class="btn-action btn-secondary" id="btnBack">Retour</button>
+                    <button type="submit" class="btn-action btn-primary" id="btnSubmit" disabled>Terminer et
+                        Accéder</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Éléments UI
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const btnNext = document.getElementById('btnNext');
+        const btnBack = document.getElementById('btnBack');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const indicator1 = document.getElementById('indicator1');
+        const indicator2 = document.getElementById('indicator2');
+        const line1 = document.getElementById('line1');
+
+        // Champs Étape 1
+        const pNom = document.getElementById('id_nom');
+        const pWhatsapp = document.getElementById('id_numero_whatsapp');
+        const pQuartier = document.getElementById('id_quartier_ville'); // Identifiants par défaut Django générés
+
+        // Champs Étape 2
+        const ePrenom = document.getElementById('id_prenom');
+        const eClasse = document.getElementById('id_classe');
+        const eQuartierQuery = document.querySelector('#step2 [name="quartier_ville"]');
+        const pQuartierQuery = document.querySelector('#step1 [name="quartier_ville"]');
+        const eMode = document.querySelector('[name="mode_de_cours"]');
+        const eMatieresAutre = document.getElementById('id_matieres_autre');
+
+        // Autre matieres variables globales
+        let customMatieres = [];
+        const btnAddMatiere = document.getElementById('btnAddMatiere');
+        const customMatiereInput = document.getElementById('customMatiereInput');
+        const customMatieresContainer = document.getElementById('customMatieresContainer');
+        const hiddenMatiereInput = document.getElementById('id_matieres_autre');
+
+        // Vérification Étape 1
+        function checkStep1() {
+            const isValid = pNom.value.trim() !== '' &&
+                pWhatsapp.value.trim().length >= 8 &&
+                pQuartierQuery.value !== '';
+            btnNext.disabled = !isValid;
+        }
+
+        // Limiteur de matières (Max 5)
+        function checkMatieresLimit() {
+            const matieresChecked = document.querySelectorAll('[name="matieres_predefinies"]:checked');
+            const total = matieresChecked.length + customMatieres.length;
+            const limitReached = total >= 5;
+
+            document.querySelectorAll('[name="matieres_predefinies"]').forEach(input => {
+                if (!input.checked) {
+                    input.disabled = limitReached;
+                    if (limitReached) {
+                        input.parentElement.classList.add('disabled');
+                    } else {
+                        input.parentElement.classList.remove('disabled');
+                    }
+                }
+            });
+
+            if (customMatiereInput) {
+                customMatiereInput.disabled = limitReached;
+                customMatiereInput.placeholder = limitReached ? "Limite de 5 atteinte" : "Autres matières...";
+                customMatiereInput.style.background = limitReached ? "#f1f5f9" : "white";
+                customMatiereInput.style.cursor = limitReached ? "not-allowed" : "text";
+            }
+            if (btnAddMatiere) {
+                btnAddMatiere.disabled = limitReached;
+                btnAddMatiere.style.background = limitReached ? "#cbd5e1" : "#16a34a";
+                btnAddMatiere.style.cursor = limitReached ? "not-allowed" : "pointer";
+            }
+        }
+
+        // Vérification Étape 2
+        function checkStep2() {
+            checkMatieresLimit();
+
+            // Selection de checkbox
+            const objectifsChecked = document.querySelectorAll('[name="objectifs_motivations"]:checked');
+            const matieresChecked = document.querySelectorAll('[name="matieres_predefinies"]:checked');
+            const hasMatieres = matieresChecked.length > 0 || customMatieres.length > 0;
+
+            const isValid =
+                ePrenom && ePrenom.value.trim() !== '' &&
+                eClasse && eClasse.value !== '' &&
+                eQuartierQuery && eQuartierQuery.value !== '' &&
+                eMode && eMode.value !== '' &&
+                hasMatieres &&
+                objectifsChecked.length > 0;
+
+            if (btnSubmit) btnSubmit.disabled = !isValid;
+        }
+
+        // Attach Listeners Step 1
+        if (pNom) pNom.addEventListener('input', checkStep1);
+        if (pWhatsapp) pWhatsapp.addEventListener('input', checkStep1);
+        if (pQuartierQuery) pQuartierQuery.addEventListener('change', checkStep1);
+
+        // Attach Listeners Step 2
+        if (ePrenom) ePrenom.addEventListener('input', checkStep2);
+        if (eClasse) eClasse.addEventListener('change', checkStep2);
+        if (eQuartierQuery) eQuartierQuery.addEventListener('change', checkStep2);
+        if (eMode) eMode.addEventListener('change', checkStep2);
+
+        // Visual check toggle for UI Pills
+        document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(function (input) {
+            input.addEventListener('change', function () {
+                if (this.checked) {
+                    this.parentElement.style.background = '#22c55e';
+                    this.parentElement.style.color = 'white';
+                    this.parentElement.style.borderColor = '#16a34a';
+                } else {
+                    this.parentElement.style.background = '#f8fafc';
+                    this.parentElement.style.color = '#334155';
+                    this.parentElement.style.borderColor = '#e2e8f0';
+                }
+                checkStep2();
+            });
+            // Initial styling trick
+            if (input.checked) {
+                input.parentElement.style.background = '#22c55e';
+                input.parentElement.style.color = 'white';
+                input.parentElement.style.borderColor = '#16a34a';
+            }
+        });
+
+        // Autre matieres Logic processing
+        function renderCustomMatieres() {
+            customMatieresContainer.innerHTML = '';
+            customMatieres.forEach(m => {
+                let pill = document.createElement('span');
+                pill.innerHTML = m + ' <strong style="margin-left:5px; font-size:1.1em;">&times;</strong>';
+                pill.style.cssText = 'background:#16a34a; color:white; padding:0.45rem 1rem; border-radius:9999px; font-size:0.85rem; cursor:pointer; font-weight:500; display:inline-flex; align-items:center;';
+                pill.onclick = function () {
+                    customMatieres = customMatieres.filter(x => x !== m);
+                    hiddenMatiereInput.value = customMatieres.join(',');
+                    renderCustomMatieres();
+                    checkStep2();
+                };
+                customMatieresContainer.appendChild(pill);
+            });
+        }
+
+        if (btnAddMatiere) {
+            btnAddMatiere.addEventListener('click', function (e) {
+                e.preventDefault();
+                const countPredefinies = document.querySelectorAll('[name="matieres_predefinies"]:checked').length;
+                if (customMatieres.length + countPredefinies >= 5) {
+                    return; // Sécurité si bouton forcé
+                }
+
+                let val = customMatiereInput.value.trim();
+                // Check format to be safe (no commas because we use them as delimiters in backend mapping safely)
+                val = val.replace(/,/g, '');
+                if (val && !customMatieres.includes(val)) {
+                    customMatieres.push(val);
+                    hiddenMatiereInput.value = customMatieres.join(',');
+                    customMatiereInput.value = '';
+                    renderCustomMatieres();
+                    checkStep2();
+                }
+            });
+        }
+
+        // Navigations transition
+        btnNext.addEventListener('click', function () {
+            // Copier le quartier du parent vers le quartier de l'enfant par défaut
+            if (pQuartierQuery.value && eQuartierQuery.value === '') {
+                eQuartierQuery.value = pQuartierQuery.value;
+                checkStep2();
+            }
+
+            step1.classList.remove('active');
+            indicator1.classList.remove('active');
+            indicator1.classList.add('completed');
+            line1.classList.add('active');
+
+            step2.classList.add('active');
+            indicator2.classList.add('active');
+        });
+
+        btnBack.addEventListener('click', function () {
+            step2.classList.remove('active');
+            indicator2.classList.remove('active');
+            line1.classList.remove('active');
+
+            step1.classList.add('active');
+            indicator1.classList.remove('completed');
+            indicator1.classList.add('active');
+        });
+
+        // Run initial checks
+        checkStep1();
+        checkStep2();
+    });
+</script>
+{% endblock %}

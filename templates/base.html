@@ -1,0 +1,560 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Prof Chez Vous{% endblock %}</title>
+    
+    <!-- Google Fonts - Raleway -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --success-50: #f0fdf4;
+            --success-100: #dcfce7;
+            --success-200: #bbf7d0;
+            --success-500: #22c55e;
+            --success-600: #16a34a;
+            --success-700: #15803d;
+            --primary-color: var(--success-50);
+            --primary-dark: var(--success-600);
+        }
+        
+        * {
+            font-family: 'Raleway', sans-serif !important;
+        }
+    </style>
+    <style>
+        /* Header Navigation - Prof Chez Vous */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0;
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--success-700);
+            text-decoration: none;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand:hover {
+            color: var(--success-600);
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--success-600);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            background: var(--success-600);
+            color: white;
+            padding: 0.625rem 1.5rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-nav:hover {
+            background: var(--success-700);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-nav-outline {
+            background: transparent;
+            color: var(--success-600);
+            border: 2px solid var(--success-600);
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-nav-outline:hover {
+            background: var(--success-50);
+            border-color: var(--success-700);
+            color: var(--success-700);
+        }
+
+        .logout-form {
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #fef2f2;
+            text-decoration: underline;
+        }
+
+        /* Menu Burger pour Mobile */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f3f4f6;
+        }
+
+        .mobile-menu-icon {
+            width: 24px;
+            height: 24px;
+            stroke: var(--success-700) !important;
+            fill: none;
+        }
+
+        .mobile-menu {
+            display: block;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .mobile-menu-close:hover {
+            background: #f3f4f6;
+        }
+
+        .mobile-menu-nav {
+            padding: 1rem 0;
+        }
+
+        .mobile-menu-nav li {
+            list-style: none;
+        }
+
+        .mobile-menu-nav a {
+            display: block;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .mobile-menu-nav a:hover {
+            background: #f9fafb;
+            color: #16a34a;
+            border-left-color: #16a34a;
+        }
+
+        .mobile-menu-actions {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                display: none;
+            }
+
+            .navbar-actions .btn-nav,
+            .navbar-actions .btn-nav-outline {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+
+            .navbar-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Très petits écrans */
+        @media (max-width: 480px) {
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .navbar-container {
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem;">
+                Prof Chez Vous
+            </a>
+            
+            <!-- Navigation Desktop -->
+            <nav class="navbar-nav">
+                <a href="{% url 'home' %}" class="nav-link">Accueil</a>
+                <a href="{% url 'faq' %}" class="nav-link">FAQ</a>
+                <a href="https://wa.me/message/QROCDDNKZIXAE1" class="nav-link" target="_blank">Support</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'messagerie' %}" class="nav-link" title="Messagerie">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; margin-top: 5px;">
+                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                    </svg>
+                </a>
+                {% endif %}
+            </nav>
+            
+            <!-- Actions Desktop -->
+            <div class="navbar-actions">
+                {% if user.is_authenticated %}
+                <a href="{% url 'post_signup_redirect' %}" class="btn-nav">Mon espace</a>
+                <form action="{% url 'logout' %}" method="post" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Déconnexion</button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn-nav-outline">Se connecter</a>
+                <a href="{% url 'signup' %}" class="btn-nav">S'inscrire</a>
+                {% endif %}
+                
+                <!-- Menu Burger Mobile -->
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <svg class="mobile-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Menu Mobile -->
+    <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="navbar-brand" style="font-size: 1.5rem;">ProfChezVous</div>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <nav class="mobile-menu-nav">
+            <li><a href="{% url 'home' %}" onclick="closeMobileMenu()">Accueil</a></li>
+            <li><a href="{% url 'faq' %}" onclick="closeMobileMenu()">FAQ</a></li>
+            <li><a href="https://wa.me/message/QROCDDNKZIXAE1" onclick="closeMobileMenu()" target="_blank">Support</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'messagerie' %}" onclick="closeMobileMenu()">Messagerie</a></li>
+            {% endif %}
+            <li><a href="{% url 'cgu' %}" onclick="closeMobileMenu()">CGU</a></li>
+        </nav>
+        
+        <div class="mobile-menu-actions">
+            {% if user.is_authenticated %}
+            <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="width: 100%; text-align: center;">Mon espace</a>
+            <form action="{% url 'logout' %}" method="post" class="logout-form" style="width: 100%;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn" style="width: 100%; text-align: center;">Déconnexion</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-nav-outline" style="width: 100%; text-align: center;">Se connecter</a>
+            <a href="{% url 'signup' %}" class="btn-nav" style="width: 100%; text-align: center;">S'inscrire</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: #1e293b; color: white; padding: 2rem 1rem 1rem;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                
+                <!-- Colonne A: Branding -->
+                <div class="footer-column">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Prof Chez Vous</h4>
+                    <p style="color: #94a3b8; line-height: 1.4; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Une plateforme de référence 100% Béninoise qui vous connecte avec le professeur idéal, près de chez vous pour l'accompagnement scolaire personnalisé.
+                    </p>
+                </div>
+
+                <!-- Colonne B: Navigation -->
+                <div class="footer-column">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Navigation</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'home' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Accueil</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'recherche' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Rechercher un prof</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'faq' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">FAQ</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="https://wa.me/message/QROCDDNKZIXAE1" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;" target="_blank">Support</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'messagerie' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Messagerie</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Colonne C: Légal -->
+                <div class="footer-column">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Légal</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'cgu' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Conditions Générales d'Utilisation</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Colonne D: Réseaux Sociaux -->
+                <div class="footer-column">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Suivez-nous</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="https://www.facebook.com/share/18SURGgof5/?mibextid=wwXIfr" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Facebook</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="https://wa.me/message/QROCDDNKZIXAE1" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">WhatsApp</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="https://www.instagram.com/prof_chezvous_benin?igsh=MTU5dGprYThtN3ZwNw%3D%3D&utm_source=qr" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Instagram</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #334155; padding-top: 1rem; text-align: center;">
+                <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">
+                    &copy; 2024 Prof Chez Vous. Tous droits réservés.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            
+            mobileMenu.classList.toggle('active');
+            mobileMenuOverlay.classList.toggle('active');
+            
+            // Empêche le scroll du body quand le menu est ouvert
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        function closeMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+            
+            mobileMenu.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Ferme le menu avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
+
+        // Système d'exhortation global
+        const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+
+        function showAuthModal() {
+            const modal = document.getElementById('authExhortationModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authExhortationModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function requireAuth(callback) {
+            if (IS_AUTHENTICATED) {
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            } else {
+                showAuthModal();
+            }
+        }
+    </script>
+
+    <!-- Modal d'exhortation global -->
+    <div id="authExhortationModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
+        <div style="background: white; border-radius: 1rem; width: 100%; max-width: 450px; padding: 2rem; text-align: center; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <button onclick="closeAuthModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">&times;</button>
+            
+            <div style="width: 60px; height: 60px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            
+            <h3 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem;">Rejoignez-nous !</h3>
+            <p style="color: #64748b; line-height: 1.6; margin-bottom: 2rem;">
+                Vous devez être connecté pour interagir avec ce profil (favoris, proposition de cours, etc.). Créez votre compte gratuitement en quelques secondes.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <a href="{% url 'signup' %}" style="display: block; width: 100%; padding: 0.875rem; background: var(--success-600); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; font-size: 1rem; transition: background 0.3s;">
+                    Créer un compte
+                </a>
+                <a href="{% url 'login' %}" style="display: block; width: 100%; padding: 0.875rem; background: white; color: var(--success-600); border: 2px solid var(--success-600); text-decoration: none; border-radius: 0.5rem; font-weight: 600; font-size: 1rem; transition: all 0.3s;">
+                    J'ai déjà un compte
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% block extra_js %}{% endblock %}
+</body>
+
+</html>

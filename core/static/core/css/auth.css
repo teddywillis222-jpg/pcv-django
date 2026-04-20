@@ -1,0 +1,417 @@
+/* Styles Premium - Thème Vert pour Authentification */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --green-50: #f0fdf4;
+    --green-100: #dcfce7;
+    --green-200: #bbf7d0;
+    --green-300: #86efac;
+    --green-400: #4ade80;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --green-800: #166534;
+    --green-900: #14532d;
+    --background: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --error: #ef4444;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Auth Page Layout - Premium Green Gradient Background */
+.auth-page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--green-50) 0%, var(--green-100) 50%, var(--green-200) 100%);
+    position: relative;
+    overflow: hidden;
+    margin: -2rem;
+    /* Compensate base.html padding if needed */
+    padding: 3rem 1rem;
+}
+
+/* Decorative background elements */
+.auth-bg-shapes::before,
+.auth-bg-shapes::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-300) 0%, var(--green-400) 100%);
+    opacity: 0.15;
+    filter: blur(60px);
+    z-index: 0;
+}
+
+.auth-bg-shapes::before {
+    top: -200px;
+    left: -100px;
+}
+
+.auth-bg-shapes::after {
+    bottom: -200px;
+    right: -100px;
+}
+
+.auth-container {
+    max-width: 520px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+}
+
+.auth-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(21, 128, 61, 0.1);
+    padding: 3rem 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-header h2 {
+    color: var(--green-800);
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.025em;
+}
+
+.auth-header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+/* Role Selector Styles */
+.role-options-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.role-option-card {
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+}
+
+.role-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.role-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 0.5rem;
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-muted);
+}
+
+.role-card-content svg {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.role-card-content span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Checked state */
+.role-radio-input:checked+.role-card-content {
+    border-color: var(--green-500);
+    background: var(--green-50);
+    color: var(--green-800);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.role-radio-input:checked+.role-card-content svg {
+    color: var(--green-600);
+}
+
+.role-option-card:hover .role-card-content {
+    border-color: var(--green-300);
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: white;
+    transition: all 0.3s ease;
+    color: var(--text-main);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--green-500);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+/* Hidden inputs */
+.django-hidden-input {
+    display: none !important;
+}
+
+/* Main Auth Button */
+.btn-auth {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
+    border: none;
+    border-radius: 10px;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    font-family: inherit;
+}
+
+.btn-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(22, 163, 74, 0.35);
+    background: linear-gradient(135deg, var(--green-400) 0%, var(--green-500) 100%);
+}
+
+.btn-auth:active {
+    transform: translateY(0);
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2rem 0;
+    color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider span {
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Social Button */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background-color: white;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.btn-social:hover {
+    background-color: var(--green-50);
+    border-color: var(--green-300);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-social svg {
+    width: 24px;
+    height: 24px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    font-weight: 700;
+    color: var(--green-600);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.auth-footer a:hover {
+    color: var(--green-500);
+    text-decoration: underline;
+}
+
+/* Errors */
+.alert-error {
+    background-color: #fef2f2;
+    border-left: 4px solid var(--error);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    color: #991b1b;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Responsive Mobile - Optimisé pour le marché béninois */
+@media (max-width: 640px) {
+    .auth-page-wrapper {
+        margin: -1rem;
+        padding: 1rem 0.5rem;
+    }
+    
+    .auth-container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+    
+    .auth-card {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+        margin: 0.5rem;
+    }
+    
+    .auth-header h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+    
+    .auth-header p {
+        font-size: 0.95rem;
+    }
+    
+    .role-options-container {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .role-card-content {
+        padding: 1rem 0.75rem;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .role-card-content svg {
+        width: 24px;
+        height: 24px;
+        margin-bottom: 0;
+    }
+    
+    .role-card-content span {
+        font-size: 0.9rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .form-group input {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+    
+    .btn-auth {
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+    }
+    
+    .auth-footer {
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .alert-error {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Très petits écrans (feature phones courants au Bénin) */
+@media (max-width: 360px) {
+    .auth-card {
+        padding: 1.5rem 1rem;
+        margin: 0.25rem;
+    }
+    
+    .auth-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .form-group input {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-auth {
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Création profil apprenant - Prof Chez Vous{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: var(--primary); margin-top: 0;">Création de ton profil apprenant</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        Tous les champs sont obligatoires sauf la photo de profil.
+    </p>
+
+    {% if form.errors %}
+    <ul class="alert alert-error">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li><strong>{{ field.label }} :</strong> {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+            {{ field }}
+            {% if field.help_text %}<small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">{{ field.help_text }}</small>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            Valider et accéder à mon espace apprenant
+        </button>
+    </form>
+</div>
+{% endblock %}

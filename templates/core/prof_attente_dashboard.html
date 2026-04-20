@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tableau de Bord Professeur - Vérification{% endblock %}
+
+{% block extra_css %}
+<style>
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary: #16a34a;
+        --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        --card-bg: white;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --warning-bg: #fffbeb;
+        --warning-text: #854d0e;
+    }
+
+    body {
+        background: var(--bg-gradient);
+    }
+
+    .dashboard-container {
+        max-width: 850px;
+        margin: 3rem auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .status-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        text-align: center;
+        border-top: 5px solid #f59e0b;
+    }
+
+    .status-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .status-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+    }
+
+    .status-text {
+        color: var(--text-gray);
+        font-size: 1rem;
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    .admin-box {
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        padding: 1.5rem;
+        border-radius: 12px;
+        color: #991b1b;
+        text-align: left;
+        margin-top: 2rem;
+    }
+
+    .admin-box strong {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Completion Card */
+    .completion-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            margin: 1.5rem 10px;
+            gap: 1rem;
+        }
+        .status-card {
+            padding: 1.5rem 10px;
+        }
+        .completion-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem 10px;
+        }
+        .modal-overlay {
+            padding: 10px;
+        }
+        .modal-content {
+            padding: 1.5rem 10px;
+        }
+        .grid-2 {
+            grid-template-columns: 1fr !important;
+        }
+        .btn-complete {
+            white-space: normal;
+        }
+    }
+
+    .progress-container {
+        flex: 1;
+        width: 100%;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 12px;
+        background: #e2e8f0;
+        border-radius: 9999px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        transition: width 1s ease-in-out;
+    }
+
+    .btn-complete {
+        background: var(--primary);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: normal;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(22, 163, 74, 0.2);
+    }
+
+    .btn-complete:hover {
+        transform: translateY(-2px);
+        background: #15803d;
+    }
+
+    .btn-complete:disabled {
+        background: var(--text-gray);
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-content {
+        background: var(--card-bg);
+        width: 100%;
+        max-width: 800px;
+        max-height: 90vh;
+        border-radius: 24px;
+        padding: 2.5rem;
+        position: relative;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        transform: translateY(20px);
+        transition: transform 0.3s;
+    }
+
+    .modal-overlay.show .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: #f1f5f9;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: var(--text-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-close:hover {
+        background: #e2e8f0;
+        color: var(--text-dark);
+    }
+
+    /* Form Elements */
+    .form-group-m {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group-m label {
+        display: block;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group-m textarea,
+    .form-group-m input {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        background: #f8fafc;
+    }
+
+    .form-group-m textarea:focus,
+    .form-group-m input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+    }
+
+    .help-modal {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        margin-top: 0.3rem;
+        display: block;
+    }
+
+    /* Grille Dispo */
+    .grid-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .grid-table th {
+        background: #f8fafc;
+        padding: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        border-bottom: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .grid-table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .grid-table td:first-child {
+        font-weight: 600;
+        text-align: left;
+        background: #fafafa;
+    }
+
+    .grid-table input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+        .grid-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
+</style>
+<script>
+    function openModal() {
+        const modal = document.getElementById('modal-etape-3');
+        modal.style.display = 'flex';
+        // Trick for animation
+        setTimeout(() => { modal.classList.add('show'); }, 10);
+    }
+    function closeModal() {
+        const modal = document.getElementById('modal-etape-3');
+        modal.classList.remove('show');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- ÉTAPE 2 : STATUS DASHBOARD -->
+    <div class="status-card">
+        <div class="status-icon">⏳</div>
+        <h2 class="status-title">Profil en cours de vérification</h2>
+        <p class="status-text">
+            Dossier transmis avec succès. L'examen de vos documents peut prendre jusqu'à 48h.
+            <strong>Pour l'instant, votre profil n'est pas visible par les parents.</strong>
+        </p>
+
+        {% if teacher.message_admin %}
+        <div class="admin-box">
+            <strong>🔴 Message de l'Administration :</strong>
+            {{ teacher.message_admin }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ÉTAPE 3 : COMPLETION BOOST -->
+    <div class="completion-card">
+        <div class="progress-container">
+            <div class="progress-header">
+                <span>Vitrine du Profil</span>
+                <span style="color:var(--primary);">{{ completion }}% Complété</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ completion }}%;"></div>
+            </div>
+            <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-gray);">
+                {% if completion < 100 %} Un profil avec une description engageante, un tarif défini et des horaires
+                    précis à 100% de chances d'être contacté en premier. {% else %} Félicitations ! Votre profil a
+                    atteint 100% de complétion. Il sera spectaculaire lors de sa validation. {% endif %} </p>
+        </div>
+        <div>
+            {% if completion < 100 %} <button class="btn-complete" onclick="openModal()">Compléter mon profil</button>
+                {% else %}
+                <button class="btn-complete" onclick="openModal()"
+                    style="background:#f1f5f9; color:#475569; box-shadow:none;">Modifier mon profil</button>
+                {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Etape 3 (Boost Conversion) -->
+<div class="modal-overlay" id="modal-etape-3">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2 style="margin-bottom:0.5rem; font-weight:800; font-size:1.8rem; color:var(--text-dark);">Enrichissez votre
+            vitrine</h2>
+        <p style="color:var(--text-gray); margin-bottom: 2rem;">Renseignez ces informations pour attirer massivement les
+            regards sur votre profil dès sa validation.</p>
+
+        <form method="post" action="{% url 'prof_attente_dashboard' %}">
+            {% csrf_token %}
+
+            <div class="grid-2">
+                <div class="form-group-m">
+                    <label>Expérience en cours d'appui (Années)</label>
+                    <input type="number" name="annees_d_experience" min="0"
+                        value="{{ teacher.annees_d_experience|default:'' }}" placeholder="Ex: 5" required>
+                </div>
+                <div class="form-group-m">
+                    <label>Tarif horaire de base (FCFA / Heure de cours)</label>
+                    <input type="number" name="tarif_horaire" min="1000" step="500"
+                        value="{{ teacher.tarif_horaire|default:'' }}" placeholder="Ex: 3500" required>
+                </div>
+            </div>
+
+            <div class="form-group-m">
+                <label>Vendez-vous aux parents (Présentation)</label>
+                <textarea name="presentation" rows="6" minlength="800"
+                    placeholder="Décrivez votre parcours, vos particularités et ce qui fait de vous un excellent enseignant..."
+                    required>{{ teacher.presentation }}</textarea>
+                <small class="help-modal">150 mots minimum exigés (env. 800 caractères).</small>
+            </div>
+
+            <div class="form-group-m">
+                <label>Votre méthodologie de travail</label>
+                <textarea name="methodologie" rows="6" minlength="800"
+                    placeholder="Comment se déroule un cours avec vous ? Comment vous assurez-vous de la progression de l'élève ?"
+                    required>{{ teacher.methodologie }}</textarea>
+                <small class="help-modal">150 mots minimum exigés (env. 800 caractères).</small>
+            </div>
+
+            <div class="form-group-m">
+                <label>Vos Disposibilités (Grille Globale)</label>
+                <p class="help-modal" style="margin-bottom:1rem;">Cochez les tranches horaires où vous êtes généralement
+                    disposé(e) à donner des cours.</p>
+                <table class="grid-table">
+                    <thead>
+                        <tr>
+                            <th>Jour</th>
+                            <th>Matin (8h-13h)</th>
+                            <th>Après-midi (13h-18h)</th>
+                            <th>Soir (18h-21h)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for jour in jours %}
+                        <tr>
+                            <td>{{ jour }}</td>
+                            <td><input type="checkbox" name="disponibilites" value="{{ jour }}_Matin" {% if jour|add:"_Matin" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                            <td><input type="checkbox" name="disponibilites" value="{{ jour }}_ApresMidi" {% if jour|add:"_ApresMidi" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                            <td><input type="checkbox" name="disponibilites" value="{{ jour }}_Soir" {% if jour|add:"_Soir" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" class="btn-complete"
+                style="width:100%; margin-top: 1rem; font-size: 1.1rem; padding: 1.2rem; box-sizing: border-box;">Sauvegarder ma vitrine de
+                profil</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

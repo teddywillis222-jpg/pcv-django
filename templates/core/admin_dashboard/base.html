@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ProfChezVous</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --primary-hover: #059669;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        .admin-header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background-color: #f9fafb;
+        }
+
+        .nav-btn.active {
+            color: var(--primary-green);
+            background-color: #ecfdf5;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            height: 100vh;
+            background: var(--card-bg);
+            box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 100;
+            padding: 2rem;
+        }
+
+        .mobile-drawer.open { right: 0; }
+        
+        .drawer-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .mobile-nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .mobile-nav-btn {
+            text-align: left;
+            font-size: 1.1rem;
+            padding: 1rem;
+            width: 100%;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 90;
+        }
+        .overlay.open { display: block; }
+
+        .admin-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+        }
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary-green);
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .mobile-menu-btn { display: block; }
+            .header-content { padding: 1rem; }
+            .admin-main { padding: 1rem 10px; }
+            h1, h2 { font-size: 1.25rem; }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Common utility classes for partials */
+        .grid { display: grid; }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--primary-green); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: #f9fafb; }
+        .btn-danger { background: var(--danger-color); color: white; }
+
+        @media (max-width: 768px) {
+            .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
+            .gap-6 { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="logo">PCV Admin</div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-target="accueil">Accueil</button>
+                <button class="nav-btn" data-target="professeurs">Professeur</button>
+                <button class="nav-btn" data-target="parent">Parent/Apprenant</button>
+                <button class="nav-btn" data-target="engagement">Engagement</button>
+                <button class="nav-btn" data-target="evaluation">Évaluation</button>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
+        </div>
+    </header>
+
+    <div class="overlay" onclick="toggleDrawer()"></div>
+    <div class="mobile-drawer">
+        <button class="drawer-close" onclick="toggleDrawer()">✕</button>
+        <nav class="mobile-nav-menu">
+            <button class="nav-btn mobile-nav-btn active" data-target="accueil">Accueil</button>
+            <button class="nav-btn mobile-nav-btn" data-target="professeurs">Professeur</button>
+            <button class="nav-btn mobile-nav-btn" data-target="parent">Parent/Apprenant</button>
+            <button class="nav-btn mobile-nav-btn" data-target="engagement">Engagement</button>
+            <button class="nav-btn mobile-nav-btn" data-target="evaluation">Évaluation</button>
+        </nav>
+    </div>
+
+    <main class="admin-main" id="admin-content">
+        <!-- Content loaded via AJAX -->
+    </main>
+
+    <script>
+        const API_BASE = '/debug-admin-pcv/api/';
+        const contentDiv = document.getElementById('admin-content');
+        const navButtons = document.querySelectorAll('.nav-btn');
+
+        async function loadSection(target) {
+            navButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === target);
+            });
+            
+            document.querySelector('.mobile-drawer').classList.remove('open');
+            document.querySelector('.overlay').classList.remove('open');
+
+            contentDiv.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>';
+
+            try {
+                const response = await fetch(`${API_BASE}${target}/`);
+                if (response.ok) {
+                    const html = await response.text();
+                    contentDiv.innerHTML = html;
+                    
+                    const scripts = contentDiv.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        newScript.text = script.text;
+                        document.body.appendChild(newScript).parentNode.removeChild(newScript);
+                    });
+                } else {
+                    contentDiv.innerHTML = `<div class="card" style="color:red">Erreur lors du chargement (Code ${response.status})</div>`;
+                }
+            } catch (err) {
+                contentDiv.innerHTML = `<div class="card" style="color:red">Erreur de connexion.</div>`;
+            }
+        }
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget.dataset.target;
+                if (['accueil', 'professeurs'].includes(target)) {
+                    loadSection(target);
+                } else {
+                    contentDiv.innerHTML = `<div class="card"><h2 style="margin:0">Section ${target} en cours de développement...</h2></div>`;
+                    navButtons.forEach(b => b.classList.toggle('active', b.dataset.target === target));
+                }
+            });
+        });
+
+        function toggleDrawer() {
+            document.querySelector('.mobile-drawer').classList.toggle('open');
+            document.querySelector('.overlay').classList.toggle('open');
+        }
+
+        loadSection('accueil');
+        
+        // Modal functions
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+</body>
+</html>

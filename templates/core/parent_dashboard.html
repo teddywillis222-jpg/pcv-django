@@ -1,0 +1,578 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Espace Parent - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dash-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --primary: #16a34a;
+        --primary-soft: #dcfce7;
+        --primary-dark: #15803d;
+        --accent: #1e293b;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+        --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    body {
+        background-color: var(--dash-bg);
+        padding-bottom: 70px; /* Espace pour la bottom nav sur mobile */
+    }
+
+    @media (min-width: 1024px) {
+        body { padding-bottom: 0; }
+    }
+
+    /* Layout */
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        .dashboard-layout {
+            grid-template-columns: 280px 1fr;
+            padding: 1.5rem;
+            gap: 2rem;
+        }
+    }
+
+    /* Sidebar (Desktop only) */
+    .dash-sidebar {
+        display: none;
+    }
+
+    @media (min-width: 1024px) {
+        .dash-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 6rem;
+            height: fit-content;
+        }
+    }
+
+    .sidebar-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .sidebar-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+        color: var(--text-gray);
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .sidebar-menu-item:hover, .sidebar-menu-item.active {
+        background: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    /* Bottom Nav (Mobile only) */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+        border-top: 1px solid #e2e8f0;
+        z-index: 1000;
+    }
+
+    @media (min-width: 1024px) { .bottom-nav { display: none; } }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        color: var(--text-gray);
+        text-decoration: none;
+        font-size: 0.65rem;
+        font-weight: 700;
+    }
+
+    .nav-item.active { color: var(--primary); }
+    .nav-item svg { width: 22px; height: 22px; }
+
+    .carousel-container {
+        margin: 0 -0.75rem;
+        padding: 0 0.75rem;
+        overflow-x: auto;
+        display: flex;
+        gap: 0.75rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .carousel-container::-webkit-scrollbar { display: none; }
+
+    .prof-card {
+        flex: 0 0 auto;
+        width: 200px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+        text-align: center;
+        border: 1px solid #f1f5f9;
+    }
+
+    .prof-card img {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        object-fit: cover;
+        margin-bottom: 0.75rem;
+    }
+
+    .glass-tabs {
+        display: flex;
+        gap: 0.25rem;
+        background: #f1f5f9;
+        padding: 0.3rem;
+        border-radius: 14px;
+        margin-bottom: 1rem;
+    }
+
+    .tab-pill {
+        flex: 1;
+        padding: 0.6rem 0.5rem;
+        border: none;
+        background: transparent;
+        color: var(--text-gray);
+        font-weight: 700;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .tab-pill.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Options Menu Toggle */
+    .options-menu.active {
+        display: block !important;
+    }
+
+    /* Badges */
+    .badge-attente { background: #fef9c3; color: #854d0e; }
+    .badge-actif { background: #dcfce7; color: #166534; }
+    .badge-termine { background: #f1f5f9; color: #475569; }
+    .badge-refuse { background: #fee2e2; color: #b91c1c; }
+
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        margin-top: 0;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    /* Enfant Cards - Reverted & Slightly Shorter */
+    .enfant-card {
+        flex: 0 0 auto;
+        width: 160px;
+        background: var(--card-bg);
+        border-radius: 18px;
+        padding: 1rem 0.75rem;
+        box-shadow: var(--shadow-sm);
+        border: 2px solid transparent;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+    }
+
+    .enfant-card.active {
+        border-color: var(--primary);
+        background: #f0fdf4;
+    }
+
+    .enfant-card .avatar {
+        width: 40px;
+        height: 40px;
+        background: #f1f5f9;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .enfant-card .btn-edit {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: underline;
+    }
+
+
+    /* History Line */
+    .history-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 14px;
+        margin-bottom: 0.5rem;
+        border: 1px solid #f1f5f9;
+    }
+
+    .btn-detail {
+        padding: 0.4rem 0.8rem;
+        background: #f1f5f9;
+        color: var(--text-dark);
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 500px;
+        padding: 1.5rem;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar Desktop -->
+    <aside class="dash-sidebar">
+        <div class="sidebar-card">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="width: 60px; height: 60px; background: var(--primary-soft); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin: 0 auto 0.75rem;">
+                    {{ parent_details.nom|slice:":1"|upper }}
+                </div>
+                <h4 style="margin: 0;">{{ parent_details.nom }}</h4>
+                <p style="font-size: 0.8rem; color: var(--text-gray);">Compte Parent</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="sidebar-menu-item active" onclick="showSection('main-dash')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                    Dashboard
+                </a>
+                <a href="#" class="sidebar-menu-item" onclick="showSection('favoris-section')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    Mes Favoris
+                </a>
+                <a href="#" class="sidebar-menu-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Gérer mon plan
+                </a>
+                <a href="#" class="sidebar-menu-item" onclick="showSection('history-section')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Historique
+                </a>
+            </nav>
+        </div>
+        
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="sidebar-menu-item" style="color: #ef4444; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Déconnexion
+                </button>
+            </form>
+
+    </aside>
+
+    <!-- Bottom Nav Mobile -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="showSection('main-dash')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Accueil
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('favoris-section')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Favoris
+        </a>
+        <a href="#" class="nav-item" onclick="showSection('history-section')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Historique
+        </a>
+        <a href="#" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profil
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="padding-top: 0;">
+        <div id="main-dash" class="dash-section">
+            <!-- Enfants Selector -->
+            <header class="section-header">
+                <h1 class="section-title">Mes enfants</h1>
+                <a href="{% url 'parent_create_profile' %}" style="font-weight: 700; color: var(--primary); text-decoration: none; font-size: 0.8rem;">+ Ajouter</a>
+            </header>
+
+            <section class="carousel-container" style="margin-bottom: 1rem;">
+                {% for enfant in enfants %}
+                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" onclick="location.href='?enfant_id={{ enfant.id }}'">
+                    <div class="avatar">👶</div>
+                    <h4 style="margin: 0; font-size: 0.95rem;">{{ enfant.prenom }}</h4>
+                    <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
+                    <a href="#" class="btn-edit" onclick="event.stopPropagation();">Voir le profil</a>
+                </div>
+                {% endfor %}
+            </section>
+
+
+            <!-- Recommandations -->
+            <section style="margin-top: 1rem;">
+                <div class="section-header">
+                    <h2 class="section-title">Recommandations pour {{ active_enfant.prenom }}</h2>
+                    <a href="{% url 'recherche' %}" style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
+                </div>
+                <div class="carousel-container">
+                    {% for prof in recommandations %}
+                    <a href="{% url 'professeur_detail' prof.slug %}" style="text-decoration: none; color: inherit;">
+                        <div class="prof-card">
+                            {% if prof.photo_de_profil %}
+                            <img src="{{ prof.photo_de_profil.url }}" alt="">
+                            {% else %}
+                            <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.2rem;">👨‍🏫</div>
+                            {% endif %}
+                            <h4 style="margin: 0; font-size: 0.85rem;">{{ prof.prenom }}</h4>
+                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
+                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
+                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Engagements Rapides -->
+            <section style="margin-top: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom }}</h2>
+                <div class="glass-tabs">
+                    <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminés</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'essais')">Essais</button>
+                </div>
+
+                <div id="tab-content">
+                    <div class="tab-pane" id="encours">
+                        {% for eng in engagements_en_cours %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
+                        {% empty %}
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Rien en cours.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="actifs" style="display: none;">
+                        {% for eng in engagements_actifs %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" show_actions=True %}
+                        {% empty %}
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun engagement actif.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="termines" style="display: none;">
+                        {% for eng in engagements_termines %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" %}
+                        {% empty %}
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Historique vide.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="essais" style="display: none;">
+                        {% for eng in engagements_essais %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
+                        {% empty %}
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun cours d'essai.</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- Section Favoris -->
+        <div id="favoris-section" class="dash-section" style="display: none;">
+            <header class="section-header">
+                <h1 class="section-title">Mes Favoris</h1>
+                <button onclick="showSection('main-dash')" style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
+            </header>
+            
+            <div style="padding: 2rem; text-align: center; background: white; border-radius: 24px; box-shadow: var(--shadow-sm);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">❤️</div>
+                <h3 style="margin-bottom: 0.5rem;">Votre liste est vide</h3>
+                <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem;">Enregistrez vos professeurs préférés pour les retrouver ici rapidement.</p>
+                <a href="{% url 'recherche' %}" class="btn-eng-main">Découvrir des professeurs</a>
+            </div>
+        </div>
+
+        <!-- Section Historique -->
+        <div id="history-section" class="dash-section" style="display: none;">
+            <header class="section-header">
+                <h1 class="section-title">Historique complet</h1>
+                <button onclick="showSection('main-dash')" style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
+            </header>
+
+            <div id="history-list">
+                {% for eng in engagements_tous %}
+                <div class="history-line">
+                    <div>
+                        <h4 style="margin: 0; font-size: 0.9rem;">{{ eng.professeur.prenom|default:"Professeur" }} - {{ eng.matiere }}</h4>
+                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ eng.get_statut_general_display }} • {{ eng.date_creation|date:"d M Y" }}</p>
+                    </div>
+                    <button class="btn-detail" onclick="openDetailModal('{{ eng.id }}')">Détail</button>
+                </div>
+                {% empty %}
+                <p style="text-align: center; padding: 2rem; color: var(--text-gray);">Aucun historique disponible.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal Détails Engagement -->
+<div id="detailModal" class="modal-overlay" onclick="if(event.target == this) closeDetailModal()">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+            <h3 id="modal-title" style="margin: 0;">Détails de l'engagement</h3>
+            <button onclick="closeDetailModal()" style="background: none; border: none; cursor: pointer;">✕</button>
+        </div>
+        <div id="modal-body" style="font-size: 0.9rem; line-height: 1.6; color: var(--text-dark);">
+            <!-- Rempli par JS -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+        
+        // Update active state in nav
+        document.querySelectorAll('.nav-item, .sidebar-menu-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(sectionId)) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    function openDetailModal(engId) {
+        // Pour l'instant on simule, idéalement faire un fetch API
+        const modal = document.getElementById('detailModal');
+        const body = document.getElementById('modal-body');
+        body.innerHTML = `<p>Chargement des détails pour l'engagement #${engId}...</p>`;
+        modal.style.display = 'flex';
+        
+        // Simuler un affichage
+        setTimeout(() => {
+            body.innerHTML = `
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <strong>Statut :</strong> <span style="color: var(--primary);">Confirmé</span><br>
+                    <strong>Matière :</strong> Mathématiques<br>
+                    <strong>Enfant :</strong> {{ active_enfant.prenom }}
+                </div>
+                <p><strong>Date de proposition :</strong> 12/04/2026</p>
+                <p><strong>Mode :</strong> À domicile</p>
+                <p><strong>Fréquence :</strong> 2 fois par semaine</p>
+                <p><strong>Budget :</strong> 3000 FCFA / h</p>
+                <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 1rem 0;">
+                <p style="font-size: 0.8rem; color: var(--text-gray);">Ceci est une vue en lecture seule.</p>
+            `;
+        }, 500);
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function switchTab(event, targetId) {
+        document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.style.display = 'none');
+        document.getElementById(targetId).style.display = 'block';
+    }
+
+    function toggleOptions(btn) {
+        // Ferme les autres menus ouverts
+        document.querySelectorAll('.options-menu').forEach(menu => {
+            if (menu !== btn.nextElementSibling) menu.classList.remove('active');
+        });
+        btn.nextElementSibling.classList.toggle('active');
+    }
+
+    // Fermer les menus au clic extérieur
+    window.onclick = function(event) {
+        if (!event.target.closest('.options-btn')) {
+            document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
+        }
+    }
+</script>
+{% endblock %}
+

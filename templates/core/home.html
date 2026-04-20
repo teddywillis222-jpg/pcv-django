@@ -1,0 +1,716 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Accueil - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Override default container for full width hero */
+main.container {
+    padding-top: 0 !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* --- HERO SECTION --- */
+.hero-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    padding: 1rem;
+}
+
+.hero-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(22, 163, 74, 0.6) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    width: 100%;
+    margin-top: -5vh; 
+}
+
+.hero-title {
+    color: #ffffff;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    color: #e2e8f0;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- RECHERCHE COMPONENT --- */
+.search-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 1.5rem;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    text-align: left; /* Aligne le texte des champs à gauche */
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input-group {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-input-group label {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+/* HARMONISATION DIMENSION INPUTS ET SELECTS */
+.search-input-group input, 
+.search-input-group select {
+    width: 100%;
+    height: 56px; /* HAUTEUR STRICTE identique pour tous */
+    padding: 0 1.25rem;
+    border: none;
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 1.05rem;
+    color: #0f172a;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-sizing: border-box; /* Essentiel pour maintenir les dimensions */
+    font-family: inherit;
+}
+
+.search-input-group input:focus, 
+.search-input-group select:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.3);
+}
+
+.btn-search {
+    background: var(--success-600);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0 2rem;
+    height: 56px; /* Hauteur identique aux inputs */
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.6rem; 
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(22, 163, 74, 0.3);
+    box-sizing: border-box;
+}
+
+.btn-search:hover {
+    background: var(--success-700);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(22, 163, 74, 0.4);
+}
+
+/* --- SECTION COMMENT CA MARCHE --- */
+/* Resserrement global du padding PC */
+.section-padding {
+    padding: 2.5rem 1rem;
+}
+.bg-light { background: #f8fafc; }
+.bg-white { background: #ffffff; }
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+.section-header h2 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+.section-header p {
+    font-size: 1.15rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.step-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    border: 1px solid #f1f5f9;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+.step-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.step-icon svg { width: 40px; height: 40px; }
+.icon-green { background: #dcfce7; color: #16a34a; }
+.icon-blue { background: #dbeafe; color: #2563eb; }
+.icon-amber { background: #fef3c7; color: #d97706; }
+
+.step-card h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+.step-card p {
+    color: #64748b;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* --- SECTION DIFFERENCE (FLAT DESIGN) --- */
+.diff-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem;
+    border-left: 4px solid var(--success-600);
+    background: #f8fafc;
+    border-radius: 0 20px 20px 0;
+    transition: background 0.3s ease;
+}
+.diff-card:hover { background: #f1f5f9; }
+.diff-icon { margin-bottom: 1rem; }
+.diff-icon svg { width: 48px; height: 48px; }
+.diff-card h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+.diff-card p {
+    color: #475569;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* --- PROFESSEURS DISPONIBLES --- */
+.prof-scroll-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 1rem 0 2rem 0;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+}
+.prof-scroll-container::-webkit-scrollbar { display: none; }
+
+.prof-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    padding: 0 1rem;
+}
+
+.prof-card {
+    width: 320px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+}
+.prof-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.prof-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e2e8f0;
+}
+.prof-info h4 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.2rem;
+}
+.prof-info p {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    margin: 0;
+}
+.prof-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+.badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.badge-green { background: #dcfce7; color: #16a34a; }
+.badge-amber { background: #fef3c7; color: #d97706; }
+
+.btn-outline-green {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid var(--success-600);
+    color: var(--success-600);
+    background: transparent;
+    border-radius: 12px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.btn-outline-green:hover { background: var(--success-50); }
+
+/* --- CTA FINAL --- */
+.cta-final {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    background: linear-gradient(135deg, var(--success-600), #10b981);
+    border-radius: 24px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 40px rgba(22, 163, 74, 0.25);
+}
+.cta-final h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+}
+.btn-white {
+    background: white;
+    color: var(--success-700);
+    padding: 1rem 2.5rem;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.btn-white:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+/* ========================================= */
+/* --- RESPONSIVE MOBILE EXTREME TWEAKS  --- */
+/* ========================================= */
+@media (max-width: 900px) {
+    /* --- HERO --- */
+    .hero-wrapper {
+        min-height: auto;
+        padding: 1rem 1rem 2rem 1rem; /* Réduction drastique du padding */
+    }
+    .hero-content {
+        margin-top: 0;
+        text-align: left; /* Alignement exigé à gauche */
+    }
+    .hero-title {
+        font-size: 2rem; /* Taille de police réduite */
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+    .hero-subtitle {
+        font-size: 1rem; /* Taille de police réduite */
+        text-align: left;
+        margin-bottom: 2rem;
+        margin-left: 0;
+    }
+
+    /* --- RECHERCHE --- */
+    .search-box {
+        padding: 1.25rem;
+        border-radius: 16px;
+    }
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8rem;
+    }
+    .search-input-group label {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+    .search-input-group input, 
+    .search-input-group select {
+        height: 50px; /* Dimension uniforme maintenue */
+        font-size: 0.95rem;
+        padding: 0 1rem;
+    }
+    .btn-search {
+        margin-top: 0.5rem;
+        height: 50px;
+        font-size: 1rem;
+    }
+
+    /* --- ESPACEMENTS SECTIONS --- */
+    .section-padding {
+        padding: 1.5rem 10px; /* Resserrement horizontal (10px) et vertical maximal */
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+        padding: 0;
+    }
+    .section-header h2 {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .section-header p {
+        font-size: 1rem;
+    }
+
+    /* --- CARTES & GRILLES (BOUFFENT L'ESPACE) --- */
+    .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 12px; /* Rapprochement des cartes */
+        padding: 0;
+    }
+
+    .step-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 16px;
+    }
+    .step-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+        border-radius: 16px;
+    }
+    .step-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+    .step-card h3 {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+    }
+    .step-card p {
+        font-size: 0.9rem;
+    }
+
+    /* Section Différence */
+    .diff-card {
+        padding: 1.5rem 1.25rem;
+        border-radius: 16px;
+        border-left: none;
+        border-top: 4px solid var(--success-600);
+    }
+    .diff-icon svg {
+        width: 36px;
+        height: 36px;
+    }
+    .diff-card h3 {
+        font-size: 1.15rem;
+    }
+    .diff-card p {
+        font-size: 0.9rem;
+    }
+
+    /* Professeurs */
+    .prof-scroll-container {
+        padding: 0 0 1rem 0;
+        margin: 0 -10px; /* Force l'overflow du père s'il y a un margin */
+    }
+    .prof-wrapper {
+        gap: 12px;
+        padding: 0 10px; /* Remet le gap initial */
+    }
+    .prof-card {
+        width: 85vw;
+        max-width: 340px;
+        padding: 1.25rem;
+        border-radius: 16px;
+    }
+    
+    /* CTA Final */
+    .cta-final {
+        margin: 1.5rem 0 0;
+        padding: 2.5rem 1rem;
+        border-radius: 16px;
+    }
+    .cta-final h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1.25rem;
+    }
+    .btn-white {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-wrapper">
+    <div class="hero-content">
+        <h1 class="hero-title">Trouvez un professeur certifié à domicile au Bénin en toute confiance.</h1>
+        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
+        
+        <div class="search-box">
+            <form action="{% url 'recherche' %}" method="GET" class="search-form">
+                <div class="search-input-group">
+                    <label for="matiere">Matière</label>
+                    <input type="text" id="matiere" name="matiere" placeholder="Quelle matière souhaitez-vous maîtriser ?" required>
+                </div>
+                
+                <div class="search-input-group">
+                    <label for="localisation">Localisation</label>
+                    <select id="localisation" name="localisation" required>
+                        <option value="">Sélectionnez un quartier...</option>
+                        <option value="Cotonou">Cotonou (Toute la ville)</option>
+                        <option value="Abomey-Calavi">Abomey-Calavi</option>
+                        <option value="Akpakpa">Akpakpa</option>
+                        <option value="Fidjrossè">Fidjrossè</option>
+                        <option value="Gbegamey">Gbegamey</option>
+                        <option value="Saint-Michel">Saint-Michel</option>
+                        <option value="Zogbo">Zogbo</option>
+                        <option value="Jéricho">Jéricho</option>
+                        <option value="Missebo">Missebo</option>
+                        <option value="Agla">Agla</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-search">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Rechercher
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section class="section-padding bg-light">
+    <div class="section-header">
+        <h2>Comment ça marche ?</h2>
+        <p>Trois étapes simples pour trouver le professeur parfait pour vos enfants</p>
+    </div>
+    
+    <div class="grid-3">
+        <!-- Step 1 -->
+        <div class="step-card">
+            <div class="step-icon icon-green">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+            <h3>🎯 Trouvez le bon professeur</h3>
+            <p>Recherchez un professeur certifié selon votre niveau, votre matière et votre quartier. Tous les profils sont vérifiés pour garantir un soutien fiable.</p>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="step-card">
+            <div class="step-icon icon-blue">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+            </div>
+            <h3>📩 Envoyez votre demande</h3>
+            <p>Envoyez une proposition d’engagement personnalisée à un professeur via un formulaire dédié. Précisez vos attentes, horaires et préférences.</p>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="step-card">
+            <div class="step-icon icon-amber">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+            </div>
+            <h3>🏠 Commencez en confiance</h3>
+            <p>Dès validation, les cours à domicile débutent avec un suivi transparent. Chaque séance est enregistrée dans un journal accessible à tout moment.</p>
+        </div>
+    </div>
+</section>
+
+<!-- LA DIFFERENCE PROF CHEZ VOUS -->
+<section class="section-padding bg-white">
+    <div class="section-header">
+        <h2>La Différence Prof Chez Vous</h2>
+        <p>Trois piliers qui font de notre plateforme la référence au Bénin</p>
+    </div>
+    
+    <div class="grid-3">
+        <div class="diff-card">
+            <div class="diff-icon" style="color: #10b981;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+            </div>
+            <h3>Sélection rigoureuse</h3>
+            <p>Chaque professeur passe par un processus strict : vérification des diplômes et tests de compétences. Seuls les meilleurs sont retenus pour une excellence constante.</p>
+        </div>
+        
+        <div class="diff-card">
+            <div class="diff-icon" style="color: #3b82f6;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+            <h3>Un cadre structuré</h3>
+            <p>Notre système d'engagement encadre juridiquement vos relations. Nous protégeons votre temps grâce à un processus de collaboration organisé. <a href="{% url 'cgu' %}" style="color: var(--success-600); font-weight: 600; text-decoration: underline;">Voir nos CGU</a></p>
+        </div>
+        
+        <div class="diff-card">
+            <div class="diff-icon" style="color: #8b5cf6;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+            </div>
+            <h3>Suivi en temps réel</h3>
+            <p>Depuis votre espace, pilotez la progression avec des outils modernes. Analysez les performances et suivez l'évolution des objectifs, où que vous soyez.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PROFESSEURS DISPONIBLES & CTA -->
+<section class="section-padding bg-light">
+    <div class="section-header" style="text-align: left; padding-left: 0.5rem; max-width: 1300px; margin-left: auto; margin-right: auto;">
+        <h2 style="margin-bottom: 0;">Professeurs Disponibles</h2>
+    </div>
+    
+    <div class="prof-scroll-container">
+        <div class="prof-wrapper">
+            <!-- Carte 1 -->
+            <div class="prof-card">
+                <div class="prof-card-header">
+                    <img src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
+                    <div class="prof-info">
+                        <h4>Dr. Koffi Adjaho</h4>
+                        <p>Mathématiques, Physique</p>
+                    </div>
+                </div>
+                <div class="prof-badges">
+                    <span class="badge badge-green">Cotonou</span>
+                    <span class="badge badge-amber">5 ans d'exp.</span>
+                </div>
+                <a href="#" class="btn-outline-green">Voir le profil complet</a>
+            </div>
+            
+            <!-- Carte 2 -->
+            <div class="prof-card">
+                <div class="prof-card-header">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
+                    <div class="prof-info">
+                        <h4>Mme. Awa Sissoko</h4>
+                        <p>Français, Philosophie</p>
+                    </div>
+                </div>
+                <div class="prof-badges">
+                    <span class="badge badge-green">Abomey-Calavi</span>
+                    <span class="badge badge-amber">8 ans d'exp.</span>
+                </div>
+                <a href="#" class="btn-outline-green">Voir le profil complet</a>
+            </div>
+            
+            <!-- Carte 3 -->
+            <div class="prof-card">
+                <div class="prof-card-header">
+                    <img src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
+                    <div class="prof-info">
+                        <h4>M. Youssef Touré</h4>
+                        <p>Anglais, Espagnol</p>
+                    </div>
+                </div>
+                <div class="prof-badges">
+                    <span class="badge badge-green">Akpakpa</span>
+                    <span class="badge badge-amber">6 ans d'exp.</span>
+                </div>
+                <a href="#" class="btn-outline-green">Voir le profil complet</a>
+            </div>
+            
+            <!-- Carte 4 -->
+            <div class="prof-card">
+                <div class="prof-card-header">
+                    <img src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
+                    <div class="prof-info">
+                        <h4>Dr. Mariam Bako</h4>
+                        <p>SVT, Chimie</p>
+                    </div>
+                </div>
+                <div class="prof-badges">
+                    <span class="badge badge-green">Fidjrossè</span>
+                    <span class="badge badge-amber">10 ans d'exp.</span>
+                </div>
+                <a href="#" class="btn-outline-green">Voir le profil complet</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CTA Final -->
+    <div class="cta-final">
+        <h2>Prêt à trouver le professeur idéal ?</h2>
+        <a href="{% url 'recherche' %}" class="btn-white">Rechercher maintenant</a>
+    </div>
+</section>
+
+{% endblock %}
