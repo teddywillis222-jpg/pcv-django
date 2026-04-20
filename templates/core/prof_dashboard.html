@@ -9,31 +9,27 @@
 
 {% block content %}
 <div class="dashboard-wrapper">
-    <!-- Sidebar (Desktop only) -->
+    <!-- Sidebar (Desktop) -->
     <aside class="dash-sidebar">
-        <div class="dash-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
-            <span>ProfChezVous</span>
+        <div style="font-size: 1.25rem; font-weight: 900; color: var(--dash-accent); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+            <span>PCV Prof</span>
         </div>
         
-        <nav class="dash-nav">
-            <a href="{% url 'prof_dashboard' %}" class="dash-nav-link active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Dashboard
+        <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="{% url 'prof_dashboard' %}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; background: var(--dash-accent-soft); color: var(--dash-accent); text-decoration: none; font-weight: 700;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Tableau de bord
             </a>
-            <a href="{% url 'prof_edit_profile' %}" class="dash-nav-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <a href="{% url 'prof_edit_profile' %}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 Mon Profil
-            </a>
-            <a href="{% url 'messagerie' %}" class="dash-nav-link">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                Messages
             </a>
         </nav>
 
         <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--dash-border);">
-            <a href="{% url 'logout' %}" style="color: #ef4444; font-weight: 700; text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <a href="{% url 'logout' %}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #ef4444; text-decoration: none; font-weight: 700; font-size: 0.875rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 Déconnexion
             </a>
         </div>
@@ -41,200 +37,211 @@
 
     <!-- Main Content -->
     <main class="dash-main">
-        <header class="dash-header">
+        <div class="dash-header">
             <div class="dash-title">
                 <h1>Bonjour, {{ teacher.prenom|default:request.user.first_name }} !</h1>
-                <p>Voici l'état de votre activité.</p>
+                <p>Voici l'état de votre activité aujourd'hui.</p>
+                
+                <!-- Profile Completion Bar (Inserted between subtitle and buttons) -->
+                <div class="header-completion">
+                    <span>Profil: {{ completion }}%</span>
+                    <div class="mini-progress-bar">
+                        <div class="mini-progress-fill" style="width: {{ completion }}%;"></div>
+                    </div>
+                </div>
             </div>
+
             <div class="dash-actions">
                 <button class="btn-dash btn-dash-outline" onclick="copyProfileLink('{{ request.build_absolute_uri|slice:':-1' }}{% url 'professeur_detail' teacher.slug %}')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                     Lien
                 </button>
                 <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" class="btn-dash btn-dash-primary">
                     Profil Public
                 </a>
             </div>
-        </header>
+        </div>
 
-        <div class="dash-content-grid">
-            <!-- Column: Activity (Top on mobile) -->
-            <div class="activity-section">
-                <!-- Engagements Tabs -->
-                <section class="tabs-container">
-                    <div class="tabs-header">
-                        <button class="tab-btn active" onclick="switchTab(event, 'tab-en-cours')">Demandes ({{ engs_en_cours.count }})</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'tab-actifs')">Actifs ({{ engs_actifs.count }})</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'tab-essais')">Essais</button>
-                        <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
-                    </div>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ teacher.nb_vues_total }}</div>
+                <div class="stat-label">Vues totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ teacher.nb_engagements_confirmes }}</div>
+                <div class="stat-label">Contrats actifs</div>
+            </div>
+            <div class="stat-card" id="desktop-only-stat">
+                <div class="stat-value">{{ teacher.nb_engagements_termines }}</div>
+                <div class="stat-label">Cours terminés</div>
+            </div>
+        </div>
 
-                    <div id="tab-en-cours" class="tab-content active">
-                        {% if engs_en_cours %}
-                            {% for eng in engs_en_cours %}
-                            <div class="eng-card">
-                                <div class="eng-info">
-                                    <div class="parent-avatar">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
-                                    <div class="eng-details">
-                                        <h4>{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|truncatechars:15 }}</h4>
-                                        <div class="eng-meta">{{ eng.matiere }} • {{ eng.date_creation|date:"d/m" }}</div>
-                                    </div>
-                                </div>
-                                <button class="btn-dash btn-dash-outline" style="width: auto; padding: 0 0.75rem;" onclick="openEngModal({{ eng.id }})">Détails</button>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucune demande.</p>
-                        {% endif %}
-                    </div>
-
-                    <div id="tab-actifs" class="tab-content">
-                        {% if engs_actifs %}
-                            {% for eng in engs_actifs %}
-                            <div class="eng-card">
-                                <div class="eng-info">
-                                    <div class="parent-avatar" style="background:var(--dash-accent-soft); color:var(--dash-accent);">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
-                                    <div class="eng-details">
-                                        <h4>{{ eng.parent_apprenant.get_full_name|truncatechars:15 }}</h4>
-                                        <div class="eng-meta">Actif • {{ eng.matiere }}</div>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn-dash btn-dash-outline" style="width: auto; padding: 0 0.75rem;">Journal</a>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun contrat actif.</p>
-                        {% endif %}
-                    </div>
-
-                    <div id="tab-essais" class="tab-content">
-                        {% if engs_essais %}
-                            {% for eng in engs_essais %}
-                            <div class="eng-card">
-                                <div class="eng-info">
-                                    <div class="parent-avatar" style="background:#e0e7ff; color:#3730a3;">E</div>
-                                    <div class="eng-details">
-                                        <h4>{{ eng.parent_apprenant.get_full_name|truncatechars:15 }}</h4>
-                                        <div class="eng-meta">Essai: {{ eng.date_heure_essai|date:"d/m à H:i"|default:"À définir" }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
-                        {% endif %}
-                    </div>
-
-                    <div id="tab-history" class="tab-content">
-                        {% if engs_termines %}
-                            {% for eng in engs_termines %}
-                            <div class="eng-card" style="opacity: 0.7;">
-                                <div class="eng-info">
-                                    <div class="eng-details">
-                                        <h4>#{{ eng.id }}</h4>
-                                        <p class="eng-meta">{{ eng.matiere }} • {{ eng.get_statut_general_display }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Historique vide.</p>
-                        {% endif %}
-                    </div>
-                </section>
+        <!-- Engagement Management Tabs -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">Demandes ({{ engs_en_cours.count }})</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Contrats ({{ engs_actifs.count }})</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
             </div>
 
-            <!-- Column: Stats (Below tabs on mobile) -->
-            <div class="sidebar-section">
-                <!-- Completion -->
-                <section class="completion-widget">
-                    <div class="completion-info">
-                        <h3>Profil: {{ completion }}%</h3>
-                        <p>Plus complet = Plus de visibilité</p>
+            <!-- Tab: Demandes -->
+            <div id="tab-pending" class="tab-content active">
+                {% if engs_en_cours %}
+                    {% for eng in engs_en_cours %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="avatar-circle">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
+                            <div class="eng-details">
+                                <h4>{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|truncatechars:18 }}</h4>
+                                <div class="eng-meta">{{ eng.matiere }} • {{ eng.date_creation|date:"d M" }}</div>
+                            </div>
+                        </div>
+                        <button class="btn-dash btn-dash-outline" style="width: auto; padding: 0 0.75rem; height: 36px; font-size: 0.75rem;" onclick="openEngModal({{ eng.id }})">Détails</button>
                     </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: {{ completion }}%;"></div>
-                    </div>
-                </section>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucune nouvelle demande.</p>
+                {% endif %}
+            </div>
 
-                <!-- Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">{{ teacher.nb_vues_total }}</div>
-                        <div class="stat-label">Vues</div>
+            <!-- Tab: Actifs -->
+            <div id="tab-active" class="tab-content">
+                {% if engs_actifs %}
+                    {% for eng in engs_actifs %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="avatar-circle" style="background:var(--dash-accent-soft);">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
+                            <div class="eng-details">
+                                <h4>{{ eng.parent_apprenant.get_full_name|truncatechars:18 }}</h4>
+                                <div class="eng-meta">Contrat en cours • {{ eng.matiere }}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">{{ teacher.nb_engagements_confirmes }}</div>
-                        <div class="stat-label">Contrats</div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucun contrat actif.</p>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Essais -->
+            <div id="tab-trials" class="tab-content">
+                {% if engs_essais %}
+                    {% for eng in engs_essais %}
+                    <div class="eng-card">
+                        <div class="eng-info">
+                            <div class="avatar-circle" style="background:#e0e7ff; color:#3730a3;">E</div>
+                            <div class="eng-details">
+                                <h4>Essai avec {{ eng.parent_apprenant.first_name|truncatechars:15 }}</h4>
+                                <div class="eng-meta">{{ eng.date_heure_essai|date:"d/m à H:i"|default:"À définir" }}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucun essai programmé.</p>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Historique -->
+            <div id="tab-history" class="tab-content">
+                {% if engs_termines %}
+                    {% for eng in engs_termines %}
+                    <div class="eng-card" style="opacity: 0.7;">
+                        <div class="eng-info">
+                            <div class="eng-details">
+                                <h4>Engagement #{{ eng.id }}</h4>
+                                <div class="eng-meta">{{ eng.get_statut_general_display }} • {{ eng.matiere }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Historique vide.</p>
+                {% endif %}
             </div>
         </div>
     </main>
 </div>
 
-<!-- Internal Bottom Navigation (Mobile) -->
+<!-- Bottom Navigation (Mobile) -->
 <nav class="dash-bottom-nav">
-    <a href="{% url 'prof_dashboard' %}" class="bottom-nav-item active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        <span>Accueil</span>
+    <a href="{% url 'prof_dashboard' %}" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Tableau</span>
     </a>
-    <a href="{% url 'prof_edit_profile' %}" class="bottom-nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        <span>Modifier</span>
+    <a href="{% url 'prof_edit_profile' %}" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <span>Profil</span>
     </a>
-    <a href="{% url 'messagerie' %}" class="bottom-nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <a href="{% url 'messagerie' %}" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Messages</span>
     </a>
 </nav>
 
-<!-- Modal Détails -->
-<div id="engModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; padding: 1rem;">
-    <div style="background: white; padding: 1.5rem; border-radius: 16px; width: 100%; max-width: 400px; position: relative;">
-        <button onclick="closeEngModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:none; font-size: 1.5rem; cursor:pointer;">✕</button>
+<!-- Modal Container -->
+<div id="engModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding: 1.5rem;">
+    <div style="background: white; padding: 1.5rem; border-radius: 20px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <button onclick="closeEngModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:none; font-size: 1.5rem; cursor:pointer; color: var(--dash-text-muted);">✕</button>
         <div id="modalContent">
-            <h3>Détails</h3>
+            <h3>Détails de l'engagement</h3>
             <p>Chargement...</p>
         </div>
     </div>
 </div>
 
 <script>
+    // Tab Switching Logic
     function switchTab(evt, tabId) {
-        let tabcontent = document.getElementsByClassName("tab-content");
-        for (let i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
-        let tablinks = document.getElementsByClassName("tab-btn");
-        for (let i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
-        document.getElementById(tabId).classList.add("active");
-        evt.currentTarget.classList.add("active");
+        // Hide all contents
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => {
+            content.style.display = 'none';
+            content.classList.remove('active');
+        });
+
+        // Deactivate all buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        // Show active content
+        const activeContent = document.getElementById(tabId);
+        activeContent.style.display = 'block';
+        activeContent.classList.add('active');
+
+        // Activate button
+        evt.currentTarget.classList.add('active');
     }
 
-    function copyProfileLink(link) {
-        navigator.clipboard.writeText(link).then(() => alert("Lien de profil copié !"));
-    }
-
+    // Modal Logic
     function openEngModal(id) {
         document.getElementById('engModal').style.display = 'flex';
         setTimeout(() => {
             document.getElementById('modalContent').innerHTML = `
-                <h3 style="margin-bottom:1rem;">Demande #${id}</h3>
-                <div style="font-size:0.875rem; line-height:1.6; margin-bottom:1.5rem;">
+                <h3 style="margin-bottom:1rem; font-size:1.125rem;">Demande d'engagement #${id}</h3>
+                <div style="font-size:0.875rem; line-height:1.6; margin-bottom:1.5rem; color:#475569;">
                     <p><strong>Matière:</strong> Mathématiques</p>
-                    <p><strong>Niveau:</strong> Terminale</p>
-                    <p><strong>Fréquence:</strong> 2x / semaine</p>
-                    <p><strong>Localisation:</strong> Cotonou</p>
+                    <p><strong>Niveau:</strong> Terminale D</p>
+                    <p><strong>Lieu:</strong> Abomey-Calavi</p>
+                    <p><strong>Fréquence:</strong> 3 séances par semaine</p>
                 </div>
                 <div style="display:flex; gap:0.75rem;">
-                    <button class="btn-dash btn-dash-primary" style="flex:1">Accepter</button>
-                    <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;">Refuser</button>
+                    <button class="btn-dash btn-dash-primary" style="flex:1" onclick="alert('Accepté')">Accepter</button>
+                    <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="alert('Refusé')">Refuser</button>
                 </div>
             `;
-        }, 200);
+        }, 250);
     }
 
     function closeEngModal() {
         document.getElementById('engModal').style.display = 'none';
+    }
+
+    function copyProfileLink(link) {
+        navigator.clipboard.writeText(link).then(() => alert("Lien de profil copié !"));
     }
 </script>
 {% endblock %}
