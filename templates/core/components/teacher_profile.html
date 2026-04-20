@@ -26,10 +26,16 @@
     
     <!-- Boutons d'action -->
     <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem;">
+        {% if user.is_authenticated and user.profile.role != 'PROF' %}
         <button class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: all 0.3s;" 
             onclick="openEngagementForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null)">
             Proposer un engagement
         </button>
+        {% elif not user.is_authenticated %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: all 0.3s;">
+            Se connecter pour s'engager
+        </a>
+        {% endif %}
         
         {% if is_side_panel %}
         <a href="{% url 'professeur_detail' teacher.slug %}" style="text-align: center; color: #64748b; text-decoration: underline; font-weight: 500; margin-top: 0.5rem;">
