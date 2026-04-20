@@ -338,7 +338,51 @@
 {% block content %}
 <div class="dashboard-container">
 
-    <!-- ÉTAPE 2 : STATUS DASHBOARD -->
+    {% if teacher.statut_de_validation == "APPROVED" %}
+    <!-- ÉTAPE : SUCCÈS / VALIDÉ -->
+    <div class="status-card" style="border-top-color: #16a34a;">
+        <div class="status-icon">🎉</div>
+        <h2 class="status-title">Félicitations, vous êtes prêt !</h2>
+        <p class="status-text">
+            Votre profil a été vérifié et validé par notre équipe. Vous faites désormais partie de la communauté des professeurs certifiés de <strong>Prof Chez Vous</strong>.
+        </p>
+        <div style="background: #f0fdf4; border: 1px dashed #16a34a; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+            <p style="color: #15803d; font-size: 0.95rem; margin: 0;">
+                Votre visibilité est maintenant active. Les parents et apprenants peuvent désormais vous trouver et vous envoyer des propositions d'engagement.
+            </p>
+        </div>
+        <a href="{% url 'prof_dashboard' %}" class="btn-complete" style="display: inline-block; text-decoration: none; width: 100%; max-width: 400px;">
+            Accéder à mon Dashboard Enseignant
+        </a>
+    </div>
+
+    {% elif teacher.statut_de_validation == "INCOMPLETE" %}
+    <!-- ÉTAPE : INCOMPLET / REFUSÉ -->
+    <div class="status-card" style="border-top-color: #ef4444;">
+        <div class="status-icon">⚠️</div>
+        <h2 class="status-title">Profil Incomplet ou Non Retenu</h2>
+        <p class="status-text">
+            Après examen de votre dossier, nous avons constaté que certaines informations sont manquantes ou ne répondent pas totalement à nos critères de sélection actuels.
+        </p>
+        
+        {% if teacher.message_admin %}
+        <div class="admin-box" style="background: #fff1f2; border-color: #fecdd3; color: #991b1b; margin-bottom: 2rem;">
+            <strong>🔴 Raison indiquée :</strong>
+            {{ teacher.message_admin }}
+        </div>
+        {% endif %}
+
+        <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 2rem;">
+            Ne vous découragez pas ! Vous pouvez mettre à jour vos informations et soumettre à nouveau votre candidature pour une nouvelle vérification.
+        </p>
+        
+        <a href="{% url 'prof_edit_profile' %}" class="btn-complete" style="display: inline-block; text-decoration: none; background: #334155; width: 100%; max-width: 400px;">
+            Modifier et Republier mon Profil
+        </a>
+    </div>
+
+    {% else %}
+    <!-- ÉTAPE 2 : STATUS DASHBOARD (EN ATTENTE) -->
     <div class="status-card">
         <div class="status-icon">⏳</div>
         <h2 class="status-title">Profil en cours de vérification</h2>
@@ -349,13 +393,17 @@
 
         {% if teacher.message_admin %}
         <div class="admin-box">
-            <strong>🔴 Message de l'Administration :</strong>
+            <strong>ℹ️ Note de l'Administration :</strong>
             {{ teacher.message_admin }}
         </div>
         {% endif %}
+        
+        <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 12px; font-size: 0.85rem; color: #64748b;">
+            Vous recevrez une notification dès que votre statut aura changé.
+        </div>
     </div>
 
-    <!-- ÉTAPE 3 : COMPLETION BOOST -->
+    <!-- ÉTAPE 3 : COMPLETION BOOST (VISIBLE SEULEMENT SI EN ATTENTE) -->
     <div class="completion-card">
         <div class="progress-container">
             <div class="progress-header">
@@ -370,14 +418,16 @@
                     précis à 100% de chances d'être contacté en premier. {% else %} Félicitations ! Votre profil a
                     atteint 100% de complétion. Il sera spectaculaire lors de sa validation. {% endif %} </p>
         </div>
-        <div>
-            {% if completion < 100 %} <button class="btn-complete" onclick="openModal()">Compléter mon profil</button>
-                {% else %}
+        <div style="flex-shrink: 0; width: 100%; text-align: center; margin-top: 1rem;">
+            {% if completion < 100 %} 
+                <button class="btn-complete" onclick="openModal()" style="width: 100%;">Compléter mon profil</button>
+            {% else %}
                 <button class="btn-complete" onclick="openModal()"
-                    style="background:#f1f5f9; color:#475569; box-shadow:none;">Modifier mon profil</button>
-                {% endif %}
+                    style="background:#f1f5f9; color:#475569; box-shadow:none; width: 100%;">Modifier ma vitrine</button>
+            {% endif %}
         </div>
     </div>
+    {% endif %}
 </div>
 
 <!-- Modal Etape 3 (Boost Conversion) -->

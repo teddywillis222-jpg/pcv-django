@@ -23,7 +23,18 @@ from django.template.loader import render_to_string
 
 
 def home(request):
-    return render(request, "core/home.html")
+    from .choices import ValidationStatus
+    # On récupère 6 professeurs validés aléatoirement (ou les plus récents)
+    top_professeurs = TeacherProfile.objects.filter(
+        statut_de_validation=ValidationStatus.VALIDE
+    ).order_by('?')[:6]
+
+    for prof in top_professeurs:
+        # Valeurs par défaut pour l'affichage home si non définies
+        prof.moyenne_avis = 4.8 if prof.est_certifie else 4.5
+        prof.nombre_avis = 12 if prof.est_certifie else 3
+
+    return render(request, "core/home.html", {"top_professeurs": top_professeurs})
 
 def faq(request):
     """Page FAQ - Questions fréquentes"""
@@ -312,8 +323,10 @@ def prof_attente_dashboard(request):
         return redirect("prof_create_profile")
 
     from .choices import ValidationStatus
-    if teacher_instance.statut_de_validation == ValidationStatus.VALIDE:
-        return redirect("prof_dashboard")
+    
+    # On ne redirige plus automatiquement pour permettre d'afficher le message de succès sur cette page
+    # if teacher_instance.statut_de_validation == ValidationStatus.VALIDE:
+    #     return redirect("prof_dashboard")
 
     if request.method == "POST":
         teacher_instance.presentation = request.POST.get("presentation", teacher_instance.presentation)

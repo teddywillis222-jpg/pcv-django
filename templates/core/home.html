@@ -254,11 +254,19 @@ main.container {
     max-width: 1300px;
     margin: 0 auto;
     overflow-x: auto;
-    padding: 1rem 0 2rem 0;
+    padding: 1.5rem 0.5rem 2.5rem 0.5rem;
     scrollbar-width: none;
     scroll-snap-type: x mandatory;
+    -ms-overflow-style: none; /* IE/Edge */
+    scroll-behavior: smooth;
 }
 .prof-scroll-container::-webkit-scrollbar { display: none; }
+
+/* Hide scroll controls on mobile */
+.scroll-controls { display: none !important; }
+@media (min-width: 1024px) {
+    .scroll-controls { display: flex !important; }
+}
 
 .prof-wrapper {
     display: flex;
@@ -633,78 +641,76 @@ main.container {
 </section>
 
 <!-- PROFESSEURS DISPONIBLES & CTA -->
-<section class="section-padding bg-light">
-    <div class="section-header" style="text-align: left; padding-left: 0.5rem; max-width: 1300px; margin-left: auto; margin-right: auto;">
-        <h2 style="margin-bottom: 0;">Professeurs Disponibles</h2>
-    </div>
-    
-    <div class="prof-scroll-container">
-        <div class="prof-wrapper">
-            <!-- Carte 1 -->
-            <div class="prof-card">
-                <div class="prof-card-header">
-                    <img src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
-                    <div class="prof-info">
-                        <h4>Dr. Koffi Adjaho</h4>
-                        <p>Mathématiques, Physique</p>
-                    </div>
-                </div>
-                <div class="prof-badges">
-                    <span class="badge badge-green">Cotonou</span>
-                    <span class="badge badge-amber">5 ans d'exp.</span>
-                </div>
-                <a href="#" class="btn-outline-green">Voir le profil complet</a>
-            </div>
-            
-            <!-- Carte 2 -->
-            <div class="prof-card">
-                <div class="prof-card-header">
-                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
-                    <div class="prof-info">
-                        <h4>Mme. Awa Sissoko</h4>
-                        <p>Français, Philosophie</p>
-                    </div>
-                </div>
-                <div class="prof-badges">
-                    <span class="badge badge-green">Abomey-Calavi</span>
-                    <span class="badge badge-amber">8 ans d'exp.</span>
-                </div>
-                <a href="#" class="btn-outline-green">Voir le profil complet</a>
-            </div>
-            
-            <!-- Carte 3 -->
-            <div class="prof-card">
-                <div class="prof-card-header">
-                    <img src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
-                    <div class="prof-info">
-                        <h4>M. Youssef Touré</h4>
-                        <p>Anglais, Espagnol</p>
-                    </div>
-                </div>
-                <div class="prof-badges">
-                    <span class="badge badge-green">Akpakpa</span>
-                    <span class="badge badge-amber">6 ans d'exp.</span>
-                </div>
-                <a href="#" class="btn-outline-green">Voir le profil complet</a>
-            </div>
-            
-            <!-- Carte 4 -->
-            <div class="prof-card">
-                <div class="prof-card-header">
-                    <img src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Prof" class="prof-avatar">
-                    <div class="prof-info">
-                        <h4>Dr. Mariam Bako</h4>
-                        <p>SVT, Chimie</p>
-                    </div>
-                </div>
-                <div class="prof-badges">
-                    <span class="badge badge-green">Fidjrossè</span>
-                    <span class="badge badge-amber">10 ans d'exp.</span>
-                </div>
-                <a href="#" class="btn-outline-green">Voir le profil complet</a>
-            </div>
+<section class="section-padding bg-light" style="position: relative;">
+    <div class="section-header" style="text-align: left; padding-left: 0.5rem; max-width: 1300px; margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h2 style="margin-bottom: 0.5rem;">Professeurs Disponibles</h2>
+            <p style="font-size: 0.95rem; color: #64748b; margin: 0;">Découvrez une sélection de nos meilleurs enseignants validés.</p>
+        </div>
+        <!-- Scroll Buttons (Desktop Only) -->
+        <div class="scroll-controls" style="display: flex; gap: 0.75rem;">
+            <button onclick="scrollProfs('left')" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--success-700); transition: all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button onclick="scrollProfs('right')" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--success-700); transition: all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
         </div>
     </div>
+    
+    <div class="prof-scroll-container" id="profScroll">
+        <div class="prof-wrapper">
+            {% for prof in top_professeurs %}
+            <!-- Dynamic Card -->
+            <div class="prof-card">
+                <div class="prof-card-header">
+                    {% if prof.photo_de_profil %}
+                        <img src="{{ prof.photo_de_profil.url }}" alt="{{ prof.prenom }}" class="prof-avatar">
+                    {% else %}
+                        <div class="prof-avatar" style="display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                    {% endif %}
+                    <div class="prof-info">
+                        <h4>{{ prof.prenom }} {{ prof.nom|slice:":1" }}.</h4>
+                        <p>{{ prof.matiere_enseignee }}</p>
+                    </div>
+                </div>
+                <div class="prof-badges">
+                    <span class="badge badge-green">{{ prof.ville_quartier }}</span>
+                    <span class="badge badge-amber">{{ prof.annees_d_experience }} ans d'exp.</span>
+                </div>
+                <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.25rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span style="font-size: 0.875rem; font-weight: 700;">{{ prof.moyenne_avis }}</span>
+                        <span style="font-size: 0.75rem; color: #94a3b8;">({{ prof.nombre_avis }})</span>
+                    </div>
+                    <div style="font-size: 0.875rem; font-weight: 800; color: var(--success-700);">
+                        {{ prof.tarif_horaire|floatformat:0 }} F/h
+                    </div>
+                </div>
+                <a href="{% url 'professeur_detail' prof.slug %}" class="btn-outline-green">Voir le profil complet</a>
+            </div>
+            {% empty %}
+            <div style="padding: 2rem; text-align: center; color: #94a3b8; width: 100%;">
+                Aucun professeur disponible pour le moment.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function scrollProfs(direction) {
+            const container = document.getElementById('profScroll');
+            const scrollAmount = 340; // Card width + gap
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+    </script>
     
     <!-- CTA Final -->
     <div class="cta-final">
