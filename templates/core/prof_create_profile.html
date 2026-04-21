@@ -113,16 +113,22 @@
 
     .form-group input[type="text"],
     .form-group input[type="email"],
+    .form-group input[type="number"],
+    .form-group input[type="tel"],
     .form-group select,
     .form-group textarea {
-        width: 100%;
-        padding: 0.8rem 1rem;
+        width: 100% !important;
+        height: 58px !important;
+        padding: 0 1.25rem;
         background: var(--input-bg);
         border: 1px solid var(--border-color);
-        border-radius: 10px;
+        border-radius: 14px;
         color: var(--text-dark);
-        font-size: 0.95rem;
+        font-size: 1rem;
         transition: all 0.2s;
+        box-sizing: border-box;
+        display: block;
+        appearance: none;
     }
 
     .form-group input:focus,
@@ -191,23 +197,34 @@
         display: none;
     }
 
-    /* Styles pour Select Choices.js Override */
-    .choices__inner {
-        background: var(--input-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 0.4rem 0.5rem;
-    }
-
-    .choices.is-focused .choices__inner {
-        border-color: var(--primary);
-        background: #fff;
-        box-shadow: 0 0 0 4px var(--primary-light);
-    }
-
+    /* Styles pour Select Choices.js Total Control */
     .choices {
         width: 100% !important;
         margin-bottom: 0;
+    }
+    .choices__inner {
+        background: var(--input-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 14px !important;
+        padding: 0 1.25rem !important;
+        min-height: 58px !important;
+        height: 58px !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .choices__list--single {
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    /* Arrow styling */
+    .choices[data-type*="select-one"]::after {
+        border: none !important;
+        content: "▼" !important;
+        font-size: 10px !important;
+        color: var(--text-gray) !important;
+        right: 1.5rem !important;
     }
     .choices__list--multiple .choices__item {
         background-color: var(--primary) !important;
@@ -370,19 +387,28 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Initialisation Choices JS pour les Listes Multipies (Classe, Modes)
+        // Initialisation Choices JS pour TOUS les selects pour une harmonie totale
+        const selectConfigs = {
+            searchEnabled: false,
+            itemSelectText: "",
+            removeItemButton: true,
+            shouldSort: false,
+        };
+
         const elClasses = document.getElementById('id_classes_enseignees');
-        if (elClasses) { new Choices(elClasses, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Classes que vous maîtrisez", itemSelectText: "" }); }
+        if (elClasses) { new Choices(elClasses, { ...selectConfigs, placeholderValue: "Classes que vous maîtrisez" }); }
 
         const elModes = document.getElementById('id_modes_de_cours');
-        if (elModes) { new Choices(elModes, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Vos modes de cours préférés", itemSelectText: "" }); }
+        if (elModes) { new Choices(elModes, { ...selectConfigs, placeholderValue: "Vos modes de cours préférés" }); }
 
-        // Corriger le placeholder des select "categorie de soutien"
-        const catSelect = document.getElementById('id_categorie_de_soutien');
-        if (catSelect && catSelect.options[0]) {
-            catSelect.options[0].text = "Sélectionnez une catégorie...";
-            catSelect.options[0].disabled = true;
-        }
+        const elCat = document.getElementById('id_categorie_de_soutien');
+        if (elCat) { new Choices(elCat, { ...selectConfigs, removeItemButton: false }); }
+
+        const elVille = document.getElementById('id_ville_quartier');
+        if (elVille) { new Choices(elVille, { ...selectConfigs, removeItemButton: false, searchEnabled: true }); }
+        
+        const elMatiereCustom = document.getElementById('matiere_custom_select');
+        if (elMatiereCustom) { new Choices(elMatiereCustom, { ...selectConfigs, removeItemButton: false }); }
 
         // Révélation de noms de fichiers UI moderne
         function initFileInputs() {
@@ -564,39 +590,36 @@
         <!-- 2. EXPERTISE & LOGISTIQUE -->
         <div class="form-section">
             <h3 class="section-title">🎯 Mon Expertise & Logistique</h3>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>{{ form.categorie_de_soutien.label }} *</label>
-                    {{ form.categorie_de_soutien }}
-                </div>
-
-                <div class="form-group">
-                    <label>Matières enseignées (Max 3) *</label>
-                    <select id="matiere_custom_select">
-                        <option value="">Quelle matière enseignez-vous ?</option>
-                        <option value="Mathématiques">Mathématiques</option>
-                        <option value="Physique-Chimie">Physique-Chimie</option>
-                        <option value="SVT">SVT</option>
-                        <option value="Français">Français</option>
-                        <option value="Anglais">Anglais</option>
-                        <option value="Philosophie">Philosophie</option>
-                        <option value="Histoire-Géographie">Histoire-Géographie</option>
-                        <option value="AUTRE">+ Ajouter une autre matière...</option>
-                    </select>
-                    <div class="selected-matieres" id="selected_matieres_badges"></div>
-                    <!-- HIDDEN DEFAULT DJANGO FIELD -->
-                    {{ form.matiere_enseignee }}
-                </div>
+ 
+            <div class="form-group">
+                <label>Ma catégorie d'enseignement principale *</label>
+                {{ form.categorie_de_soutien }}
             </div>
-
+ 
             <div class="form-group" style="margin-top: 1rem;">
-                <label>{{ form.classes_enseignees.label }}</label>
+                <label>Matière principale enseignée (Max 3) *</label>
+                <select id="matiere_custom_select">
+                    <option value="">Quelle matière enseignez-vous ?</option>
+                    <option value="Mathématiques">Mathématiques</option>
+                    <option value="Physique-Chimie">Physique-Chimie</option>
+                    <option value="SVT">SVT</option>
+                    <option value="Français">Français</option>
+                    <option value="Anglais">Anglais</option>
+                    <option value="Philosophie">Philosophie</option>
+                    <option value="Histoire-Géographie">Histoire-Géographie</option>
+                    <option value="AUTRE">+ Ajouter une autre matière...</option>
+                </select>
+                <div class="selected-matieres" id="selected_matieres_badges"></div>
+                {{ form.matiere_enseignee }}
+            </div>
+ 
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label>Niveaux / Classes que vous maîtrisez *</label>
                 {{ form.classes_enseignees }}
             </div>
-
+ 
             <div class="form-group" style="margin-top: 1.5rem;">
-                <label>{{ form.modes_de_cours.label }}</label>
+                <label>Vos modes de cours préférés *</label>
                 {{ form.modes_de_cours }}
             </div>
         </div>
