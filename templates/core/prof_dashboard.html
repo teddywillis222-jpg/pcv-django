@@ -85,10 +85,10 @@
         <!-- Engagement Management Tabs -->
         <div class="tabs-container">
             <div class="tabs-header">
-                <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">Demandes ({{ engs_en_cours.count }})</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Contrats ({{ engs_actifs.count }})</button>
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">En cours ({{ engs_en_cours.count }})</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs ({{ engs_actifs.count }})</button>
                 <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Terminé</button>
             </div>
 
             <!-- Tab: Demandes -->
@@ -99,7 +99,12 @@
                         <div class="eng-info">
                             <div class="avatar-circle">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
                             <div class="eng-details">
-                                <h4>{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|truncatechars:18 }}</h4>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <h4 style="margin:0;">{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|truncatechars:18 }}</h4>
+                                    <span class="badge-status {% if eng.statut_general == 'EN_ATTENTE' %}status-pending{% else %}status-active{% endif %}" style="font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 800; text-transform: uppercase;">
+                                        {{ eng.get_statut_general_display }}
+                                    </span>
+                                </div>
                                 <div class="eng-meta">{{ eng.matiere }} • {{ eng.date_creation|date:"d M" }}</div>
                             </div>
                         </div>

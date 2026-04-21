@@ -54,6 +54,8 @@ urlpatterns = [
     path("api/teacher-profile/<slug:teacher_slug>/", core_views.api_teacher_profile, name="api_teacher_profile"),
     path("api/engagement/", core_views.api_engagement, name="api_engagement"),
     path("api/engagement/<int:engagement_id>/action/", core_views.api_engagement_action, name="api_engagement_action"),
+    path("api/engagement/<int:engagement_id>/update/", core_views.api_update_engagement, name="api_update_engagement"),
+    path("api/engagement/<int:engagement_id>/finalize/", core_views.api_finalize_engagement, name="api_finalize_engagement"),
 
     # Admin Dashboard PCV (Test Route)
     path("debug-admin-pcv/", core_views.debug_admin_pcv, name="debug_admin_pcv"),

@@ -516,21 +516,20 @@ def prof_dashboard(request):
     # 1. Gestion des Engagements par onglets
     engagements = teacher.engagements.all().order_by("-date_creation")
     
-    # Demandes reçues (En attente)
-    engs_en_cours = engagements.filter(statut_general=StatutGeneral.EN_ATTENTE)
-    
-    # Contrats actifs (Confirmé, En cours, Finalisé)
-    engs_actifs = engagements.filter(
-        statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE]
+    # "En cours" (Demandes en attente ou confirmées mais pas encore finalisées)
+    # On regroupe EN_ATTENTE, CONFIRME (qui est "En cours") et EN_COURS
+    engs_en_cours = engagements.filter(
+        statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
     )
     
-    # Historique (Terminé, Refusé, Annulé)
-    engs_termines = engagements.filter(
-        statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.REFUSE, StatutGeneral.ANNULE]
-    )
+    # "Finalisés/actifs" (Uniquement les engagements ayant le statut FINALISE)
+    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE)
     
-    # Séances d'essai
-    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
+    # "Essai"
+    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI).exclude(statut_general=StatutGeneral.TERMINE)
+    
+    # "Terminé"
+    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
 
     # 2. Statistiques et Analytics
     # (Les champs de base sont déjà dans le modèle teacher)
@@ -997,23 +996,32 @@ def api_engagement_action(request, engagement_id):
         if action == 'accepter':
             engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
             
-            # 1. Trouver ou Créer la conversation
-            conversation, created = Conversation.objects.get_or_create(
+            # 1. Trouver ou Créer la conversation (plus robuste que get_or_create)
+            conversation = Conversation.objects.filter(
                 professeur=engagement.professeur,
-                parent=engagement.parent_apprenant,
-            )
+                parent=engagement.parent_apprenant
+            ).first()
             
-            if created:
+            if not conversation:
+                conversation = Conversation.objects.create(
+                    professeur=engagement.professeur,
+                    parent=engagement.parent_apprenant,
+                    statut_conversation=ConversationStatus.ENGAGEMENT_EN_COURS
+                )
                 # Ajouter les participants au ManyToMany
                 conversation.participants.add(engagement.professeur.user, engagement.parent_apprenant)
-                conversation.statut_conversation = ConversationStatus.ENGAGEMENT_EN_COURS
-                
+            
             # 2. Lier l'engagement à la conversation
             engagement.conversation = conversation
             
-            # 3. Mettre à jour l'engagement actif de la conversation si c'est le cas
+            # 3. Mettre à jour l'engagement actif de la conversation
             conversation.engagement_actif = engagement
             conversation.save()
+            
+            # 4. Mettre à jour les stats du professeur
+            teacher = engagement.professeur
+            teacher.nb_engagements_confirmes = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.CONFIRME).count()
+            teacher.save()
             
             engagement.save()
             return JsonResponse({'success': True, 'message': 'Engagement accepté', 'conversation_id': conversation.id})
@@ -1033,8 +1041,8 @@ def api_engagement_action(request, engagement_id):
 @login_required
 def conversation_detail(request, conversation_id):
     """Page de discussion privée entre deux participants."""
-    from .models import Conversation, Message, Engagement, Profile
-    from .choices import StatutGeneral, Profile as Role
+    from .choices import StatutGeneral, TypeAbonnement
+    from .models import Conversation, Message, Profile as Role
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
@@ -1058,24 +1066,34 @@ def conversation_detail(request, conversation_id):
     # Déterminer le rôle
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
     
-    # Logique de blocage (Standard vs Premium)
+    # Logique de blocage et éligibilité à la finalisation
     is_blocked = False
+    is_eligible_to_finalize = False
     blocking_message = ""
     
     if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
-        # Si parent standard, vérifier le paiement
         active_eng = conversation.engagement_actif
-        if active_eng and not active_eng.paiement_effectue:
+        
+        # Vérifier si premium
+        is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+        
+        # Un parent est bloqué s'il n'est pas premium ET n'a pas payé l'engagement actif
+        if active_eng and not active_eng.paiement_effectue and not is_premium:
             is_blocked = True
-            blocking_message = "Ce professeur vous a laissé un message. Réglez les frais afin de continuer les échanges."
+            blocking_message = "Ce professeur vous a laissé un message. Réglez les frais ou passez au Plan Premium afin de continuer les échanges."
+            
+        # Éligibilité à la finalisation : Premium OU paiement effectué
+        if is_premium or (active_eng and active_eng.paiement_effectue):
+            is_eligible_to_finalize = True
 
     return render(request, "core/conversation_detail.html", {
         "conversation": conversation,
         "messages": messages,
         "engagements": linked_engagements,
         "is_blocked": is_blocked,
+        "is_eligible_to_finalize": is_eligible_to_finalize,
         "blocking_message": blocking_message,
-        "other_participant": conversation.professeur.user if request.user == conversation.parent else conversation.parent,
+        "other_participant": conversation.professeur.user if conversation.professeur and request.user == conversation.parent else conversation.parent,
         "role": user_role,
         "ROLE_PROF": Role.ROLE_PROF,
         "ROLE_PARENT": Role.ROLE_PARENT
@@ -1137,6 +1155,56 @@ def api_send_message(request, conversation_id):
             'date': message.date_envoi.strftime("%H:%M")
         })
         
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def api_update_engagement(request, engagement_id):
+    """API pour modifier les termes d'un engagement (Parent)"""
+    from .models import Engagement
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    if engagement.parent_apprenant != request.user:
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    try:
+        data = json.loads(request.body)
+        engagement.matiere = data.get('matiere', engagement.matiere)
+        engagement.budget_convenu = data.get('budget', engagement.budget_convenu)
+        engagement.frequence_hebdomadaire = data.get('frequence', engagement.frequence_hebdomadaire)
+        engagement.duree_seance = data.get('duree_seance', engagement.duree_seance)
+        engagement.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def api_finalize_engagement(request, engagement_id):
+    """API pour qu'un parent finalise un engagement après accord."""
+    from .choices import StatutGeneral
+    from .models import Engagement
+    
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    if engagement.parent_apprenant != request.user:
+        return JsonResponse({'error': 'Action non autorisée'}, status=403)
+        
+    try:
+        engagement.statut_general = StatutGeneral.FINALISE
+        engagement.save()
+        
+        # Mettre à jour stats prof
+        teacher = engagement.professeur
+        teacher.nb_engagements_finalises = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.FINALISE).count()
+        teacher.save()
+        
+        return JsonResponse({'success': True, 'message': 'Engagement finalisé avec succès'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
