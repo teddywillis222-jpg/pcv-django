@@ -52,11 +52,125 @@ def politique_confidentialite(request):
     """Page de la Politique de Confidentialité"""
     return render(request, "core/politique_confidentialite.html")
 
+@login_required
 def messagerie(request):
-    """Page Messagerie - Communication entre utilisateurs"""
-    if not request.user.is_authenticated:
-        return redirect("login")
-    return render(request, "core/messagerie.html")
+    """Page Messagerie - Liste des discussions avec filtres et recherche intelligente."""
+    from .choices import StatutGeneral, Profile as Role
+    from .models import Conversation, Profile
+    
+    # Sécurité Rôle
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        return redirect("finalisation_compte")
+
+    # Base Queryset
+    conversations = Conversation.objects.filter(participants=request.user).select_related(
+        'professeur', 'parent', 'engagement_actif', 'dernier_message_auteur'
+    ).prefetch_related('engagement_actif__enfants_concernes')
+
+    # 1. Filtre par onglet (Status)
+    tab = request.GET.get('tab', 'toutes')
+    
+    if tab == 'actives':
+        conversations = conversations.filter(engagement_actif__statut_general=StatutGeneral.FINALISE)
+    elif tab == 'en_cours':
+        conversations = conversations.filter(
+            engagement_actif__statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+        )
+    elif tab == 'bloquees':
+        conversations = conversations.filter(
+            engagement_actif__statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS],
+            engagement_actif__paiement_effectue=False
+        )
+    elif tab == 'terminees':
+        conversations = conversations.filter(engagement_actif__statut_general=StatutGeneral.TERMINE)
+    elif tab == 'archivees':
+        conversations = conversations.filter(conversation_archivee=True)
+    else:
+        # Par défaut, on cache les archivées dans "Toutes"
+        conversations = conversations.filter(conversation_archivee=False)
+
+    # 2. Recherche intelligente
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        conversations = conversations.filter(
+            Q(professeur__nom__icontains=search_query) |
+            Q(professeur__prenom__icontains=search_query) |
+            Q(engagement_actif__enfants_concernes__prenom__icontains=search_query) |
+            Q(engagement_actif__matiere__icontains=search_query) |
+            Q(engagement_actif__localisation_option__icontains=search_query)
+        ).distinct()
+
+    conversations = conversations.order_by('-dernier_message_date', '-date_creation')
+
+    # 3. Traitement des données pour le template (Contextualisation)
+    formatted_conversations = []
+    for conv in conversations:
+        eng = conv.engagement_actif
+        
+        # Déterminer le nom à afficher
+        if user_profile.role == Role.ROLE_PARENT or user_profile.role == Role.ROLE_APPRENANT:
+            display_name = f"Prof. {conv.professeur.prenom} {conv.professeur.nom}" if conv.professeur else "Professeur PCV"
+        else:
+            # Pour le prof : Parent de [Enfants] ou Nom Apprenant
+            if eng and eng.enfants_concernes.exists():
+                enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
+                display_name = f"Parent de {enfants_names}"
+            else:
+                display_name = conv.parent.first_name if conv.parent else "Parent PCV"
+
+        # Badge Statut & Couleur
+        statut_label = "Discussion"
+        statut_class = "statut-default"
+        
+        if eng:
+            if eng.statut_general == StatutGeneral.FINALISE:
+                statut_label = "Actif"
+                statut_class = "statut-active"
+            elif eng.statut_general == StatutGeneral.TERMINE:
+                statut_label = "Terminé"
+                statut_class = "statut-finished"
+            elif eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
+                statut_label = "Paiement requis"
+                statut_class = "statut-blocked"
+            elif eng.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]:
+                statut_label = "En cours"
+                statut_class = "statut-pending"
+
+        # Blocage Messagerie
+        is_blocked = False
+        if eng and eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
+            is_blocked = True
+
+        # Non-lus
+        has_unread = False
+        if user_profile.role == Role.ROLE_PROF:
+            has_unread = not conv.conversation_lue_par_prof
+        else:
+            has_unread = not conv.conversation_lue_par_parent
+
+        formatted_conversations.append({
+            'obj': conv,
+            'display_name': display_name,
+            'statut_label': statut_label,
+            'statut_class': statut_class,
+            'is_blocked': is_blocked,
+            'has_unread': has_unread,
+            'engagement': eng,
+        })
+
+    context = {
+        'conversations': formatted_conversations,
+        'current_tab': tab,
+        'search_query': search_query,
+        'role': user_profile.role,
+        'ROLE_PROF': Role.ROLE_PROF,
+        'ROLE_PARENT': Role.ROLE_PARENT,
+        'ROLE_APPRENANT': Role.ROLE_APPRENANT,
+    }
+
+    return render(request, "core/messagerie.html", context)
 
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
