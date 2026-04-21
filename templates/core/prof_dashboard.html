@@ -223,21 +223,42 @@
     // Modal Logic
     function openEngModal(id) {
         document.getElementById('engModal').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('modalContent').innerHTML = `
-                <h3 style="margin-bottom:1rem; font-size:1.125rem;">Demande d'engagement #${id}</h3>
-                <div style="font-size:0.875rem; line-height:1.6; margin-bottom:1.5rem; color:#475569;">
-                    <p><strong>Matière:</strong> Mathématiques</p>
-                    <p><strong>Niveau:</strong> Terminale D</p>
-                    <p><strong>Lieu:</strong> Abomey-Calavi</p>
-                    <p><strong>Fréquence:</strong> 3 séances par semaine</p>
-                </div>
-                <div style="display:flex; gap:0.75rem;">
-                    <button class="btn-dash btn-dash-primary" style="flex:1" onclick="alert('Accepté')">Accepter</button>
-                    <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="alert('Refusé')">Refuser</button>
-                </div>
-            `;
-        }, 250);
+        // En vrai ici on chargerait les vraies données via fetch
+        document.getElementById('modalContent').innerHTML = `
+            <h3 style="margin-bottom:1rem; font-size:1.125rem;">Demande d'engagement #${id}</h3>
+            <div style="font-size:0.875rem; line-height:1.6; margin-bottom:1.5rem; color:#475569;">
+                <p><strong>Matière:</strong> Mathématiques</p>
+                <p><strong>Niveau:</strong> Terminale D</p>
+                <p><strong>Lieu:</strong> Abomey-Calavi</p>
+                <p><strong>Fréquence:</strong> 3 séances par semaine</p>
+            </div>
+            <div style="display:flex; gap:0.75rem;">
+                <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter')">Accepter</button>
+                <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
+            </div>
+        `;
+    }
+
+    async function handleEngAction(id, action) {
+        try {
+            const response = await fetch(`/api/engagement/${id}/action/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action })
+            });
+            const data = await response.json();
+            if (data.success) {
+                if (action === 'accepter' && data.conversation_id) {
+                    window.location.href = `/messagerie/${data.conversation_id}/`;
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                alert(data.error || "Une erreur est survenue");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
 
     function closeEngModal() {

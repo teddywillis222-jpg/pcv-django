@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Discussion avec {{ other_participant.first_name }} - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-wrapper">
+    
+    <!-- Zone Principale: Chat -->
+    <main class="chat-main">
+        <header class="chat-header">
+            <div class="chat-user-info">
+                <a href="{% url 'messagerie' %}" class="btn-back" style="margin-right: 0.5rem; color: #64748b;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </a>
+                <div class="chat-avatar">
+                    {{ other_participant.first_name|slice:":1"|upper }}
+                </div>
+                <div>
+                    <div class="chat-user-name">
+                        {% if role == ROLE_PROF %}
+                            Parent de {{ conversation.engagement_actif.enfants_concernes.first.prenom|default:"l'élève" }}
+                        {% else %}
+                            Prof. {{ conversation.professeur.prenom }}
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 0.75rem; color: #16a34a; font-weight: 700;">En ligne</div>
+                </div>
+            </div>
+            
+            <div class="chat-actions">
+                <button class="btn-icon" title="Voir le profil" style="background: none; border: none; cursor: pointer; color: #64748b;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Liste des messages -->
+        <div class="messages-container" id="messagesList">
+            {% for msg in messages %}
+                <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}">
+                    {{ msg.contenu_texte }}
+                    <div class="msg-time">{{ msg.date_envoi|date:"H:i" }}</div>
+                </div>
+            {% empty %}
+                <div style="text-align: center; color: #94a3b8; margin-top: 2rem; font-size: 0.9rem;">
+                    Dites bonjour à {{ other_participant.first_name }} !
+                </div>
+            {% endfor %}
+
+            {% if is_blocked %}
+            <div class="blocked-banner">
+                <p>{{ blocking_message }}</p>
+                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()" style="padding: 0.75rem 2rem;">Procéder au paiement</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Zone de saisie -->
+        <footer class="chat-input-area">
+            <form id="chatForm" class="chat-input-container">
+                <button type="button" class="btn-attach" style="background: none; border: none; cursor: pointer; color: #64748b; padding-bottom: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+                <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" {% if is_blocked %}disabled{% endif %}></textarea>
+                <button type="submit" class="btn-send" {% if is_blocked %}disabled{% endif %}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </form>
+        </footer>
+    </main>
+
+    <!-- Zone Latérale: Engagements -->
+    <aside class="chat-sidebar">
+        <h3 class="sidebar-title">Engagements liés</h3>
+        
+        <div class="eng-list">
+            {% for eng in engagements %}
+            <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}" onclick="showEngDetail({{ eng.id }})">
+                <div class="eng-mini-status" style="background: #f1f5f9; color: #475569;">{{ eng.get_statut_general_display }}</div>
+                <div class="eng-mini-title">{{ eng.matiere }}</div>
+                <div style="font-size: 0.75rem; color: #64748b;">{{ eng.get_classe_display }} – {{ eng.date_creation|date:"d M" }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if role == ROLE_PARENT %}
+        <div style="margin-top: auto;">
+            <button class="btn-dash btn-dash-outline" style="width: 100%; border-style: dashed;" onclick="showNewProposalModal()">
+                Nouvelle proposition
+            </button>
+        </div>
+        {% endif %}
+    </aside>
+
+</div>
+
+<!-- Modal Paiement (Placeholders) -->
+<div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 20px; width: 100%; max-width: 450px; padding: 2rem; position: relative;">
+        <button onclick="hidePaymentModal()" style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+        <h3 style="margin-bottom: 1rem; font-size: 1.25rem; font-weight: 800;">Débloquer la conversation</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Choisissez votre mode d'accès pour continuer les échanges avec ce professeur.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="border: 2px solid #e2e8f0; padding: 1rem; border-radius: 12px; cursor: pointer;" onclick="selectPlan('standard')">
+                <div style="font-weight: 800;">Plan Standard</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Accès à cette conversation uniquement.</div>
+                <div style="margin-top: 0.5rem; font-weight: 900; color: #16a34a;">2 000 FCFA</div>
+            </div>
+            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1rem; border-radius: 12px; cursor: pointer;" onclick="selectPlan('premium')">
+                <div style="font-weight: 800; color: #16a34a;">Access+ Premium</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Jusqu'à 5 propositions par mois.</div>
+                <div style="margin-top: 0.5rem; font-weight: 900; color: #16a34a;">5 000 FCFA / mois</div>
+            </div>
+        </div>
+        
+        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 1.5rem;">Confirmer le choix</button>
+    </div>
+</div>
+
+<script>
+    function showPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; }
+    function hidePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
+    
+    // Auto-scroll to bottom
+    const messagesList = document.getElementById('messagesList');
+    messagesList.scrollTop = messagesList.scrollHeight;
+
+    // Handle form submission
+    document.getElementById('chatForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (text === '') return;
+        
+        try {
+            const formData = new FormData();
+            formData.append('texte', text);
+            
+            const response = await fetch(`/messagerie/{{ conversation.id }}/send/`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Add bubble instantly
+                const bubble = document.createElement('div');
+                bubble.className = 'msg-bubble msg-sent';
+                bubble.innerHTML = text + `<div class="msg-time">${data.date}</div>`;
+                messagesList.appendChild(bubble);
+                messagesList.scrollTop = messagesList.scrollHeight;
+                input.value = '';
+                input.style.height = 'auto';
+            } else {
+                alert(data.error || "Erreur lors de l'envoi");
+                if (data.error === "Paiement requis") showPaymentModal();
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
+
+    // Auto-resize textarea
+    const textarea = document.getElementById('messageInput');
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+</script>
+{% endblock %}

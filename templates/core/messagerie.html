@@ -48,7 +48,7 @@
     <!-- Zone C: Liste des conversations -->
     <div class="msg-list">
         {% for conv in conversations %}
-        <a href="#" class="conv-card">
+        <a href="{% url 'conversation_detail' conv.obj.id %}" class="conv-card">
             <!-- Ligne 1: Nom + Statut -->
             <div class="card-top">
                 <span class="conv-name">{{ conv.display_name }}</span>

@@ -966,14 +966,177 @@ def api_engagement(request):
                 engagement.enfants_concernes.clear()
                 engagement.enfants_concernes.add(enfants.first())
 
+        engagement.save()
         return JsonResponse({
             'success': True,
             'message': 'Votre proposition d\'engagement a été enregistrée avec succès.',
             'engagement_id': engagement.id
         })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def api_engagement_action(request, engagement_id):
+    """API pour qu'un professeur accepte ou refuse un engagement."""
+    from .choices import StatutGeneral, ConversationStatus
+    from .models import Engagement, Conversation
+    
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # Sécurité: Seul le professeur concerné peut agir
+    if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
+        return JsonResponse({'error': 'Action non autorisée'}, status=403)
         
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Données invalides'}, status=400)
+    try:
+        data = json.loads(request.body)
+        action = data.get('action') # 'accepter' ou 'refuser'
+        
+        if action == 'accepter':
+            engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
+            
+            # 1. Trouver ou Créer la conversation
+            conversation, created = Conversation.objects.get_or_create(
+                professeur=engagement.professeur,
+                parent=engagement.parent_apprenant,
+            )
+            
+            if created:
+                # Ajouter les participants au ManyToMany
+                conversation.participants.add(engagement.professeur.user, engagement.parent_apprenant)
+                conversation.statut_conversation = ConversationStatus.ENGAGEMENT_EN_COURS
+                
+            # 2. Lier l'engagement à la conversation
+            engagement.conversation = conversation
+            
+            # 3. Mettre à jour l'engagement actif de la conversation si c'est le cas
+            conversation.engagement_actif = engagement
+            conversation.save()
+            
+            engagement.save()
+            return JsonResponse({'success': True, 'message': 'Engagement accepté', 'conversation_id': conversation.id})
+            
+        elif action == 'refuser':
+            engagement.statut_general = StatutGeneral.REFUSE
+            engagement.save()
+            return JsonResponse({'success': True, 'message': 'Engagement refusé'})
+            
+        else:
+            return JsonResponse({'error': 'Action inconnue'}, status=400)
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def conversation_detail(request, conversation_id):
+    """Page de discussion privée entre deux participants."""
+    from .models import Conversation, Message, Engagement, Profile
+    from .choices import StatutGeneral, Profile as Role
+    
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    
+    # Sécurité: L'utilisateur doit être participant
+    if request.user not in conversation.participants.all():
+        return redirect("messagerie")
+        
+    # Charger les messages
+    messages = conversation.messages.all().order_by("date_envoi")
+    
+    # Marquer comme lu
+    if request.user == conversation.parent:
+        conversation.conversation_lue_par_parent = True
+    elif hasattr(request.user, 'teacher_profile') and request.user.teacher_profile == conversation.professeur:
+        conversation.conversation_lue_par_prof = True
+    conversation.save()
+    
+    # Engagements liés
+    linked_engagements = conversation.engagements.all().order_by("-date_creation")
+    
+    # Déterminer le rôle
+    user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
+    
+    # Logique de blocage (Standard vs Premium)
+    is_blocked = False
+    blocking_message = ""
+    
+    if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
+        # Si parent standard, vérifier le paiement
+        active_eng = conversation.engagement_actif
+        if active_eng and not active_eng.paiement_effectue:
+            is_blocked = True
+            blocking_message = "Ce professeur vous a laissé un message. Réglez les frais afin de continuer les échanges."
+
+    return render(request, "core/conversation_detail.html", {
+        "conversation": conversation,
+        "messages": messages,
+        "engagements": linked_engagements,
+        "is_blocked": is_blocked,
+        "blocking_message": blocking_message,
+        "other_participant": conversation.professeur.user if request.user == conversation.parent else conversation.parent,
+        "role": user_role,
+        "ROLE_PROF": Role.ROLE_PROF,
+        "ROLE_PARENT": Role.ROLE_PARENT
+    })
+
+
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def api_send_message(request, conversation_id):
+    """API pour envoyer un message dans une conversation."""
+    from .models import Conversation, Message
+    
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    
+    # Sécurité
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    # Vérifier le blocage (Simulé ici, idéalement utiliser la même logique que detail)
+    # Si Parent et non payé -> Bloqué
+    if request.user == conversation.parent:
+        active_eng = conversation.engagement_actif
+        if active_eng and not active_eng.paiement_effectue:
+            return JsonResponse({'error': 'Paiement requis'}, status=402)
+
+    try:
+        texte = request.POST.get('texte', '').strip()
+        fichier = request.FILES.get('fichier')
+        
+        if not texte and not fichier:
+            return JsonResponse({'error': 'Message vide'}, status=400)
+            
+        destinataire = conversation.professeur.user if request.user == conversation.parent else conversation.parent
+        
+        message = Message.objects.create(
+            conversation=conversation,
+            auteur=request.user,
+            destinataire=destinataire,
+            contenu_texte=texte,
+            contenu_media=fichier
+        )
+        
+        # Mettre à jour la conversation
+        conversation.dernier_message_texte = texte if texte else "Fichier joint"
+        conversation.dernier_message_date = message.date_envoi
+        conversation.dernier_message_auteur = request.user
+        
+        if request.user == conversation.parent:
+            conversation.conversation_lue_par_prof = False
+        else:
+            conversation.conversation_lue_par_parent = False
+            
+        conversation.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message_id': message.id,
+            'date': message.date_envoi.strftime("%H:%M")
+        })
+        
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 

@@ -43,6 +43,8 @@ urlpatterns = [
     path("faq/", core_views.faq, name="faq"),
     path("support/", core_views.support, name="support"),
     path("messagerie/", core_views.messagerie, name="messagerie"),
+    path("messagerie/<int:conversation_id>/", core_views.conversation_detail, name="conversation_detail"),
+    path("messagerie/<int:conversation_id>/send/", core_views.api_send_message, name="api_send_message"),
     path("recherche/", core_views.recherche, name="recherche"),
     path("cgu/", core_views.cgu, name="cgu"),
     path("politique-confidentialite/", core_views.politique_confidentialite, name="politique_confidentialite"),
@@ -51,6 +53,7 @@ urlpatterns = [
     path("professeur/<slug:teacher_slug>/", core_views.professeur_detail, name="professeur_detail"),
     path("api/teacher-profile/<slug:teacher_slug>/", core_views.api_teacher_profile, name="api_teacher_profile"),
     path("api/engagement/", core_views.api_engagement, name="api_engagement"),
+    path("api/engagement/<int:engagement_id>/action/", core_views.api_engagement_action, name="api_engagement_action"),
 
     # Admin Dashboard PCV (Test Route)
     path("debug-admin-pcv/", core_views.debug_admin_pcv, name="debug_admin_pcv"),
