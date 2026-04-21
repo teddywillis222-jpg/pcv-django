@@ -252,13 +252,31 @@ body {
 /* Engagement Cards */
 .eng-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: #fcfcfc;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
-    border-radius: 12px;
-    margin-bottom: 0.75rem;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.eng-card .btn-dash {
+    width: 100% !important;
+}
+
+@media (min-width: 768px) {
+    .eng-card {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+    }
+    .eng-card .btn-dash {
+        width: auto !important;
+        padding: 0 1.5rem;
+    }
 }
 
 .eng-info {

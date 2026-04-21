@@ -180,7 +180,7 @@ class StatutGeneral:
     TERMINE = "TERMINE"
     CHOICES = [
         (EN_ATTENTE, "En attente"),
-        (CONFIRME, "Confirmé"),
+        (CONFIRME, "En cours"),
         (EN_COURS, "En cours"),
         (FINALISE, "Finalisé"),
         (REFUSE, "Refusé"),

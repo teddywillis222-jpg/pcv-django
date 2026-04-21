@@ -55,8 +55,8 @@ def politique_confidentialite(request):
 @login_required
 def messagerie(request):
     """Page Messagerie - Liste des discussions avec filtres et recherche intelligente."""
-    from .choices import StatutGeneral, Profile as Role
-    from .models import Conversation, Profile
+    from .choices import StatutGeneral
+    from .models import Conversation, Profile as Role, Profile
     
     # Sécurité Rôle
     try:

@@ -103,7 +103,7 @@
                                 <div class="eng-meta">{{ eng.matiere }} • {{ eng.date_creation|date:"d M" }}</div>
                             </div>
                         </div>
-                        <button class="btn-dash btn-dash-outline" style="width: auto; padding: 0 0.75rem; height: 36px; font-size: 0.75rem;" onclick="openEngModal({{ eng.id }})">Détails</button>
+                        <button class="btn-dash btn-dash-outline" onclick="openEngModal({{ eng.id }})">Voir les détails</button>
                     </div>
                     {% endfor %}
                 {% else %}
