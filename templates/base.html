@@ -310,6 +310,16 @@
             }
         }
     </style>
+    <!-- intl-tel-input for Premium Phone Fields -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
+    <style>
+        /* Custom styles for intl-tel-input to match our premium design */
+        .iti { width: 100%; display: block; margin-bottom: 1rem; }
+        .iti__country-list { z-index: 10000; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .iti__flag-container { border-radius: 12px 0 0 12px; }
+        .iti input { padding-left: 52px !important; }
+    </style>
 </head>
 
 <body>
@@ -561,6 +571,31 @@
     </div>
 
 {% block extra_js %}{% endblock %}
-</body>
+    <!-- Script Global pour Initialiser les Téléphones Premium -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInputs = document.querySelectorAll('input[type="tel"], .phone-input, #id_telephone_whatsapp, #id_numero_whatsapp, #id_telephone');
+            
+            phoneInputs.forEach(input => {
+                const iti = window.intlTelInput(input, {
+                    initialCountry: "bj", // Bénin par défaut
+                    preferredCountries: ["bj", "tg", "ci", "sn", "bf", "ne"], // Pays d'Afrique de l'Ouest
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/utils.js",
+                });
 
+                // Lors de la soumission du formulaire, on met le numéro complet dans le champ caché ou on remplace la valeur
+                const form = input.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function() {
+                        const fullNumber = iti.getNumber();
+                        // On crée un champ caché pour envoyer le numéro complet si nécessaire
+                        // Ou on remplace simplement la valeur du champ actuel par le format international
+                        input.value = fullNumber;
+                    });
+                }
+            });
+        });
+    </script>
+</body>
 </html>

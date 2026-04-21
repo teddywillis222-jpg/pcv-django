@@ -170,7 +170,7 @@ class ParentForm(forms.ModelForm):
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
         self.fields['numero_whatsapp'].required = True
-        self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "Ex: 01 23 45 67 89"})
+        self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "Ex: 01 23 45 67 89", "class": "phone-input"})
         self.fields['photo_profil'].widget.attrs.update({"accept": "image/*"})
 
 
@@ -314,6 +314,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         for field_name in ["nom", "email_apprenant", "telephone", "niveau", "classe", "quartier_ville", "preference_de_cours"]:
             if field_name in self.fields:
                 self.fields[field_name].required = True
+        if "telephone" in self.fields:
+            self.fields["telephone"].widget.attrs.update({"class": "phone-input"})
 
 
 from .models import TeacherProfile
@@ -367,3 +369,5 @@ class TeacherProfileForm(forms.ModelForm):
         for field_name in ["email", "nom", "telephone_whatsapp", "categorie_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
                 self.fields[field_name].required = True
+                if field_name == "telephone_whatsapp":
+                    self.fields[field_name].widget.attrs.update({"class": "phone-input"})
