@@ -396,7 +396,13 @@
         };
 
         const elClasses = document.getElementById('id_classes_enseignees');
-        if (elClasses) { new Choices(elClasses, { ...selectConfigs, placeholderValue: "Classes que vous maîtrisez" }); }
+        if (elClasses) { 
+            new Choices(elClasses, { 
+                ...selectConfigs, 
+                placeholderValue: "Classes que vous maîtrisez (Max 3)", 
+                maxItemCount: 3 
+            }); 
+        }
 
         const elModes = document.getElementById('id_modes_de_cours');
         if (elModes) { new Choices(elModes, { ...selectConfigs, placeholderValue: "Vos modes de cours préférés" }); }
@@ -515,6 +521,32 @@
 
 {% block content %}
 <div class="profil-container">
+    {% if teacher_instance and teacher_instance.statut_de_validation != "INCOMPLETE" %}
+        <!-- Message si profil déjà en attente ou validé -->
+        <div style="text-align: center; padding: 2rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">
+                {% if teacher_instance.statut_de_validation == "APPROVED" %}✅{% else %}⏳{% endif %}
+            </div>
+            <h2 style="font-weight: 800; color: var(--text-dark); margin-bottom: 1rem;">
+                {% if teacher_instance.statut_de_validation == "APPROVED" %}
+                    Votre profil est déjà validé !
+                {% else %}
+                    Profil en cours de vérification
+                {% endif %}
+            </h2>
+            <p style="color: var(--text-gray); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                {% if teacher_instance.statut_de_validation == "APPROVED" %}
+                    Vous n'avez pas besoin de recréer un profil. Vous pouvez modifier vos informations depuis votre tableau de bord.
+                {% else %}
+                    Nous avons bien reçu votre dossier. Il est inutile de le renvoyer. Patientez pendant que notre équipe l'étudie (max 48h).
+                {% endif %}
+            </p>
+            <a href="{% if teacher_instance.statut_de_validation == 'APPROVED' %}{% url 'prof_dashboard' %}{% else %}{% url 'prof_attente_dashboard' %}{% endif %}" 
+               class="submit-btn" style="display: inline-block; text-decoration: none; width: auto; padding: 1rem 2.5rem;">
+                Retourner à mon espace ➔
+            </a>
+        </div>
+    {% else %}
     <div class="profil-header">
         <h2>Dossier de Vérification</h2>
         <p>Afin de garantir l'excellence sur ProfChezVous, ces informations resteront strictement professionnelles.
@@ -647,11 +679,39 @@
                 </label>
             </div>
 
-            <button type="submit" class="submit-btn" style="margin-top: 2rem;">
+            <button type="submit" class="submit-btn" id="mainSubmitBtn" style="margin-top: 2rem;">
                 Transmettre au jury d'admission ➔
             </button>
         </div>
 
     </form>
+    {% endif %}
+</div>
+
+<script>
+    // Loading state for submit button
+    const mainForm = document.querySelector('form');
+    const submitBtn = document.getElementById('mainSubmitBtn');
+    if (mainForm && submitBtn) {
+        mainForm.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Transmission en cours...</span>';
+            submitBtn.style.opacity = '0.7';
+            submitBtn.style.cursor = 'not-allowed';
+        });
+    }
+
+    if (!document.getElementById('spin-style')) {
+        const style = document.createElement('style');
+        style.id = 'spin-style';
+        style.innerHTML = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+</script>
 </div>
 {% endblock %}

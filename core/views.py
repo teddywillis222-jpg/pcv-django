@@ -305,7 +305,10 @@ def prof_create_profile(request):
         }
         form = TeacherProfileForm(instance=teacher_instance, initial=initial)
 
-    return render(request, "core/prof_create_profile.html", {"form": form})
+    return render(request, "core/prof_create_profile.html", {
+        "form": form,
+        "teacher_instance": teacher_instance
+    })
 
 
 @login_required

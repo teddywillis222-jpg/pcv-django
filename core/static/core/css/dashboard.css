@@ -13,7 +13,13 @@
     --dash-text-muted: #64748b;
     --dash-border: #e2e8f0;
     --dash-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-    --container-padding: 0.875rem;
+    --container-padding: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --container-padding: 0.625rem;
+    }
 }
 
 * {
@@ -58,10 +64,10 @@ body {
 
 /* Header Section */
 .dash-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .dash-title h1 {
@@ -183,7 +189,18 @@ body {
     border: 1px solid var(--dash-border);
     box-shadow: var(--dash-shadow);
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .tabs-container {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        margin-left: calc(-1 * var(--container-padding));
+        margin-right: calc(-1 * var(--container-padding));
+        width: calc(100% + (2 * var(--container-padding)));
+    }
 }
 
 .tabs-header {
