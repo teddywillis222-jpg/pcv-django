@@ -80,8 +80,21 @@
         }
 
         .profil-container {
-            margin: 1rem;
-            padding: 1.5rem;
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 0;
+            padding: 1.5rem 1rem;
+            box-shadow: none;
+            border: none;
+        }
+
+        .profil-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
         }
     }
 
@@ -192,9 +205,13 @@
         box-shadow: 0 0 0 4px var(--primary-light);
     }
 
+    .choices {
+        width: 100% !important;
+        margin-bottom: 0;
+    }
     .choices__list--multiple .choices__item {
-        background-color: var(--primary);
-        border: 1px solid var(--primary-dark);
+        background-color: var(--primary) !important;
+        border: 1px solid var(--primary) !important;
         border-radius: 6px;
     }
 
@@ -300,11 +317,14 @@
     }
 
     .consent-box input {
-        width: 18px;
-        height: 18px;
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
         accent-color: var(--primary);
         cursor: pointer;
-        margin-top: 0.1rem;
+        margin-top: 0;
+        border: 2px solid var(--primary);
+        border-radius: 6px;
     }
 
     .consent-box label {
@@ -352,10 +372,10 @@
 
         // Initialisation Choices JS pour les Listes Multipies (Classe, Modes)
         const elClasses = document.getElementById('id_classes_enseignees');
-        if (elClasses) { new Choices(elClasses, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Sélectionnez vos classes", itemSelectText: "" }); }
+        if (elClasses) { new Choices(elClasses, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Classes que vous maîtrisez", itemSelectText: "" }); }
 
         const elModes = document.getElementById('id_modes_de_cours');
-        if (elModes) { new Choices(elModes, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Sélectionnez le mode de cours", itemSelectText: "" }); }
+        if (elModes) { new Choices(elModes, { removeItemButton: true, searchEnabled: false, placeholder: true, placeholderValue: "Vos modes de cours préférés", itemSelectText: "" }); }
 
         // Corriger le placeholder des select "categorie de soutien"
         const catSelect = document.getElementById('id_categorie_de_soutien');
@@ -554,7 +574,7 @@
                 <div class="form-group">
                     <label>Matières enseignées (Max 3) *</label>
                     <select id="matiere_custom_select">
-                        <option value="">Sélectionnez une matière...</option>
+                        <option value="">Quelle matière enseignez-vous ?</option>
                         <option value="Mathématiques">Mathématiques</option>
                         <option value="Physique-Chimie">Physique-Chimie</option>
                         <option value="SVT">SVT</option>

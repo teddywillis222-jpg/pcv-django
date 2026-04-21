@@ -324,7 +324,7 @@ from .choices import CourseMode, ClassLevel
 
 class TeacherProfileForm(forms.ModelForm):
     VILLE_QUARTIER_CHOICES = [
-        ("", "Sélectionnez votre zone de résidence"),
+        ("", "Votre zone de résidence au Bénin"),
         ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
         ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
         ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
@@ -364,7 +364,8 @@ class TeacherProfileForm(forms.ModelForm):
         self.fields["nom"].label = "Nom Complet"
         
         self.fields["matiere_enseignee"].widget = forms.HiddenInput()
-        self.fields["categorie_de_soutien"].empty_label = "Choisissez une catégorie principale..."
+        self.fields["categorie_de_soutien"].empty_label = "Votre catégorie d'enseignement principale"
+        self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})
         
         for field_name in ["email", "nom", "telephone_whatsapp", "categorie_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
