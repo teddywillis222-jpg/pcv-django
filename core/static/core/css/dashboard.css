@@ -264,6 +264,9 @@ body {
 
 .eng-card .btn-dash {
     width: 100% !important;
+    height: 48px;
+    font-size: 0.95rem;
+    font-weight: 700;
 }
 
 @media (min-width: 768px) {

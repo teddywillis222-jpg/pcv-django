@@ -140,13 +140,13 @@ class ValidationStatus:
 class ConversationStatus:
     DISCUSSION_LIBRE = "DISCUSSION_LIBRE"
     ENGAGEMENT_NEGOCIATION = "NEGOCIATION"
-    ENGAGEMENT_CONFIRME = "CONFIRME"
+    ENGAGEMENT_EN_COURS = "CONFIRME"
     ENGAGEMENT_TERMINE = "TERMINE"
     CONVERSATION_CLOSE = "CLOSE"
     CHOICES = [
         (DISCUSSION_LIBRE, "Discussion libre"),
         (ENGAGEMENT_NEGOCIATION, "Engagement en négociation"),
-        (ENGAGEMENT_CONFIRME, "Engagement confirmé"),
+        (ENGAGEMENT_EN_COURS, "Engagement en cours"),
         (ENGAGEMENT_TERMINE, "Engagement terminé"),
         (CONVERSATION_CLOSE, "Conversation close"),
     ]
