@@ -323,6 +323,7 @@
 </head>
 
 <body>
+    {% block navbar %}
     <header class="navbar">
         <div class="navbar-container">
             <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem;">
@@ -403,6 +404,7 @@
             {% endif %}
         </div>
     </div>
+    {% endblock %}
 
     <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
         {% block content %}{% endblock %}

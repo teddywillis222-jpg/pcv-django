@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 
+from django.utils import timezone
 from .forms import (
     ApprenantCreateProfileForm,
     EnfantForm,
@@ -1059,8 +1060,15 @@ def conversation_detail(request, conversation_id):
     if request.user not in conversation.participants.all():
         return redirect("messagerie")
         
-    # Charger les messages
-    messages = conversation.messages.all().order_by("date_envoi")
+    # Charger les messages avec marquage de changement de date
+    raw_messages = conversation.messages.all().order_by("date_envoi")
+    messages = []
+    last_date = None
+    for msg in raw_messages:
+        msg_date = msg.date_envoi.date()
+        msg.changed_date = (msg_date != last_date)
+        messages.append(msg)
+        last_date = msg_date
     
     # Marquer comme lu
     if request.user == conversation.parent:
@@ -1068,6 +1076,11 @@ def conversation_detail(request, conversation_id):
     elif hasattr(request.user, 'teacher_profile') and request.user.teacher_profile == conversation.professeur:
         conversation.conversation_lue_par_prof = True
     conversation.save()
+    
+    # Marquer les messages reçus comme lus
+    conversation.messages.filter(destinataire=request.user, lu=False).update(
+        lu=True, date_lecture=timezone.now()
+    )
     
     # Engagements liés
     linked_engagements = conversation.engagements.all().order_by("-date_creation")
@@ -1095,6 +1108,23 @@ def conversation_detail(request, conversation_id):
         if is_premium or (active_eng and active_eng.paiement_effectue):
             is_eligible_to_finalize = True
 
+    # Autres infos pour le header
+    other_user = conversation.professeur.user if conversation.professeur and request.user == conversation.parent else conversation.parent
+    
+    other_profile_obj = None
+    if other_user:
+        if hasattr(other_user, 'teacher_profile'):
+            other_profile_obj = other_user.teacher_profile
+        elif hasattr(other_user, 'parent'):
+            other_profile_obj = other_user.parent
+        elif hasattr(other_user, 'apprenant'):
+            other_profile_obj = other_user.apprenant
+    
+    # Enfants du parent pour le filtre (si parent)
+    parent_children = []
+    if user_role == Role.ROLE_PARENT and hasattr(request.user, 'parent'):
+        parent_children = request.user.parent.enfants.all()
+
     return render(request, "core/conversation_detail.html", {
         "conversation": conversation,
         "messages": messages,
@@ -1102,10 +1132,13 @@ def conversation_detail(request, conversation_id):
         "is_blocked": is_blocked,
         "is_eligible_to_finalize": is_eligible_to_finalize,
         "blocking_message": blocking_message,
-        "other_participant": conversation.professeur.user if conversation.professeur and request.user == conversation.parent else conversation.parent,
+        "other_participant": other_user,
+        "other_profile": other_profile_obj,
+        "parent_children": parent_children,
         "role": user_role,
         "ROLE_PROF": Role.ROLE_PROF,
-        "ROLE_PARENT": Role.ROLE_PARENT
+        "ROLE_PARENT": Role.ROLE_PARENT,
+        "ROLE_APPRENANT": Role.ROLE_APPRENANT,
     })
 
 

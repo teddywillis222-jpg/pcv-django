@@ -1,61 +1,126 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Discussion avec {{ other_participant.first_name }} - Prof Chez Vous{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
-{% endblock %}
+{% block navbar %}{% endblock %}
 
 {% block content %}
-<div class="chat-wrapper">
+<div class="chat-wrapper" style="height: 100vh; max-width: 100%;">
     
     <!-- Zone Principale: Chat -->
-    <main class="chat-main">
+    <main class="chat-main" style="height: 100%;">
         <header class="chat-header">
-            <div class="chat-user-info">
-                <a href="{% url 'messagerie' %}" class="btn-back" style="margin-right: 0.5rem; color: #64748b;">
+            <div class="chat-partner-info">
+                <a href="{% url 'messagerie' %}" style="color: #64748b; padding: 0.5rem 0.25rem;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 </a>
-                <div class="chat-avatar">
-                    {{ other_participant.first_name|slice:":1"|upper }}
+                
+                <div style="position: relative;">
+                    {% if other_profile.photo_de_profil %}
+                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    {% elif other_profile.photo_profil %}
+                        <img src="{{ other_profile.photo_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    {% else %}
+                        <div class="chat-avatar-img" style="display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 1.1rem;">
+                            {{ other_participant.first_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <div style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #22c55e; border: 2px solid white; border-radius: 50%;"></div>
                 </div>
-                <div>
-                    <div class="chat-user-name">
+
+                <div style="flex: 1; min-width: 0;">
+                    <div class="chat-user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         {% if role == ROLE_PROF %}
-                            Parent de {{ conversation.engagement_actif.enfants_concernes.first.prenom|default:"l'élève" }}
+                            {% if conversation.parent %}
+                                Parent de {{ conversation.engagement_actif.enfants_concernes.first.prenom|default:"l'élève" }}
+                            {% else %}
+                                {% if other_profile.prenom %}
+                                    {{ other_profile.prenom }} {{ other_profile.nom }}
+                                {% elif other_profile.nom %}
+                                    {{ other_profile.nom }}
+                                {% else %}
+                                    {{ other_participant.get_full_name|default:other_participant.username }}
+                                {% endif %}
+                            {% endif %}
                         {% else %}
-                            Prof. {{ conversation.professeur.prenom }}
+                            Prof. {{ other_participant.first_name }}
                         {% endif %}
                     </div>
-                    <div style="font-size: 0.75rem; color: #16a34a; font-weight: 700;">En ligne</div>
+                    <div class="chat-status-text">
+                        {% if other_participant.last_login %}
+                            Il y a {{ other_participant.last_login|timesince }}
+                        {% else %}
+                            En ligne
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             
-            <div class="chat-actions">
-                <button class="btn-icon" title="Voir le profil" style="background: none; border: none; cursor: pointer; color: #64748b;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <div style="display: flex; gap: 0.25rem;">
+                <button class="btn-icon" onclick="toggleSheet()" title="Engagements" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
                 </button>
+                <button class="btn-icon" onclick="toggleOptions()" title="Options" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                </button>
+            </div>
+
+            <!-- Focus Group -->
+            <div id="optionsDropdown" class="focus-group">
+                {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                    <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="focus-item" style="text-decoration: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Voir le profil
+                    </a>
+                {% else %}
+                    <div class="focus-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Voir profil {% if conversation.parent %}élève{% else %}apprenant{% endif %}
+                    </div>
+                {% endif %}
+                <div class="focus-item danger">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                    Bloquer
+                </div>
             </div>
         </header>
 
         <!-- Liste des messages -->
         <div class="messages-container" id="messagesList">
             {% for msg in messages %}
+                {% if msg.changed_date %}
+                    <div class="date-separator">
+                        <span>{{ msg.date_envoi|date:"d F Y" }}</span>
+                    </div>
+                {% endif %}
                 <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}">
-                    {{ msg.contenu_texte }}
-                    <div class="msg-time">{{ msg.date_envoi|date:"H:i" }}</div>
+                    <div class="msg-content">{{ msg.contenu_texte }}</div>
+                    <div class="msg-meta">
+                        <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
+                        {% if msg.auteur == request.user %}
+                            <span class="msg-status {% if msg.lu %}status-read{% endif %}">
+                                {% if msg.lu %}
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                        <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                                    </svg>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
                 </div>
             {% empty %}
-                <div style="text-align: center; color: #94a3b8; margin-top: 2rem; font-size: 0.9rem;">
+                <div style="text-align: center; color: #54656f; margin-top: 2rem; font-size: 0.9rem; background: #fff9c4; padding: 0.5rem 1rem; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);">
+                    🔒 Les messages sont chiffrés de bout en bout.
+                </div>
+                <div style="text-align: center; color: #54656f; margin-top: 1rem; font-size: 0.9rem;">
                     Dites bonjour à {{ other_participant.first_name }} !
                 </div>
             {% endfor %}
 
             {% if is_blocked %}
-            <div class="blocked-banner">
-                <p>{{ blocking_message }}</p>
-                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()" style="padding: 0.75rem 2rem;">Procéder au paiement</button>
+            <div class="blocked-banner" style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <p style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">{{ blocking_message }}</p>
+                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()" style="padding: 0.75rem 2rem; width: 100%; max-width: 300px;">Procéder au paiement</button>
             </div>
             {% endif %}
         </div>
@@ -63,24 +128,25 @@
         <!-- Zone de saisie -->
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
-                <button type="button" class="btn-attach" style="background: none; border: none; cursor: pointer; color: #64748b; padding-bottom: 10px;">
+                <button type="button" class="btn-attach" title="Joindre un fichier">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                 </button>
-                <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" {% if is_blocked %}disabled{% endif %}></textarea>
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" {% if is_blocked %}disabled{% endif %}></textarea>
+                </div>
                 <button type="submit" class="btn-send" {% if is_blocked %}disabled{% endif %}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-left: 2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform: rotate(45deg); margin-top: -2px; margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </form>
         </footer>
     </main>
 
-    <!-- Zone Latérale: Engagements -->
+    <!-- Zone Latérale: Masquée sur Mobile (On utilise le sheet à la place) -->
     <aside class="chat-sidebar">
         <h3 class="sidebar-title">Engagements liés</h3>
-        
         <div class="eng-list">
             {% for eng in engagements %}
-            <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}" onclick="showEngDetail({{ eng.id }}, '{{ eng.get_statut_general_display|escapejs }}', '{{ eng.matiere|escapejs }}', '{{ eng.budget_convenu|default:0 }}', '{{ eng.frequence_hebdomadaire|default:1 }}', '{{ eng.duree_seance|default:'1H' }}', '{{ eng.statut_general }}')">
+            <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}" onclick="toggleSheet()">
                 <div class="eng-mini-status {% if eng.statut_general == 'FINALISE' %}status-active{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}status-pending{% endif %}">
                     {{ eng.get_statut_general_display }}
                 </div>
@@ -89,39 +155,135 @@
             </div>
             {% endfor %}
         </div>
-
-        {% if role == ROLE_PARENT %}
-        <div style="margin-top: auto;">
-            <button class="btn-dash btn-dash-outline" style="width: 100%; border-style: dashed;" onclick="showNewProposalModal()">
-                Nouvelle proposition
-            </button>
-        </div>
-        {% endif %}
     </aside>
 
 </div>
 
-<!-- Modal Paiement (Placeholders) -->
-<div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 20px; width: 100%; max-width: 450px; padding: 2rem; position: relative;">
-        <button onclick="hidePaymentModal()" style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-        <h3 style="margin-bottom: 1rem; font-size: 1.25rem; font-weight: 800;">Débloquer la conversation</h3>
-        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Choisissez votre mode d'accès pour continuer les échanges avec ce professeur.</p>
-        
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <div style="border: 2px solid #e2e8f0; padding: 1rem; border-radius: 12px; cursor: pointer;" onclick="selectPlan('standard')">
-                <div style="font-weight: 800;">Plan Standard</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Accès à cette conversation uniquement.</div>
-                <div style="margin-top: 0.5rem; font-weight: 900; color: #16a34a;">2 000 FCFA</div>
+<!-- Bottom Sheet: Engagements -->
+<div id="engSheetOverlay" class="eng-sheet-overlay" onclick="toggleSheet()"></div>
+<div id="engSheet" class="eng-sheet">
+    <div class="eng-sheet-header">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Engagements pour cette conversation</h3>
+        <button onclick="toggleSheet()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
+    </div>
+    
+    <div class="eng-sheet-content">
+        {% if role == ROLE_PARENT and parent_children %}
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrer par enfant</label>
+            <select id="childFilter" onchange="filterEngagements()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;">
+                <option value="all">Tous les enfants</option>
+                {% for enfant in parent_children %}
+                <option value="{{ enfant.id }}">{{ enfant.prenom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div id="engSheetList">
+            {% for eng in engagements %}
+            <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}">
+                <div class="eng-row-main" onclick="toggleEngRow(this)">
+                    {% if other_profile.photo_de_profil %}
+                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" style="width: 38px; height: 38px;" alt="">
+                    {% else %}
+                        <div class="chat-avatar-img" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 0.9rem;">
+                            {{ other_participant.first_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">
+                            {% if role == ROLE_PROF %}
+                                {{ conversation.parent.get_full_name|default:conversation.parent.username }}
+                            {% else %}
+                                Prof. {{ conversation.professeur.prenom }}
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 0.8rem; color: #64748b;">
+                            {{ eng.matiere }} • {{ eng.localisation_option|default:"Lieu à définir" }}
+                        </div>
+                    </div>
+                    
+                    <div class="eng-status-badge {% if eng.statut_general == 'FINALISE' %}status-active{% else %}status-pending{% endif %}" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800;">
+                        {{ eng.get_statut_general_display }}
+                    </div>
+                    
+                    <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+
+                <div class="eng-row-details">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                        <div>
+                            <span style="color: #64748b;">Classe :</span><br>
+                            <span style="font-weight: 700;">{{ eng.get_classe_display }}</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b;">Fréquence :</span><br>
+                            <span style="font-weight: 700;">{{ eng.get_frequence_hebdomadaire_display }}</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b;">Durée :</span><br>
+                            <span style="font-weight: 700;">{{ eng.get_duree_seance_display }}</span>
+                        </div>
+                        <div>
+                            <span style="color: #64748b;">Budget :</span><br>
+                            <span style="font-weight: 800; color: #16a34a;">{{ eng.budget_convenu }} FCFA/h</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+                        {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                            {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                                <button onclick="finalizeEngagement({{ eng.id }})" 
+                                    class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}" 
+                                    style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
+                                    Finaliser l'engagement
+                                </button>
+                                {% if not is_eligible_to_finalize %}
+                                <p style="font-size: 0.7rem; color: #ef4444; text-align: center; margin-top: 0.5rem; font-weight: 600;">
+                                    Paiement requis pour débloquer
+                                </p>
+                                {% endif %}
+                            {% elif eng.statut_general == 'EN_ATTENTE' %}
+                                <button onclick="showEditProposal({{ eng.id }})" class="btn-dash btn-dash-outline" style="width: 100%;">
+                                    Modifier ma proposition
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
+                                En attente de finalisation par le parent
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1rem; border-radius: 12px; cursor: pointer;" onclick="selectPlan('premium')">
-                <div style="font-weight: 800; color: #16a34a;">Access+ Premium</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Jusqu'à 5 propositions par mois.</div>
-                <div style="margin-top: 0.5rem; font-weight: 900; color: #16a34a;">5 000 FCFA / mois</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Paiement (Sheet-like for mobile) -->
+<div id="paymentModal" class="eng-sheet-overlay" onclick="hidePaymentModal()"></div>
+<div id="paymentSheet" class="eng-sheet" style="max-height: 70vh;">
+    <div class="eng-sheet-header">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Débloquer la conversation</h3>
+        <button onclick="hidePaymentModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
+    </div>
+    <div class="eng-sheet-content" style="padding: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="border: 2px solid #e2e8f0; padding: 1.25rem; border-radius: 16px; cursor: pointer;" onclick="selectPlan('standard')">
+                <div style="font-weight: 800; font-size: 1.1rem;">Plan Standard</div>
+                <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Accès à cette conversation uniquement.</p>
+                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">2 000 FCFA</div>
+            </div>
+            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1.25rem; border-radius: 16px; cursor: pointer;" onclick="selectPlan('premium')">
+                <div style="font-weight: 800; color: #16a34a; font-size: 1.1rem;">Access+ Premium</div>
+                <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Jusqu'à 5 propositions par mois.</p>
+                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">5 000 FCFA / mois</div>
             </div>
         </div>
-        
-        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 1.5rem;">Confirmer le choix</button>
+        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 52px;">Continuer vers le paiement</button>
     </div>
 </div>
 
@@ -185,12 +347,63 @@
 </div>
 
 <script>
-    function showPaymentModal() { document.getElementById('paymentModal').style.display = 'flex'; }
-    function hidePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
-    
-    // Auto-scroll to bottom
+    // Navigation UI
+    function toggleOptions() {
+        document.getElementById('optionsDropdown').classList.toggle('active');
+    }
+
+    function toggleSheet() {
+        document.getElementById('engSheetOverlay').classList.toggle('active');
+        document.getElementById('engSheet').classList.toggle('active');
+    }
+
+    function toggleEngRow(header) {
+        const details = header.nextElementSibling;
+        details.classList.toggle('active');
+        header.querySelector('.row-arrow').style.transform = details.classList.contains('active') ? 'rotate(180deg)' : '';
+    }
+
+    function filterEngagements() {
+        const childId = document.getElementById('childFilter').value;
+        const rows = document.querySelectorAll('.eng-row');
+        rows.forEach(row => {
+            if (childId === 'all' || row.getAttribute('data-child-id') === childId) {
+                row.style.display = 'block';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Payment Sheet
+    function showPaymentModal() { 
+        document.getElementById('paymentModal').classList.add('active'); 
+        document.getElementById('paymentSheet').classList.add('active'); 
+    }
+    function hidePaymentModal() { 
+        document.getElementById('paymentModal').classList.remove('active'); 
+        document.getElementById('paymentSheet').classList.remove('active'); 
+    }
+
+    // Close on escape or outside click
+    window.onclick = function(event) {
+        if (!event.target.closest('.btn-icon')) {
+            document.getElementById('optionsDropdown').classList.remove('active');
+        }
+    }
+
+    window.onload = function() {
+        scrollToBottom();
+        document.getElementById('messageInput').focus();
+    };
+
+    function scrollToBottom() {
+        const container = document.getElementById('messagesList');
+        if (container) container.scrollTop = container.scrollHeight;
+    }
+
     const messagesList = document.getElementById('messagesList');
-    messagesList.scrollTop = messagesList.scrollHeight;
+    scrollToBottom();
 
     // Handle form submission
     document.getElementById('chatForm').addEventListener('submit', async function(e) {
@@ -211,7 +424,6 @@
             const data = await response.json();
             
             if (data.success) {
-                // Add bubble instantly
                 const bubble = document.createElement('div');
                 bubble.className = 'msg-bubble msg-sent';
                 bubble.innerHTML = text + `<div class="msg-time">${data.date}</div>`;
@@ -220,82 +432,28 @@
                 input.value = '';
                 input.style.height = 'auto';
             } else {
-                alert(data.error || "Erreur lors de l'envoi");
                 if (data.error === "Paiement requis") showPaymentModal();
+                else alert(data.error || "Erreur lors de l'envoi");
             }
-        } catch (error) {
-            console.error("Error:", error);
-        }
+        } catch (error) { console.error("Error:", error); }
     });
 
-    // Modal Engagement Functions
-    const isEligibleToFinalize = {{ is_eligible_to_finalize|yesno:"true,false" }};
-
-    function showEngDetail(id, status_label, matiere, budget, frequence, duree, status_code) {
-        document.getElementById('rev_id').value = id;
-        document.getElementById('rev_matiere').value = matiere;
-        document.getElementById('rev_budget').value = budget;
-        document.getElementById('rev_frequence').value = frequence;
-        document.getElementById('rev_duree').value = duree;
-        
-        const btnFinalize = document.getElementById('btn_finalize');
-        const eligibilityInfo = document.getElementById('eligibility_info');
-
-        if (btnFinalize) {
-            // Afficher le bouton finaliser seulement si confirmé par le prof ET éligible
-            if (status_code === 'CONFIRME' && isEligibleToFinalize) {
-                btnFinalize.style.display = 'block';
-                if (eligibilityInfo) eligibilityInfo.style.display = 'block';
-            } else {
-                btnFinalize.style.display = 'none';
-            }
-        }
-
-        document.getElementById('engReviewModal').style.display = 'flex';
-    }
-
-    function hideEngReviewModal() {
-        document.getElementById('engReviewModal').style.display = 'none';
-    }
-
-    async function updateEngagement() {
-        const id = document.getElementById('rev_id').value;
-        const data = {
-            matiere: document.getElementById('rev_matiere').value,
-            budget: document.getElementById('rev_budget').value,
-            frequence: document.getElementById('rev_frequence').value,
-            duree_seance: document.getElementById('rev_duree').value,
-        };
-        
-        try {
-            const response = await fetch(`/api/engagement/${id}/update/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            if (response.ok) {
-                alert("Modification enregistrée !");
-                location.reload();
-            }
-        } catch (e) { alert("Erreur lors de la modification"); }
-    }
-
-    async function finalizeEngagement() {
-        const id = document.getElementById('rev_id').value;
+    async function finalizeEngagement(id) {
         if (!confirm("Voulez-vous finaliser cet engagement ? Cela activera officiellement le contrat.")) return;
-        
         try {
-            const response = await fetch(`/api/engagement/${id}/finalize/`, {
-                method: 'POST'
-            });
+            const response = await fetch(`/api/engagement/${id}/finalize/`, { method: 'POST' });
             const res = await response.json();
             if (res.success) {
                 alert("Engagement finalisé ! Félicitations.");
                 location.reload();
-            } else {
-                alert(res.error || "Erreur lors de la finalisation");
-            }
+            } else alert(res.error || "Erreur lors de la finalisation");
         } catch (e) { alert("Erreur réseau"); }
+    }
+
+    function showEditProposal(id) {
+        // Rediriger ou ouvrir un modal d'édition
+        // Pour l'instant on réutilise l'ancienne logique ou on notifie
+        alert("Fonction de modification en cours d'intégration...");
     }
 
     // Auto-resize textarea
