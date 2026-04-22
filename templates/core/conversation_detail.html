@@ -1,7 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
+<style>
+    /* Correction pour que le chat prenne tout l'écran sans scroll global */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+    .navbar {
+        display: none !important; /* On cache la navbar sur cette page spécifique pour maximiser l'espace chat */
+    }
+</style>
+{% endblock %}
+
 {% block navbar %}{% endblock %}
 
 {% block content %}
-<div class="chat-wrapper" style="height: 100vh; max-width: 100%;">
+<div class="chat-wrapper">
     
     <!-- Zone Principale: Chat -->
     <main class="chat-main" style="height: 100%;">
@@ -358,9 +377,8 @@
     }
 
     function toggleEngRow(header) {
-        const details = header.nextElementSibling;
-        details.classList.toggle('active');
-        header.querySelector('.row-arrow').style.transform = details.classList.contains('active') ? 'rotate(180deg)' : '';
+        const row = header.closest('.eng-row');
+        row.classList.toggle('active');
     }
 
     function filterEngagements() {
@@ -388,22 +406,21 @@
     // Close on escape or outside click
     window.onclick = function(event) {
         if (!event.target.closest('.btn-icon')) {
-            document.getElementById('optionsDropdown').classList.remove('active');
+            const dropdown = document.getElementById('optionsDropdown');
+            if (dropdown) dropdown.classList.remove('active');
         }
     }
-
-    window.onload = function() {
-        scrollToBottom();
-        document.getElementById('messageInput').focus();
-    };
 
     function scrollToBottom() {
         const container = document.getElementById('messagesList');
         if (container) container.scrollTop = container.scrollHeight;
     }
 
-    const messagesList = document.getElementById('messagesList');
-    scrollToBottom();
+    window.onload = function() {
+        scrollToBottom();
+        const input = document.getElementById('messageInput');
+        if (input) input.focus();
+    };
 
     // Handle form submission
     document.getElementById('chatForm').addEventListener('submit', async function(e) {
@@ -416,51 +433,35 @@
             const formData = new FormData();
             formData.append('texte', text);
             
-            const response = await fetch(`/messagerie/{{ conversation.id }}/send/`, {
+            // On utilise l'URL correcte définie dans views.py (api_send_message)
+            const response = await fetch("{% url 'api_send_message' conversation.id %}", {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
             });
             
             const data = await response.json();
             
-            if (data.success) {
-                const bubble = document.createElement('div');
-                bubble.className = 'msg-bubble msg-sent';
-                bubble.innerHTML = text + `<div class="msg-time">${data.date}</div>`;
-                messagesList.appendChild(bubble);
-                messagesList.scrollTop = messagesList.scrollHeight;
-                input.value = '';
-                input.style.height = 'auto';
+            if (response.ok) {
+                // Pour une expérience fluide, on recharge pour voir le message avec le style correct
+                // Idéalement on injecterait en JS, mais le rechargement garantit la cohérence des dates/bulles
+                location.reload();
             } else {
-                if (data.error === "Paiement requis") showPaymentModal();
+                if (response.status === 402) showPaymentModal(); // Paiement requis
                 else alert(data.error || "Erreur lors de l'envoi");
             }
         } catch (error) { console.error("Error:", error); }
     });
 
-    async function finalizeEngagement(id) {
-        if (!confirm("Voulez-vous finaliser cet engagement ? Cela activera officiellement le contrat.")) return;
-        try {
-            const response = await fetch(`/api/engagement/${id}/finalize/`, { method: 'POST' });
-            const res = await response.json();
-            if (res.success) {
-                alert("Engagement finalisé ! Félicitations.");
-                location.reload();
-            } else alert(res.error || "Erreur lors de la finalisation");
-        } catch (e) { alert("Erreur réseau"); }
-    }
-
-    function showEditProposal(id) {
-        // Rediriger ou ouvrir un modal d'édition
-        // Pour l'instant on réutilise l'ancienne logique ou on notifie
-        alert("Fonction de modification en cours d'intégration...");
-    }
-
     // Auto-resize textarea
     const textarea = document.getElementById('messageInput');
-    textarea.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-    });
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
 </script>
 {% endblock %}
