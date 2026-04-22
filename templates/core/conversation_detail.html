@@ -4,25 +4,33 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
 <style>
-    /* Correction responsive pour le chat */
+    /* Correction responsive pour le chat - Mobile First */
     body, html {
         margin: 0;
         padding: 0;
+        height: 100%;
+        overflow: hidden;
     }
     
     .chat-wrapper {
         position: fixed;
-        top: 80px; /* Hauteur de la navbar */
+        top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 100;
+        z-index: 9999;
+        height: 100vh;
+        width: 100vw;
     }
     
-    @media (max-width: 768px) {
-        .chat-wrapper {
-            top: 60px; /* Navbar plus petite sur mobile */
-        }
+    /* Cacher la navbar sur cette page */
+    .navbar {
+        display: none !important;
+    }
+    
+    /* Cacher le footer sur cette page */
+    footer {
+        display: none !important;
     }
 </style>
 {% endblock %}
@@ -73,7 +81,7 @@
                     </div>
                     <div class="chat-status-text">
                         {% if other_participant.last_login %}
-                            Il y a {{ other_participant.last_login|timesince }}
+                            Depuis {{ other_participant.last_login|time:"H:i" }}
                         {% else %}
                             En ligne
                         {% endif %}
