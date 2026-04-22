@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 import re
 
 from .models import Apprenant, Enfant, Parent, Profile
+from .choices import ClassLevel, CourseMode
 
 
 class SignUpForm(UserCreationForm):
@@ -305,6 +306,14 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             "preference_de_cours",
             "disponibilites",
         ]
+        widgets = {
+            'classe': forms.Select(choices=ClassLevel.CHOICES),
+            'preference_de_cours': forms.Select(choices=CourseMode.CHOICES),
+            'matieres_recherchees': forms.CheckboxSelectMultiple(),
+            'objectifs_motivations': forms.CheckboxSelectMultiple(),
+            'description_difficultes': forms.Textarea(attrs={'rows': 4}),
+            'disponibilites': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Lundi 16h-18h, Mercredi 14h-16h...'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
