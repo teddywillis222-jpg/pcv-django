@@ -289,21 +289,18 @@ class EnfantForm(forms.ModelForm):
 
 
 class ApprenantCreateProfileForm(forms.ModelForm):
-    """Tous les champs obligatoires sauf photo_de_profil."""
+    """Formulaire en 2 étapes pour le profil apprenant."""
 
     class Meta:
         model = Apprenant
         fields = [
             "nom",
-            "email_apprenant",
             "telephone",
             "photo_de_profil",
-            "niveau",
             "classe",
             "matieres_recherchees",
             "objectifs_motivations",
             "description_difficultes",
-            "habitudes_de_travail",
             "quartier_ville",
             "preference_de_cours",
             "disponibilites",
@@ -311,9 +308,18 @@ class ApprenantCreateProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name in ["nom", "email_apprenant", "telephone", "niveau", "classe", "quartier_ville", "preference_de_cours"]:
+        # Champs obligatoires pour les 2 étapes
+        required_fields = ["nom", "telephone", "classe", "quartier_ville", "preference_de_cours"]
+        for field_name in required_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = True
+        
+        # Champs optionnels
+        optional_fields = ["photo_de_profil", "matieres_recherchees", "objectifs_motivations", "description_difficultes", "disponibilites"]
+        for field_name in optional_fields:
+            if field_name in self.fields:
+                self.fields[field_name].required = False
+        
         if "telephone" in self.fields:
             self.fields["telephone"].widget.attrs.update({"class": "phone-input"})
 
