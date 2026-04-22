@@ -531,8 +531,11 @@ def prof_dashboard(request):
     # "Terminé"
     engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
 
-    # 2. Statistiques et Analytics
-    # (Les champs de base sont déjà dans le modèle teacher)
+    # 2. Statistiques dynamiques (Plus fiables que les compteurs stockés)
+    # Contrats actifs = Uniquement FINALISE
+    nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).count()
+    # Cours terminés = TERMINE
+    nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).count()
     
     # 3. Centre de Notifications (Messages non lus)
     unread_messages_count = Message.objects.filter(
@@ -552,6 +555,8 @@ def prof_dashboard(request):
         "unread_count": unread_messages_count,
         "parents_favoris": parents_favoris,
         "completion": teacher.completion_percentage,
+        "nb_actifs": nb_actifs,
+        "nb_termines": nb_termines,
     }
 
     return render(request, "core/prof_dashboard.html", context)
@@ -993,6 +998,10 @@ def api_engagement_action(request, engagement_id):
         data = json.loads(request.body)
         action = data.get('action') # 'accepter' ou 'refuser'
         
+        # Sécurité: Ne pas agir sur un engagement déjà traité
+        if engagement.statut_general != StatutGeneral.EN_ATTENTE:
+            return JsonResponse({'error': 'Cet engagement a déjà été traité.'}, status=400)
+
         if action == 'accepter':
             engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
             

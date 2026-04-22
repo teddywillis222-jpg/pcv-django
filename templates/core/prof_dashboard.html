@@ -73,11 +73,11 @@
                 <div class="stat-label">Vues totales</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">{{ teacher.nb_engagements_confirmes }}</div>
+                <div class="stat-value">{{ nb_actifs }}</div>
                 <div class="stat-label">Contrats actifs</div>
             </div>
             <div class="stat-card" id="desktop-only-stat">
-                <div class="stat-value">{{ teacher.nb_engagements_termines }}</div>
+                <div class="stat-value">{{ nb_termines }}</div>
                 <div class="stat-label">Cours terminés</div>
             </div>
         </div>
@@ -95,7 +95,7 @@
             <div id="tab-pending" class="tab-content active">
                 {% if engs_en_cours %}
                     {% for eng in engs_en_cours %}
-                    <div class="eng-card" data-id="{{ eng.id }}" data-eng='{"parent_name": "{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|escapejs }}", "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.get_classe_display|escapejs }}", "mode": "{{ eng.get_mode_de_cours_display|escapejs }}", "lieu": "{{ eng.localisation_option|escapejs }}", "budget": "{{ eng.budget_convenu|default:"Non spécifié" }}", "frequence": "{{ eng.get_frequence_hebdomadaire_display|default:"Non spécifié" }}", "duree": "{{ eng.get_duree_seance_display|default:"Non spécifié" }}", "date_debut": "{{ eng.date_debut|date:"d/m/Y"|default:"À convenir" }}"}'>
+                    <div class="eng-card" data-id="{{ eng.id }}" data-eng='{"parent_name": "{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|escapejs }}", "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.get_classe_display|escapejs }}", "mode": "{{ eng.get_mode_de_cours_display|escapejs }}", "lieu": "{{ eng.localisation_option|escapejs }}", "budget": "{{ eng.budget_convenu|default:"Non spécifié" }}", "frequence": "{{ eng.get_frequence_hebdomadaire_display|default:"Non spécifié" }}", "duree": "{{ eng.get_duree_seance_display|default:eng.duree_seance }}", "date_debut": "{{ eng.date_debut|date:"d/m/Y"|default:"À convenir" }}", "status": "{{ eng.statut_general }}"}'>
                         <div class="eng-info">
                             <div class="avatar-circle">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
                             <div class="eng-details">
@@ -227,10 +227,17 @@
 
     // Modal Logic
     function openEngModal(id) {
-        // On récupère les données depuis les attributs du bouton ou d'un objet global
         const card = document.querySelector(`.eng-card[data-id="${id}"]`);
         const data = JSON.parse(card.getAttribute('data-eng'));
         
+        // Formatage durée : si c'est juste un chiffre, on ajoute "h"
+        let displayDuree = data.duree;
+        if (!isNaN(displayDuree)) {
+            displayDuree = displayDuree + "h";
+        } else if (displayDuree && !displayDuree.toLowerCase().includes('h')) {
+             displayDuree = displayDuree + "h";
+        }
+
         document.getElementById('engModal').style.display = 'flex';
         document.getElementById('modalContent').innerHTML = `
             <div style="text-align: center; margin-bottom: 1.5rem;">
@@ -238,7 +245,7 @@
                     ${data.parent_name.charAt(0)}
                 </div>
                 <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">${data.parent_name}</h3>
-                <p style="font-size: 0.85rem; color: #64748b;">Souhaiterait vous engager</p>
+                <p style="font-size: 0.85rem; color: #64748b;">Détails de la demande</p>
             </div>
 
             <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.7;">
@@ -247,7 +254,7 @@
                     <span style="font-weight: 700; color: #0f172a;">${data.matiere}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Niveau</span>
+                    <span style="color: #64748b;">Classe</span>
                     <span style="font-weight: 700; color: #0f172a;">${data.classe}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
@@ -263,12 +270,12 @@
                     <span style="font-weight: 700; color: #0f172a;">${data.frequence}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Durée</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.duree}</span>
+                    <span style="color: #64748b;">Durée séance</span>
+                    <span style="font-weight: 700; color: #0f172a;">${displayDuree}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
                     <span style="color: #64748b;">Budget proposé</span>
-                    <span style="font-weight: 800; color: #16a34a;">${data.budget} FCFA /h</span>
+                    <span style="font-weight: 800; color: #16a34a;">${data.budget} FCFA/h</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: #64748b;">Début souhaité</span>
@@ -276,10 +283,16 @@
                 </div>
             </div>
 
+            ${data.status === 'EN_ATTENTE' ? `
             <div style="display:flex; gap:0.75rem;">
                 <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter')">Accepter</button>
                 <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
             </div>
+            ` : `
+            <div style="text-align: center; padding: 0.5rem; background: #f0fdf4; color: #16a34a; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                Cette demande a été acceptée.
+            </div>
+            `}
         `;
     }
 
