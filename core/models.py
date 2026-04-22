@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.utils import timezone
 
@@ -792,8 +792,11 @@ class Message(models.Model):
         related_name="messages_recus",
     )
 
-    # 2. Contenu
-    contenu_texte = models.TextField(blank=True)
+    # 2. Contenu avec validation
+    contenu_texte = models.TextField(
+        validators=[MinLengthValidator(1, message="Le message ne peut pas être vide")],
+        blank=True  # Permet le vide si un fichier est joint
+    )
     contenu_media = models.FileField(
         upload_to="messages/media/",
         blank=True,

@@ -65,10 +65,27 @@ def messagerie(request):
     except Profile.DoesNotExist:
         return redirect("finalisation_compte")
 
-    # Base Queryset
-    conversations = Conversation.objects.filter(participants=request.user).select_related(
-        'professeur', 'parent', 'engagement_actif', 'dernier_message_auteur'
-    ).prefetch_related('engagement_actif__enfants_concernes')
+    # Base Queryset optimisé
+    from django.db.models import Q, Count, Max
+    
+    conversations = Conversation.objects.filter(
+        participants=request.user
+    ).select_related(
+        'professeur__user',
+        'parent', 
+        'engagement_actif',
+        'engagement_actif__professeur',
+        'engagement_actif__parent_apprenant',
+        'dernier_message_auteur'
+    ).prefetch_related(
+        'engagement_actif__enfants_concernes',
+        'participants'
+    ).annotate(
+        unread_count=Count(
+            'messages', 
+            filter=Q(messages__lu=False) & Q(messages__destinataire=request.user)
+        )
+    )
 
     # 1. Filtre par onglet (Status)
     tab = request.GET.get('tab', 'toutes')
@@ -144,12 +161,8 @@ def messagerie(request):
         if eng and eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
             is_blocked = True
 
-        # Non-lus
-        has_unread = False
-        if user_profile.role == Role.ROLE_PROF:
-            has_unread = not conv.conversation_lue_par_prof
-        else:
-            has_unread = not conv.conversation_lue_par_parent
+        # Non-lus (utilise le compteur annoté pour performance)
+        has_unread = conv.unread_count > 0
 
         formatted_conversations.append({
             'obj': conv,
@@ -1053,12 +1066,21 @@ def conversation_detail(request, conversation_id):
     """Page de discussion privée entre deux participants."""
     from .choices import StatutGeneral, TypeAbonnement
     from .models import Conversation, Message, Profile as Role
+    from django.contrib import messages
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
-    # Sécurité: L'utilisateur doit être participant
+    # Sécurité stricte: Vérification que l'utilisateur est bien participant
     if request.user not in conversation.participants.all():
+        messages.error(request, "Accès non autorisé à cette conversation.")
         return redirect("messagerie")
+    
+    # Vérification que l'utilisateur a un profil valide
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        messages.error(request, "Profil utilisateur incomplet. Veuillez finaliser votre compte.")
+        return redirect("finalisation_compte")
         
     # Charger les messages avec marquage de changement de date
     raw_messages = conversation.messages.all().order_by("date_envoi")
@@ -1070,14 +1092,14 @@ def conversation_detail(request, conversation_id):
         messages.append(msg)
         last_date = msg_date
     
-    # Marquer comme lu
-    if request.user == conversation.parent:
+    # Marquer la conversation comme lue selon le rôle
+    if user_profile.role == Role.ROLE_PARENT:
         conversation.conversation_lue_par_parent = True
-    elif hasattr(request.user, 'teacher_profile') and request.user.teacher_profile == conversation.professeur:
+    elif user_profile.role == Role.ROLE_PROF:
         conversation.conversation_lue_par_prof = True
     conversation.save()
     
-    # Marquer les messages reçus comme lus
+    # Marquer les messages reçus comme lus (messages où l'utilisateur est destinataire)
     conversation.messages.filter(destinataire=request.user, lu=False).update(
         lu=True, date_lecture=timezone.now()
     )
@@ -1142,32 +1164,48 @@ def conversation_detail(request, conversation_id):
     })
 
 
-@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def api_send_message(request, conversation_id):
     """API pour envoyer un message dans une conversation."""
     from .models import Conversation, Message
+    from django.utils import timezone
+    from datetime import timedelta
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
-    # Sécurité
+    # Sécurité stricte
     if request.user not in conversation.participants.all():
         return JsonResponse({'error': 'Non autorisé'}, status=403)
+    
+    # Validation anti-spam (max 5 messages par minute)
+    recent_messages = Message.objects.filter(
+        auteur=request.user,
+        date_envoi__gte=timezone.now() - timedelta(minutes=1)
+    ).count()
+    
+    if recent_messages >= 5:
+        return JsonResponse({'error': 'Trop de messages envoyés. Veuillez patienter.'}, status=429)
         
-    # Vérifier le blocage (Simulé ici, idéalement utiliser la même logique que detail)
-    # Si Parent et non payé -> Bloqué
-    if request.user == conversation.parent:
+    # Vérifier le blocage (même logique que conversation_detail)
+    from .choices import TypeAbonnement
+    if hasattr(request.user, 'profile') and request.user.profile.role in ['PARENT', 'APPRENANT']:
         active_eng = conversation.engagement_actif
-        if active_eng and not active_eng.paiement_effectue:
-            return JsonResponse({'error': 'Paiement requis'}, status=402)
+        is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+        
+        if active_eng and not active_eng.paiement_effectue and not is_premium:
+            return JsonResponse({'error': 'Paiement requis pour continuer les échanges'}, status=402)
 
     try:
         texte = request.POST.get('texte', '').strip()
         fichier = request.FILES.get('fichier')
         
+        # Validation renforcée du contenu
         if not texte and not fichier:
-            return JsonResponse({'error': 'Message vide'}, status=400)
+            return JsonResponse({'error': 'Un message ou un fichier est requis'}, status=400)
+        
+        if texte and len(texte) > 2000:
+            return JsonResponse({'error': 'Le message ne peut pas dépasser 2000 caractères'}, status=400)
             
         destinataire = conversation.professeur.user if request.user == conversation.parent else conversation.parent
         

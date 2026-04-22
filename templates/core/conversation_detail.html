@@ -4,15 +4,25 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
 <style>
-    /* Correction pour que le chat prenne tout l'écran sans scroll global */
+    /* Correction responsive pour le chat */
     body, html {
         margin: 0;
         padding: 0;
-        height: 100%;
-        overflow: hidden;
     }
-    .navbar {
-        display: none !important; /* On cache la navbar sur cette page spécifique pour maximiser l'espace chat */
+    
+    .chat-wrapper {
+        position: fixed;
+        top: 80px; /* Hauteur de la navbar */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+    
+    @media (max-width: 768px) {
+        .chat-wrapper {
+            top: 60px; /* Navbar plus petite sur mobile */
+        }
     }
 </style>
 {% endblock %}
@@ -254,9 +264,7 @@
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
                         {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
                             {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
-                                <button onclick="finalizeEngagement({{ eng.id }})" 
-                                    class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}" 
-                                    style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
+                                <button onclick='finalizeEngagement({{ eng.id }})' class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}" style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
                                     Finaliser l'engagement
                                 </button>
                                 {% if not is_eligible_to_finalize %}
@@ -265,7 +273,7 @@
                                 </p>
                                 {% endif %}
                             {% elif eng.statut_general == 'EN_ATTENTE' %}
-                                <button onclick="showEditProposal({{ eng.id }})" class="btn-dash btn-dash-outline" style="width: 100%;">
+                                <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline" style="width: 100%;">
                                     Modifier ma proposition
                                 </button>
                             {% endif %}
