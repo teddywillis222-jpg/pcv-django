@@ -720,7 +720,7 @@ def apprenant_create_profile(request):
             apprenant.save()
             return redirect("apprenant_dashboard")
     else:
-        initial = {"nom": request.user.first_name, "email_apprenant": request.user.email}
+        initial = {"nom": request.user.first_name}
         form = ApprenantCreateProfileForm(instance=apprenant_instance, initial=initial)
 
     return render(request, "core/apprenant_create_profile.html", {"form": form})
