@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
-# Build script pour Render - Prof Chez Vous
+# Build script optimisé pour Render - Prof Chez Vous
 
 set -e
 
-echo "Début du build Prof Chez Vous..."
+echo "--- Début du build Prof Chez Vous ---"
 
-# Installation des dépendances
+# 1. Installation des dépendances
+echo "Installation des packages..."
 pip install -r requirements.txt
 
-# Collecte des fichiers statiques
+# 2. Collecte des fichiers statiques
+echo "Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 
-# Génération des migrations (détecte les changements de modèles)
-python manage.py makemigrations
+# 3. Forcer la détection des changements dans 'core' (Crucial pour ton erreur 500)
+echo "Génération des migrations pour l'application core..."
+python manage.py makemigrations core
 
-# Exécution des migrations de base de données
+# 4. Exécution des migrations générales
+echo "Application des migrations à la base de données..."
 python manage.py migrate
 
-# Vérification de la configuration
+# 5. Vérification finale
+echo "Vérification de la configuration Django..."
 python manage.py check
 
-echo "Build terminé avec succès !"
+echo "--- Build terminé avec succès ! ---"
