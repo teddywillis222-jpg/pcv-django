@@ -1084,7 +1084,7 @@ def conversation_detail(request, conversation_id):
     # Vérification que l'utilisateur a un profil valide
     try:
         user_profile = request.user.profile
-    except Profile.DoesNotExist:
+    except Role.DoesNotExist:
         django_messages.error(request, "Profil utilisateur incomplet. Veuillez finaliser votre compte.")
         return redirect("finalisation_compte")
         
