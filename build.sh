@@ -11,6 +11,9 @@ pip install -r requirements.txt
 # Collecte des fichiers statiques
 python manage.py collectstatic --noinput
 
+# Génération des migrations (détecte les changements de modèles)
+python manage.py makemigrations
+
 # Exécution des migrations de base de données
 python manage.py migrate
 
