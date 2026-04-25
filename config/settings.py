@@ -38,6 +38,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').
 # Application definition
 
 INSTALLED_APPS = [
+    'cloudinary_storage'
+    'django.contrib.staticfiles'
+    'cloudinary'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -180,4 +183,15 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     
     # Pour que Allauth génère des URLs d'emails en HTTPS
-    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    import os
+
+# Configuration Cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# Indique à Django d'utiliser Cloudinary pour les fichiers MEDIA
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
