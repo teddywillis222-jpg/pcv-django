@@ -116,13 +116,35 @@
                     Voir le profil
                 </a>
                 {% else %}
-                <div class="focus-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    Voir profil {% if conversation.parent %}élève{% else %}apprenant{% endif %}
-                </div>
+                {% with eng=linked_engagements.first %}
+                {% if eng %}
+                    {% if eng.enfants_concernes.all %}
+                    <a href="{% url 'profil_eleve' 'enfant' eng.enfants_concernes.first.id %}" class="focus-item" style="text-decoration: none; color: inherit;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Voir profil de l'élève
+                    </a>
+                    {% else %}
+                    <a href="{% url 'profil_eleve' 'apprenant' eng.parent_apprenant.apprenant.id %}" class="focus-item" style="text-decoration: none; color: inherit;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Voir le profil
+                    </a>
+                    {% endif %}
+                {% else %}
+                    <div class="focus-item" style="opacity: 0.5;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Profil indisponible
+                    </div>
+                {% endif %}
+                {% endwith %}
                 {% endif %}
                 <div class="focus-item danger">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

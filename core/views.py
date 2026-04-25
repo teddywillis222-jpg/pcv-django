@@ -1485,3 +1485,73 @@ def admin_api_prof_action(request, prof_id):
         return JsonResponse({'success': True, 'message': 'Note enregistrée et email envoyé.'})
         
     return JsonResponse({'error': 'Action non reconnue.'}, status=400)
+
+
+@login_required
+def profil_eleve(request, type_eleve, id_eleve):
+    from django.http import Http404
+    is_owner = False
+    is_teacher = getattr(request.user.profile, 'role', '') == Profile.ROLE_PROF
+    eleve_data = {}
+
+    if type_eleve == 'enfant':
+        enfant = get_object_or_404(Enfant, id=id_eleve)
+        
+        if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
+            is_owner = True
+        elif not is_teacher:
+            raise Http404("Profil introuvable ou accès refusé.")
+            
+        obj_text = enfant.objectif_principal
+        objectifs = []
+        difficultes = []
+        if obj_text and "DIFFICULTÉS:" in obj_text:
+            parts = obj_text.split("DIFFICULTÉS:")
+            obj_str = parts[0].replace("OBJECTIFS:", "").strip()
+            diff_str = parts[1].strip()
+            objectifs = [o.strip() for o in obj_str.split(',') if o.strip()]
+            difficultes = [d.strip() for d in diff_str.split(',') if d.strip()]
+        elif obj_text:
+            objectifs = [obj_text]
+
+        if not difficultes and enfant.besoin_prioritaire:
+            difficultes = [enfant.besoin_prioritaire]
+
+        eleve_data = {
+            'type': 'enfant',
+            'id': enfant.id,
+            'nom': enfant.prenom,
+            'photo_url': None,
+            'quartier_ville': enfant.quartier_ville,
+            'classe': enfant.get_classe_display() if hasattr(enfant, 'get_classe_display') else enfant.classe,
+            'matieres': enfant.matieres,
+            'difficultes': difficultes,
+            'objectifs': objectifs
+        }
+    elif type_eleve == 'apprenant':
+        apprenant = get_object_or_404(Apprenant, id=id_eleve)
+        
+        if apprenant.user == request.user:
+            is_owner = True
+        elif not is_teacher:
+            raise Http404("Profil introuvable ou accès refusé.")
+            
+        eleve_data = {
+            'type': 'apprenant',
+            'id': apprenant.id,
+            'nom': apprenant.nom,
+            'photo_url': apprenant.photo_de_profil.url if apprenant.photo_de_profil else None,
+            'quartier_ville': getattr(apprenant, 'quartier_ville', "Non spécifié"),
+            'classe': apprenant.get_classe_display() if hasattr(apprenant, 'get_classe_display') else apprenant.classe,
+            'matieres': apprenant.matieres_recherchees,
+            'difficultes': [apprenant.description_difficultes] if apprenant.description_difficultes else [],
+            'objectifs': apprenant.objectifs_motivations
+        }
+    else:
+        raise Http404("Type d'élève invalide.")
+
+    return render(request, "core/profil_eleve.html", {
+        "eleve": eleve_data,
+        "is_owner": is_owner,
+        "is_teacher": is_teacher
+    })

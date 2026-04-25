@@ -428,12 +428,12 @@
 
             <section class="carousel-container" style="margin-bottom: 1rem;">
                 {% for enfant in enfants %}
-                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" onclick="location.href='?enfant_id={{ enfant.id }}'">
+                <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" style="text-decoration: none;">
                     <div class="avatar">👶</div>
                     <h4 style="margin: 0; font-size: 0.95rem;">{{ enfant.prenom }}</h4>
                     <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
-                    <a href="#" class="btn-edit" onclick="event.stopPropagation();">Voir le profil</a>
-                </div>
+                    <div class="btn-edit" onclick="event.stopPropagation(); location.href='?enfant_id={{ enfant.id }}'">Sélectionner</div>
+                </a>
                 {% endfor %}
             </section>
 

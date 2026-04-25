@@ -39,6 +39,8 @@ urlpatterns = [
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),
     path("apprenant/dashboard/", core_views.apprenant_dashboard, name="apprenant_dashboard"),
     
+    path("profil-eleve/<str:type_eleve>/<int:id_eleve>/", core_views.profil_eleve, name="profil_eleve"),
+    
     # Nouvelles URLs pour la navigation principale
     path("faq/", core_views.faq, name="faq"),
     path("support/", core_views.support, name="support"),

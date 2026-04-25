@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profil de {{ eleve.nom }}{% endblock %}
+
+{% block content %}
+<style>
+    .profil-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .header-profil {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2rem 1rem;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    .btn-retour {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        background: #f1f5f9;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        color: var(--text-dark);
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary);
+        font-weight: 800;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .profil-nom {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin: 0 0 0.5rem 0;
+    }
+    .profil-localisation {
+        color: var(--text-gray);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .section-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 1.5rem;
+    }
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-top: 0;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    @media (min-width: 600px) {
+        .info-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    .info-item {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 14px;
+        border: 1px solid #f1f5f9;
+    }
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.3rem;
+    }
+    .info-value {
+        font-size: 1rem;
+        color: var(--text-dark);
+        font-weight: 700;
+    }
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .tag {
+        background: var(--primary-soft);
+        color: var(--primary);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+    .text-block {
+        background: #fffbeb;
+        border: 1px solid #fef3c7;
+        padding: 1.2rem;
+        border-radius: 14px;
+        color: #92400e;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .text-block.objectifs {
+        background: #f0fdf4;
+        border-color: #dcfce7;
+        color: #166534;
+    }
+    .btn-edit-profile {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary);
+        color: white;
+        text-align: center;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        margin-top: 2rem;
+        transition: background 0.2s;
+    }
+    .btn-edit-profile:hover {
+        background: #15803d;
+    }
+</style>
+
+<div class="profil-container">
+    <!-- En-tête -->
+    <div class="header-profil">
+        <a href="javascript:history.back()" class="btn-retour">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Retour
+        </a>
+        
+        {% if eleve.photo_url %}
+        <img src="{{ eleve.photo_url }}" class="avatar-large" alt="{{ eleve.nom }}">
+        {% else %}
+        <div class="avatar-large">
+            {{ eleve.nom|slice:":1"|upper }}
+        </div>
+        {% endif %}
+        
+        <h1 class="profil-nom">{{ eleve.nom }}</h1>
+        <div class="profil-localisation">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            {{ eleve.quartier_ville|default:"Non spécifié" }}
+        </div>
+    </div>
+
+    <!-- Informations scolaires -->
+    <div class="section-card">
+        <h2 class="section-title">🎓 Informations scolaires</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Classe actuelle</div>
+                <div class="info-value">{{ eleve.classe|default:"Non spécifiée" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Matières concernées</div>
+                <div class="tag-list" style="margin-top: 0.5rem;">
+                    {% for matiere in eleve.matieres %}
+                        <span class="tag">{{ matiere }}</span>
+                    {% empty %}
+                        <span style="color: var(--text-gray); font-size: 0.9rem;">Aucune matière spécifiée</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficultés -->
+    <div class="section-card">
+        <h2 class="section-title">⚠️ Difficultés principales</h2>
+        {% if eleve.difficultes %}
+            <div class="tag-list" style="margin-bottom: 0.5rem;">
+                {% for diff in eleve.difficultes %}
+                    <div class="text-block" style="flex: 1; min-width: 100%;">{{ diff }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin: 0;">Aucune difficulté particulière renseignée.</p>
+        {% endif %}
+    </div>
+
+    <!-- Objectifs -->
+    <div class="section-card">
+        <h2 class="section-title">🎯 Objectifs & motivations</h2>
+        {% if eleve.objectifs %}
+            <div class="tag-list" style="margin-bottom: 0.5rem;">
+                {% for obj in eleve.objectifs %}
+                    <div class="text-block objectifs" style="flex: 1; min-width: 100%;">{{ obj }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin: 0;">Aucun objectif renseigné.</p>
+        {% endif %}
+    </div>
+
+    <!-- Actions -->
+    {% if is_owner %}
+        <a href="#" onclick="alert('La modification du profil depuis cette vue sera bientôt disponible.'); return false;" class="btn-edit-profile">✏️ Modifier le profil</a>
+    {% endif %}
+</div>
+{% endblock %}
