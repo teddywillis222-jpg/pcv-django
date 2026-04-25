@@ -5,13 +5,14 @@
 <link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
 <style>
     /* Correction responsive pour le chat - Mobile First */
-    body, html {
+    body,
+    html {
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden;
     }
-    
+
     .chat-wrapper {
         position: fixed;
         top: 0;
@@ -22,12 +23,12 @@
         height: 100vh;
         width: 100vw;
     }
-    
+
     /* Cacher la navbar sur cette page */
     .navbar {
         display: none !important;
     }
-    
+
     /* Cacher le footer sur cette page */
     footer {
         display: none !important;
@@ -39,26 +40,33 @@
 
 {% block content %}
 <div class="chat-wrapper">
-    
+
     <!-- Zone Principale: Chat -->
     <main class="chat-main" style="height: 100%;">
         <header class="chat-header">
             <div class="chat-partner-info">
                 <a href="{% url 'messagerie' %}" style="color: #64748b; padding: 0.5rem 0.25rem;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
                 </a>
-                
+
                 <div style="position: relative;">
                     {% if other_profile.photo_de_profil %}
-                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" alt="Avatar">
                     {% elif other_profile.photo_profil %}
-                        <img src="{{ other_profile.photo_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    <img src="{{ other_profile.photo_profil.url }}" class="chat-avatar-img" alt="Avatar">
                     {% else %}
-                        <div class="chat-avatar-img" style="display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 1.1rem;">
-                            {{ other_participant.first_name|slice:":1"|upper }}
-                        </div>
+                    <div class="chat-avatar-img"
+                        style="display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 1.1rem;">
+                        {{ other_participant.first_name|slice:":1"|upper }}
+                    </div>
                     {% endif %}
-                    <div style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #22c55e; border: 2px solid white; border-radius: 50%;"></div>
+                    <div
+                        style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #22c55e; border: 2px solid white; border-radius: 50%;">
+                    </div>
                 </div>
 
                 <div style="flex: 1; min-width: 0;">
@@ -67,38 +75,60 @@
                     </div>
                     <div class="chat-status-text">
                         {% if other_participant.last_login %}
-                            Depuis {{ other_participant.last_login|time:"H:i" }}
+                        Depuis {{ other_participant.last_login|time:"H:i" }}
                         {% else %}
-                            En ligne
+                        En ligne
                         {% endif %}
                     </div>
                 </div>
             </div>
-            
+
             <div style="display: flex; gap: 0.25rem;">
-                <button class="btn-icon" onclick="toggleSheet()" title="Engagements" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                <button class="btn-icon" onclick="toggleSheet()" title="Engagements"
+                    style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
                 </button>
-                <button class="btn-icon" onclick="toggleOptions()" title="Options" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                <button class="btn-icon" onclick="toggleOptions()" title="Options"
+                    style="background: none; border: none; cursor: pointer; color: #64748b; padding: 0.5rem;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
                 </button>
             </div>
 
             <!-- Focus Group -->
             <div id="optionsDropdown" class="focus-group">
                 {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
-                    <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="focus-item" style="text-decoration: none;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        Voir le profil
-                    </a>
+                <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="focus-item"
+                    style="text-decoration: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Voir le profil
+                </a>
                 {% else %}
-                    <div class="focus-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        Voir profil {% if conversation.parent %}élève{% else %}apprenant{% endif %}
-                    </div>
+                <div class="focus-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Voir profil {% if conversation.parent %}élève{% else %}apprenant{% endif %}
+                </div>
                 {% endif %}
                 <div class="focus-item danger">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                    </svg>
                     Bloquer
                 </div>
             </div>
@@ -107,39 +137,44 @@
         <!-- Liste des messages -->
         <div class="messages-container" id="messagesList">
             {% for msg in messages %}
-                {% if msg.changed_date %}
-                    <div class="date-separator">
-                        <span>{{ msg.date_envoi|date:"d F Y" }}</span>
-                    </div>
-                {% endif %}
-                <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}" data-id="{{ msg.id }}">
-                    {% if msg.contenu_media %}
-                        <div class="msg-file" style="margin-bottom: 0.25rem;">
-                            <a href="{{ msg.contenu_media.url }}" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">📎 {{ msg.contenu_media.name|slice:"15:" }}</a>
-                        </div>
-                    {% endif %}
-                    {% if msg.contenu_texte %}
-                        <div class="msg-content">{{ msg.contenu_texte }}</div>
-                    {% endif %}
-                    <div class="msg-meta">
-                        <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
-                        {% if msg.auteur == request.user %}
-                            <span class="msg-status {% if msg.lu %}status-read{% endif %}">
-                                {% if msg.lu %}
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                        <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
-                                    </svg>
-                                {% else %}
-                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-                                    </svg>
-                                {% endif %}
-                            </span>
-                        {% endif %}
-                    </div>
+            {% if msg.changed_date %}
+            <div class="date-separator">
+                <span>{{ msg.date_envoi|date:"d F Y" }}</span>
+            </div>
+            {% endif %}
+            <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}"
+                data-id="{{ msg.id }}">
+                {% if msg.contenu_media %}
+                <div class="msg-file" style="margin-bottom: 0.25rem;">
+                    <a href="{{ msg.contenu_media.url }}" target="_blank"
+                        style="color: inherit; text-decoration: underline; font-weight: 600;">📎 {{
+                        msg.contenu_media.name|slice:"15:" }}</a>
                 </div>
+                {% endif %}
+                {% if msg.contenu_texte %}
+                <div class="msg-content">{{ msg.contenu_texte }}</div>
+                {% endif %}
+                <div class="msg-meta">
+                    <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
+                    {% if msg.auteur == request.user %}
+                    <span class="msg-status {% if msg.lu %}status-read{% endif %}">
+                        {% if msg.lu %}
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path
+                                d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z" />
+                        </svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                        </svg>
+                        {% endif %}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
             {% empty %}
-                <div style="text-align: center; color: #54656f; margin-top: 2rem; font-size: 0.9rem; background: #fff9c4; padding: 0.5rem 1rem; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);">
+            <div
+                style="text-align: center; color: #54656f; margin-top: 2rem; font-size: 0.9rem; background: #fff9c4; padding: 0.5rem 1rem; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);">
                 💬 Début de votre conversation avec {{ other_participant.first_name }}.
             </div>
             <div style="text-align: center; color: #54656f; margin-top: 1rem; font-size: 0.9rem;">
@@ -148,9 +183,11 @@
             {% endfor %}
 
             {% if is_blocked %}
-            <div class="blocked-banner" style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="blocked-banner"
+                style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 <p style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">{{ blocking_message }}</p>
-                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()" style="padding: 0.75rem 2rem; width: 100%; max-width: 300px;">Procéder au paiement</button>
+                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()"
+                    style="padding: 0.75rem 2rem; width: 100%; max-width: 300px;">Procéder au paiement</button>
             </div>
             {% endif %}
         </div>
@@ -158,15 +195,27 @@
         <!-- Zone de saisie -->
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
-                <input type="file" id="fileInput" name="fichier" style="display: none;" accept="image/*,.pdf,.doc,.docx">
-                <button type="button" class="btn-attach" title="Joindre un fichier" onclick="document.getElementById('fileInput').click()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                <input type="file" id="fileInput" name="fichier" style="display: none;"
+                    accept="image/*,.pdf,.doc,.docx">
+                <button type="button" class="btn-attach" title="Joindre un fichier"
+                    onclick="document.getElementById('fileInput').click()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path
+                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                        </path>
+                    </svg>
                 </button>
                 <div class="chat-input-wrapper">
-                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" style="max-height: 120px; overflow-y: auto;" {% if is_blocked %}disabled{% endif %}></textarea>
+                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1"
+                        style="max-height: 120px; overflow-y: auto;" {% if is_blocked %}disabled{% endif %}></textarea>
                 </div>
                 <button type="submit" class="btn-send" {% if is_blocked %}disabled{% endif %}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform: rotate(45deg); margin-top: -2px; margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        style="transform: rotate(45deg); margin-top: -2px; margin-left: -2px;">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
                 </button>
             </form>
         </footer>
@@ -177,12 +226,15 @@
         <h3 class="sidebar-title">Engagements liés</h3>
         <div class="eng-list">
             {% for eng in engagements %}
-            <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}" onclick="toggleSheet()">
-                <div class="eng-mini-status {% if eng.statut_general == 'FINALISE' %}status-active{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}status-pending{% endif %}">
+            <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}"
+                onclick="toggleSheet()">
+                <div
+                    class="eng-mini-status {% if eng.statut_general == 'FINALISE' %}status-active{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}status-pending{% endif %}">
                     {{ eng.get_statut_general_display }}
                 </div>
                 <div class="eng-mini-title">{{ eng.matiere }}</div>
-                <div style="font-size: 0.75rem; color: #64748b;">{{ eng.get_classe_display }} – {{ eng.date_creation|date:"d M" }}</div>
+                <div style="font-size: 0.75rem; color: #64748b;">{{ eng.get_classe_display }} – {{
+                    eng.date_creation|date:"d M" }}</div>
             </div>
             {% endfor %}
         </div>
@@ -195,14 +247,18 @@
 <div id="engSheet" class="eng-sheet">
     <div class="eng-sheet-header">
         <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Engagements pour cette conversation</h3>
-        <button onclick="toggleSheet()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
+        <button onclick="toggleSheet()"
+            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
     </div>
-    
+
     <div class="eng-sheet-content">
         {% if role == ROLE_PARENT and parent_children %}
         <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrer par enfant</label>
-            <select id="childFilter" onchange="filterEngagements()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;">
+            <label
+                style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrer
+                par enfant</label>
+            <select id="childFilter" onchange="filterEngagements()"
+                style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;">
                 <option value="all">Tous les enfants</option>
                 {% for enfant in parent_children %}
                 <option value="{{ enfant.id }}">{{ enfant.prenom }}</option>
@@ -216,35 +272,42 @@
             <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}">
                 <div class="eng-row-main" onclick="toggleEngRow(this)">
                     {% if other_profile.photo_de_profil %}
-                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" style="width: 38px; height: 38px;" alt="">
+                    <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img"
+                        style="width: 38px; height: 38px;" alt="">
                     {% else %}
-                        <div class="chat-avatar-img" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 0.9rem;">
-                            {{ other_participant.first_name|slice:":1"|upper }}
-                        </div>
+                    <div class="chat-avatar-img"
+                        style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 0.9rem;">
+                        {{ other_participant.first_name|slice:":1"|upper }}
+                    </div>
                     {% endif %}
-                    
+
                     <div style="flex: 1;">
                         <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">
                             {% if role == ROLE_PROF %}
-                                {{ conversation.parent.get_full_name|default:conversation.parent.username }}
+                            {{ conversation.parent.get_full_name|default:conversation.parent.username }}
                             {% else %}
-                                Prof. {{ conversation.professeur.prenom }}
+                            Prof. {{ conversation.professeur.prenom }}
                             {% endif %}
                         </div>
                         <div style="font-size: 0.8rem; color: #64748b;">
                             {{ eng.matiere }} • {{ eng.localisation_option|default:"Lieu à définir" }}
                         </div>
                     </div>
-                    
-                    <div class="eng-status-badge {% if eng.statut_general == 'FINALISE' %}status-active{% else %}status-pending{% endif %}" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800;">
+
+                    <div class="eng-status-badge {% if eng.statut_general == 'FINALISE' %}status-active{% else %}status-pending{% endif %}"
+                        style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800;">
                         {{ eng.get_statut_general_display }}
                     </div>
-                    
-                    <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+
+                    <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </div>
 
                 <div class="eng-row-details">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
                         <div>
                             <span style="color: #64748b;">Classe :</span><br>
                             <span style="font-weight: 700;">{{ eng.get_classe_display }}</span>
@@ -262,27 +325,31 @@
                             <span style="font-weight: 800; color: #16a34a;">{{ eng.budget_convenu }} FCFA/h</span>
                         </div>
                     </div>
-                    
+
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
                         {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
-                            {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
-                                <button onclick='finalizeEngagement({{ eng.id }})' class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}" style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
-                                    Finaliser l'engagement
-                                </button>
-                                {% if not is_eligible_to_finalize %}
-                                <p style="font-size: 0.7rem; color: #ef4444; text-align: center; margin-top: 0.5rem; font-weight: 600;">
-                                    Paiement requis pour débloquer
-                                </p>
-                                {% endif %}
-                            {% elif eng.statut_general == 'EN_ATTENTE' %}
-                                <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline" style="width: 100%;">
-                                    Modifier ma proposition
-                                </button>
-                            {% endif %}
+                        {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                        <button onclick='finalizeEngagement({{ eng.id }})'
+                            class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}"
+                            style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
+                            Finaliser l'engagement
+                        </button>
+                        {% if not is_eligible_to_finalize %}
+                        <p
+                            style="font-size: 0.7rem; color: #ef4444; text-align: center; margin-top: 0.5rem; font-weight: 600;">
+                            Paiement requis pour débloquer
+                        </p>
+                        {% endif %}
+                        {% elif eng.statut_general == 'EN_ATTENTE' %}
+                        <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline"
+                            style="width: 100%;">
+                            Modifier ma proposition
+                        </button>
+                        {% endif %}
                         {% else %}
-                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
-                                En attente de finalisation par le parent
-                            </div>
+                        <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
+                            En attente de finalisation par le parent
+                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -297,56 +364,78 @@
 <div id="paymentSheet" class="eng-sheet" style="max-height: 70vh;">
     <div class="eng-sheet-header">
         <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Débloquer la conversation</h3>
-        <button onclick="hidePaymentModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
+        <button onclick="hidePaymentModal()"
+            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
     </div>
     <div class="eng-sheet-content" style="padding: 2rem;">
         <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <div style="border: 2px solid #e2e8f0; padding: 1.25rem; border-radius: 16px; cursor: pointer;" onclick="selectPlan('standard')">
+            <div style="border: 2px solid #e2e8f0; padding: 1.25rem; border-radius: 16px; cursor: pointer;"
+                onclick="selectPlan('standard')">
                 <div style="font-weight: 800; font-size: 1.1rem;">Plan Standard</div>
-                <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Accès à cette conversation uniquement.</p>
+                <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Accès à cette conversation uniquement.
+                </p>
                 <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">2 000 FCFA</div>
             </div>
-            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1.25rem; border-radius: 16px; cursor: pointer;" onclick="selectPlan('premium')">
+            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1.25rem; border-radius: 16px; cursor: pointer;"
+                onclick="selectPlan('premium')">
                 <div style="font-weight: 800; color: #16a34a; font-size: 1.1rem;">Access+ Premium</div>
                 <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Jusqu'à 5 propositions par mois.</p>
-                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">5 000 FCFA / mois</div>
+                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">5 000 FCFA / mois
+                </div>
             </div>
         </div>
-        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 52px;">Continuer vers le paiement</button>
+        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 52px;">Continuer vers le
+            paiement</button>
     </div>
 </div>
 
 <!-- Modal Détail Engagement / Finalisation (Parent) -->
-<div id="engReviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
-        <button onclick="hideEngReviewModal()" style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-        <h3 id="rev_title" style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 800;">Détails de l'engagement</h3>
-        
+<div id="engReviewModal"
+    style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
+    <div
+        style="background: white; border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
+        <button onclick="hideEngReviewModal()"
+            style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+        <h3 id="rev_title" style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 800;">Détails de l'engagement
+        </h3>
+
         <form id="revForm">
             <input type="hidden" id="rev_id">
             <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
                 {% if is_eligible_to_finalize or role == ROLE_PROF %}
-                <div id="eligibility_info" style="display: none; padding: 0.75rem; background: #f0fdf4; color: #16a34a; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
+                <div id="eligibility_info"
+                    style="display: none; padding: 0.75rem; background: #f0fdf4; color: #16a34a; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
                     ✓ Éligible à la finalisation
                 </div>
                 {% else %}
-                <div id="eligibility_info" style="padding: 0.75rem; background: #fffbeb; color: #b45309; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
+                <div id="eligibility_info"
+                    style="padding: 0.75rem; background: #fffbeb; color: #b45309; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
                     ⚠ Paiement ou Premium requis pour finaliser
                 </div>
                 {% endif %}
-                
+
                 <div>
-                    <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Matière</label>
-                    <input type="text" id="rev_matiere" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
+                    <label
+                        style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Matière</label>
+                    <input type="text" id="rev_matiere"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
+                        role !=ROLE_PARENT %}readonly{% endif %}>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
-                        <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Budget (FCFA/h)</label>
-                        <input type="number" id="rev_budget" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
+                        <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Budget
+                            (FCFA/h)</label>
+                        <input type="number" id="rev_budget"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
+                            role !=ROLE_PARENT %}readonly{% endif %}>
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Fréquence (/sem)</label>
-                        <select id="rev_frequence" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
+                        <label
+                            style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Fréquence
+                            (/sem)</label>
+                        <select id="rev_frequence"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
+                            role !=ROLE_PARENT %}disabled{% endif %}>
                             <option value="1">1 fois</option>
                             <option value="2">2 fois</option>
                             <option value="3">3 fois</option>
@@ -355,8 +444,11 @@
                     </div>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Durée séance</label>
-                    <select id="rev_duree" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
+                    <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Durée
+                        séance</label>
+                    <select id="rev_duree"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
+                        role !=ROLE_PARENT %}disabled{% endif %}>
                         <option value="1H">1h</option>
                         <option value="1H30">1h30</option>
                         <option value="2H">2h</option>
@@ -367,8 +459,10 @@
 
             {% if role == ROLE_PARENT %}
             <div id="rev_parent_actions" style="display: flex; gap: 1rem;">
-                <button type="button" onclick="updateEngagement()" class="btn-dash btn-dash-outline" style="flex: 1;">Enregistrer</button>
-                <button type="button" id="btn_finalize" onclick="finalizeEngagement()" class="btn-dash btn-dash-primary" style="flex: 1; display: none;">Finaliser</button>
+                <button type="button" onclick="updateEngagement()" class="btn-dash btn-dash-outline"
+                    style="flex: 1;">Enregistrer</button>
+                <button type="button" id="btn_finalize" onclick="finalizeEngagement()" class="btn-dash btn-dash-primary"
+                    style="flex: 1; display: none;">Finaliser</button>
             </div>
             {% endif %}
         </form>
@@ -407,17 +501,17 @@
     }
 
     // Payment Sheet
-    function showPaymentModal() { 
-        document.getElementById('paymentModal').classList.add('active'); 
-        document.getElementById('paymentSheet').classList.add('active'); 
+    function showPaymentModal() {
+        document.getElementById('paymentModal').classList.add('active');
+        document.getElementById('paymentSheet').classList.add('active');
     }
-    function hidePaymentModal() { 
-        document.getElementById('paymentModal').classList.remove('active'); 
-        document.getElementById('paymentSheet').classList.remove('active'); 
+    function hidePaymentModal() {
+        document.getElementById('paymentModal').classList.remove('active');
+        document.getElementById('paymentSheet').classList.remove('active');
     }
 
     // Close on escape or outside click
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (!event.target.closest('.btn-icon')) {
             const dropdown = document.getElementById('optionsDropdown');
             if (dropdown) dropdown.classList.remove('active');
@@ -429,30 +523,30 @@
         if (container) container.scrollTop = container.scrollHeight;
     }
 
-    window.onload = function() {
+    window.onload = function () {
         scrollToBottom();
         const input = document.getElementById('messageInput');
         if (input) input.focus();
     };
 
     // Handle form submission
-    document.getElementById('chatForm').addEventListener('submit', async function(e) {
+    document.getElementById('chatForm').addEventListener('submit', async function (e) {
         e.preventDefault();
         const input = document.getElementById('messageInput');
         const fileInput = document.getElementById('fileInput');
         const text = input.value.trim();
         const file = fileInput.files[0];
         if (text === '' && !file) return;
-        
+
         // Désactiver le bouton pendant l'envoi
         const sendBtn = this.querySelector('.btn-send');
         sendBtn.disabled = true;
-        
+
         try {
             const formData = new FormData();
             if (text) formData.append('texte', text);
             if (file) formData.append('fichier', file);
-            
+
             const response = await fetch("{% url 'api_send_message' conversation.id %}", {
                 method: 'POST',
                 body: formData,
@@ -460,9 +554,9 @@
                     'X-CSRFToken': '{{ csrf_token }}'
                 }
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) {
                 if (data.message_id > lastMsgId) lastMsgId = data.message_id;
                 // Injecter la bulle de message dans le DOM
@@ -470,7 +564,7 @@
                 const bubble = document.createElement('div');
                 bubble.className = 'msg-bubble msg-sent';
                 bubble.setAttribute('data-id', data.message_id);
-                
+
                 let contentHtml = '';
                 if (file) {
                     contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem; font-weight: 600;">📎 ${file.name}</div>`;
@@ -478,7 +572,7 @@
                 if (text) {
                     contentHtml += `<div class="msg-content">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
                 }
-                
+
                 bubble.innerHTML = `
                     ${contentHtml}
                     <div class="msg-meta">
@@ -491,7 +585,7 @@
                     </div>
                 `;
                 container.appendChild(bubble);
-                
+
                 // Vider l'input et scroller en bas
                 input.value = '';
                 input.style.height = 'auto';
@@ -501,7 +595,7 @@
                 if (response.status === 402) showPaymentModal();
                 else alert(data.error || "Erreur lors de l'envoi");
             }
-        } catch (error) { 
+        } catch (error) {
             console.error("Error:", error);
             alert("Erreur de connexion. Veuillez réessayer.");
         } finally {
@@ -512,7 +606,7 @@
     // Auto-resize textarea
     const textarea = document.getElementById('messageInput');
     if (textarea) {
-        textarea.addEventListener('input', function() {
+        textarea.addEventListener('input', function () {
             this.style.height = 'auto';
             if (this.scrollHeight <= 120) {
                 this.style.height = (this.scrollHeight) + 'px';
@@ -523,7 +617,7 @@
     }
 
     // Afficher une indication si un fichier est sélectionné
-    document.getElementById('fileInput').addEventListener('change', function() {
+    document.getElementById('fileInput').addEventListener('change', function () {
         if (this.files.length > 0) {
             const fileName = this.files[0].name;
             textarea.placeholder = `Fichier joint: ${fileName} - Tapez un message...`;
@@ -533,28 +627,28 @@
     });
 
     // === POLLING AJAX ===
-    let lastMsgId = {% if messages %}{{ messages|last.id }}{% else %}0{% endif %};
+    let lastMsgId = {% if messages %}{ { messages.last.id } } {% else %} 0{% endif %};
     const pollInterval = 5000; // 5 secondes
-    
+
     async function fetchNewMessages() {
         try {
             const response = await fetch(`{% url 'api_fetch_new_messages' conversation.id %}?last_msg_id=${lastMsgId}`);
             if (!response.ok) return;
             const data = await response.json();
-            
+
             let hasNew = false;
-            
+
             // 1. Ajouter les nouveaux messages
             if (data.messages && data.messages.length > 0) {
                 const container = document.getElementById('messagesList');
                 data.messages.forEach(msg => {
                     if (msg.id > lastMsgId) lastMsgId = msg.id;
                     if (msg.is_mine) return;
-                    
+
                     const bubble = document.createElement('div');
                     bubble.className = 'msg-bubble msg-received';
                     bubble.setAttribute('data-id', msg.id);
-                    
+
                     let contentHtml = '';
                     if (msg.fichier_url) {
                         contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem;"><a href="${msg.fichier_url}" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">📎 ${msg.fichier_nom}</a></div>`;
@@ -562,7 +656,7 @@
                     if (msg.texte) {
                         contentHtml += `<div class="msg-content">${msg.texte.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
                     }
-                    
+
                     bubble.innerHTML = `
                         ${contentHtml}
                         <div class="msg-meta">
@@ -573,7 +667,7 @@
                     hasNew = true;
                 });
             }
-            
+
             // 2. Mettre à jour les statuts lus
             if (data.newly_read && data.newly_read.length > 0) {
                 data.newly_read.forEach(id => {
@@ -589,14 +683,14 @@
                     }
                 });
             }
-            
+
             if (hasNew) scrollToBottom();
-            
+
         } catch (e) {
             console.error("Erreur Polling:", e);
         }
     }
-    
+
     // Démarrer le polling
     setInterval(fetchNewMessages, pollInterval);
 
@@ -608,9 +702,9 @@
             engId = document.getElementById('rev_id').value;
         }
         if (!engId) return alert("Aucun engagement sélectionné.");
-        
+
         if (!confirm("Voulez-vous finaliser cet engagement ? Cette action est irréversible.")) return;
-        
+
         fetch(`/api/engagement/${engId}/finalize/`, {
             method: 'POST',
             headers: {
@@ -619,27 +713,27 @@
             },
             body: JSON.stringify({})
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.error || "Erreur lors de la finalisation.");
-            }
-        })
-        .catch(err => console.error("Erreur:", err));
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || "Erreur lors de la finalisation.");
+                }
+            })
+            .catch(err => console.error("Erreur:", err));
     }
 
     // Afficher le modal d'édition de proposition (Parent)
     function showEditProposal(engId) {
         const modal = document.getElementById('engReviewModal');
         if (!modal) return;
-        
+
         document.getElementById('rev_id').value = engId;
         document.getElementById('rev_title').textContent = "Modifier ma proposition";
-        
+
         modal.style.display = 'flex';
-        
+
         // Fermer le sheet si ouvert
         const sheetOverlay = document.getElementById('engSheetOverlay');
         const sheet = document.getElementById('engSheet');
@@ -651,14 +745,14 @@
     function updateEngagement() {
         const engId = document.getElementById('rev_id').value;
         if (!engId) return alert("Aucun engagement sélectionné.");
-        
+
         const payload = {
             matiere: document.getElementById('rev_matiere').value,
             budget: document.getElementById('rev_budget').value,
             frequence: document.getElementById('rev_frequence').value,
             duree_seance: document.getElementById('rev_duree').value
         };
-        
+
         fetch(`/api/engagement/${engId}/update/`, {
             method: 'POST',
             headers: {
@@ -667,16 +761,16 @@
             },
             body: JSON.stringify(payload)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                hideEngReviewModal();
-                location.reload();
-            } else {
-                alert(data.error || "Erreur lors de la mise à jour.");
-            }
-        })
-        .catch(err => console.error("Erreur:", err));
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    hideEngReviewModal();
+                    location.reload();
+                } else {
+                    alert(data.error || "Erreur lors de la mise à jour.");
+                }
+            })
+            .catch(err => console.error("Erreur:", err));
     }
 
     // Afficher / Masquer le modal de review d'engagement
