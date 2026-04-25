@@ -126,8 +126,15 @@
                         <span>{{ msg.date_envoi|date:"d F Y" }}</span>
                     </div>
                 {% endif %}
-                <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}">
-                    <div class="msg-content">{{ msg.contenu_texte }}</div>
+                <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}" data-id="{{ msg.id }}">
+                    {% if msg.contenu_media %}
+                        <div class="msg-file" style="margin-bottom: 0.25rem;">
+                            <a href="{{ msg.contenu_media.url }}" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">📎 {{ msg.contenu_media.name|slice:"15:" }}</a>
+                        </div>
+                    {% endif %}
+                    {% if msg.contenu_texte %}
+                        <div class="msg-content">{{ msg.contenu_texte }}</div>
+                    {% endif %}
                     <div class="msg-meta">
                         <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
                         {% if msg.auteur == request.user %}
@@ -147,11 +154,11 @@
                 </div>
             {% empty %}
                 <div style="text-align: center; color: #54656f; margin-top: 2rem; font-size: 0.9rem; background: #fff9c4; padding: 0.5rem 1rem; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);">
-                    🔒 Les messages sont chiffrés de bout en bout.
-                </div>
-                <div style="text-align: center; color: #54656f; margin-top: 1rem; font-size: 0.9rem;">
-                    Dites bonjour à {{ other_participant.first_name }} !
-                </div>
+                💬 Début de votre conversation avec {{ other_participant.first_name }}.
+            </div>
+            <div style="text-align: center; color: #54656f; margin-top: 1rem; font-size: 0.9rem;">
+                Envoyez un premier message pour démarrer l'échange !
+            </div>
             {% endfor %}
 
             {% if is_blocked %}
@@ -165,11 +172,12 @@
         <!-- Zone de saisie -->
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
-                <button type="button" class="btn-attach" title="Joindre un fichier">
+                <input type="file" id="fileInput" name="fichier" style="display: none;" accept="image/*,.pdf,.doc,.docx">
+                <button type="button" class="btn-attach" title="Joindre un fichier" onclick="document.getElementById('fileInput').click()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                 </button>
                 <div class="chat-input-wrapper">
-                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" {% if is_blocked %}disabled{% endif %}></textarea>
+                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1" style="max-height: 120px; overflow-y: auto;" {% if is_blocked %}disabled{% endif %}></textarea>
                 </div>
                 <button type="submit" class="btn-send" {% if is_blocked %}disabled{% endif %}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform: rotate(45deg); margin-top: -2px; margin-left: -2px;"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -383,9 +391,6 @@
 
 <script>
     // Navigation UI
-    function toggleOptions() {
-        document.getElementById('optionsDropdown').classList.toggle('active');
-    }
 
     function toggleSheet() {
         document.getElementById('engSheetOverlay').classList.toggle('active');
@@ -448,14 +453,20 @@
     document.getElementById('chatForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const input = document.getElementById('messageInput');
+        const fileInput = document.getElementById('fileInput');
         const text = input.value.trim();
-        if (text === '') return;
+        const file = fileInput.files[0];
+        if (text === '' && !file) return;
+        
+        // Désactiver le bouton pendant l'envoi
+        const sendBtn = this.querySelector('.btn-send');
+        sendBtn.disabled = true;
         
         try {
             const formData = new FormData();
-            formData.append('texte', text);
+            if (text) formData.append('texte', text);
+            if (file) formData.append('fichier', file);
             
-            // On utilise l'URL correcte définie dans views.py (api_send_message)
             const response = await fetch("{% url 'api_send_message' conversation.id %}", {
                 method: 'POST',
                 body: formData,
@@ -467,14 +478,49 @@
             const data = await response.json();
             
             if (response.ok) {
-                // Pour une expérience fluide, on recharge pour voir le message avec le style correct
-                // Idéalement on injecterait en JS, mais le rechargement garantit la cohérence des dates/bulles
-                location.reload();
+                if (data.message_id > lastMsgId) lastMsgId = data.message_id;
+                // Injecter la bulle de message dans le DOM
+                const container = document.getElementById('messagesList');
+                const bubble = document.createElement('div');
+                bubble.className = 'msg-bubble msg-sent';
+                bubble.setAttribute('data-id', data.message_id);
+                
+                let contentHtml = '';
+                if (file) {
+                    contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem; font-weight: 600;">📎 ${file.name}</div>`;
+                }
+                if (text) {
+                    contentHtml += `<div class="msg-content">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                }
+                
+                bubble.innerHTML = `
+                    ${contentHtml}
+                    <div class="msg-meta">
+                        <span class="msg-time">${data.date}</span>
+                        <span class="msg-status">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                        </span>
+                    </div>
+                `;
+                container.appendChild(bubble);
+                
+                // Vider l'input et scroller en bas
+                input.value = '';
+                input.style.height = 'auto';
+                fileInput.value = ''; // Reset file
+                scrollToBottom();
             } else {
-                if (response.status === 402) showPaymentModal(); // Paiement requis
+                if (response.status === 402) showPaymentModal();
                 else alert(data.error || "Erreur lors de l'envoi");
             }
-        } catch (error) { console.error("Error:", error); }
+        } catch (error) { 
+            console.error("Error:", error);
+            alert("Erreur de connexion. Veuillez réessayer.");
+        } finally {
+            sendBtn.disabled = false;
+        }
     });
 
     // Auto-resize textarea
@@ -482,7 +528,196 @@
     if (textarea) {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
+            if (this.scrollHeight <= 120) {
+                this.style.height = (this.scrollHeight) + 'px';
+            } else {
+                this.style.height = '120px';
+            }
+        });
+    }
+
+    // Afficher une indication si un fichier est sélectionné
+    document.getElementById('fileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const fileName = this.files[0].name;
+            textarea.placeholder = `Fichier joint: ${fileName} - Tapez un message...`;
+        } else {
+            textarea.placeholder = "Écrivez votre message...";
+        }
+    });
+
+    // === POLLING AJAX ===
+    let lastMsgId = {% if messages %}{{ messages|last.id }}{% else %}0{% endif %};
+    const pollInterval = 5000; // 5 secondes
+    
+    async function fetchNewMessages() {
+        try {
+            const response = await fetch(`{% url 'api_fetch_new_messages' conversation.id %}?last_msg_id=${lastMsgId}`);
+            if (!response.ok) return;
+            const data = await response.json();
+            
+            let hasNew = false;
+            
+            // 1. Ajouter les nouveaux messages
+            if (data.messages && data.messages.length > 0) {
+                const container = document.getElementById('messagesList');
+                data.messages.forEach(msg => {
+                    if (msg.id > lastMsgId) lastMsgId = msg.id;
+                    if (msg.is_mine) return;
+                    
+                    const bubble = document.createElement('div');
+                    bubble.className = 'msg-bubble msg-received';
+                    bubble.setAttribute('data-id', msg.id);
+                    
+                    let contentHtml = '';
+                    if (msg.fichier_url) {
+                        contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem;"><a href="${msg.fichier_url}" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">📎 ${msg.fichier_nom}</a></div>`;
+                    }
+                    if (msg.texte) {
+                        contentHtml += `<div class="msg-content">${msg.texte.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                    }
+                    
+                    bubble.innerHTML = `
+                        ${contentHtml}
+                        <div class="msg-meta">
+                            <span class="msg-time">${msg.date}</span>
+                        </div>
+                    `;
+                    container.appendChild(bubble);
+                    hasNew = true;
+                });
+            }
+            
+            // 2. Mettre à jour les statuts lus
+            if (data.newly_read && data.newly_read.length > 0) {
+                data.newly_read.forEach(id => {
+                    const bubble = document.querySelector(`.msg-sent[data-id="${id}"]`);
+                    if (bubble) {
+                        const icon = bubble.querySelector('.msg-status');
+                        if (icon && !icon.classList.contains('status-read')) {
+                            icon.classList.add('status-read');
+                            icon.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                                <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
+                                              </svg>`;
+                        }
+                    }
+                });
+            }
+            
+            if (hasNew) scrollToBottom();
+            
+        } catch (e) {
+            console.error("Erreur Polling:", e);
+        }
+    }
+    
+    // Démarrer le polling
+    setInterval(fetchNewMessages, pollInterval);
+
+    // === GESTION DES ENGAGEMENTS ===
+
+    // Finaliser un engagement (Parent)
+    function finalizeEngagement(engId) {
+        if (!engId) {
+            engId = document.getElementById('rev_id').value;
+        }
+        if (!engId) return alert("Aucun engagement sélectionné.");
+        
+        if (!confirm("Voulez-vous finaliser cet engagement ? Cette action est irréversible.")) return;
+        
+        fetch(`/api/engagement/${engId}/finalize/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || "Erreur lors de la finalisation.");
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+
+    // Afficher le modal d'édition de proposition (Parent)
+    function showEditProposal(engId) {
+        const modal = document.getElementById('engReviewModal');
+        if (!modal) return;
+        
+        document.getElementById('rev_id').value = engId;
+        document.getElementById('rev_title').textContent = "Modifier ma proposition";
+        
+        modal.style.display = 'flex';
+        
+        // Fermer le sheet si ouvert
+        const sheetOverlay = document.getElementById('engSheetOverlay');
+        const sheet = document.getElementById('engSheet');
+        if (sheetOverlay) sheetOverlay.classList.remove('active');
+        if (sheet) sheet.classList.remove('active');
+    }
+
+    // Enregistrer les modifications d'un engagement (Parent)
+    function updateEngagement() {
+        const engId = document.getElementById('rev_id').value;
+        if (!engId) return alert("Aucun engagement sélectionné.");
+        
+        const payload = {
+            matiere: document.getElementById('rev_matiere').value,
+            budget: document.getElementById('rev_budget').value,
+            frequence: document.getElementById('rev_frequence').value,
+            duree_seance: document.getElementById('rev_duree').value
+        };
+        
+        fetch(`/api/engagement/${engId}/update/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                hideEngReviewModal();
+                location.reload();
+            } else {
+                alert(data.error || "Erreur lors de la mise à jour.");
+            }
+        })
+        .catch(err => console.error("Erreur:", err));
+    }
+
+    // Afficher / Masquer le modal de review d'engagement
+    function showEngReviewModal() {
+        const modal = document.getElementById('engReviewModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function hideEngReviewModal() {
+        const modal = document.getElementById('engReviewModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Sélection de plan de paiement
+    let selectedPlan = null;
+
+    function selectPlan(plan) {
+        selectedPlan = plan;
+        const cards = document.querySelectorAll('#paymentSheet [onclick^="selectPlan"]');
+        cards.forEach(card => {
+            if (card.getAttribute('onclick').includes(plan)) {
+                card.style.borderColor = '#16a34a';
+                card.style.background = '#f0fdf4';
+            } else {
+                card.style.borderColor = '#e2e8f0';
+                card.style.background = 'white';
+            }
         });
     }
 </script>

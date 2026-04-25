@@ -159,7 +159,13 @@ def messagerie(request):
         # Blocage Messagerie
         is_blocked = False
         if eng and eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
-            is_blocked = True
+            if user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
+                from .choices import TypeAbonnement
+                is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+                if not is_premium:
+                    is_blocked = True
+            else:
+                is_blocked = True
 
         # Non-lus (utilise le compteur annoté pour performance)
         has_unread = conv.unread_count > 0
@@ -1066,30 +1072,30 @@ def conversation_detail(request, conversation_id):
     """Page de discussion privée entre deux participants."""
     from .choices import StatutGeneral, TypeAbonnement
     from .models import Conversation, Message, Profile as Role
-    from django.contrib import messages
+    from django.contrib import messages as django_messages
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
     # Sécurité stricte: Vérification que l'utilisateur est bien participant
     if request.user not in conversation.participants.all():
-        messages.error(request, "Accès non autorisé à cette conversation.")
+        django_messages.error(request, "Accès non autorisé à cette conversation.")
         return redirect("messagerie")
     
     # Vérification que l'utilisateur a un profil valide
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
-        messages.error(request, "Profil utilisateur incomplet. Veuillez finaliser votre compte.")
+        django_messages.error(request, "Profil utilisateur incomplet. Veuillez finaliser votre compte.")
         return redirect("finalisation_compte")
         
     # Charger les messages avec marquage de changement de date
     raw_messages = conversation.messages.all().order_by("date_envoi")
-    messages = []
+    chat_messages = []
     last_date = None
     for msg in raw_messages:
         msg_date = msg.date_envoi.date()
         msg.changed_date = (msg_date != last_date)
-        messages.append(msg)
+        chat_messages.append(msg)
         last_date = msg_date
     
     # Marquer la conversation comme lue selon le rôle
@@ -1149,7 +1155,7 @@ def conversation_detail(request, conversation_id):
 
     return render(request, "core/conversation_detail.html", {
         "conversation": conversation,
-        "messages": messages,
+        "messages": chat_messages,
         "engagements": linked_engagements,
         "is_blocked": is_blocked,
         "is_eligible_to_finalize": is_eligible_to_finalize,
@@ -1237,6 +1243,67 @@ def api_send_message(request, conversation_id):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["GET"])
+def api_fetch_new_messages(request, conversation_id):
+    """API pour récupérer les nouveaux messages (Polling AJAX)."""
+    from .models import Conversation
+    from django.utils import timezone
+    
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    last_msg_id = request.GET.get('last_msg_id', 0)
+    try:
+        last_msg_id = int(last_msg_id)
+    except ValueError:
+        last_msg_id = 0
+        
+    new_messages = conversation.messages.filter(id__gt=last_msg_id).order_by('date_envoi')
+    
+    # Marquer les messages reçus comme lus
+    if new_messages.exists():
+        unread_received = new_messages.filter(destinataire=request.user, lu=False)
+        if unread_received.exists():
+            unread_received.update(lu=True, date_lecture=timezone.now())
+            
+        try:
+            user_profile = request.user.profile
+            if user_profile.role in ['PARENT', 'APPRENANT']:
+                conversation.conversation_lue_par_parent = True
+            elif user_profile.role == 'PROF':
+                conversation.conversation_lue_par_prof = True
+            conversation.save(update_fields=['conversation_lue_par_parent', 'conversation_lue_par_prof'])
+        except Exception:
+            pass
+
+    messages_data = []
+    for msg in new_messages:
+        file_url = msg.contenu_media.url if msg.contenu_media else None
+        file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
+        
+        messages_data.append({
+            'id': msg.id,
+            'texte': msg.contenu_texte,
+            'fichier_url': file_url,
+            'fichier_nom': file_name,
+            'date': msg.date_envoi.strftime("%H:%M"),
+            'is_mine': msg.auteur == request.user,
+            'lu': msg.lu
+        })
+        
+    # Vérifier les messages envoyés par l'utilisateur qui ont été récemment lus
+    newly_read = list(conversation.messages.filter(
+        auteur=request.user, 
+        lu=True, 
+        id__lte=last_msg_id
+    ).values_list('id', flat=True))
+        
+    return JsonResponse({'messages': messages_data, 'newly_read': newly_read})
 
 
 @csrf_exempt

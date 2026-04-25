@@ -45,6 +45,7 @@ urlpatterns = [
     path("messagerie/", core_views.messagerie, name="messagerie"),
     path("messagerie/<int:conversation_id>/", core_views.conversation_detail, name="conversation_detail"),
     path("messagerie/<int:conversation_id>/send/", core_views.api_send_message, name="api_send_message"),
+    path("messagerie/<int:conversation_id>/fetch/", core_views.api_fetch_new_messages, name="api_fetch_new_messages"),
     path("recherche/", core_views.recherche, name="recherche"),
     path("cgu/", core_views.cgu, name="cgu"),
     path("politique-confidentialite/", core_views.politique_confidentialite, name="politique_confidentialite"),
