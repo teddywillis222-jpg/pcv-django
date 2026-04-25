@@ -640,6 +640,16 @@ def parent_dashboard(request):
     except Parent.DoesNotExist:
         return redirect("parent_create_profile")
 
+    if request.method == "POST":
+        enfant_form = EnfantForm(request.POST)
+        if enfant_form.is_valid():
+            enfant = enfant_form.save(commit=False)
+            enfant.parent = parent
+            enfant.save()
+            # redirection vers le dashboard avec le nouvel enfant sélectionné
+            from django.urls import reverse
+            return redirect(f"{reverse('parent_dashboard')}?enfant_id={enfant.id}")
+
     enfants = parent.enfants.all()
     if not enfants.exists():
         return redirect("parent_create_profile")
@@ -680,9 +690,11 @@ def parent_dashboard(request):
     # Onglet "Essais"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
-    # 4. Abonnement & Favoris (Placeholders pour l'instant)
+    # 4. Abonnement & Favoris
     abonnement = request.user.abonnements.first()
-    favoris = [] # À implémenter si le modèle existe
+    favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
+
+    enfant_form = EnfantForm()
 
     return render(
         request,
@@ -699,6 +711,7 @@ def parent_dashboard(request):
             "engagements_tous": engagements_tous,
             "abonnement": abonnement,
             "favoris": favoris,
+            "enfant_form": enfant_form,
         },
     )
 

@@ -137,13 +137,16 @@
 
     .prof-card {
         flex: 0 0 auto;
-        width: 200px;
+        width: 180px;
         background: var(--card-bg);
         border-radius: 20px;
         padding: 1rem;
         box-shadow: var(--shadow-sm);
         text-align: center;
         border: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .prof-card img {
@@ -208,13 +211,12 @@
         color: var(--text-dark);
     }
 
-    /* Enfant Cards - Reverted & Slightly Shorter */
     .enfant-card {
         flex: 0 0 auto;
-        width: 160px;
+        width: 140px;
         background: var(--card-bg);
-        border-radius: 18px;
-        padding: 1rem 0.75rem;
+        border-radius: 16px;
+        padding: 0.75rem;
         box-shadow: var(--shadow-sm);
         border: 2px solid transparent;
         text-align: center;
@@ -229,14 +231,14 @@
     }
 
     .enfant-card .avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         background: #f1f5f9;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 0.5rem;
+        margin: 0 auto 0.25rem;
         font-size: 1.2rem;
     }
 
@@ -292,6 +294,53 @@
         padding: 1.5rem;
         max-height: 80vh;
         overflow-y: auto;
+    }
+
+    /* Bottom Sheet */
+    .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+        z-index: 3000;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        max-height: 85vh;
+    }
+    .bottom-sheet.active {
+        bottom: 0;
+    }
+    .sheet-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2999;
+        backdrop-filter: blur(2px);
+    }
+    .sheet-overlay.active {
+        display: block;
+    }
+    .sheet-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .sheet-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+    }
+    .sheet-body input, .sheet-body select {
+        width: 100%; padding: 0.85rem; border: 1px solid #d1d5db; border-radius: 10px; margin-bottom: 1rem; box-sizing: border-box;
+    }
+    .sheet-body label {
+        display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-dark);
     }
 
 </style>
@@ -374,7 +423,7 @@
             <!-- Enfants Selector -->
             <header class="section-header">
                 <h1 class="section-title">Mes enfants</h1>
-                <a href="{% url 'parent_create_profile' %}" style="font-weight: 700; color: var(--primary); text-decoration: none; font-size: 0.8rem;">+ Ajouter</a>
+                <button onclick="document.getElementById('childSheet').classList.add('active'); document.getElementById('sheetOverlay').classList.add('active');" style="background: none; border: none; font-weight: 700; color: var(--primary); font-size: 0.8rem; cursor: pointer;">+ Ajouter</button>
             </header>
 
             <section class="carousel-container" style="margin-bottom: 1rem;">
@@ -404,8 +453,9 @@
                             {% else %}
                             <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.2rem;">👨‍🏫</div>
                             {% endif %}
-                            <h4 style="margin: 0; font-size: 0.85rem;">{{ prof.prenom }}</h4>
-                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
+                            <h4 style="margin: 0; font-size: 0.85rem;">{{ prof.prenom }} {% if prof.est_certifie %}<span style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}</h4>
+                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ prof.matiere_enseignee }}</p>
+                            <div style="margin-top: 0.75rem; padding: 0.4rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700;">Voir le profil</div>
                         </div>
                     </a>
                     {% empty %}
@@ -468,12 +518,31 @@
                 <button onclick="showSection('main-dash')" style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
             </header>
             
+            {% if favoris %}
+            <div class="carousel-container" style="flex-wrap: wrap; justify-content: center; padding: 1rem;">
+                {% for prof in favoris %}
+                    <a href="{% url 'professeur_detail' prof.slug %}" style="text-decoration: none; color: inherit;">
+                        <div class="prof-card" style="margin-bottom: 1rem;">
+                            {% if prof.photo_de_profil %}
+                            <img src="{{ prof.photo_de_profil.url }}" alt="">
+                            {% else %}
+                            <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.2rem;">👨‍🏫</div>
+                            {% endif %}
+                            <h4 style="margin: 0; font-size: 0.85rem;">{{ prof.prenom }} {% if prof.est_certifie %}<span style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}</h4>
+                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ prof.matiere_enseignee }}</p>
+                            <div style="margin-top: 0.75rem; padding: 0.4rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700;">Voir le profil</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            {% else %}
             <div style="padding: 2rem; text-align: center; background: white; border-radius: 24px; box-shadow: var(--shadow-sm);">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">❤️</div>
                 <h3 style="margin-bottom: 0.5rem;">Votre liste est vide</h3>
                 <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem;">Enregistrez vos professeurs préférés pour les retrouver ici rapidement.</p>
-                <a href="{% url 'recherche' %}" class="btn-eng-main">Découvrir des professeurs</a>
+                <a href="{% url 'recherche' %}" class="btn-eng-main" style="display:inline-block; padding: 0.8rem 1.5rem; border-radius: 12px; background: var(--primary); color: white; text-decoration: none; font-weight: 700;">Découvrir des professeurs</a>
             </div>
+            {% endif %}
         </div>
 
         <!-- Section Historique -->
@@ -513,10 +582,66 @@
     </div>
 </div>
 
+<!-- Bottom Sheet Ajouter Enfant -->
+<div id="sheetOverlay" class="sheet-overlay" onclick="closeChildSheet()"></div>
+<div id="childSheet" class="bottom-sheet">
+    <div class="sheet-header">
+        <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Ajouter un enfant</h3>
+        <button onclick="closeChildSheet()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
+    </div>
+    <div class="sheet-body">
+        <form method="post" id="addChildForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Prénom de l'enfant <span style="color: #ef4444;">*</span></label>
+                {{ enfant_form.prenom }}
+            </div>
+            <div class="form-group">
+                <label>Classe <span style="color: #ef4444;">*</span></label>
+                {{ enfant_form.classe }}
+            </div>
+            <div class="form-group" style="display:none;">
+                <label>Quartier (Hérité)</label>
+                {{ enfant_form.quartier_ville }}
+            </div>
+            <div class="form-group">
+                <label>Mode de cours <span style="color: #ef4444;">*</span></label>
+                {{ enfant_form.mode_de_cours }}
+            </div>
+            <div class="form-group">
+                <label>Matières <span style="color: #ef4444;">*</span></label>
+                <div class="checkbox-group">
+                    {{ enfant_form.matieres_predefinies }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Difficultés</label>
+                <div class="checkbox-group">
+                    {{ enfant_form.difficultes_predefinies }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Objectifs</label>
+                <div class="checkbox-group">
+                    {{ enfant_form.objectifs_motivations }}
+                </div>
+            </div>
+            <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
+                Enregistrer l'enfant
+            </button>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    function closeChildSheet() {
+        document.getElementById('childSheet').classList.remove('active');
+        document.getElementById('sheetOverlay').classList.remove('active');
+    }
+
     function showSection(sectionId) {
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
         document.getElementById(sectionId).style.display = 'block';
@@ -581,6 +706,14 @@
             document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
         }
     }
+
+    // Hériter du quartier parent si vide
+    document.addEventListener("DOMContentLoaded", function() {
+        const quartierInput = document.querySelector('#addChildForm [name="quartier_ville"]');
+        if (quartierInput && !quartierInput.value) {
+            quartierInput.value = "{{ parent_details.quartier_ville|escapejs }}";
+        }
+    });
 </script>
 {% endblock %}
 

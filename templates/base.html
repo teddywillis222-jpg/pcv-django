@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Prof Chez Vous{% endblock %}</title>
     
     <!-- Google Fonts - Raleway -->
@@ -29,6 +29,16 @@
         
         * {
             font-family: 'Raleway', sans-serif !important;
+        }
+
+        body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Prevent iOS zoom on input focus */
+        input, select, textarea {
+            font-size: 16px !important;
         }
     </style>
     <style>
