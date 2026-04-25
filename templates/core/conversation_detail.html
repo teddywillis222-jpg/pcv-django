@@ -418,24 +418,21 @@
                     <label
                         style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Matière</label>
                     <input type="text" id="rev_matiere"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
-                        role !=ROLE_PARENT %}readonly{% endif %}>
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
                         <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Budget
                             (FCFA/h)</label>
                         <input type="number" id="rev_budget"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
-                            role !=ROLE_PARENT %}readonly{% endif %}>
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
                     </div>
                     <div>
                         <label
                             style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Fréquence
                             (/sem)</label>
                         <select id="rev_frequence"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
-                            role !=ROLE_PARENT %}disabled{% endif %}>
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
                             <option value="1">1 fois</option>
                             <option value="2">2 fois</option>
                             <option value="3">3 fois</option>
@@ -447,8 +444,7 @@
                     <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Durée
                         séance</label>
                     <select id="rev_duree"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if
-                        role !=ROLE_PARENT %}disabled{% endif %}>
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
                         <option value="1H">1h</option>
                         <option value="1H30">1h30</option>
                         <option value="2H">2h</option>
@@ -627,7 +623,7 @@
     });
 
     // === POLLING AJAX ===
-    let lastMsgId = {% if messages %}{ { messages.last.id } } {% else %} 0{% endif %};
+    let lastMsgId = {% if messages %}{{ messages.last.id }}{% else %}0{% endif %};
     const pollInterval = 5000; // 5 secondes
 
     async function fetchNewMessages() {
