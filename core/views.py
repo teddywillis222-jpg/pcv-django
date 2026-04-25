@@ -1099,7 +1099,7 @@ def conversation_detail(request, conversation_id):
         last_date = msg_date
     
     # Marquer la conversation comme lue selon le rôle
-    if user_profile.role == Role.ROLE_PARENT:
+    if user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
         conversation.conversation_lue_par_parent = True
     elif user_profile.role == Role.ROLE_PROF:
         conversation.conversation_lue_par_prof = True
@@ -1137,7 +1137,10 @@ def conversation_detail(request, conversation_id):
             is_eligible_to_finalize = True
 
     # Autres infos pour le header
-    other_user = conversation.professeur.user if conversation.professeur and request.user == conversation.parent else conversation.parent
+    if request.user == conversation.parent:
+        other_user = conversation.professeur.user if conversation.professeur else None
+    else:
+        other_user = conversation.parent
     
     other_profile_obj = None
     if other_user:
@@ -1152,6 +1155,17 @@ def conversation_detail(request, conversation_id):
     parent_children = []
     if user_role == Role.ROLE_PARENT and hasattr(request.user, 'parent'):
         parent_children = request.user.parent.enfants.all()
+        
+    # Nom à afficher (comme dans la messagerie)
+    eng = conversation.engagement_actif
+    if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
+        display_name = f"Prof. {conversation.professeur.prenom} {conversation.professeur.nom}" if conversation.professeur else "Professeur PCV"
+    else:
+        if eng and eng.enfants_concernes.exists():
+            enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
+            display_name = f"Parent de {enfants_names}"
+        else:
+            display_name = conversation.parent.first_name if conversation.parent else "Parent/Apprenant PCV"
 
     return render(request, "core/conversation_detail.html", {
         "conversation": conversation,
@@ -1162,6 +1176,7 @@ def conversation_detail(request, conversation_id):
         "blocking_message": blocking_message,
         "other_participant": other_user,
         "other_profile": other_profile_obj,
+        "display_name": display_name,
         "parent_children": parent_children,
         "role": user_role,
         "ROLE_PROF": Role.ROLE_PROF,
@@ -1195,7 +1210,13 @@ def api_send_message(request, conversation_id):
         
     # Vérifier le blocage (même logique que conversation_detail)
     from .choices import TypeAbonnement
-    if hasattr(request.user, 'profile') and request.user.profile.role in ['PARENT', 'APPRENANT']:
+    user_role = None
+    try:
+        user_role = request.user.profile.role
+    except Exception:
+        pass
+
+    if user_role in ['PARENT', 'APPRENANT']:
         active_eng = conversation.engagement_actif
         is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
         
@@ -1213,7 +1234,13 @@ def api_send_message(request, conversation_id):
         if texte and len(texte) > 2000:
             return JsonResponse({'error': 'Le message ne peut pas dépasser 2000 caractères'}, status=400)
             
-        destinataire = conversation.professeur.user if request.user == conversation.parent else conversation.parent
+        if request.user == conversation.parent:
+            destinataire = conversation.professeur.user if conversation.professeur else None
+        else:
+            destinataire = conversation.parent
+            
+        if not destinataire:
+            return JsonResponse({'error': 'Destinataire introuvable (profil incomplet ou supprimé).'}, status=400)
         
         message = Message.objects.create(
             conversation=conversation,

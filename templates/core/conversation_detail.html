@@ -63,21 +63,7 @@
 
                 <div style="flex: 1; min-width: 0;">
                     <div class="chat-user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        {% if role == ROLE_PROF %}
-                            {% if conversation.parent %}
-                                Parent de {{ conversation.engagement_actif.enfants_concernes.first.prenom|default:"l'élève" }}
-                            {% else %}
-                                {% if other_profile.prenom %}
-                                    {{ other_profile.prenom }} {{ other_profile.nom }}
-                                {% elif other_profile.nom %}
-                                    {{ other_profile.nom }}
-                                {% else %}
-                                    {{ other_participant.get_full_name|default:other_participant.username }}
-                                {% endif %}
-                            {% endif %}
-                        {% else %}
-                            Prof. {{ other_participant.first_name }}
-                        {% endif %}
+                        {{ display_name }}
                     </div>
                     <div class="chat-status-text">
                         {% if other_participant.last_login %}
