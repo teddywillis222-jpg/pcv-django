@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Suivi Pédagogique - {{ engagement.matiere }}{% endblock %}
+
+{% block content %}
+<style>
+    .suivi-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .header-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+    .btn-retour {
+        background: #f1f5f9;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        color: var(--text-dark);
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .status-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+    .status-FINALISE { background: #dcfce7; color: #166534; }
+    .status-EN_ATTENTE { background: #fef9c3; color: #854d0e; }
+    .status-EN_COURS { background: #dbeafe; color: #1e3a8a; }
+    .status-ANNULE { background: #fee2e2; color: #991b1b; }
+    .status-TERMINE { background: #f3f4f6; color: #374151; }
+    
+    .context-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .context-item {
+        font-size: 0.85rem;
+    }
+    .context-label {
+        color: var(--text-gray);
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+    .context-value {
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    /* Progress Bar */
+    .progress-section {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 1.5rem;
+    }
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .progress-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin: 0;
+    }
+    .progress-percent {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: var(--primary);
+    }
+    .progress-track {
+        height: 12px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 6px;
+        transition: width 0.5s ease-out;
+    }
+    
+    /* Journal */
+    .journal-section {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 1.5rem;
+    }
+    .seance-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+    }
+    .seance-row:last-child {
+        border-bottom: none;
+    }
+    .seance-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+    .seance-non-lue { background: #3b82f6; }
+    .seance-validee { background: #22c55e; }
+    
+    .seance-date {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.2rem;
+    }
+    .seance-notions {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+    }
+    .seance-taux {
+        font-weight: 800;
+        font-size: 0.95rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .btn-secondary {
+        flex: 1;
+        background: #f1f5f9;
+        color: var(--text-dark);
+        text-align: center;
+        padding: 1rem;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-primary {
+        flex: 1;
+        background: var(--primary);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    /* Sheets */
+    .sheet-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        opacity: 0; pointer-events: none;
+        transition: 0.3s;
+        z-index: 1000;
+    }
+    .sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    
+    .bottom-sheet {
+        position: fixed;
+        bottom: -100%; left: 0; right: 0;
+        background: white;
+        border-radius: 24px 24px 0 0;
+        padding: 1.5rem;
+        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .bottom-sheet.active { bottom: 0; }
+    
+    /* Form Styles */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; }
+    .form-control { width: 100%; padding: 0.8rem; border: 2px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 0.95rem; }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    
+    .notion-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        align-items: center;
+    }
+    .btn-remove-notion {
+        background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 36px; height: 36px; font-weight: bold; cursor: pointer;
+    }
+    
+    .warning-box {
+        background: #fffbeb;
+        border: 1px solid #fef3c7;
+        color: #92400e;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="suivi-container">
+    
+    <!-- En-tête -->
+    <div class="header-card">
+        <a href="javascript:history.back()" class="btn-retour">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Retour
+        </a>
+        
+        <div class="status-badge status-{{ engagement.statut_general }}">
+            {{ engagement.get_statut_general_display }}
+        </div>
+        
+        <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Suivi Pédagogique</h1>
+        <p style="margin: 0.2rem 0 0 0; color: var(--text-gray); font-size: 0.95rem;">
+            {{ engagement.matiere }} • {{ engagement.get_classe_display }}
+        </p>
+        
+        <div class="context-grid">
+            <div class="context-item">
+                <div class="context-label">Professeur</div>
+                <div class="context-value">{{ engagement.professeur.prenom }} {{ engagement.professeur.nom }}</div>
+            </div>
+            <div class="context-item">
+                <div class="context-label">Élève(s)</div>
+                <div class="context-value">
+                    {% if engagement.enfants_concernes.all %}
+                        {% for enfant in engagement.enfants_concernes.all %}
+                            {{ enfant.prenom }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {{ engagement.parent_apprenant.first_name }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if engagement.statut_general != 'FINALISE' and engagement.statut_general != 'TERMINE' %}
+    <div class="warning-box">
+        ⚠️ Finalisez l'engagement pour consulter et ajouter des séances pédagogiques.
+    </div>
+    {% endif %}
+
+    <!-- Progression -->
+    <div class="progress-section">
+        <div class="progress-header">
+            <h2 class="progress-title">Taux global de maîtrise</h2>
+            <div class="progress-percent">
+                {{ engagement.taux_global_matiere|default:"0"|floatformat:1 }}%
+            </div>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" style="width: {{ engagement.taux_global_matiere|default:0|stringformat:'f' }}%;"></div>
+        </div>
+        <p style="margin: 0.5rem 0 0 0; font-size: 0.75rem; color: var(--text-gray); text-align: center;">
+            Calcul basé sur l'ensemble des notions abordées ({{ engagement.total_points_obtenus_matiere|default:0 }} / {{ engagement.total_points_max_matiere|default:0 }} pts)
+        </p>
+    </div>
+    
+    <!-- Journal -->
+    <div class="journal-section">
+        <h2 class="progress-title" style="margin-bottom: 1rem;">Journal des séances</h2>
+        
+        {% if not seances %}
+            <p style="color: var(--text-gray); font-size: 0.9rem; text-align: center; padding: 1rem;">Aucune séance enregistrée pour le moment.</p>
+        {% else %}
+            {% for seance in seances %}
+            <div class="seance-row" onclick="openSeanceDetails({{ seance.id }})">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <div class="seance-indicator {% if seance.validee %}seance-validee{% else %}seance-non-lue{% endif %}"></div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="seance-date">{{ seance.date_seance|date:"d M Y" }}</div>
+                        <div class="seance-notions">
+                            {% for notion in seance.notions.all %}
+                                {{ notion.nom_notion }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="seance-taux" style="color: {% if seance.taux_maitrise_seance >= 80 %}#16a34a{% elif seance.taux_maitrise_seance >= 40 %}#ca8a04{% else %}#dc2626{% endif %}">
+                        {{ seance.taux_maitrise_seance|floatformat:0 }}%
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg>
+                </div>
+            </div>
+            
+            <!-- Data struct for JS -->
+            <script type="application/json" id="seance-data-{{ seance.id }}">
+                {
+                    "id": {{ seance.id }},
+                    "date": "{{ seance.date_seance|date:'d M Y' }}",
+                    "taux": {{ seance.taux_maitrise_seance|stringformat:'f' }},
+                    "objectifs": "{{ seance.objectifs|escapejs }}",
+                    "difficultes": "{{ seance.difficultes_rencontrees|escapejs }}",
+                    "taches": "{{ seance.taches_domicile|escapejs }}",
+                    "validee": {{ seance.validee|yesno:"true,false" }},
+                    "notions": [
+                        {% for notion in seance.notions.all %}
+                        {"nom": "{{ notion.nom_notion|escapejs }}", "score": {{ notion.score }}}
+                        {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ]
+                }
+            </script>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="action-buttons">
+            <a href="{% url 'toutes_seances' engagement.id %}" class="btn-secondary">Voir tout</a>
+            {% if is_prof and engagement.statut_general == 'FINALISE' %}
+            <button onclick="openAddSeance()" class="btn-primary">Ajouter</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Overlay global -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
+
+<!-- BOTTOM SHEET: Détails Séance -->
+<div class="bottom-sheet" id="sheetDetails">
+    <div style="width: 40px; height: 5px; background: #e2e8f0; border-radius: 10px; margin: 0 auto 1.5rem;"></div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800;">Bilan du <span id="dt-date"></span></h2>
+        <div id="dt-taux" style="font-size: 1.25rem; font-weight: 900; color: var(--primary);"></div>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">🎯 Objectifs de la séance</label>
+        <div id="dt-objectifs" style="font-size: 0.95rem; color: var(--text-dark); background: #f8fafc; padding: 1rem; border-radius: 12px;"></div>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">📚 Notions abordées</label>
+        <div id="dt-notions" style="display: grid; gap: 0.5rem;"></div>
+    </div>
+    
+    <div class="form-group" id="dt-diff-container">
+        <label class="form-label">⚠️ Difficultés rencontrées</label>
+        <div id="dt-difficultes" style="font-size: 0.95rem; color: #991b1b; background: #fef2f2; padding: 1rem; border-radius: 12px;"></div>
+    </div>
+    
+    <div class="form-group" id="dt-taches-container">
+        <label class="form-label">🏠 Tâches à domicile</label>
+        <div id="dt-taches" style="font-size: 0.95rem; color: var(--text-dark); background: #f8fafc; padding: 1rem; border-radius: 12px;"></div>
+    </div>
+    
+    {% if is_parent_apprenant %}
+    <div id="dt-valider-container" style="margin-top: 2rem;">
+        <button id="btn-valider" onclick="validerSeance()" class="btn-primary" style="width: 100%;">✅ Valider cette séance</button>
+    </div>
+    <div id="dt-validee-msg" style="margin-top: 2rem; text-align: center; color: #16a34a; font-weight: 700; display: none;">
+        ✓ Séance vue et validée
+    </div>
+    {% endif %}
+</div>
+
+<!-- BOTTOM SHEET: Ajouter Séance (Prof) -->
+{% if is_prof %}
+<div class="bottom-sheet" id="sheetAdd">
+    <div style="width: 40px; height: 5px; background: #e2e8f0; border-radius: 10px; margin: 0 auto 1.5rem;"></div>
+    
+    <h2 style="margin: 0 0 1rem 0; font-size: 1.25rem; font-weight: 800;">Ajouter une séance</h2>
+    <div class="warning-box">
+        Les informations que vous renseignez sont importantes et peuvent guider des décisions pédagogiques. Merci d'être précis.
+    </div>
+    
+    <form id="form-ajouter-seance">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">Date de la séance *</label>
+            <input type="date" id="add-date" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Objectifs de la séance *</label>
+            <textarea id="add-objectifs" class="form-control" rows="2" placeholder="Quels étaient les buts fixés ?" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Notions abordées * (Noter sur 3)</label>
+            <div id="notions-container">
+                <div class="notion-row">
+                    <input type="text" class="form-control notion-name" placeholder="Nom de la notion" required>
+                    <select class="form-control notion-score" style="width: 80px;" required>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" onclick="addNotionRow()" style="background: none; border: 1px dashed #cbd5e1; color: var(--text-dark); font-weight: 600; padding: 0.5rem; border-radius: 8px; width: 100%; margin-top: 0.5rem; cursor: pointer;">
+                + Ajouter une notion
+            </button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Des difficultés rencontrées ? *</label>
+            <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                <label style="font-size: 0.9rem;"><input type="radio" name="has_diff" value="non" checked onchange="toggleDiffText()"> Aucune difficulté</label>
+                <label style="font-size: 0.9rem;"><input type="radio" name="has_diff" value="oui" onchange="toggleDiffText()"> Oui</label>
+            </div>
+            <textarea id="add-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés..." style="display: none;"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Tâches à domicile (Optionnel)</label>
+            <textarea id="add-taches" class="form-control" rows="2" placeholder="Exercices, révisions..."></textarea>
+        </div>
+        
+        <button type="button" onclick="submitSeance()" class="btn-primary" style="width: 100%; margin-top: 1rem;">Enregistrer la séance</button>
+    </form>
+</div>
+{% endif %}
+
+<script>
+    // Initialiser la date par défaut à aujourd'hui
+    if(document.getElementById('add-date')) {
+        document.getElementById('add-date').valueAsDate = new Date();
+    }
+
+    function openAllSheets() {
+        // utility
+    }
+    
+    function closeAllSheets() {
+        document.getElementById('sheetOverlay').classList.remove('active');
+        document.getElementById('sheetDetails').classList.remove('active');
+        let sheetAdd = document.getElementById('sheetAdd');
+        if(sheetAdd) sheetAdd.classList.remove('active');
+    }
+    
+    function openAddSeance() {
+        document.getElementById('sheetOverlay').classList.add('active');
+        document.getElementById('sheetAdd').classList.add('active');
+    }
+    
+    let currentSeanceId = null;
+    
+    function openSeanceDetails(id) {
+        currentSeanceId = id;
+        const data = JSON.parse(document.getElementById('seance-data-' + id).textContent);
+        
+        document.getElementById('dt-date').textContent = data.date;
+        document.getElementById('dt-taux').textContent = parseFloat(data.taux).toFixed(0) + '%';
+        document.getElementById('dt-objectifs').textContent = data.objectifs;
+        
+        const diffCont = document.getElementById('dt-diff-container');
+        if(data.difficultes) {
+            diffCont.style.display = 'block';
+            document.getElementById('dt-difficultes').textContent = data.difficultes;
+        } else {
+            diffCont.style.display = 'none';
+        }
+        
+        const tachesCont = document.getElementById('dt-taches-container');
+        if(data.taches) {
+            tachesCont.style.display = 'block';
+            document.getElementById('dt-taches').textContent = data.taches;
+        } else {
+            tachesCont.style.display = 'none';
+        }
+        
+        const notionsDiv = document.getElementById('dt-notions');
+        notionsDiv.innerHTML = '';
+        data.notions.forEach(n => {
+            notionsDiv.innerHTML += `
+                <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 8px;">
+                    <span style="font-size: 0.9rem; font-weight: 600;">${n.nom}</span>
+                    <span style="font-weight: 800; color: var(--primary);">${n.score}/3</span>
+                </div>
+            `;
+        });
+        
+        const validerCont = document.getElementById('dt-valider-container');
+        const valideeMsg = document.getElementById('dt-validee-msg');
+        
+        if (validerCont) { // If parent
+            if(data.validee) {
+                validerCont.style.display = 'none';
+                valideeMsg.style.display = 'block';
+            } else {
+                validerCont.style.display = 'block';
+                valideeMsg.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('sheetOverlay').classList.add('active');
+        document.getElementById('sheetDetails').classList.add('active');
+    }
+    
+    function addNotionRow() {
+        const cont = document.getElementById('notions-container');
+        const row = document.createElement('div');
+        row.className = 'notion-row';
+        row.innerHTML = `
+            <input type="text" class="form-control notion-name" placeholder="Nom de la notion" required>
+            <select class="form-control notion-score" style="width: 80px;" required>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            <button type="button" class="btn-remove-notion" onclick="this.parentElement.remove()">X</button>
+        `;
+        cont.appendChild(row);
+    }
+    
+    function toggleDiffText() {
+        const hasDiff = document.querySelector('input[name="has_diff"]:checked').value === 'oui';
+        const tf = document.getElementById('add-difficultes');
+        if(hasDiff) {
+            tf.style.display = 'block';
+            tf.setAttribute('required', 'required');
+        } else {
+            tf.style.display = 'none';
+            tf.removeAttribute('required');
+        }
+    }
+    
+    async function submitSeance() {
+        const form = document.getElementById('form-ajouter-seance');
+        if(!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement...';
+        
+        const notions = [];
+        document.querySelectorAll('.notion-row').forEach(row => {
+            notions.push({
+                nom: row.querySelector('.notion-name').value,
+                score: row.querySelector('.notion-score').value
+            });
+        });
+        
+        const formData = new FormData();
+        formData.append('date_seance', document.getElementById('add-date').value);
+        formData.append('objectifs', document.getElementById('add-objectifs').value);
+        
+        const hasDiff = document.querySelector('input[name="has_diff"]:checked').value === 'oui';
+        formData.append('difficultes_presentes', hasDiff ? 'oui' : 'non');
+        if(hasDiff) {
+            formData.append('difficultes_rencontrees', document.getElementById('add-difficultes').value);
+        }
+        formData.append('taches_domicile', document.getElementById('add-taches').value);
+        formData.append('notions_json', JSON.stringify(notions));
+        
+        try {
+            const response = await fetch("{% url 'api_ajouter_seance' engagement.id %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+            const result = await response.json();
+            if(result.success) {
+                location.reload();
+            } else {
+                alert("Erreur : " + result.error);
+                btn.disabled = false;
+                btn.textContent = 'Enregistrer la séance';
+            }
+        } catch(e) {
+            alert("Erreur de connexion.");
+            btn.disabled = false;
+            btn.textContent = 'Enregistrer la séance';
+        }
+    }
+    
+    async function validerSeance() {
+        const btn = document.getElementById('btn-valider');
+        btn.disabled = true;
+        btn.textContent = 'Validation...';
+        
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        try {
+            const response = await fetch(`/api/seance/${currentSeanceId}/valider/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+            const result = await response.json();
+            if(result.success) {
+                location.reload();
+            } else {
+                alert("Erreur : " + result.error);
+                btn.disabled = false;
+                btn.textContent = '✅ Valider cette séance';
+            }
+        } catch(e) {
+            alert("Erreur de connexion.");
+            btn.disabled = false;
+            btn.textContent = '✅ Valider cette séance';
+        }
+    }
+</script>
+{% endblock %}

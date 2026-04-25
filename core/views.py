@@ -1490,6 +1490,9 @@ def admin_api_prof_action(request, prof_id):
 @login_required
 def profil_eleve(request, type_eleve, id_eleve):
     from django.http import Http404
+    from .choices import ObjectifMotivation
+    
+    obj_dict = dict(ObjectifMotivation.CHOICES)
     is_owner = False
     is_teacher = getattr(request.user.profile, 'role', '') == Profile.ROLE_PROF
     eleve_data = {}
@@ -1516,6 +1519,9 @@ def profil_eleve(request, type_eleve, id_eleve):
 
         if not difficultes and enfant.besoin_prioritaire:
             difficultes = [enfant.besoin_prioritaire]
+
+        # Map objectives to display names
+        objectifs = [obj_dict.get(o, o) for o in objectifs]
 
         eleve_data = {
             'type': 'enfant',
@@ -1545,7 +1551,7 @@ def profil_eleve(request, type_eleve, id_eleve):
             'classe': apprenant.get_classe_display() if hasattr(apprenant, 'get_classe_display') else apprenant.classe,
             'matieres': apprenant.matieres_recherchees,
             'difficultes': [apprenant.description_difficultes] if apprenant.description_difficultes else [],
-            'objectifs': apprenant.objectifs_motivations
+            'objectifs': [obj_dict.get(o, o) for o in apprenant.objectifs_motivations]
         }
     else:
         raise Http404("Type d'élève invalide.")
@@ -1555,3 +1561,149 @@ def profil_eleve(request, type_eleve, id_eleve):
         "is_owner": is_owner,
         "is_teacher": is_teacher
     })
+
+
+# ==========================================
+# ESPACE DE SUIVI PÉDAGOGIQUE
+# ==========================================
+
+@login_required
+def suivi_engagement(request, engagement_id):
+    from django.http import Http404
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    is_parent_apprenant = engagement.parent_apprenant == request.user
+    is_prof = hasattr(request.user, 'profile') and engagement.professeur == request.user.profile
+    if not (is_parent_apprenant or is_prof):
+        raise Http404("Accès refusé.")
+        
+    seances = engagement.seances.all().order_by('-date_seance')[:5]
+    
+    return render(request, "core/suivi_engagement.html", {
+        "engagement": engagement,
+        "seances": seances,
+        "is_parent_apprenant": is_parent_apprenant,
+        "is_prof": is_prof,
+    })
+
+@login_required
+def toutes_seances(request, engagement_id):
+    from django.http import Http404
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    is_parent_apprenant = engagement.parent_apprenant == request.user
+    is_prof = hasattr(request.user, 'profile') and engagement.professeur == request.user.profile
+    if not (is_parent_apprenant or is_prof):
+        raise Http404("Accès refusé.")
+        
+    seances = engagement.seances.all().order_by('-date_seance')
+    
+    mois = request.GET.get('mois')
+    taux = request.GET.get('taux')
+    
+    if mois:
+        try:
+            from datetime import datetime
+            mois_date = datetime.strptime(mois, "%Y-%m").date()
+            seances = seances.filter(mois_index=mois_date)
+        except ValueError:
+            pass
+            
+    if taux == 'faible':
+        seances = seances.filter(taux_maitrise_seance__lt=40)
+    elif taux == 'moyen':
+        seances = seances.filter(taux_maitrise_seance__gte=40, taux_maitrise_seance__lte=80)
+    elif taux == 'excellent':
+        seances = seances.filter(taux_maitrise_seance__gt=80)
+        
+    return render(request, "core/toutes_seances.html", {
+        "engagement": engagement,
+        "seances": seances,
+    })
+
+@login_required
+def api_ajouter_seance(request, engagement_id):
+    from .models import Seance, NotionSeance
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    if not (hasattr(request.user, 'profile') and engagement.professeur == request.user.profile):
+        return JsonResponse({"error": "Accès refusé. Seul le professeur peut ajouter une séance."}, status=403)
+        
+    try:
+        from datetime import datetime
+        date_seance_str = request.POST.get('date_seance')
+        date_seance = datetime.strptime(date_seance_str, "%Y-%m-%d").date()
+        objectifs = request.POST.get('objectifs')
+        difficultes_presentes = request.POST.get('difficultes_presentes') == 'oui'
+        difficultes_rencontrees = request.POST.get('difficultes_rencontrees', '')
+        taches_domicile = request.POST.get('taches_domicile', '')
+        
+        import json
+        notions_data = request.POST.get('notions_json')
+        if not notions_data:
+            return JsonResponse({"error": "Aucune notion trouvée."}, status=400)
+            
+        notions = json.loads(notions_data)
+        if len(notions) == 0:
+            return JsonResponse({"error": "Au moins une notion est requise."}, status=400)
+            
+        total_points_obtenus = sum(int(n.get('score', 0)) for n in notions)
+        total_points_max = len(notions) * 3
+        taux_maitrise = (total_points_obtenus / total_points_max) * 100 if total_points_max > 0 else 0
+        
+        from decimal import Decimal
+        
+        seance = Seance.objects.create(
+            engagement=engagement,
+            date_seance=date_seance,
+            objectifs=objectifs,
+            difficultes_presentes=difficultes_presentes,
+            difficultes_rencontrees=difficultes_rencontrees,
+            taches_domicile=taches_domicile,
+            total_points_obtenus=Decimal(str(total_points_obtenus)),
+            total_points_max=Decimal(str(total_points_max)),
+            taux_maitrise_seance=Decimal(str(round(taux_maitrise, 1))),
+            mois_index=date_seance.replace(day=1)
+        )
+        
+        for n in notions:
+            NotionSeance.objects.create(
+                seance=seance,
+                nom_notion=n.get('nom'),
+                score=int(n.get('score', 0))
+            )
+            
+        if engagement.total_points_obtenus_matiere is None:
+            engagement.total_points_obtenus_matiere = Decimal('0')
+        if engagement.total_points_max_matiere is None:
+            engagement.total_points_max_matiere = Decimal('0')
+            
+        engagement.total_points_obtenus_matiere += Decimal(str(total_points_obtenus))
+        engagement.total_points_max_matiere += Decimal(str(total_points_max))
+        
+        if engagement.total_points_max_matiere > 0:
+            engagement.taux_global_matiere = (engagement.total_points_obtenus_matiere / engagement.total_points_max_matiere) * 100
+        
+        engagement.save()
+        
+        return JsonResponse({"success": True, "message": "Séance ajoutée avec succès."})
+        
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+@login_required
+def api_valider_seance(request, seance_id):
+    from .models import Seance
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    seance = get_object_or_404(Seance, id=seance_id)
+    if seance.engagement.parent_apprenant != request.user:
+        return JsonResponse({"error": "Accès refusé. Seul le parent/apprenant peut valider."}, status=403)
+        
+    seance.validee = True
+    seance.save()
+    return JsonResponse({"success": True})
+

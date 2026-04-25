@@ -60,6 +60,12 @@ urlpatterns = [
     path("api/engagement/<int:engagement_id>/update/", core_views.api_update_engagement, name="api_update_engagement"),
     path("api/engagement/<int:engagement_id>/finalize/", core_views.api_finalize_engagement, name="api_finalize_engagement"),
 
+    # Suivi Pédagogique
+    path("engagement/<int:engagement_id>/suivi/", core_views.suivi_engagement, name="suivi_engagement"),
+    path("engagement/<int:engagement_id>/seances/", core_views.toutes_seances, name="toutes_seances"),
+    path("api/engagement/<int:engagement_id>/ajouter-seance/", core_views.api_ajouter_seance, name="api_ajouter_seance"),
+    path("api/seance/<int:seance_id>/valider/", core_views.api_valider_seance, name="api_valider_seance"),
+
     # Admin Dashboard PCV (Test Route)
     path("debug-admin-pcv/", core_views.debug_admin_pcv, name="debug_admin_pcv"),
     path("debug-admin-pcv/api/accueil/", core_views.admin_api_accueil, name="admin_api_accueil"),
