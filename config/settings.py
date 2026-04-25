@@ -38,9 +38,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').
 # Application definition
 
 INSTALLED_APPS = [
-    'cloudinary_storage'
-    'django.contrib.staticfiles'
-    'cloudinary'
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
