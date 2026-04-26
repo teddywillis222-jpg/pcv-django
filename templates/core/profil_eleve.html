@@ -235,7 +235,11 @@
 
     <!-- Actions -->
     {% if is_owner %}
-        <a href="#" onclick="alert('La modification du profil depuis cette vue sera bientôt disponible.'); return false;" class="btn-edit-profile">✏️ Modifier le profil</a>
+        {% if eleve.type == 'apprenant' %}
+            <a href="{% url 'apprenant_create_profile' %}" class="btn-edit-profile">✏️ Modifier le profil</a>
+        {% else %}
+            <a href="#" onclick="alert('La modification du profil enfant depuis cette vue sera bientôt disponible.'); return false;" class="btn-edit-profile">✏️ Modifier le profil</a>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}

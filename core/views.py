@@ -760,7 +760,55 @@ def apprenant_dashboard(request):
     except Apprenant.DoesNotExist:
         return redirect("apprenant_create_profile")
 
-    return render(request, "core/apprenant_dashboard.html", {"apprenant": apprenant})
+    from .choices import ValidationStatus, StatutGeneral, EngagementType, ObjectifMotivation, CreneauDisponibilite
+
+    # 1. Recommandations dynamiques basées sur la classe de l'apprenant
+    recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
+    
+    if apprenant.classe:
+        recommandations = recommandations.filter(classes_enseignees__icontains=apprenant.classe)
+    
+    recommandations = recommandations.order_by("?")[:8]
+
+    # 2. Engagements filtrés pour l'apprenant (parent_apprenant=request.user)
+    engagements = request.user.engagements_client.all().order_by("-date_creation")
+
+    # Onglet "En cours" : En attente ou Confirmé/En cours
+    engs_en_cours = engagements.filter(
+        statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+    )
+    
+    # Onglet "Actifs" : Finalisé
+    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    
+    # Onglet "Terminé" (Historique rapide) : Terminé, Annulé, Refusé
+    engs_termines = engagements.filter(
+        statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
+    )
+    
+    # Historique complet pour le modal/liste (tous les statuts)
+    engagements_tous = engagements.all()
+
+    # Onglet "Essais"
+    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
+
+    # 3. Abonnement & Favoris
+    abonnement = request.user.abonnements.first()
+    favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
+
+    context = {
+        "apprenant": apprenant,
+        "recommandations": recommandations,
+        "engagements_en_cours": engs_en_cours,
+        "engagements_actifs": engs_actifs,
+        "engagements_termines": engs_termines,
+        "engagements_essais": engs_essais,
+        "engagements_tous": engagements_tous,
+        "abonnement": abonnement,
+        "favoris": favoris,
+    }
+
+    return render(request, "core/apprenant_dashboard.html", context)
 
 
 # Vues pour le système de recherche et profils hybride
