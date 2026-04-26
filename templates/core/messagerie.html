@@ -104,16 +104,16 @@
                         {% endif %}
                         
                         <div class="conv-options-wrapper">
-                            <button class="conv-options-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleConvMenu(this);">
+                            <button type="button" class="conv-options-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleConvMenu(this);">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
                             </button>
                             <div class="conv-options-menu">
-                                <a href="#" onclick="event.preventDefault(); event.stopPropagation(); archiverConv('{{ conv.obj.id }}');">
+                                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); archiverConv('{{ conv.obj.id }}');">
                                     📦 Archiver
-                                </a>
-                                <a href="#" onclick="event.preventDefault(); event.stopPropagation(); supprimerConv('{{ conv.obj.id }}');" class="danger">
+                                </button>
+                                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); supprimerConv('{{ conv.obj.id }}');" class="danger">
                                     🗑️ Supprimer
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

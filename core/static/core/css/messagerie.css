@@ -131,14 +131,14 @@
 }
 
 .conv-card {
-    background: #f9fafb; /* Fond légèrement plus foncé pour différencier */
+    background: #f1f5f9; /* Fond plus prononcé pour une meilleure distinction */
     border-bottom: 1px solid var(--msg-border);
     padding: 0.85rem 1rem;
-    text-decoration: none !important; /* Désactive le soulignement strictement */
+    text-decoration: none !important;
     color: inherit;
     transition: all 0.2s;
     position: relative;
-    display: flex; /* Utilise flex pour aligner l'avatar */
+    display: flex;
     align-items: center;
     gap: 0.85rem;
     outline: none;
@@ -202,21 +202,25 @@
     overflow: hidden;
 }
 
-.conv-options-menu a {
+.conv-options-menu button {
     display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--msg-text);
-    text-decoration: none !important;
+    cursor: pointer;
     transition: background 0.2s;
 }
 
-.conv-options-menu a:hover {
+.conv-options-menu button:hover {
     background: #f8fafc;
 }
 
-.conv-options-menu a.danger {
+.conv-options-menu button.danger {
     color: #ef4444;
 }
 
