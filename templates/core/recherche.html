@@ -140,10 +140,11 @@
 /* Cartes Professeur */
 .teachers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(335px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 335px), 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
     justify-content: center;
+    width: 100%;
 }
 
 .teacher-card {

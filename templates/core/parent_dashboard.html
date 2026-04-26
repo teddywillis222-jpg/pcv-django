@@ -590,8 +590,7 @@
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">
-                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom
-                    }}</h2>
+                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom }}</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
@@ -602,8 +601,7 @@
                 <div id="tab-content">
                     <div class="tab-pane" id="encours">
                         {% for eng in engagements_en_cours %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng
-                        status_class="badge-attente" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
                         {% empty %}
                         <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Rien
                             en cours.</p>
@@ -611,8 +609,7 @@
                     </div>
                     <div class="tab-pane" id="actifs" style="display: none;">
                         {% for eng in engagements_actifs %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif"
-                        show_actions=True %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" show_actions=True %}
                         {% empty %}
                         <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
                             Aucun engagement actif.</p>
@@ -620,8 +617,7 @@
                     </div>
                     <div class="tab-pane" id="termines" style="display: none;">
                         {% for eng in engagements_termines %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng
-                        status_class="badge-termine" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" %}
                         {% empty %}
                         <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
                             Historique vide.</p>
@@ -629,8 +625,7 @@
                     </div>
                     <div class="tab-pane" id="essais" style="display: none;">
                         {% for eng in engagements_essais %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng
-                        status_class="badge-attente" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
                         {% empty %}
                         <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
                             Aucun cours d'essai.</p>
@@ -650,7 +645,7 @@
             </header>
 
             {% if favoris %}
-            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem; justify-content: center; width: 100%; box-sizing: border-box;">
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem 0; justify-content: center; width: 100%; box-sizing: border-box;">
                 {% for teacher in favoris %}
                 <div class="teacher-card" onclick="location.href='{% url 'professeur_detail' teacher.slug %}'" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
                     <div class="teacher-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
@@ -745,10 +740,8 @@
                 {% for eng in engagements_tous %}
                 <div class="history-line">
                     <div>
-                        <h4 style="margin: 0; font-size: 0.9rem;">{{ eng.professeur.prenom|default:"Professeur" }} - {{
-                            eng.matiere }}</h4>
-                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{
-                            eng.get_statut_general_display }} • {{ eng.date_creation|date:"d M Y" }}</p>
+                        <h4 style="margin: 0; font-size: 0.9rem;">{{ eng.professeur.prenom|default:"Professeur" }} - {{ eng.matiere }}</h4>
+                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ eng.get_statut_general_display }} • {{ eng.date_creation|date:"d M Y" }}</p>
                     </div>
                     <button class="btn-detail" onclick="openDetailModal('{{ eng.id }}')">Détail</button>
                 </div>
