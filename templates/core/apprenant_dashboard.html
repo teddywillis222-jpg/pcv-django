@@ -429,7 +429,7 @@
             </header>
             
             {% if favoris %}
-            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(335px, 1fr)); gap: 2rem; padding: 1rem; justify-content: center;">
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem; justify-content: center; width: 100%; box-sizing: border-box;">
                 {% for teacher in favoris %}
                 <div class="teacher-card" onclick="location.href='{% url 'professeur_detail' teacher.slug %}'" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
                     <div class="teacher-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
@@ -550,6 +550,65 @@
 
 {% block extra_js %}
 <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function toggleFavorite(btn, profId) {
+        requireAuth(async () => {
+            try {
+                const response = await fetch(`/api/professeur/${profId}/toggle-favori/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.is_favorite) {
+                        btn.classList.add('active');
+                        btn.style.background = "#fee2e2";
+                        btn.style.color = "#ef4444";
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = "#f1f5f9";
+                        btn.style.color = "#94a3b8";
+                        
+                        // Si on est dans la section favoris, on retire la carte
+                        if (document.getElementById('favoris-section').style.display !== 'none') {
+                            const card = btn.closest('.teacher-card');
+                            if (card) {
+                                card.style.opacity = '0';
+                                card.style.transform = 'scale(0.9)';
+                                setTimeout(() => {
+                                    card.remove();
+                                    const grid = document.querySelector('#favoris-section .teachers-grid');
+                                    if (grid && grid.children.length === 0) {
+                                        location.reload();
+                                    }
+                                }, 300);
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+    }
+
     function showSection(sectionId) {
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
         document.getElementById(sectionId).style.display = 'block';

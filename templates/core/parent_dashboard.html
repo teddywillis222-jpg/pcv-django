@@ -524,8 +524,7 @@
                             👶</div>
                         <div>
                             <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-dark);">{{ enfant.prenom }}</h4>
-                            <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{
-                                enfant.get_classe_display }}</p>
+                            <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
                         </div>
                     </div>
                     <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();"
@@ -562,8 +561,7 @@
                             {% if prof.est_certifie %}<span
                                 style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}
                         </h4>
-                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee
-                            }}</p>
+                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
                         <p style="margin: 0 0 1rem; font-size: 0.7rem; color: #64748b; text-transform: lowercase;">
                             {% if prof.classes_enseignees %}
                                 {% for c in prof.classes_enseignees|slice:":2" %}
@@ -652,7 +650,7 @@
             </header>
 
             {% if favoris %}
-            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(335px, 1fr)); gap: 2rem; padding: 1rem; justify-content: center;">
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem; justify-content: center; width: 100%; box-sizing: border-box;">
                 {% for teacher in favoris %}
                 <div class="teacher-card" onclick="location.href='{% url 'professeur_detail' teacher.slug %}'" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
                     <div class="teacher-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
@@ -869,21 +867,18 @@
     }
 
     function openDetailModal(engId) {
-        // Pour l'instant on simule, idéalement faire un fetch API
         const modal = document.getElementById('detailModal');
         const body = document.getElementById('modal-body');
         body.innerHTML = `<p>Chargement des détails pour l'engagement #${engId}...</p>`;
         modal.style.display = 'flex';
 
-        // Simuler un affichage
         setTimeout(() => {
             body.innerHTML = `
                 <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
                     <strong>Statut :</strong> <span style="color: var(--primary);">Confirmé</span><br>
                     <strong>Matière :</strong> Mathématiques<br>
-                    <strong>Enfant :</strong> {{ active_enfant.prenom }}
+                    <strong>Date :</strong> 12/04/2026
                 </div>
-                <p><strong>Date de proposition :</strong> 12/04/2026</p>
                 <p><strong>Mode :</strong> À domicile</p>
                 <p><strong>Fréquence :</strong> 2 fois par semaine</p>
                 <p><strong>Budget :</strong> 3000 FCFA / h</p>
@@ -895,6 +890,66 @@
 
     function closeDetailModal() {
         document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function toggleFavorite(btn, profId) {
+        requireAuth(async () => {
+            try {
+                const response = await fetch(`/api/professeur/${profId}/toggle-favori/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.is_favorite) {
+                        btn.classList.add('active');
+                        btn.style.background = "#fee2e2";
+                        btn.style.color = "#ef4444";
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = "#f1f5f9";
+                        btn.style.color = "#94a3b8";
+                        
+                        // Si on est dans la section favoris, on retire la carte
+                        if (document.getElementById('favoris-section').style.display !== 'none') {
+                            const card = btn.closest('.teacher-card');
+                            if (card) {
+                                card.style.opacity = '0';
+                                card.style.transform = 'scale(0.9)';
+                                setTimeout(() => {
+                                    card.remove();
+                                    // Si plus de favoris, afficher le message vide
+                                    const grid = document.querySelector('#favoris-section .teachers-grid');
+                                    if (grid && grid.children.length === 0) {
+                                        location.reload(); // Plus simple pour réafficher le message "vide"
+                                    }
+                                }, 300);
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
     }
 
     function switchTab(event, targetId) {
