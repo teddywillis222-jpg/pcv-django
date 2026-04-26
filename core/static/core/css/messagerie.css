@@ -127,18 +127,25 @@
 .msg-list {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem; /* Espace minimal entre les cartes pour un effet "liste continue" */
+    gap: 0.15rem;
 }
 
 .conv-card {
-    background: white;
+    background: #f9fafb; /* Fond légèrement plus foncé pour différencier */
     border-bottom: 1px solid var(--msg-border);
     padding: 0.85rem 1rem;
-    text-decoration: none;
+    text-decoration: none !important; /* Désactive le soulignement strictement */
     color: inherit;
     transition: all 0.2s;
     position: relative;
-    display: block;
+    display: flex; /* Utilise flex pour aligner l'avatar */
+    align-items: center;
+    gap: 0.85rem;
+    outline: none;
+}
+
+.conv-card * {
+    text-decoration: none !important;
 }
 
 .conv-card:last-child {
@@ -146,11 +153,105 @@
 }
 
 .conv-card:hover {
-    background: #f9fafb;
+    background: #f1f5f9; /* Un peu plus foncé au survol */
+}
+
+.conv-card:active {
+    background: #e2e8f0; /* Feedback visuel au clic sans soulignement */
 }
 
 .conv-card.unread {
     background: #f0fdf4;
+}
+
+/* Options Menu Styles */
+.conv-options-wrapper {
+    position: relative;
+    margin-left: 0.5rem;
+}
+
+.conv-options-btn {
+    background: none;
+    border: none;
+    color: var(--msg-text-muted);
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.conv-options-btn:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--msg-text);
+}
+
+.conv-options-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid var(--msg-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    min-width: 140px;
+    overflow: hidden;
+}
+
+.conv-options-menu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--msg-text);
+    text-decoration: none !important;
+    transition: background 0.2s;
+}
+
+.conv-options-menu a:hover {
+    background: #f8fafc;
+}
+
+.conv-options-menu a.danger {
+    color: #ef4444;
+}
+
+/* Avatar Styles */
+.conv-avatar-wrapper {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.conv-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.conv-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--msg-accent);
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.conv-content-wrapper {
+    flex: 1;
+    min-width: 0; /* Important pour le troncage du texte dans flex */
 }
 
 .card-header {
@@ -171,7 +272,7 @@
 }
 
 .conv-badge {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 800;
     text-transform: uppercase;
     padding: 0.15rem 0.5rem;

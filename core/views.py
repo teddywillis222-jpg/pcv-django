@@ -126,10 +126,12 @@ def messagerie(request):
     formatted_conversations = []
     for conv in conversations:
         eng = conv.engagement_actif
-        
-        # Déterminer le nom à afficher
+        # Déterminer le nom et la photo à afficher
+        display_photo = None
         if user_profile.role == Role.ROLE_PARENT or user_profile.role == Role.ROLE_APPRENANT:
             display_name = f"Prof. {conv.professeur.prenom} {conv.professeur.nom}" if conv.professeur else "Professeur PCV"
+            if conv.professeur and conv.professeur.photo_de_profil:
+                display_photo = conv.professeur.photo_de_profil.url
         else:
             # Pour le prof : Parent de [Enfants] ou Nom Apprenant
             if eng and eng.enfants_concernes.exists():
@@ -137,6 +139,18 @@ def messagerie(request):
                 display_name = f"Parent de {enfants_names}"
             else:
                 display_name = conv.parent.first_name if conv.parent else "Parent PCV"
+            
+            # Photo du parent ou de l'apprenant
+            if conv.parent:
+                try:
+                    if conv.parent.profile.role == Role.ROLE_PARENT:
+                        if hasattr(conv.parent, 'parent') and conv.parent.parent.photo_profil:
+                            display_photo = conv.parent.parent.photo_profil.url
+                    elif conv.parent.profile.role == Role.ROLE_APPRENANT:
+                        if hasattr(conv.parent, 'apprenant') and conv.parent.apprenant.photo_de_profil:
+                            display_photo = conv.parent.apprenant.photo_de_profil.url
+                except Exception:
+                    pass
 
         # Badge Statut & Couleur
         statut_label = "Discussion"
@@ -178,6 +192,7 @@ def messagerie(request):
             'is_blocked': is_blocked,
             'has_unread': has_unread,
             'engagement': eng,
+            'display_photo': display_photo,
         })
 
     context = {

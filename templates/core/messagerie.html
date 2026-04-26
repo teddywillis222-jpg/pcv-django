@@ -48,49 +48,75 @@
     <div class="msg-list">
         {% for conv in conversations %}
         <a href="{% url 'conversation_detail' conv.obj.id %}" class="conv-card {% if conv.has_unread %}unread{% endif %}">
-            <!-- Ligne 1: Nom + Badge Statut -->
-            <div class="card-header">
-                <span class="conv-name">{{ conv.display_name }}</span>
-                {% if conv.statut_label != "Discussion" %}
-                <span class="conv-badge {{ conv.statut_class }}">{{ conv.statut_label }}</span>
+            <div class="conv-avatar-wrapper">
+                {% if conv.display_photo %}
+                    <img src="{{ conv.display_photo }}" alt="" class="conv-avatar">
+                {% else %}
+                    <div class="conv-avatar-placeholder">
+                        {{ conv.display_name|slice:":1" }}
+                    </div>
                 {% endif %}
             </div>
 
-            <!-- Ligne 2: Message + Date -->
-            <div class="card-body">
-                <div class="preview-text {% if conv.is_blocked %}blocked{% endif %}">
-                    {% if conv.is_blocked %}
-                        <span class="blocked-icon">🔒</span> Message en attente – Paiement requis
-                    {% else %}
-                        {% if "📷 Photo" in conv.obj.dernier_message_texte %}
-                            <span class="msg-type-icon">📷</span> Photo
-                        {% elif "📄 Fichier" in conv.obj.dernier_message_texte %}
-                            <span class="msg-type-icon">📄</span> Fichier
-                        {% elif "Fichier joint" in conv.obj.dernier_message_texte %}
-                            <span class="msg-type-icon">📎</span> Fichier
-                        {% endif %}
-                        
-                        {% if conv.obj.dernier_message_texte %}
-                            {{ conv.obj.dernier_message_texte|default:""|truncatechars:40 }}
-                        {% else %}
-                            <span style="font-style: italic; opacity: 0.6;">Aucun message</span>
-                        {% endif %}
+            <div class="conv-content-wrapper">
+                <!-- Ligne 1: Nom + Badge Statut -->
+                <div class="card-header">
+                    <span class="conv-name">{{ conv.display_name }}</span>
+                    {% if conv.statut_label != "Discussion" %}
+                    <span class="conv-badge {{ conv.statut_class }}">{{ conv.statut_label }}</span>
                     {% endif %}
                 </div>
-                
-                <div class="card-meta">
-                    <span class="msg-time">
-                        {% if conv.obj.dernier_message_date %}
-                            {% if conv.obj.dernier_message_date.date == today %}
-                                {{ conv.obj.dernier_message_date|date:"H:i" }}
+
+                <!-- Ligne 2: Message + Date -->
+                <div class="card-body">
+                    <div class="preview-text {% if conv.is_blocked %}blocked{% endif %}">
+                        {% if conv.is_blocked %}
+                            <span class="blocked-icon">🔒</span> Message en attente – Paiement requis
+                        {% else %}
+                            {% if "📷 Photo" in conv.obj.dernier_message_texte %}
+                                <span class="msg-type-icon">📷</span> Photo
+                            {% elif "📄 Fichier" in conv.obj.dernier_message_texte %}
+                                <span class="msg-type-icon">📄</span> Fichier
+                            {% elif "Fichier joint" in conv.obj.dernier_message_texte %}
+                                <span class="msg-type-icon">📎</span> Fichier
+                            {% endif %}
+                            
+                            {% if conv.obj.dernier_message_texte %}
+                                {{ conv.obj.dernier_message_texte|default:""|truncatechars:40 }}
                             {% else %}
-                                {{ conv.obj.dernier_message_date|date:"d/m/y" }}
+                                <span style="font-style: italic; opacity: 0.6;">Aucun message</span>
                             {% endif %}
                         {% endif %}
-                    </span>
-                    {% if conv.has_unread %}
-                        <span class="unread-dot"></span>
-                    {% endif %}
+                    </div>
+                    
+                    <div class="card-meta">
+                        <span class="msg-time">
+                            {% if conv.obj.dernier_message_date %}
+                                {% if conv.obj.dernier_message_date.date == today %}
+                                    {{ conv.obj.dernier_message_date|date:"H:i" }}
+                                {% else %}
+                                    {{ conv.obj.dernier_message_date|date:"d/m/y" }}
+                                {% endif %}
+                            {% endif %}
+                        </span>
+                        {% if conv.has_unread %}
+                            <span class="unread-dot"></span>
+                        {% endif %}
+                        
+                        <div class="conv-options-wrapper">
+                            <button class="conv-options-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleConvMenu(this);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                            </button>
+                            <div class="conv-options-menu">
+                                <a href="#" onclick="event.preventDefault(); event.stopPropagation(); archiverConv('{{ conv.obj.id }}');">
+                                    📦 Archiver
+                                </a>
+                                <a href="#" onclick="event.preventDefault(); event.stopPropagation(); supprimerConv('{{ conv.obj.id }}');" class="danger">
+                                    🗑️ Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </a>
@@ -121,5 +147,37 @@
             bar.querySelector('input').focus();
         }
     });
+
+    function toggleConvMenu(btn) {
+        const menu = btn.nextElementSibling;
+        const allMenus = document.querySelectorAll('.conv-options-menu');
+        allMenus.forEach(m => {
+            if (m !== menu) m.style.display = 'none';
+        });
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Fermer les menus au clic ailleurs
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.conv-options-wrapper')) {
+            document.querySelectorAll('.conv-options-menu').forEach(m => m.style.display = 'none');
+        }
+    });
+
+    function archiverConv(id) {
+        if(confirm("Voulez-vous archiver cette conversation ?")) {
+            // Logique API ici
+            alert("Conversation " + id + " archivée (démo)");
+            location.reload();
+        }
+    }
+
+    function supprimerConv(id) {
+        if(confirm("Voulez-vous supprimer cette conversation ?")) {
+            // Logique API ici
+            alert("Conversation " + id + " supprimée (démo)");
+            location.reload();
+        }
+    }
 </script>
 {% endblock %}
