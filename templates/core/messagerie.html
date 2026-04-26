@@ -25,7 +25,6 @@
                 Vos échanges avec vos professeurs.
             {% endif %}
         </p>
-
         <form method="GET" class="search-bar" id="searchBar" {% if not search_query %}style="display: none;"{% endif %}>
             <input type="hidden" name="tab" value="{{ current_tab }}">
             <div class="search-icon">
@@ -48,45 +47,49 @@
     <!-- Zone C: Liste des conversations -->
     <div class="msg-list">
         {% for conv in conversations %}
-        <a href="{% url 'conversation_detail' conv.obj.id %}" class="conv-card">
-            <!-- Ligne 1: Nom + Statut -->
-            <div class="card-top">
+        <a href="{% url 'conversation_detail' conv.obj.id %}" class="conv-card {% if conv.has_unread %}unread{% endif %}">
+            <!-- Ligne 1: Nom + Badge Statut -->
+            <div class="card-header">
                 <span class="conv-name">{{ conv.display_name }}</span>
+                {% if conv.statut_label != "Discussion" %}
                 <span class="conv-badge {{ conv.statut_class }}">{{ conv.statut_label }}</span>
-            </div>
-
-            <!-- Ligne 2: Contexte Scolaire -->
-            <div class="conv-context">
-                {% if conv.engagement %}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                    {{ conv.engagement.matiere }} – {{ conv.engagement.get_classe_display }} 
-                    | {{ conv.engagement.localisation_option }}
-                {% else %}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                    Discussion libre
                 {% endif %}
             </div>
 
-            <!-- Ligne 3 & 4: Message / Blocage & Date -->
-            <div class="conv-preview">
+            <!-- Ligne 2: Message + Date -->
+            <div class="card-body">
                 <div class="preview-text {% if conv.is_blocked %}blocked{% endif %}">
                     {% if conv.is_blocked %}
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Message en attente – Paiement requis
+                        <span class="blocked-icon">🔒</span> Message en attente – Paiement requis
                     {% else %}
-                        {{ conv.obj.dernier_message_texte|default:"Aucun message" }}
+                        {% if "📷 Photo" in conv.obj.dernier_message_texte %}
+                            <span class="msg-type-icon">📷</span> Photo
+                        {% elif "📄 Fichier" in conv.obj.dernier_message_texte %}
+                            <span class="msg-type-icon">📄</span> Fichier
+                        {% elif "Fichier joint" in conv.obj.dernier_message_texte %}
+                            <span class="msg-type-icon">📎</span> Fichier
+                        {% endif %}
+                        
+                        {% if conv.obj.dernier_message_texte %}
+                            {{ conv.obj.dernier_message_texte|default:""|truncatechars:40 }}
+                        {% else %}
+                            <span style="font-style: italic; opacity: 0.6;">Aucun message</span>
+                        {% endif %}
                     {% endif %}
                 </div>
-
-                <!-- Ligne 5 & 6: Métadonnées -->
-                <div class="conv-meta">
+                
+                <div class="card-meta">
                     <span class="msg-time">
                         {% if conv.obj.dernier_message_date %}
-                            {{ conv.obj.dernier_message_date|date:"H:i" }}
+                            {% if conv.obj.dernier_message_date.date == today %}
+                                {{ conv.obj.dernier_message_date|date:"H:i" }}
+                            {% else %}
+                                {{ conv.obj.dernier_message_date|date:"d/m/y" }}
+                            {% endif %}
                         {% endif %}
                     </span>
                     {% if conv.has_unread %}
-                        <span class="unread-badge">!</span>
+                        <span class="unread-dot"></span>
                     {% endif %}
                 </div>
             </div>

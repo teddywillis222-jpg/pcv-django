@@ -188,6 +188,7 @@ def messagerie(request):
         'ROLE_PROF': Role.ROLE_PROF,
         'ROLE_PARENT': Role.ROLE_PARENT,
         'ROLE_APPRENANT': Role.ROLE_APPRENANT,
+        'today': timezone.now().date(),
     }
 
     return render(request, "core/messagerie.html", context)
@@ -1324,7 +1325,12 @@ def api_send_message(request, conversation_id):
         )
         
         # Mettre à jour la conversation
-        conversation.dernier_message_texte = texte if texte else "Fichier joint"
+        if fichier:
+            is_image = fichier.content_type.startswith('image/')
+            prefix = "📷 Photo" if is_image else "📄 Fichier"
+            conversation.dernier_message_texte = f"{prefix} {texte}" if texte else prefix
+        else:
+            conversation.dernier_message_texte = texte
         conversation.dernier_message_date = message.date_envoi
         conversation.dernier_message_auteur = request.user
         
