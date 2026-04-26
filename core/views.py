@@ -273,6 +273,8 @@ def signup(request):
                 prix="2000f par engagement",
                 date_debut=date.today(),
             )
+            from django.contrib import messages
+            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect("post_signup_redirect")
     else:
@@ -289,6 +291,8 @@ def login_view(request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            from django.contrib import messages
+            messages.success(request, f"Heureux de vous revoir, {user.first_name} !")
             login(request, user)
             return redirect("post_signup_redirect")
     else:
