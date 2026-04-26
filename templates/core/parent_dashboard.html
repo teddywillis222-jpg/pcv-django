@@ -14,17 +14,20 @@
         --primary-soft: #dcfce7;
         --primary-dark: #15803d;
         --accent: #1e293b;
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-        --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     body {
         background-color: var(--dash-bg);
-        padding-bottom: 70px; /* Espace pour la bottom nav sur mobile */
+        padding-bottom: 70px;
+        /* Espace pour la bottom nav sur mobile */
     }
 
     @media (min-width: 1024px) {
-        body { padding-bottom: 0; }
+        body {
+            padding-bottom: 0;
+        }
     }
 
     /* Layout */
@@ -87,7 +90,8 @@
         font-size: 0.95rem;
     }
 
-    .sidebar-menu-item:hover, .sidebar-menu-item.active {
+    .sidebar-menu-item:hover,
+    .sidebar-menu-item.active {
         background: var(--primary-soft);
         color: var(--primary);
     }
@@ -107,7 +111,11 @@
         z-index: 1000;
     }
 
-    @media (min-width: 1024px) { .bottom-nav { display: none; } }
+    @media (min-width: 1024px) {
+        .bottom-nav {
+            display: none;
+        }
+    }
 
     .nav-item {
         display: flex;
@@ -120,8 +128,14 @@
         font-weight: 700;
     }
 
-    .nav-item.active { color: var(--primary); }
-    .nav-item svg { width: 22px; height: 22px; }
+    .nav-item.active {
+        color: var(--primary);
+    }
+
+    .nav-item svg {
+        width: 22px;
+        height: 22px;
+    }
 
     .carousel-container {
         margin: 0 -0.75rem;
@@ -133,7 +147,9 @@
         -webkit-overflow-scrolling: touch;
     }
 
-    .carousel-container::-webkit-scrollbar { display: none; }
+    .carousel-container::-webkit-scrollbar {
+        display: none;
+    }
 
     .prof-card {
         flex: 0 0 auto;
@@ -147,6 +163,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        margin-bottom: 5px;
     }
 
     .prof-card img {
@@ -190,10 +207,25 @@
     }
 
     /* Badges */
-    .badge-attente { background: #fef9c3; color: #854d0e; }
-    .badge-actif { background: #dcfce7; color: #166534; }
-    .badge-termine { background: #f1f5f9; color: #475569; }
-    .badge-refuse { background: #fee2e2; color: #b91c1c; }
+    .badge-attente {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .badge-actif {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-termine {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .badge-refuse {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
 
 
     /* Section Headers */
@@ -279,7 +311,7 @@
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 2000;
         align-items: center;
         justify-content: center;
@@ -304,27 +336,31 @@
         right: 0;
         background: white;
         border-radius: 24px 24px 0 0;
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
         z-index: 3000;
         transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         flex-direction: column;
         max-height: 85vh;
     }
+
     .bottom-sheet.active {
         bottom: 0;
     }
+
     .sheet-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 2999;
         backdrop-filter: blur(2px);
     }
+
     .sheet-overlay.active {
         display: block;
     }
+
     .sheet-header {
         padding: 1.5rem;
         border-bottom: 1px solid #e2e8f0;
@@ -332,17 +368,29 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .sheet-body {
         padding: 1.5rem;
         overflow-y: auto;
     }
-    .sheet-body input, .sheet-body select {
-        width: 100%; padding: 0.85rem; border: 1px solid #d1d5db; border-radius: 10px; margin-bottom: 1rem; box-sizing: border-box;
-    }
-    .sheet-body label {
-        display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-dark);
+
+    .sheet-body input,
+    .sheet-body select {
+        width: 100%;
+        padding: 0.85rem;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
     }
 
+    .sheet-body label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+    }
 </style>
 {% endblock %}
 
@@ -352,67 +400,103 @@
     <aside class="dash-sidebar">
         <div class="sidebar-card">
             <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div style="width: 60px; height: 60px; background: var(--primary-soft); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin: 0 auto 0.75rem;">
+                <div
+                    style="width: 60px; height: 60px; background: var(--primary-soft); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; margin: 0 auto 0.75rem;">
                     {{ parent_details.nom|slice:":1"|upper }}
                 </div>
                 <h4 style="margin: 0;">{{ parent_details.nom }}</h4>
                 <p style="font-size: 0.8rem; color: var(--text-gray);">Compte Parent</p>
             </div>
-            
+
             <nav class="sidebar-nav">
                 <a href="#" class="sidebar-menu-item active" onclick="showSection('main-dash')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    </svg>
                     Dashboard
                 </a>
                 <a href="#" class="sidebar-menu-item" onclick="showSection('favoris-section')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
                     Mes Favoris
                 </a>
                 <a href="#" class="sidebar-menu-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
                     Gérer mon plan
                 </a>
                 <a href="{% url 'messagerie' %}" class="sidebar-menu-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
                     Messagerie
                 </a>
                 <a href="#" class="sidebar-menu-item" onclick="showSection('history-section')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     Historique
                 </a>
             </nav>
         </div>
-        
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="sidebar-menu-item" style="color: #ef4444; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                    Déconnexion
-                </button>
-            </form>
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="sidebar-menu-item"
+                style="color: #ef4444; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Déconnexion
+            </button>
+        </form>
 
     </aside>
 
     <!-- Bottom Nav Mobile -->
     <nav class="bottom-nav">
         <a href="#" class="nav-item active" onclick="showSection('main-dash')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg>
             Accueil
         </a>
         <a href="#" class="nav-item" onclick="showSection('favoris-section')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
             Favoris
         </a>
         <a href="#" class="nav-item" onclick="showSection('history-section')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </svg>
             Historique
         </a>
         <a href="{% url 'messagerie' %}" class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
             Messages
         </a>
         <a href="#" class="nav-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
             Profil
         </a>
     </nav>
@@ -423,20 +507,30 @@
             <!-- Enfants Selector -->
             <header class="section-header" style="margin-bottom: 0.5rem; padding-top: 0.5rem;">
                 <h1 class="section-title">Mes enfants</h1>
-                <button onclick="document.getElementById('childSheet').classList.add('active'); document.getElementById('sheetOverlay').classList.add('active');" style="background: none; border: none; font-weight: 700; color: var(--primary); font-size: 0.8rem; cursor: pointer;">+ Ajouter</button>
+                <button
+                    onclick="document.getElementById('childSheet').classList.add('active'); document.getElementById('sheetOverlay').classList.add('active');"
+                    style="background: none; border: none; font-weight: 700; color: var(--primary); font-size: 0.8rem; cursor: pointer;">+
+                    Ajouter</button>
             </header>
 
             <section class="carousel-container" style="margin-bottom: 1.5rem; gap: 1rem; padding-bottom: 0.5rem;">
                 {% for enfant in enfants %}
-                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" onclick="location.href='?enfant_id={{ enfant.id }}'" style="cursor: pointer; padding: 0.75rem 1rem; border-radius: 12px; min-width: max-content; display: flex; align-items: center; gap: 1rem; background: {% if enfant.id == active_enfant.id %}white{% else %}transparent{% endif %}; border: 1px solid {% if enfant.id == active_enfant.id %}var(--primary){% else %}#e2e8f0{% endif %};">
+                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}"
+                    onclick="location.href='?enfant_id={{ enfant.id }}'"
+                    style="cursor: pointer; padding: 0.75rem 1rem; border-radius: 12px; min-width: max-content; display: flex; align-items: center; gap: 1rem; background: {% if enfant.id == active_enfant.id %}white{% else %}transparent{% endif %}; border: 1px solid {% if enfant.id == active_enfant.id %}var(--primary){% else %}#e2e8f0{% endif %};">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <div class="avatar" style="width: 32px; height: 32px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; background: #e0e7ff; border-radius: 50%; margin: 0;">👶</div>
+                        <div class="avatar"
+                            style="width: 32px; height: 32px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; background: #e0e7ff; border-radius: 50%; margin: 0;">
+                            👶</div>
                         <div>
                             <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-dark);">{{ enfant.prenom }}</h4>
-                            <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
+                            <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{
+                                enfant.get_classe_display }}</p>
                         </div>
                     </div>
-                    <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();" style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-decoration: underline; white-space: nowrap; margin-left: 0.5rem;">Voir profil</a>
+                    <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();"
+                        style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-decoration: underline; white-space: nowrap; margin-left: 0.5rem;">Voir
+                        profil</a>
                 </div>
                 {% endfor %}
             </section>
@@ -446,28 +540,45 @@
             <section style="margin-top: 1rem;">
                 <div class="section-header">
                     <h2 class="section-title">Recommandations pour {{ active_enfant.prenom }}</h2>
-                    <a href="{% url 'recherche' %}" style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
+                    <a href="{% url 'recherche' %}"
+                        style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
                 </div>
                 <div class="carousel-container">
                     {% for prof in recommandations %}
                     <div class="prof-card" style="text-align: center; padding: 1.2rem; min-width: 180px;">
                         {% if prof.photo_de_profil %}
-                        <img src="{{ prof.photo_de_profil.url }}" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 0.8rem;">
+                        <img src="{{ prof.photo_de_profil.url }}" alt=""
+                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 0.8rem;">
                         {% else %}
-                        <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem;">👨‍🏫</div>
+                        <div
+                            style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem;">
+                            👨‍🏫</div>
                         {% endif %}
-                        <h4 style="margin: 0; font-size: 0.9rem;">{{ prof.prenom }} {% if prof.est_certifie %}<span style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}</h4>
-                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
+                        <h4 style="margin: 0; font-size: 0.9rem;">
+                            {% if prof.statut_de_validation == 'APPROVED' %}
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #16a34a; color: white; border-radius: 50%; font-size: 8px; margin-right: 4px; vertical-align: middle;">✓</span>
+                            {% endif %}
+                            {{ prof.prenom }} {% if prof.est_certifie %}<span
+                                style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}
+                        </h4>
+                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee
+                            }}</p>
                         <p style="margin: 0 0 1rem; font-size: 0.7rem; color: var(--primary); opacity: 0.8;">
-                            {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif
+                            %}{% endfor %}
                             {% if prof.classes_enseignees|length > 2 %}...{% endif %}
                         </p>
-                        <a href="{% url 'professeur_detail' prof.slug %}" style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir le profil</a>
+                        <a href="{% url 'professeur_detail' prof.slug %}"
+                            style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir
+                            le profil</a>
                     </div>
                     {% empty %}
-                    <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
-                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
-                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
+                    <div
+                        style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
+                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne
+                            correspond exactement.</p>
+                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche
+                            manuelle</a>
                     </div>
                     {% endfor %}
                 </div>
@@ -475,7 +586,8 @@
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">
-                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom }}</h2>
+                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom
+                    }}</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
@@ -486,30 +598,38 @@
                 <div id="tab-content">
                     <div class="tab-pane" id="encours">
                         {% for eng in engagements_en_cours %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng
+                        status_class="badge-attente" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Rien en cours.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Rien
+                            en cours.</p>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="actifs" style="display: none;">
                         {% for eng in engagements_actifs %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" show_actions=True %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif"
+                        show_actions=True %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun engagement actif.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
+                            Aucun engagement actif.</p>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="termines" style="display: none;">
                         {% for eng in engagements_termines %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng
+                        status_class="badge-termine" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Historique vide.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
+                            Historique vide.</p>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="essais" style="display: none;">
                         {% for eng in engagements_essais %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng
+                        status_class="badge-attente" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun cours d'essai.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">
+                            Aucun cours d'essai.</p>
                         {% endfor %}
                     </div>
 
@@ -521,59 +641,86 @@
         <div id="favoris-section" class="dash-section" style="display: none;">
             <header class="section-header">
                 <h1 class="section-title">Mes Favoris</h1>
-                <button onclick="showSection('main-dash')" style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
+                <button onclick="showSection('main-dash')"
+                    style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
             </header>
-            
+
             {% if favoris %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.5rem; padding: 1rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.5rem; padding: 1rem;">
                 {% for prof in favoris %}
-                    <a href="{% url 'professeur_detail' prof.slug %}" style="text-decoration: none; color: inherit; display: block;">
-                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                                {% if prof.photo_de_profil %}
-                                <img src="{{ prof.photo_de_profil.url }}" alt="" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #f0fdf4;">
-                                {% else %}
-                                <div style="width: 75px; height: 75px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #94a3b8; font-weight: bold;">
-                                    {{ prof.prenom|first }}{{ prof.nom|first }}
-                                </div>
-                                {% endif %}
-                                <div>
-                                    <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">{{ prof.prenom }} {{ prof.nom }}</h3>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #64748b;">{{ prof.matiere_enseignee }}</p>
-                                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 0.25rem;">
-                                        📍 {{ prof.ville_quartier }}
-                                    </p>
-                                </div>
+                <a href="{% url 'professeur_detail' prof.slug %}"
+                    style="text-decoration: none; color: inherit; display: block;">
+                    <div
+                        style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            {% if prof.photo_de_profil %}
+                            <img src="{{ prof.photo_de_profil.url }}" alt=""
+                                style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #f0fdf4;">
+                            {% else %}
+                            <div
+                                style="width: 75px; height: 75px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #94a3b8; font-weight: bold;">
+                                {{ prof.prenom|first }}{{ prof.nom|first }}
                             </div>
-                            
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                                <span style="color: #fbbf24; font-size: 0.9rem;">★★★★★</span>
-                                <span style="font-size: 0.85rem; color: #64748b;">{{ prof.moyenne_avis|default:"Nouveau" }} ({{ prof.nombre_avis|default:"0" }} avis)</span>
-                            </div>
-                            
-                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                                {% if prof.est_certifie %}
-                                <span style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Vérifié</span>
-                                {% endif %}
-                                <span style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Disponible</span>
-                                {% if prof.annees_d_experience %}
-                                <span style="background: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{{ prof.annees_d_experience }} ans d'exp.</span>
-                                {% endif %}
-                            </div>
-                            
-                            <div style="display: flex; gap: 0.75rem; align-items: center;">
-                                <button style="flex: 1; background: var(--success-600, #16a34a); color: white; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-align: center;">Consulter</button>
+                            {% endif %}
+                            <div>
+                                <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">
+                                    {% if prof.statut_de_validation == 'APPROVED' %}
+                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #16a34a; color: white; border-radius: 50%; font-size: 9px; margin-right: 5px; vertical-align: middle;">✓</span>
+                                    {% endif %}
+                                    {{ prof.prenom }} {{ prof.nom }}
+                                </h3>
+                                <p style="margin: 0; font-size: 0.9rem; color: #64748b;">{{ prof.matiere_enseignee }}
+                                </p>
+                                <p
+                                    style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 0.25rem;">
+                                    📍 {{ prof.ville_quartier }}
+                                </p>
+                                <p style="margin: 4px 0 0; font-size: 0.8rem; color: var(--success-600); font-weight: 600;">
+                                    {% for c in prof.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    {% if prof.classes_enseignees|length > 3 %}...{% endif %}
+                                </p>
                             </div>
                         </div>
-                    </a>
+
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="color: #fbbf24; font-size: 0.9rem;">★★★★★</span>
+                            <span style="font-size: 0.85rem; color: #64748b;">{{ prof.moyenne_avis|default:"Nouveau" }}
+                                ({{ prof.nombre_avis|default:"0" }} avis)</span>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                            {% if prof.est_certifie %}
+                            <span
+                                style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Vérifié</span>
+                            {% endif %}
+                            <span
+                                style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Disponible</span>
+                            {% if prof.annees_d_experience %}
+                            <span
+                                style="background: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{{
+                                prof.annees_d_experience }} ans d'exp.</span>
+                            {% endif %}
+                        </div>
+
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <button
+                                style="flex: 1; background: var(--success-600, #16a34a); color: white; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-align: center;">Consulter</button>
+                        </div>
+                    </div>
+                </a>
                 {% endfor %}
             </div>
             {% else %}
-            <div style="padding: 2rem; text-align: center; background: white; border-radius: 24px; box-shadow: var(--shadow-sm);">
+            <div
+                style="padding: 2rem; text-align: center; background: white; border-radius: 24px; box-shadow: var(--shadow-sm);">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">❤️</div>
                 <h3 style="margin-bottom: 0.5rem;">Votre liste est vide</h3>
-                <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem;">Enregistrez vos professeurs préférés pour les retrouver ici rapidement.</p>
-                <a href="{% url 'recherche' %}" class="btn-eng-main" style="display:inline-block; padding: 0.8rem 1.5rem; border-radius: 12px; background: var(--primary); color: white; text-decoration: none; font-weight: 700;">Découvrir des professeurs</a>
+                <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem;">Enregistrez vos
+                    professeurs préférés pour les retrouver ici rapidement.</p>
+                <a href="{% url 'recherche' %}" class="btn-eng-main"
+                    style="display:inline-block; padding: 0.8rem 1.5rem; border-radius: 12px; background: var(--primary); color: white; text-decoration: none; font-weight: 700;">Découvrir
+                    des professeurs</a>
             </div>
             {% endif %}
         </div>
@@ -582,15 +729,18 @@
         <div id="history-section" class="dash-section" style="display: none;">
             <header class="section-header">
                 <h1 class="section-title">Historique complet</h1>
-                <button onclick="showSection('main-dash')" style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
+                <button onclick="showSection('main-dash')"
+                    style="background: none; border: none; color: var(--primary); font-weight: 700;">Retour</button>
             </header>
 
             <div id="history-list">
                 {% for eng in engagements_tous %}
                 <div class="history-line">
                     <div>
-                        <h4 style="margin: 0; font-size: 0.9rem;">{{ eng.professeur.prenom|default:"Professeur" }} - {{ eng.matiere }}</h4>
-                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ eng.get_statut_general_display }} • {{ eng.date_creation|date:"d M Y" }}</p>
+                        <h4 style="margin: 0; font-size: 0.9rem;">{{ eng.professeur.prenom|default:"Professeur" }} - {{
+                            eng.matiere }}</h4>
+                        <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{
+                            eng.get_statut_general_display }} • {{ eng.date_creation|date:"d M Y" }}</p>
                     </div>
                     <button class="btn-detail" onclick="openDetailModal('{{ eng.id }}')">Détail</button>
                 </div>
@@ -619,7 +769,7 @@
 <div id="sheetOverlay" class="sheet-overlay" onclick="closeChildSheet()"></div>
 <div id="childSheet" class="bottom-sheet">
     <style>
-        #childSheet .form-group input, 
+        #childSheet .form-group input,
         #childSheet .form-group select {
             height: 50px !important;
             box-sizing: border-box;
@@ -627,7 +777,8 @@
     </style>
     <div class="sheet-header">
         <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Ajouter un enfant</h3>
-        <button onclick="closeChildSheet()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
+        <button onclick="closeChildSheet()"
+            style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
     </div>
     <div class="sheet-body">
         <form method="post" id="addChildForm">
@@ -660,7 +811,8 @@
                 <label>Objectifs</label>
                 {{ enfant_form.objectifs_motivations }}
             </div>
-            <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
+            <button type="submit"
+                style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
                 Enregistrer l'enfant
             </button>
         </form>
@@ -677,10 +829,10 @@
     }
 
     // Gestion de la limite des multiselects (5 max)
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const multiSelects = document.querySelectorAll('select.multi-select');
         multiSelects.forEach(select => {
-            select.addEventListener('change', function(e) {
+            select.addEventListener('change', function (e) {
                 const max = parseInt(this.getAttribute('data-max') || '5');
                 const selectedOptions = Array.from(this.selectedOptions);
                 if (selectedOptions.length > max) {
@@ -696,7 +848,7 @@
     function showSection(sectionId) {
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
         document.getElementById(sectionId).style.display = 'block';
-        
+
         // Update active state in nav
         document.querySelectorAll('.nav-item, .sidebar-menu-item').forEach(item => {
             item.classList.remove('active');
@@ -712,7 +864,7 @@
         const body = document.getElementById('modal-body');
         body.innerHTML = `<p>Chargement des détails pour l'engagement #${engId}...</p>`;
         modal.style.display = 'flex';
-        
+
         // Simuler un affichage
         setTimeout(() => {
             body.innerHTML = `
@@ -753,7 +905,7 @@
 
     async function masquerEngagement(engId, btnElement) {
         if (!confirm("Voulez-vous vraiment masquer cet engagement de votre tableau de bord ?")) return;
-        
+
         try {
             const response = await fetch(`/api/engagement/${engId}/masquer/`, {
                 method: 'POST',
@@ -783,14 +935,14 @@
     }
 
     // Fermer les menus au clic extérieur
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (!event.target.closest('.options-btn')) {
             document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
         }
     }
 
     // Hériter du quartier parent si vide
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const quartierInput = document.querySelector('#addChildForm [name="quartier_ville"]');
         if (quartierInput && !quartierInput.value) {
             quartierInput.value = "{{ parent_details.quartier_ville|escapejs }}";
@@ -798,4 +950,3 @@
     });
 </script>
 {% endblock %}
-

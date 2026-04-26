@@ -8,18 +8,17 @@
 .search-page {
     min-height: 100vh;
     background: #f8fafc;
-    padding: 2rem 0;
+    padding: 0;
 }
 
 .search-header {
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 2rem 0;
-    margin-bottom: 2rem;
+    background: #f8fafc;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
 }
 
 .search-container {
-    max-width: 1400px; /* Un peu plus resserré que 1600 pour éviter d'être trop étalé sur les écrans géants, mais large */
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 2rem;
 }
@@ -135,9 +134,10 @@
 /* Cartes Professeur */
 .teachers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(335px, 1fr)); /* Min 335px */
+    grid-template-columns: repeat(auto-fill, minmax(335px, 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
+    justify-content: center;
 }
 
 .teacher-card {
@@ -413,13 +413,13 @@
     
     .teachers-grid {
         grid-template-columns: 1fr;
-        padding: 0 10px;
+        padding: 0;
     }
     
     .teacher-card {
         margin: 0;
         width: 100%;
-        min-width: 335px; /* Appliquer aussi sur mobile selon demande */
+        min-width: 0;
         box-sizing: border-box;
         padding: 1rem;
     }
@@ -454,9 +454,6 @@
     <div class="search-header">
         <div class="search-container">
             <h1 class="search-title">Trouvez le meilleur répétiteur à domicile au Bénin</h1>
-            <p class="search-subtitle">
-                Des professeurs certifiés et vérifiés dans toutes les matières, du primaire au supérieur, disponibles à Cotonou, Abomey-Calavi et dans tous les quartiers du Bénin.
-            </p>
             
             <!-- Formulaire de recherche -->
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
@@ -584,8 +581,17 @@
                     </div>
                     {% endif %}
                     <div class="teacher-info">
-                        <h3 class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</h3>
+                        <h3 class="teacher-name">
+                            {% if teacher.statut_de_validation == 'APPROVED' %}
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-right: 6px; vertical-align: middle;">✓</span>
+                            {% endif %}
+                            {{ teacher.prenom }} {{ teacher.nom }}
+                        </h3>
                         <p class="teacher-subjects">{{ teacher.matiere_enseignee }}</p>
+                        <p style="margin: 2px 0; font-size: 0.8rem; color: var(--success-600); font-weight: 600;">
+                            {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
+                        </p>
                         <p class="teacher-location">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
