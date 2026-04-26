@@ -4,10 +4,10 @@
         <div>
             <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--text-dark);">
                 {% if eng.professeur %}
-                    {% if eng.professeur.statut_de_validation == 'APPROVED' %}
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #16a34a; color: white; border-radius: 50%; font-size: 9px; margin-right: 5px; vertical-align: middle;">✓</span>
-                    {% endif %}
                     Prof. {{ eng.professeur.prenom }} {{ eng.professeur.nom }}
+                    {% if eng.professeur.statut_de_validation == 'APPROVED' %}
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #16a34a; color: white; border-radius: 50%; font-size: 9px; margin-left: 5px; vertical-align: middle;">✓</span>
+                    {% endif %}
                 {% else %}
                     Affectation en cours...
                 {% endif %}

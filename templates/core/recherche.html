@@ -13,8 +13,8 @@
 
 .search-header {
     background: #f8fafc;
-    padding: 1rem 0;
-    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    margin-bottom: 0;
 }
 
 .search-container {
@@ -27,7 +27,7 @@
     font-size: 2.5rem;
     font-weight: 800;
     color: #1e293b;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     line-height: 1.2;
 }
 
@@ -80,22 +80,28 @@
 
 .more-filters-btn {
     background: transparent;
-    color: var(--success-600);
-    border: 2px solid var(--success-600);
-    height: 3.5rem;
-    padding: 0 1.5rem;
-    border-radius: 0.75rem;
+    color: #64748b;
+    border: none;
+    height: auto;
+    padding: 0;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
-    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
 }
 
 .more-filters-btn:hover {
-    background: var(--success-50);
-    border-color: var(--success-700);
-    color: var(--success-700);
+    color: var(--success-600);
+}
+
+.more-filters-btn svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Filtres Avancés */
@@ -419,7 +425,7 @@
     .teacher-card {
         margin: 0;
         width: 100%;
-        min-width: 0;
+        min-width: 335px;
         box-sizing: border-box;
         padding: 1rem;
     }
@@ -458,55 +464,52 @@
             <!-- Formulaire de recherche -->
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
                 <!-- Filtres Principaux -->
-                <div class="main-filters">
-                    <div class="filter-group">
-                        <label class="filter-label" for="matiere">Matière</label>
-                        <input 
-                            type="text" 
-                            id="matiere" 
-                            name="matiere"
-                            value="{{ matiere }}"
-                            class="filter-input" 
-                            placeholder="Ex: Mathématiques, Français..."
-                            list="matieres-list"
-                        >
-                        <datalist id="matieres-list">
-                            <option value="Mathématiques">
-                            <option value="Français">
-                            <option value="Physique-Chimie">
-                            <option value="SVT">
-                            <option value="Histoire-Géographie">
-                            <option value="Anglais">
-                            <option value="Espagnol">
-                            <option value="Philosophie">
-                            <option value="Économie">
-                        </datalist>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label" for="localisation">Quartier / Ville</label>
-                        <select id="localisation" name="localisation" class="filter-input">
-                            <option value="">Tous les quartiers</option>
-                            <option value="Cotonou" {% if localisation == 'Cotonou' %}selected{% endif %}>Cotonou</option>
-                            <option value="Abomey-Calavi" {% if localisation == 'Abomey-Calavi' %}selected{% endif %}>Abomey-Calavi</option>
-                            <option value="Akpakpa" {% if localisation == 'Akpakpa' %}selected{% endif %}>Akpakpa</option>
-                            <option value="Fidjrossè" {% if localisation == 'Fidjrossè' %}selected{% endif %}>Fidjrossè</option>
-                            <option value="Gbegamey" {% if localisation == 'Gbegamey' %}selected{% endif %}>Gbegamey</option>
-                            <option value="Saint-Michel" {% if localisation == 'Saint-Michel' %}selected{% endif %}>Saint-Michel</option>
-                            <option value="Zogbo" {% if localisation == 'Zogbo' %}selected{% endif %}>Zogbo</option>
-                            <option value="Jéricho" {% if localisation == 'Jéricho' %}selected{% endif %}>Jéricho</option>
-                            <option value="Missebo" {% if localisation == 'Missebo' %}selected{% endif %}>Missebo</option>
-                            <option value="Agla" {% if localisation == 'Agla' %}selected{% endif %}>Agla</option>
-                        </select>
+                <div class="main-filters" style="align-items: flex-start; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; width: 100%; gap: 1rem;">
+                        <div class="filter-group">
+                            <input 
+                                type="text" 
+                                id="matiere" 
+                                name="matiere"
+                                value="{{ matiere }}"
+                                class="filter-input" 
+                                placeholder="Matière (Ex: Mathématiques, Français...)"
+                                list="matieres-list"
+                            >
+                            <datalist id="matieres-list">
+                                <option value="Mathématiques">
+                                <option value="Français">
+                                <option value="Physique-Chimie">
+                                <option value="SVT">
+                                <option value="Histoire-Géographie">
+                                <option value="Anglais">
+                                <option value="Espagnol">
+                                <option value="Philosophie">
+                                <option value="Économie">
+                                </datalist>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <select id="localisation" name="localisation" class="filter-input">
+                                <option value="">Quartier / Ville (Ex : Cotonou, Agla)</option>
+                                <option value="Cotonou" {% if localisation == 'Cotonou' %}selected{% endif %}>Cotonou</option>
+                                <option value="Abomey-Calavi" {% if localisation == 'Abomey-Calavi' %}selected{% endif %}>Abomey-Calavi</option>
+                                <option value="Akpakpa" {% if localisation == 'Akpakpa' %}selected{% endif %}>Akpakpa</option>
+                                <option value="Fidjrossè" {% if localisation == 'Fidjrossè' %}selected{% endif %}>Fidjrossè</option>
+                                <option value="Gbegamey" {% if localisation == 'Gbegamey' %}selected{% endif %}>Gbegamey</option>
+                                <option value="Saint-Michel" {% if localisation == 'Saint-Michel' %}selected{% endif %}>Saint-Michel</option>
+                                <option value="Zogbo" {% if localisation == 'Zogbo' %}selected{% endif %}>Zogbo</option>
+                                <option value="Jéricho" {% if localisation == 'Jéricho' %}selected{% endif %}>Jéricho</option>
+                                <option value="Missebo" {% if localisation == 'Missebo' %}selected{% endif %}>Missebo</option>
+                                <option value="Agla" {% if localisation == 'Agla' %}selected{% endif %}>Agla</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
                         Plus de filtres
                     </button>
-                    <!-- Fallback pour soumettre si JS est désactivé -->
-                    <noscript>
-                        <button type="submit" class="more-filters-btn" style="background: var(--success-600); color: white;">Rechercher</button>
-                    </noscript>
                 </div>
                 
                 <!-- Filtres Avancés -->
@@ -582,15 +585,19 @@
                     {% endif %}
                     <div class="teacher-info">
                         <h3 class="teacher-name">
-                            {% if teacher.statut_de_validation == 'APPROVED' %}
-                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-right: 6px; vertical-align: middle;">✓</span>
-                            {% endif %}
                             {{ teacher.prenom }} {{ teacher.nom }}
+                            {% if teacher.statut_de_validation == 'APPROVED' %}
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-left: 6px; vertical-align: middle;">✓</span>
+                            {% endif %}
                         </h3>
                         <p class="teacher-subjects">{{ teacher.matiere_enseignee }}</p>
-                        <p style="margin: 2px 0; font-size: 0.8rem; color: var(--success-600); font-weight: 600;">
-                            {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                            {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
+                        <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b; font-weight: 400; text-transform: lowercase;">
+                            {% if teacher.classes_enseignees %}
+                                {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
+                            {% else %}
+                                toutes classes
+                            {% endif %}
                         </p>
                         <p class="teacher-location">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -623,7 +630,12 @@
                     <button class="btn-view-profile" onclick="event.stopPropagation(); openTeacherProfile('{{ teacher.slug }}')">
                         Consulter
                     </button>
-                    <button class="btn-favorite {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" onclick="event.stopPropagation(); toggleFavorite(this, '{{ teacher.id }}')">
+                    <button class="btn-favorite {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" 
+                        {% if user.is_authenticated and user.professeur %}
+                            style="opacity: 0.5; cursor: not-allowed;" onclick="event.stopPropagation(); return false;"
+                        {% else %}
+                            onclick="event.stopPropagation(); toggleFavorite(this, '{{ teacher.id }}')"
+                        {% endif %}>
                         {% if user.is_authenticated and user in teacher.parents_favoris.all %}
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>

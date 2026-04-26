@@ -555,18 +555,22 @@
                             👨‍🏫</div>
                         {% endif %}
                         <h4 style="margin: 0; font-size: 0.9rem;">
+                            {{ prof.prenom }}
                             {% if prof.statut_de_validation == 'APPROVED' %}
-                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #16a34a; color: white; border-radius: 50%; font-size: 8px; margin-right: 4px; vertical-align: middle;">✓</span>
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; background: #16a34a; color: white; border-radius: 50%; font-size: 8px; margin-left: 4px; vertical-align: middle;">✓</span>
                             {% endif %}
-                            {{ prof.prenom }} {% if prof.est_certifie %}<span
+                            {% if prof.est_certifie %}<span
                                 style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}
                         </h4>
                         <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee
                             }}</p>
-                        <p style="margin: 0 0 1rem; font-size: 0.7rem; color: var(--primary); opacity: 0.8;">
-                            {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif
-                            %}{% endfor %}
-                            {% if prof.classes_enseignees|length > 2 %}...{% endif %}
+                        <p style="margin: 0 0 1rem; font-size: 0.7rem; color: #64748b; text-transform: lowercase;">
+                            {% if prof.classes_enseignees %}
+                                {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                {% if prof.classes_enseignees|length > 2 %}...{% endif %}
+                            {% else %}
+                                toutes classes
+                            {% endif %}
                         </p>
                         <a href="{% url 'professeur_detail' prof.slug %}"
                             style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir
@@ -646,69 +650,71 @@
             </header>
 
             {% if favoris %}
-            <div
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1.5rem; padding: 1rem;">
-                {% for prof in favoris %}
-                <a href="{% url 'professeur_detail' prof.slug %}"
-                    style="text-decoration: none; color: inherit; display: block;">
-                    <div
-                        style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            {% if prof.photo_de_profil %}
-                            <img src="{{ prof.photo_de_profil.url }}" alt=""
-                                style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #f0fdf4;">
-                            {% else %}
-                            <div
-                                style="width: 75px; height: 75px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #94a3b8; font-weight: bold;">
-                                {{ prof.prenom|first }}{{ prof.nom|first }}
-                            </div>
-                            {% endif %}
-                            <div>
-                                <h3 style="margin: 0 0 0.25rem 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">
-                                    {% if prof.statut_de_validation == 'APPROVED' %}
-                                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #16a34a; color: white; border-radius: 50%; font-size: 9px; margin-right: 5px; vertical-align: middle;">✓</span>
-                                    {% endif %}
-                                    {{ prof.prenom }} {{ prof.nom }}
-                                </h3>
-                                <p style="margin: 0; font-size: 0.9rem; color: #64748b;">{{ prof.matiere_enseignee }}
-                                </p>
-                                <p
-                                    style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 0.25rem;">
-                                    📍 {{ prof.ville_quartier }}
-                                </p>
-                                <p style="margin: 4px 0 0; font-size: 0.8rem; color: var(--success-600); font-weight: 600;">
-                                    {% for c in prof.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                                    {% if prof.classes_enseignees|length > 3 %}...{% endif %}
-                                </p>
-                            </div>
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(335px, 1fr)); gap: 2rem; padding: 1rem; justify-content: center;">
+                {% for teacher in favoris %}
+                <div class="teacher-card" onclick="location.href='{% url 'professeur_detail' teacher.slug %}'" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="teacher-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        {% if teacher.photo_de_profil %}
+                        <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}" class="teacher-photo" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 3px solid #f0fdf4;">
+                        {% else %}
+                        <div class="teacher-photo" style="width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #94a3b8; font-weight: bold; font-size: 1.5rem;">
+                            {{ teacher.prenom|first }}{{ teacher.nom|first }}
                         </div>
-
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                            <span style="color: #fbbf24; font-size: 0.9rem;">★★★★★</span>
-                            <span style="font-size: 0.85rem; color: #64748b;">{{ prof.moyenne_avis|default:"Nouveau" }}
-                                ({{ prof.nombre_avis|default:"0" }} avis)</span>
-                        </div>
-
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                            {% if prof.est_certifie %}
-                            <span
-                                style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Vérifié</span>
-                            {% endif %}
-                            <span
-                                style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Disponible</span>
-                            {% if prof.annees_d_experience %}
-                            <span
-                                style="background: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{{
-                                prof.annees_d_experience }} ans d'exp.</span>
-                            {% endif %}
-                        </div>
-
-                        <div style="display: flex; gap: 0.75rem; align-items: center;">
-                            <button
-                                style="flex: 1; background: var(--success-600, #16a34a); color: white; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-align: center;">Consulter</button>
+                        {% endif %}
+                        <div class="teacher-info" style="flex: 1;">
+                            <h3 class="teacher-name" style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0 0.25rem 0 0; display: flex; align-items: center; flex-wrap: wrap;">
+                                {{ teacher.prenom }} {{ teacher.nom }}
+                                {% if teacher.statut_de_validation == 'APPROVED' %}
+                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-left: 6px; vertical-align: middle;">✓</span>
+                                {% endif %}
+                            </h3>
+                            <p class="teacher-subjects" style="font-size: 0.9rem; color: #64748b; margin: 0;">{{ teacher.matiere_enseignee }}</p>
+                            <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b; font-weight: 400; text-transform: lowercase;">
+                                {% if teacher.classes_enseignees %}
+                                    {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
+                                {% else %}
+                                    toutes classes
+                                {% endif %}
+                            </p>
+                            <p class="teacher-location" style="font-size: 0.85rem; color: #94a3b8; margin: 0; display: flex; align-items: center; gap: 0.25rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                                {{ teacher.ville_quartier }}
+                            </p>
                         </div>
                     </div>
-                </a>
+                    
+                    <div class="rating-stars" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span class="stars" style="color: #fbbf24; font-size: 0.9rem;">★★★★★</span>
+                        <span class="rating-text" style="font-size: 0.85rem; color: #64748b;">{{ teacher.moyenne_avis|default:"Nouveau" }} ({{ teacher.nombre_avis|default:"0" }} avis)</span>
+                    </div>
+                    
+                    <div class="teacher-badges" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        {% if teacher.est_certifie %}
+                        <span class="badge" style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Vérifié</span>
+                        {% endif %}
+                        <span class="badge" style="background: #f0fdf4; color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Disponible</span>
+                        {% if teacher.essai_gratuit_actif %}
+                        <span class="badge" style="background: #fef3c7; color: #d97706; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Essai possible</span>
+                        {% endif %}
+                        {% if teacher.annees_d_experience %}
+                        <span class="badge" style="background: #f1f5f9; color: #475569; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">{{ teacher.annees_d_experience }} ans d'exp.</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="teacher-actions" style="display: flex; gap: 0.75rem; margin-top: auto;">
+                        <button class="btn-view-profile" style="flex: 1; background: #16a34a; color: white; border: none; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                            Consulter
+                        </button>
+                        <button class="btn-favorite active" onclick="event.stopPropagation(); toggleFavorite(this, '{{ teacher.id }}')" style="background: #fee2e2; color: #ef4444; border: none; width: 3.5rem; height: 3.5rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
             {% else %}
