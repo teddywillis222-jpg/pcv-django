@@ -53,7 +53,7 @@
                     <img src="{{ conv.display_photo }}" alt="" class="conv-avatar">
                 {% else %}
                     <div class="conv-avatar-placeholder">
-                        {{ conv.display_name|slice:":1" }}
+                        {{ conv.display_initial }}
                     </div>
                 {% endif %}
             </div>

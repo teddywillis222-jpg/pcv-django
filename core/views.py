@@ -126,10 +126,16 @@ def messagerie(request):
     formatted_conversations = []
     for conv in conversations:
         eng = conv.engagement_actif
-        # Déterminer le nom et la photo à afficher
+        # Déterminer le nom, la photo et l'initiale à afficher
+        display_initial = "?"
         display_photo = None
         if user_profile.role == Role.ROLE_PARENT or user_profile.role == Role.ROLE_APPRENANT:
-            display_name = f"Prof. {conv.professeur.prenom} {conv.professeur.nom}" if conv.professeur else "Professeur PCV"
+            if conv.professeur:
+                display_name = f"Prof. {conv.professeur.prenom} {conv.professeur.nom}"
+                display_initial = conv.professeur.prenom[0] if conv.professeur.prenom else conv.professeur.nom[0]
+            else:
+                display_name = "Professeur PCV"
+                display_initial = "P"
             if conv.professeur and conv.professeur.photo_de_profil:
                 display_photo = conv.professeur.photo_de_profil.url
         else:
@@ -139,6 +145,10 @@ def messagerie(request):
                 display_name = f"Parent de {enfants_names}"
             else:
                 display_name = conv.parent.first_name if conv.parent else "Parent PCV"
+            
+            # Initiale basée sur le prénom de l'utilisateur parent
+            if conv.parent:
+                display_initial = conv.parent.first_name[0] if conv.parent.first_name else conv.parent.username[0]
             
             # Photo du parent ou de l'apprenant
             if conv.parent:
@@ -193,6 +203,7 @@ def messagerie(request):
             'has_unread': has_unread,
             'engagement': eng,
             'display_photo': display_photo,
+            'display_initial': display_initial,
         })
 
     context = {
