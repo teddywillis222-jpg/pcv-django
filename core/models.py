@@ -642,7 +642,13 @@ class Engagement(models.Model):
     statut_essai = models.CharField(
         max_length=20,
         choices=StatutEssai.CHOICES,
+        null=True,
         blank=True,
+    )
+
+    masque_par_parent = models.BooleanField(
+        default=False,
+        help_text="Si vrai, l'engagement n'est plus visible dans l'espace parent."
     )
 
     # 4. États et flux de contrôle
@@ -650,6 +656,14 @@ class Engagement(models.Model):
         max_length=20,
         choices=StatutGeneral.CHOICES,
         default=StatutGeneral.EN_ATTENTE,
+    )
+
+    # Négociation / Budget
+    tarif_horaire_propose = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
     )
     paiement_effectue = models.BooleanField(default=False)
     vu_par_professeur = models.BooleanField(default=False)

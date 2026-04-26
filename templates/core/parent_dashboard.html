@@ -428,12 +428,14 @@
 
             <section class="carousel-container" style="margin-bottom: 1rem;">
                 {% for enfant in enfants %}
-                <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" style="text-decoration: none;">
-                    <div class="avatar">👶</div>
-                    <h4 style="margin: 0; font-size: 0.95rem;">{{ enfant.prenom }}</h4>
-                    <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
-                    <div class="btn-edit" onclick="event.stopPropagation(); location.href='?enfant_id={{ enfant.id }}'">Sélectionner</div>
-                </a>
+                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}" onclick="location.href='?enfant_id={{ enfant.id }}'" style="cursor: pointer; padding: 1rem; border-radius: 16px; min-width: 200px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div class="avatar" style="width: 30px; height: 30px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; background: #e0e7ff; border-radius: 50%; margin: 0;">👶</div>
+                        <h4 style="margin: 0; font-size: 1rem; color: var(--text-dark);">{{ enfant.prenom }}</h4>
+                    </div>
+                    <p style="margin: 0 0 1rem 0; font-size: 0.8rem; color: var(--text-gray);">Classe : {{ enfant.get_classe_display }}</p>
+                    <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();" style="display: block; text-align: center; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir le profil</a>
+                </div>
                 {% endfor %}
             </section>
 
@@ -446,18 +448,20 @@
                 </div>
                 <div class="carousel-container">
                     {% for prof in recommandations %}
-                    <a href="{% url 'professeur_detail' prof.slug %}" style="text-decoration: none; color: inherit;">
-                        <div class="prof-card">
-                            {% if prof.photo_de_profil %}
-                            <img src="{{ prof.photo_de_profil.url }}" alt="">
-                            {% else %}
-                            <div style="width: 50px; height: 50px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-size: 1.2rem;">👨‍🏫</div>
-                            {% endif %}
-                            <h4 style="margin: 0; font-size: 0.85rem;">{{ prof.prenom }} {% if prof.est_certifie %}<span style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}</h4>
-                            <p style="margin: 2px 0 0; font-size: 0.7rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ prof.matiere_enseignee }}</p>
-                            <div style="margin-top: 0.75rem; padding: 0.4rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700;">Voir le profil</div>
-                        </div>
-                    </a>
+                    <div class="prof-card" style="text-align: center; padding: 1.2rem; min-width: 180px;">
+                        {% if prof.photo_de_profil %}
+                        <img src="{{ prof.photo_de_profil.url }}" alt="" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 0.8rem;">
+                        {% else %}
+                        <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem;">👨‍🏫</div>
+                        {% endif %}
+                        <h4 style="margin: 0; font-size: 0.9rem;">{{ prof.prenom }} {% if prof.est_certifie %}<span style="color:#16a34a; font-size:0.75rem;">✔</span>{% endif %}</h4>
+                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
+                        <p style="margin: 0 0 1rem; font-size: 0.7rem; color: var(--primary); opacity: 0.8;">
+                            {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            {% if prof.classes_enseignees|length > 2 %}...{% endif %}
+                        </p>
+                        <a href="{% url 'professeur_detail' prof.slug %}" style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir le profil</a>
+                    </div>
                     {% empty %}
                     <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
                         <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
@@ -600,8 +604,8 @@
                 <label>Classe <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.classe }}
             </div>
-            <div class="form-group" style="display:none;">
-                <label>Quartier (Hérité)</label>
+            <div class="form-group">
+                <label>Quartier de résidence <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.quartier_ville }}
             </div>
             <div class="form-group">
@@ -610,21 +614,15 @@
             </div>
             <div class="form-group">
                 <label>Matières <span style="color: #ef4444;">*</span></label>
-                <div class="checkbox-group">
-                    {{ enfant_form.matieres_predefinies }}
-                </div>
+                {{ enfant_form.matieres_predefinies }}
             </div>
             <div class="form-group">
                 <label>Difficultés</label>
-                <div class="checkbox-group">
-                    {{ enfant_form.difficultes_predefinies }}
-                </div>
+                {{ enfant_form.difficultes_predefinies }}
             </div>
             <div class="form-group">
                 <label>Objectifs</label>
-                <div class="checkbox-group">
-                    {{ enfant_form.objectifs_motivations }}
-                </div>
+                {{ enfant_form.objectifs_motivations }}
             </div>
             <button type="submit" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
                 Enregistrer l'enfant
@@ -641,6 +639,23 @@
         document.getElementById('childSheet').classList.remove('active');
         document.getElementById('sheetOverlay').classList.remove('active');
     }
+
+    // Gestion de la limite des multiselects (5 max)
+    document.addEventListener('DOMContentLoaded', function() {
+        const multiSelects = document.querySelectorAll('select.multi-select');
+        multiSelects.forEach(select => {
+            select.addEventListener('change', function(e) {
+                const max = parseInt(this.getAttribute('data-max') || '5');
+                const selectedOptions = Array.from(this.selectedOptions);
+                if (selectedOptions.length > max) {
+                    // Désélectionner le dernier élément cliqué
+                    const lastSelected = selectedOptions[selectedOptions.length - 1];
+                    lastSelected.selected = false;
+                    alert("Vous ne pouvez sélectionner que " + max + " options au maximum.");
+                }
+            });
+        });
+    });
 
     function showSection(sectionId) {
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
@@ -698,6 +713,37 @@
             if (menu !== btn.nextElementSibling) menu.classList.remove('active');
         });
         btn.nextElementSibling.classList.toggle('active');
+    }
+
+    async function masquerEngagement(engId, btnElement) {
+        if (!confirm("Voulez-vous vraiment masquer cet engagement de votre tableau de bord ?")) return;
+        
+        try {
+            const response = await fetch(`/api/engagement/${engId}/masquer/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                // Trouver la carte d'engagement et la masquer visuellement
+                const card = btnElement.closest('.engagement-card');
+                if (card) {
+                    card.style.transition = "all 0.3s ease";
+                    card.style.opacity = "0";
+                    card.style.height = "0";
+                    card.style.margin = "0";
+                    card.style.padding = "0";
+                    setTimeout(() => card.remove(), 300);
+                }
+            } else {
+                alert("Erreur: " + data.error);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Erreur lors de la requête.");
+        }
     }
 
     // Fermer les menus au clic extérieur

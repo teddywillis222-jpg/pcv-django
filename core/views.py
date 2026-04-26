@@ -659,17 +659,25 @@ def parent_dashboard(request):
     active_enfant = enfants.filter(id=enfant_id).first() if enfant_id else enfants.first()
 
     # 2. Recommandations dynamiques basées sur l'enfant actif
+    from django.db.models import Q
     recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
     
-    # Filtrage par classe de l'enfant (si disponible dans les TeacherProfile)
+    # Au moins la classe en commun
     if active_enfant.classe:
         recommandations = recommandations.filter(classes_enseignees__icontains=active_enfant.classe)
+        
+    # Au moins une matière en commun
+    if active_enfant.matieres:
+        q_matieres = Q()
+        for mat in active_enfant.matieres:
+            q_matieres |= Q(matiere_enseignee__icontains=mat)
+        recommandations = recommandations.filter(q_matieres)
     
     # On mélange et on limite
     recommandations = recommandations.order_by("?")[:8]
 
-    # 3. Engagements filtrés selon la fiche technique
-    engagements = active_enfant.engagements.all().order_by("-date_creation")
+    # 3. Engagements filtrés selon la fiche technique (exclure ceux masqués par le parent)
+    engagements = active_enfant.engagements.filter(masque_par_parent=False).order_by("-date_creation")
 
     # Onglet "En cours" : En attente ou Confirmé/En cours
     engs_en_cours = engagements.filter(
@@ -684,7 +692,7 @@ def parent_dashboard(request):
         statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
     )
     
-    # Historique complet pour le modal/liste (tous les statuts)
+    # Historique complet pour le modal/liste (tous les statuts, mais non masqués)
     engagements_tous = engagements.all()
 
     # Onglet "Essais"
@@ -1755,3 +1763,31 @@ def api_valider_seance(request, seance_id):
     seance.save()
     return JsonResponse({"success": True})
 
+
+@login_required
+def toggle_favori(request, prof_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+    
+    prof = get_object_or_404(TeacherProfile, id=prof_id)
+    if request.user in prof.parents_favoris.all():
+        prof.parents_favoris.remove(request.user)
+        is_favorite = False
+    else:
+        prof.parents_favoris.add(request.user)
+        is_favorite = True
+        
+    return JsonResponse({"success": True, "is_favorite": is_favorite})
+
+@login_required
+def masquer_engagement(request, eng_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    engagement = get_object_or_404(Engagement, id=eng_id)
+    if engagement.parent_apprenant != request.user:
+        return JsonResponse({"error": "Accès refusé."}, status=403)
+        
+    engagement.masque_par_parent = True
+    engagement.save()
+    return JsonResponse({"success": True})

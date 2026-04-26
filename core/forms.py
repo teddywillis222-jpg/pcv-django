@@ -200,7 +200,11 @@ class EnfantForm(forms.ModelForm):
         label="Matières nécessitant appui (Max 5)",
         required=False,
         choices=MATIERES_CHOICES,
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input multi-select', 
+            'data-max': '5',
+            'style': 'height: 120px; padding: 0.5rem;'
+        })
     )
     matieres_autre = forms.CharField(
         label="Autre(s) matière(s)",
@@ -211,13 +215,21 @@ class EnfantForm(forms.ModelForm):
         label="Difficultés principales observées",
         required=True,
         choices=DIFFICULTES_CHOICES,
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input multi-select', 
+            'data-max': '5',
+            'style': 'height: 120px; padding: 0.5rem;'
+        })
     )
     objectifs_motivations = forms.MultipleChoiceField(
         label="Objectifs & Motivations",
         required=True,
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.CheckboxSelectMultiple
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input multi-select', 
+            'data-max': '5',
+            'style': 'height: 120px; padding: 0.5rem;'
+        })
     )
 
     class Meta:

@@ -74,9 +74,9 @@
                 {% endif %}
 
                 <!-- Masquer (Toujours visible) -->
-                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-gray); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
-                    🗑️ Masquer
-                </a>
+                <button type="button" class="menu-item" onclick="masquerEngagement('{{ eng.id }}', this)" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--text-gray); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+                    🗑️ Masquer l'engagement
+                </button>
             </div>
 
         </div>

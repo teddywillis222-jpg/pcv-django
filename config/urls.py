@@ -59,6 +59,9 @@ urlpatterns = [
     path("api/engagement/<int:engagement_id>/action/", core_views.api_engagement_action, name="api_engagement_action"),
     path("api/engagement/<int:engagement_id>/update/", core_views.api_update_engagement, name="api_update_engagement"),
     path("api/engagement/<int:engagement_id>/finalize/", core_views.api_finalize_engagement, name="api_finalize_engagement"),
+    path("api/engagement/<int:eng_id>/masquer/", core_views.masquer_engagement, name="masquer_engagement"),
+    
+    path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
 
     # Suivi Pédagogique
     path("engagement/<int:engagement_id>/suivi/", core_views.suivi_engagement, name="suivi_engagement"),

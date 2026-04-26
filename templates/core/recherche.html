@@ -617,10 +617,16 @@
                     <button class="btn-view-profile" onclick="event.stopPropagation(); openTeacherProfile('{{ teacher.slug }}')">
                         Consulter
                     </button>
-                    <button class="btn-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">
+                    <button class="btn-favorite {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" onclick="event.stopPropagation(); toggleFavorite(this, '{{ teacher.id }}')">
+                        {% if user.is_authenticated and user in teacher.parents_favoris.all %}
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        {% else %}
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
+                        {% endif %}
                     </button>
                 </div>
             </div>
@@ -758,22 +764,38 @@ async function loadTeacherProfile(teacherSlug) {
 }
 
 // Gestion des favoris
-function toggleFavorite(btn) {
-    requireAuth(() => {
-        btn.classList.toggle('active');
-        
-        if (btn.classList.contains('active')) {
-            btn.innerHTML = `
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-            `;
-        } else {
-            btn.innerHTML = `
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-            `;
+async function toggleFavorite(btn, profId) {
+    requireAuth(async () => {
+        try {
+            const response = await fetch(`/api/professeur/${profId}/toggle-favori/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                if (data.is_favorite) {
+                    btn.classList.add('active');
+                    btn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    `;
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    `;
+                }
+            } else {
+                console.error("Erreur toggle favori:", data.error);
+            }
+        } catch (e) {
+            console.error(e);
         }
     });
 }
