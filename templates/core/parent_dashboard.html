@@ -566,7 +566,9 @@
                             }}</p>
                         <p style="margin: 0 0 1rem; font-size: 0.7rem; color: #64748b; text-transform: lowercase;">
                             {% if prof.classes_enseignees %}
-                                {% for c in prof.classes_enseignees|slice:":2" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                {% for c in prof.classes_enseignees|slice:":2" %}
+                                    {{ c }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
                                 {% if prof.classes_enseignees|length > 2 %}...{% endif %}
                             {% else %}
                                 toutes classes
@@ -671,7 +673,9 @@
                             <p class="teacher-subjects" style="font-size: 0.9rem; color: #64748b; margin: 0;">{{ teacher.matiere_enseignee }}</p>
                             <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b; font-weight: 400; text-transform: lowercase;">
                                 {% if teacher.classes_enseignees %}
-                                    {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    {% for c in teacher.classes_enseignees|slice:":3" %}
+                                        {{ c }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
                                     {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
                                 {% else %}
                                     toutes classes

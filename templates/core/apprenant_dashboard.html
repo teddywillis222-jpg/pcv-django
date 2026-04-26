@@ -450,7 +450,9 @@
                             <p class="teacher-subjects" style="font-size: 0.9rem; color: #64748b; margin: 0;">{{ teacher.matiere_enseignee }}</p>
                             <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b; font-weight: 400; text-transform: lowercase;">
                                 {% if teacher.classes_enseignees %}
-                                    {% for c in teacher.classes_enseignees|slice:":3" %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                                    {% for c in teacher.classes_enseignees|slice:":3" %}
+                                        {{ c }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
                                     {% if teacher.classes_enseignees|length > 3 %}...{% endif %}
                                 {% else %}
                                     toutes classes

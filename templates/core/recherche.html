@@ -449,6 +449,30 @@
         width: 65px;
         height: 65px;
     }
+
+    .search-inputs-row {
+        display: flex;
+        width: 100%;
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .search-inputs-row {
+            flex-direction: column;
+        }
+        
+        .main-filters {
+            width: 100%;
+        }
+    }
+
+    .main-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+        width: 100%;
+    }
 }
 </style>
 {% endblock %}
@@ -464,8 +488,8 @@
             <!-- Formulaire de recherche -->
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
                 <!-- Filtres Principaux -->
-                <div class="main-filters" style="align-items: flex-start; flex-direction: column; gap: 0.5rem;">
-                    <div style="display: flex; width: 100%; gap: 1rem;">
+                <div class="main-filters">
+                    <div class="search-inputs-row">
                         <div class="filter-group">
                             <input 
                                 type="text" 
