@@ -203,7 +203,8 @@ class EnfantForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
             'data-max': '5',
-            'style': 'height: 120px; padding: 0.5rem;'
+            'style': 'height: 50px; padding: 0.5rem;',
+            'placeholder': 'Ex : Mathématiques'
         })
     )
     matieres_autre = forms.CharField(
@@ -218,7 +219,8 @@ class EnfantForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
             'data-max': '5',
-            'style': 'height: 120px; padding: 0.5rem;'
+            'style': 'height: 50px; padding: 0.5rem;',
+            'placeholder': 'Ex : Bases fragiles non acquises'
         })
     )
     objectifs_motivations = forms.MultipleChoiceField(
@@ -228,7 +230,8 @@ class EnfantForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
             'data-max': '5',
-            'style': 'height: 120px; padding: 0.5rem;'
+            'style': 'height: 50px; padding: 0.5rem;',
+            'placeholder': 'Ex : Remise à niveau'
         })
     )
 
@@ -246,17 +249,17 @@ class EnfantForm(forms.ModelForm):
         self.fields["prenom"].widget.attrs.update({"placeholder": "Ex: Alexandre"})
         
         # Ajout des placeholders natifs Django par le biais de choices
-        classe_choices = [("", "Sélectionnez sa classe courante...")] + list(self.fields["classe"].choices)[1:]
+        classe_choices = [("", "Ex : 4ème")] + list(self.fields["classe"].choices)[1:]
         self.fields["classe"].choices = classe_choices
         
-        mode_choices = [("", "Sélectionnez le mode de cours préféré...")] + list(self.fields["mode_de_cours"].choices)[1:]
+        mode_choices = [("", "Ex : A domicile")] + list(self.fields["mode_de_cours"].choices)[1:]
         self.fields["mode_de_cours"].choices = mode_choices
 
         for field in ["prenom", "classe", "quartier_ville", "mode_de_cours"]:
             self.fields[field].required = True
             
         self.fields["quartier_ville"].widget = forms.Select(choices=[
-            ("", "Sélectionnez un quartier-ville"),
+            ("", "Ex : Cotonou-Agla"),
             ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
             ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
             ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
