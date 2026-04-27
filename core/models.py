@@ -455,6 +455,12 @@ class TeacherProfile(models.Model):
     nb_engagements_finalises = models.PositiveIntegerField(default=0)
     nb_engagements_termines = models.PositiveIntegerField(default=0)
     nb_engagements_total = models.PositiveIntegerField(default=0)
+    temps_moyen_reponse = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Temps de réponse moyen en minutes"
+    )
 
     parents_favoris = models.ManyToManyField(
         User,

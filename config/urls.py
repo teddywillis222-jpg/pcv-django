@@ -60,7 +60,9 @@ urlpatterns = [
     path("api/engagement/<int:engagement_id>/action/", core_views.api_engagement_action, name="api_engagement_action"),
     path("api/engagement/<int:engagement_id>/update/", core_views.api_update_engagement, name="api_update_engagement"),
     path("api/engagement/<int:engagement_id>/finalize/", core_views.api_finalize_engagement, name="api_finalize_engagement"),
+    path("api/engagement/<int:engagement_id>/details/", core_views.api_engagement_details, name="api_engagement_details"),
     path("api/engagement/<int:eng_id>/masquer/", core_views.masquer_engagement, name="masquer_engagement"),
+    path("api/engagement/<int:eng_id>/masquer-prof/", core_views.masquer_engagement_prof, name="masquer_engagement_prof"),
     
     path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
 

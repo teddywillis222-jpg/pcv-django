@@ -580,7 +580,7 @@ def prof_dashboard(request):
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI).exclude(statut_general=StatutGeneral.TERMINE)
     
     # "Terminé"
-    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
+    engs_termines = engagements.filter(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE])
 
     # 2. Statistiques dynamiques (Plus fiables que les compteurs stockés)
     # Contrats actifs = Uniquement FINALISE
@@ -1198,6 +1198,11 @@ def api_engagement_action(request, engagement_id):
 
         if action == 'accepter':
             engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
+            engagement.date_confirmation = timezone.now()
+            
+            # Calcul du temps de réponse (en minutes)
+            diff = engagement.date_confirmation - engagement.date_creation
+            engagement.temps_reponse_prof = diff.total_seconds() / 60
             
             # 1. Trouver ou Créer la conversation (plus robuste que get_or_create)
             conversation = Conversation.objects.filter(
@@ -1224,8 +1229,13 @@ def api_engagement_action(request, engagement_id):
             # 4. Mettre à jour les stats du professeur
             teacher = engagement.professeur
             teacher.nb_engagements_confirmes = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.CONFIRME).count()
-            teacher.save()
             
+            # Mise à jour du temps de réponse moyen
+            responses = Engagement.objects.filter(professeur=teacher, temps_reponse_prof__isnull=False).values_list('temps_reponse_prof', flat=True)
+            total_time = sum(responses) + engagement.temps_reponse_prof
+            teacher.temps_moyen_reponse = total_time / (len(responses) + 1)
+            
+            teacher.save()
             engagement.save()
             return JsonResponse({'success': True, 'message': 'Engagement accepté', 'conversation_id': conversation.id})
             
@@ -1901,3 +1911,46 @@ def masquer_engagement(request, eng_id):
     engagement.masque_par_parent = True
     engagement.save()
     return JsonResponse({"success": True})
+
+@login_required
+def masquer_engagement_prof(request, eng_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    engagement = get_object_or_404(Engagement, id=eng_id)
+    if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
+        return JsonResponse({"error": "Accès refusé."}, status=403)
+        
+    engagement.masque_pour_professeur = True
+    engagement.save()
+    return JsonResponse({"success": True})
+
+
+@login_required
+def api_engagement_details(request, engagement_id):
+    """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # Sécurité: Seuls les acteurs de l'engagement peuvent voir les détails
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    is_client = engagement.parent_apprenant == request.user
+    
+    if not (is_prof or is_client):
+        return JsonResponse({'error': 'Accès refusé'}, status=403)
+        
+    data = {
+        'id': engagement.id,
+        'matiere': engagement.matiere,
+        'classe': engagement.get_classe_display(),
+        'mode': engagement.get_mode_de_cours_display(),
+        'lieu': engagement.localisation_option,
+        'budget': str(engagement.budget_convenu) if engagement.budget_convenu else None,
+        'frequence': engagement.get_frequence_hebdomadaire_display(),
+        'duree': engagement.get_duree_seance_display(),
+        'date_debut': engagement.date_debut.strftime("%d/%m/%Y") if engagement.date_debut else None,
+        'status': engagement.statut_general,
+        'type': engagement.get_type_engagement_display(),
+    }
+    
+    return JsonResponse({'success': True, 'engagement': data})
+

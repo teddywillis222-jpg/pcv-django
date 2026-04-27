@@ -1,0 +1,89 @@
+<div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
+    <!-- En-tête : Client et Statut -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--dash-text-dark);">
+                {% if eng.parent_apprenant.profile.role == 'PARENT' %}
+                    Parent de 
+                    {% with first_child=eng.enfants_concernes.first %}
+                        {% if first_child %}{{ first_child.prenom }}{% else %}son enfant{% endif %}
+                    {% endwith %}
+                {% else %}
+                    {{ eng.parent_apprenant.apprenant.nom|default:eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username }}
+                {% endif %}
+            </h4>
+            <p style="margin: 2px 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">
+                {{ eng.matiere }} • {{ eng.get_classe_display }}
+            </p>
+        </div>
+        <span class="badge-status {% if eng.statut_general == 'EN_ATTENTE' %}status-pending{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'FINALISE' %}status-active{% else %}status-inactive{% endif %}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px; text-transform: uppercase;">
+            {{ eng.get_statut_general_display }}
+        </span>
+    </div>
+
+    <!-- Détails de l'engagement -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--dash-text-muted);">
+        <div>
+            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Localisation</span>
+            <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
+        </div>
+        <div>
+            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
+            <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
+        </div>
+    </div>
+
+    <!-- Footer : Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
+        
+        {% if eng.statut_general == 'EN_ATTENTE' %}
+            <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
+                Voir les détails
+            </button>
+        {% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'FINALISE' or eng.statut_general == 'EN_COURS' %}
+            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-dash btn-dash-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem;">
+                Accéder à l'espace
+            </a>
+        {% endif %}
+        
+        <div style="position: relative;">
+            <button class="options-btn" onclick="toggleOptions(this)" style="background: #f1f5f9; border: none; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--dash-text-muted);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="1"></circle>
+                    <circle cx="19" cy="12" r="1"></circle>
+                    <circle cx="5" cy="12" r="1"></circle>
+                </svg>
+            </button>
+            
+            <div class="options-menu" style="display: none; position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
+                
+                <!-- Voir détails (toujours utile pour le prof) -->
+                <button type="button" class="menu-item" onclick="openEngModal({{ eng.id }})" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">
+                    📄 Voir la proposition
+                </button>
+
+                <!-- Messagerie -->
+                {% if eng.conversation and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'REFUSE' %}
+                <a href="{% url 'conversation_detail' eng.conversation.id %}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                    💬 Rejoindre la messagerie
+                </a>
+                {% endif %}
+
+                <!-- Actions de gestion -->
+                {% if eng.statut_general == 'FINALISE' or eng.statut_general == 'EN_COURS' %}
+                <button type="button" class="menu-item" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">
+                    ✅ Terminer l'engagement
+                </button>
+                <button type="button" class="menu-item danger" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: #ef4444; text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">
+                    🚫 Annuler l'engagement
+                </button>
+                {% endif %}
+
+                <!-- Masquer -->
+                <button type="button" class="menu-item" onclick="masquerEngagementProf('{{ eng.id }}', this)" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+                    🗑️ Masquer l'engagement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

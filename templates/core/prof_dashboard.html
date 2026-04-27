@@ -95,24 +95,12 @@
             <div id="tab-pending" class="tab-content active">
                 {% if engs_en_cours %}
                     {% for eng in engs_en_cours %}
-                    <div class="eng-card" data-id="{{ eng.id }}" data-eng='{"parent_name": "{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|escapejs }}", "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.get_classe_display|escapejs }}", "mode": "{{ eng.get_mode_de_cours_display|escapejs }}", "lieu": "{{ eng.localisation_option|escapejs }}", "budget": "{{ eng.budget_convenu|default:"Non spécifié" }}", "frequence": "{{ eng.get_frequence_hebdomadaire_display|default:"Non spécifié" }}", "duree": "{{ eng.get_duree_seance_display|default:eng.duree_seance }}", "date_debut": "{{ eng.date_debut|date:"d/m/Y"|default:"À convenir" }}", "status": "{{ eng.statut_general }}"}'>
-                        <div class="eng-info">
-                            <div class="avatar-circle">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
-                            <div class="eng-details">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <h4 style="margin:0;">{{ eng.parent_apprenant.get_full_name|default:eng.parent_apprenant.username|truncatechars:18 }}</h4>
-                                    <span class="badge-status {% if eng.statut_general == 'EN_ATTENTE' %}status-pending{% else %}status-active{% endif %}" style="font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 800; text-transform: uppercase;">
-                                        {{ eng.get_statut_general_display }}
-                                    </span>
-                                </div>
-                                <div class="eng-meta">{{ eng.matiere }} • {{ eng.date_creation|date:"d M" }}</div>
-                            </div>
-                        </div>
-                        <button class="btn-dash btn-dash-outline" onclick="openEngModal({{ eng.id }})">Voir les détails</button>
-                    </div>
+                        {% if not eng.masque_pour_professeur %}
+                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                        {% endif %}
                     {% endfor %}
                 {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucune nouvelle demande.</p>
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucune demande en cours.</p>
                 {% endif %}
             </div>
 
@@ -120,18 +108,12 @@
             <div id="tab-active" class="tab-content">
                 {% if engs_actifs %}
                     {% for eng in engs_actifs %}
-                    <div class="eng-card">
-                        <div class="eng-info">
-                            <div class="avatar-circle" style="background:var(--dash-accent-soft);">{{ eng.parent_apprenant.first_name|slice:":1" }}</div>
-                            <div class="eng-details">
-                                <h4>{{ eng.parent_apprenant.get_full_name|truncatechars:18 }}</h4>
-                                <div class="eng-meta">Contrat en cours • {{ eng.matiere }}</div>
-                            </div>
-                        </div>
-                    </div>
+                        {% if not eng.masque_pour_professeur %}
+                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                        {% endif %}
                     {% endfor %}
                 {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucun contrat actif.</p>
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun contrat actif.</p>
                 {% endif %}
             </div>
 
@@ -139,18 +121,12 @@
             <div id="tab-trials" class="tab-content">
                 {% if engs_essais %}
                     {% for eng in engs_essais %}
-                    <div class="eng-card">
-                        <div class="eng-info">
-                            <div class="avatar-circle" style="background:#e0e7ff; color:#3730a3;">E</div>
-                            <div class="eng-details">
-                                <h4>Essai avec {{ eng.parent_apprenant.first_name|truncatechars:15 }}</h4>
-                                <div class="eng-meta">{{ eng.date_heure_essai|date:"d/m à H:i"|default:"À définir" }}</div>
-                            </div>
-                        </div>
-                    </div>
+                        {% if not eng.masque_pour_professeur %}
+                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                        {% endif %}
                     {% endfor %}
                 {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Aucun essai programmé.</p>
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
                 {% endif %}
             </div>
 
@@ -158,17 +134,12 @@
             <div id="tab-history" class="tab-content">
                 {% if engs_termines %}
                     {% for eng in engs_termines %}
-                    <div class="eng-card" style="opacity: 0.7;">
-                        <div class="eng-info">
-                            <div class="eng-details">
-                                <h4>Engagement #{{ eng.id }}</h4>
-                                <div class="eng-meta">{{ eng.get_statut_general_display }} • {{ eng.matiere }}</div>
-                            </div>
-                        </div>
-                    </div>
+                        {% if not eng.masque_pour_professeur %}
+                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                        {% endif %}
                     {% endfor %}
                 {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 1rem; font-size: 0.8125rem;">Historique vide.</p>
+                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Historique vide.</p>
                 {% endif %}
             </div>
         </div>
@@ -192,15 +163,47 @@
 </nav>
 
 <!-- Modal Container -->
-<div id="engModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding: 1.5rem;">
-    <div style="background: white; padding: 1.5rem; border-radius: 20px; width: 100%; max-width: 400px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-        <button onclick="closeEngModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:none; font-size: 1.5rem; cursor:pointer; color: var(--dash-text-muted);">✕</button>
+<div id="engModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:5000; align-items:center; justify-content:center; padding: 1.5rem;">
+    <div class="modal-content" style="background: white; padding: 1.5rem; border-radius: 24px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;">
+        <button onclick="closeEngModal()" style="position:absolute; top:1.25rem; right:1.25rem; border:none; background:#f1f5f9; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor:pointer; color: var(--dash-text-muted); display: flex; align-items: center; justify-content: center;">✕</button>
         <div id="modalContent">
             <h3>Détails de l'engagement</h3>
             <p>Chargement...</p>
         </div>
     </div>
 </div>
+
+<style>
+    /* Complementary styles for engagement cards */
+    .options-menu {
+        display: none;
+        position: absolute;
+        bottom: 3.5rem;
+        right: 0;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        z-index: 100;
+        width: 220px;
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+    }
+    .options-menu.active { display: block; }
+    .menu-item {
+        display: block; padding: 0.85rem 1rem; color: var(--dash-text); text-decoration: none; font-size: 0.9rem; font-weight: 600; border: none; background: none; width: 100%; text-align: left; cursor: pointer; border-bottom: 1px solid #f1f5f9; transition: background 0.2s;
+    }
+    .menu-item:hover { background: #f8fafc; }
+    .menu-item.danger { color: #ef4444; }
+    .menu-item:last-child { border-bottom: none; }
+    
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-active { background: #dcfce7; color: #166534; }
+    .status-inactive { background: #f1f5f9; color: #475569; }
+    
+    .modal-overlay {
+        position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+</style>
 
 <script>
     // Tab Switching Logic
@@ -226,81 +229,92 @@
     }
 
     // Modal Logic
-    function openEngModal(id) {
-        const card = document.querySelector(`.eng-card[data-id="${id}"]`);
-        const data = JSON.parse(card.getAttribute('data-eng'));
+    async function openEngModal(id) {
+        const modal = document.getElementById('engModal');
+        const content = document.getElementById('modalContent');
+        modal.style.display = 'flex';
+        content.innerHTML = '<p style="text-align:center; padding: 2rem;">Chargement des détails...</p>';
         
-        // Formatage durée : si c'est juste un chiffre, on ajoute "h"
-        let displayDuree = data.duree;
-        if (!isNaN(displayDuree)) {
-            displayDuree = displayDuree + "h";
-        } else if (displayDuree && !displayDuree.toLowerCase().includes('h')) {
-             displayDuree = displayDuree + "h";
+        try {
+            const response = await fetch(`/api/engagement/${id}/details/`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const eng = data.engagement;
+                let actionsHtml = '';
+                
+                if (eng.status === 'EN_ATTENTE') {
+                    actionsHtml = `
+                        <div style="display:flex; gap:0.75rem; margin-top: 1.5rem;">
+                            <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter')">Accepter</button>
+                            <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
+                        </div>
+                    `;
+                } else if (eng.status === 'REFUSE') {
+                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #fee2e2; color: #b91c1c; border-radius: 12px; font-weight: 700; margin-top:1rem;">Proposition refusée</div>`;
+                } else {
+                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #f0fdf4; color: #16a34a; border-radius: 12px; font-weight: 700; margin-top:1rem;">Demande déjà acceptée</div>`;
+                }
+
+                content.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">Proposition d'Engagement</h3>
+                        <p style="font-size: 0.85rem; color: #64748b;">Détails envoyés par le client</p>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.8;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Matière</span>
+                            <span style="font-weight: 700;">${eng.matiere}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Classe</span>
+                            <span style="font-weight: 700;">${eng.classe}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Mode</span>
+                            <span style="font-weight: 700;">${eng.mode}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Lieu</span>
+                            <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Budget</span>
+                            <span style="font-weight: 800; color: #16a34a;">${eng.budget || 'À négocier'} FCFA/h</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Début</span>
+                            <span style="font-weight: 700;">${eng.date_debut || 'À convenir'}</span>
+                        </div>
+                    </div>
+                    ${actionsHtml}
+                `;
+            } else {
+                content.innerHTML = `<p style="color:red; text-align:center;">Erreur: ${data.error}</p>`;
+            }
+        } catch (error) {
+            content.innerHTML = '<p style="color:red; text-align:center;">Erreur lors du chargement.</p>';
         }
+    }
 
-        document.getElementById('engModal').style.display = 'flex';
-        document.getElementById('modalContent').innerHTML = `
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div class="avatar-circle" style="width: 50px; height: 50px; margin: 0 auto 0.5rem; font-size: 1.25rem;">
-                    ${data.parent_name.charAt(0)}
-                </div>
-                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">${data.parent_name}</h3>
-                <p style="font-size: 0.85rem; color: #64748b;">Détails de la demande</p>
-            </div>
-
-            <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.7;">
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Matière</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.matiere}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Classe</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.classe}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Mode</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.mode}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Lieu</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.lieu}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Fréquence</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.frequence}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Durée séance</span>
-                    <span style="font-weight: 700; color: #0f172a;">${displayDuree}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="color: #64748b;">Budget proposé</span>
-                    <span style="font-weight: 800; color: #16a34a;">${data.budget} FCFA/h</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: #64748b;">Début souhaité</span>
-                    <span style="font-weight: 700; color: #0f172a;">${data.date_debut}</span>
-                </div>
-            </div>
-
-            ${data.status === 'EN_ATTENTE' ? `
-            <div style="display:flex; gap:0.75rem;">
-                <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter')">Accepter</button>
-                <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
-            </div>
-            ` : `
-            <div style="text-align: center; padding: 0.5rem; background: #f0fdf4; color: #16a34a; border-radius: 12px; font-weight: 700; font-size: 0.85rem;">
-                Cette demande a été acceptée.
-            </div>
-            `}
-        `;
+    function toggleOptions(btn) {
+        document.querySelectorAll('.options-menu').forEach(menu => {
+            if (menu !== btn.nextElementSibling) menu.classList.remove('active');
+        });
+        btn.nextElementSibling.classList.toggle('active');
     }
 
     async function handleEngAction(id, action) {
+        if (!confirm(`Voulez-vous vraiment ${action}er cet engagement ?`)) return;
+        
         try {
             const response = await fetch(`/api/engagement/${id}/action/`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
                 body: JSON.stringify({ action: action })
             });
             const data = await response.json();
@@ -318,12 +332,41 @@
         }
     }
 
+    async function masquerEngagementProf(id, btn) {
+        if (!confirm("Masquer cet engagement de votre liste ?")) return;
+        try {
+            const response = await fetch(`/api/engagement/${id}/masquer-prof/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            });
+            if (response.ok) {
+                const card = btn.closest('.engagement-card');
+                if (card) {
+                    card.style.opacity = '0';
+                    setTimeout(() => card.remove(), 300);
+                }
+            }
+        } catch (e) { console.error(e); }
+    }
+
     function closeEngModal() {
         document.getElementById('engModal').style.display = 'none';
+    }
+
+    // Fermer les menus au clic extérieur
+    window.onclick = function(event) {
+        if (!event.target.closest('.options-btn')) {
+            document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
+        }
+        if (event.target.classList.contains('modal-overlay')) {
+            closeEngModal();
+        }
     }
 
     function copyProfileLink(link) {
         navigator.clipboard.writeText(link).then(() => alert("Lien de profil copié !"));
     }
+</script>
+{% endblock %}
 </script>
 {% endblock %}
