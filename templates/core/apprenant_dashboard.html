@@ -562,10 +562,10 @@
             </div>
         </div>
     </div>
+    {% include "core/components/engagement_modal.html" %}
 {% endblock %}
 
-{% include "core/components/engagement_modal.html" %}
-
+{% block extra_js %}
 <script>
     async function convertirEnEngagement(engId) {
         try {
