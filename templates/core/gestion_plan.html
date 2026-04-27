@@ -20,17 +20,33 @@
         --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
     body {
         background-color: var(--dash-bg);
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
     }
 
     .plan-container {
+        width: 100%;
         max-width: 900px;
-        margin: 2rem auto;
+        margin: 1.5rem auto;
         padding: 0 1rem;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+        .plan-container {
+            margin: 1rem auto;
+            padding: 0 0.75rem;
+            gap: 1rem;
+        }
     }
 
     /* Info Link */
@@ -46,11 +62,20 @@
         color: var(--primary-dark);
         font-weight: 700;
         text-decoration: none;
-        padding: 0.75rem 1.25rem;
+        padding: 0.75rem 1rem;
         background: var(--primary-soft);
         border-radius: 50px;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         transition: all 0.2s;
+        line-height: 1.3;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .info-link {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+        }
     }
 
     .info-link:hover {
@@ -61,11 +86,19 @@
     /* Plan Cards */
     .plan-card {
         background: var(--card-bg);
-        border-radius: 24px;
-        padding: 2rem;
+        border-radius: 20px;
+        padding: 1.5rem;
         box-shadow: var(--shadow-sm);
         position: relative;
         overflow: hidden;
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .plan-card {
+            border-radius: 24px;
+            padding: 2rem;
+        }
     }
 
     .plan-card.premium {
@@ -75,31 +108,52 @@
 
     .plan-badge {
         position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        padding: 0.5rem 1rem;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.75rem;
         border-radius: 50px;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+    }
+
+    @media (min-width: 768px) {
+        .plan-badge {
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 0.85rem;
+        }
     }
 
     .badge-standard { background: #f1f5f9; color: #475569; }
     .badge-premium { background: var(--premium-soft); color: var(--premium); }
 
     .plan-header h2 {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         font-weight: 900;
         color: var(--text-dark);
         margin-bottom: 0.5rem;
     }
 
+    @media (min-width: 768px) {
+        .plan-header h2 {
+            font-size: 1.75rem;
+        }
+    }
+
     .plan-desc {
         color: var(--text-gray);
-        font-size: 1.05rem;
-        max-width: 500px;
+        font-size: 0.95rem;
+        max-width: 100%;
         line-height: 1.5;
+    }
+
+    @media (min-width: 768px) {
+        .plan-desc {
+            font-size: 1.05rem;
+            max-width: 500px;
+        }
     }
 
     /* Consumption Block */
@@ -162,23 +216,33 @@
     .compare-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
+        width: 100%;
     }
 
     @media (min-width: 768px) {
         .compare-grid {
             grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
     }
 
     .compare-card {
         background: white;
         border-radius: 20px;
-        padding: 1.5rem;
+        padding: 1.25rem;
         box-shadow: var(--shadow-sm);
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .compare-card {
+            padding: 1.5rem;
+            gap: 1.25rem;
+        }
     }
 
     .compare-card.active {
@@ -214,16 +278,35 @@
     .feature-item {
         display: flex;
         align-items: flex-start;
-        gap: 0.75rem;
-        font-size: 0.9rem;
+        gap: 0.65rem;
+        font-size: 0.88rem;
         color: var(--text-gray);
         line-height: 1.4;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .feature-item span, .feature-item strong {
+        display: inline;
     }
 
     .feature-item svg {
         flex-shrink: 0;
         color: var(--primary);
-        margin-top: 2px;
+        margin-top: 3px;
+        width: 16px;
+        height: 16px;
+    }
+
+    @media (min-width: 768px) {
+        .feature-item {
+            font-size: 0.9rem;
+            gap: 0.75rem;
+        }
+        .feature-item svg {
+            width: 18px;
+            height: 18px;
+        }
     }
 
     /* History Block */
@@ -245,6 +328,7 @@
         align-items: center;
         padding: 1rem 0;
         border-bottom: 1px solid #f1f5f9;
+        gap: 0.5rem;
     }
 
     .history-item:last-child {
@@ -259,8 +343,15 @@
 
     .hist-type {
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         color: var(--text-dark);
+        line-height: 1.3;
+    }
+
+    @media (min-width: 768px) {
+        .hist-type {
+            font-size: 0.95rem;
+        }
     }
 
     .hist-meta {
@@ -462,8 +553,8 @@
                     Accès à la messagerie et au journal de séance après activation
                 </li>
                 <li class="feature-item">
-                    <span style="font-size: 1.2rem; margin-right: 0.5rem;">💳</span>
-                    <strong>2000 F</strong> uniquement après confirmation du professeur (déblocage de l’engagement)
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span><strong>2000 F</strong> uniquement après confirmation du professeur (déblocage de l’engagement)</span>
                 </li>
             </ul>
             <p style="font-size: 0.8rem; color: var(--text-gray); font-style: italic; margin-top: 0.5rem; line-height: 1.4;">

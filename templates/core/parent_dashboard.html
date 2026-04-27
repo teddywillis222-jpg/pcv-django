@@ -818,6 +818,24 @@
             </button>
         </form>
     </div>
+    <!-- Welcome Pricing Modal -->
+    <div id="welcomePricingModal" class="modal-overlay" style="z-index: 5000;">
+        <div class="modal-content" style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3.5rem; margin-bottom: 1rem;">👋</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1rem; line-height: 1.2;">Avant de commencer</h3>
+            <p style="color: var(--text-gray); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem; text-align: left;">
+                Sur <strong>Prof Chez Vous</strong>, la collaboration avec un professeur se fait à travers des engagements structurés.
+                <br><br>
+                Selon votre plan, certains avantages et frais peuvent s’appliquer lors de l’envoi ou de la validation d’un engagement.
+                <br><br>
+                👉 Pour éviter toute surprise et comprendre comment fonctionne la plateforme, nous vous recommandons vivement de consulter votre plan.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="{% url 'gestion_plan' %}" class="btn-eng-main" style="display: block; padding: 1rem; text-decoration: none; border-radius: 14px; background: var(--primary); color: white; font-weight: 700;" onclick="closeWelcomePricingModal()">Découvrir mon plan</a>
+                <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #94a3b8; font-weight: 700; cursor: pointer; padding: 0.5rem; font-size: 0.9rem;">Cela ne m'intéresse pas</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
@@ -1004,6 +1022,20 @@
         const quartierInput = document.querySelector('#addChildForm [name="quartier_ville"]');
         if (quartierInput && !quartierInput.value) {
             quartierInput.value = "{{ parent_details.quartier_ville|escapejs }}";
+        }
+    });
+    // Welcome Pricing Modal Logic
+    function closeWelcomePricingModal() {
+        document.getElementById('welcomePricingModal').style.display = 'none';
+        localStorage.setItem('pcv_welcome_pricing_shown', 'true');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!localStorage.getItem('pcv_welcome_pricing_shown')) {
+            setTimeout(() => {
+                const modal = document.getElementById('welcomePricingModal');
+                if (modal) modal.style.display = 'flex';
+            }, 1200);
         }
     });
 </script>
