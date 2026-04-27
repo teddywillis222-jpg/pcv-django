@@ -1,0 +1,601 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon Plan - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dash-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --primary: #16a34a;
+        --primary-soft: #dcfce7;
+        --primary-dark: #15803d;
+        --accent: #1e293b;
+        --premium: #7c3aed;
+        --premium-soft: #f5f3ff;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        background-color: var(--dash-bg);
+    }
+
+    .plan-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Info Link */
+    .info-link-wrapper {
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-dark);
+        font-weight: 700;
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        background: var(--primary-soft);
+        border-radius: 50px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+
+    .info-link:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Plan Cards */
+    .plan-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .plan-card.premium {
+        border: 2px solid var(--premium);
+        background: linear-gradient(135deg, #ffffff 0%, #faf9ff 100%);
+    }
+
+    .plan-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-standard { background: #f1f5f9; color: #475569; }
+    .badge-premium { background: var(--premium-soft); color: var(--premium); }
+
+    .plan-header h2 {
+        font-size: 1.75rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .plan-desc {
+        color: var(--text-gray);
+        font-size: 1.05rem;
+        max-width: 500px;
+        line-height: 1.5;
+    }
+
+    /* Consumption Block */
+    .usage-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .usage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .usage-title {
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .usage-stats {
+        font-weight: 800;
+        color: var(--premium);
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--premium);
+        border-radius: 10px;
+        transition: width 0.5s ease-out;
+    }
+
+    .usage-limit-msg {
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        color: #ef4444;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    /* Comparison Grid */
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+        margin-top: 1rem;
+    }
+
+    .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .compare-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .compare-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .compare-card.active {
+        border: 2px solid var(--primary);
+    }
+
+    .compare-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .compare-name {
+        font-weight: 800;
+        font-size: 1.15rem;
+    }
+
+    .compare-price {
+        font-weight: 900;
+        font-size: 1.25rem;
+        color: var(--text-dark);
+    }
+
+    .compare-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--text-gray);
+        line-height: 1.4;
+    }
+
+    .feature-item svg {
+        flex-shrink: 0;
+        color: var(--primary);
+        margin-top: 2px;
+    }
+
+    /* History Block */
+    .history-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .history-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .history-item:last-child {
+        border-bottom: none;
+    }
+
+    .hist-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .hist-type {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+    }
+
+    .hist-meta {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+    }
+
+    .hist-amount {
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    /* Actions */
+    .actions-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .actions-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+    }
+
+    .btn-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: white; border: 2px solid #e2e8f0; color: var(--text-gray); }
+    .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-premium-cta { background: var(--premium); color: white; }
+    .btn-premium-cta:hover { background: #6d28d9; }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+    }
+
+    .modal-content {
+        background: white;
+        width: 100%;
+        max-width: 600px;
+        max-height: 85vh;
+        border-radius: 24px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-md);
+        animation: modalIn 0.3s ease-out;
+    }
+
+    @keyframes modalIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: var(--text-dark);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #334155;
+    }
+
+    .modal-body strong { color: var(--text-dark); }
+
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-close {
+        padding: 0.75rem 1.5rem;
+        background: #f1f5f9;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        color: var(--text-gray);
+        cursor: pointer;
+    }
+
+    .faq-note {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        text-align: center;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="plan-container">
+    
+    <!-- Header Info Link -->
+    <div class="info-link-wrapper">
+        <a href="#" class="info-link" onclick="openModal('engagementInfoModal')">
+            📌 En savoir plus sur la proposition d’un engagement
+        </a>
+    </div>
+
+    <!-- Block 1: Plan Actuel -->
+    <div class="plan-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}premium{% endif %}">
+        <div class="plan-badge {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}badge-premium{% else %}badge-standard{% endif %}">
+            Plan {{ abonnement.get_type_abonnement_display }}
+        </div>
+        
+        <div class="plan-header">
+            <h2>{{ abonnement.get_type_abonnement_display }}</h2>
+            <p class="plan-desc">
+                {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+                    Vous bénéficiez d’un accès prioritaire et d’échanges illimités dans la limite mensuelle.
+                {% else %}
+                    Vous payez uniquement lorsque vous souhaitez débloquer une discussion confirmée.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Block 3: Suivi Consommation (Visible si Premium) -->
+        {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+        <div class="usage-section">
+            <div class="usage-header">
+                <span class="usage-title">Quota mensuel (Engagements confirmés)</span>
+                <span class="usage-stats">{{ confirmations_ce_mois }} / 5</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {% widthratio confirmations_ce_mois 5 100 %}%"></div>
+            </div>
+            {% if confirmations_ce_mois >= 5 %}
+            <div class="usage-limit-msg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Limite atteinte. Renouvelez votre abonnement ou patientez jusqu'au mois prochain.
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Block 4: Comparaison des offres -->
+    <h3 class="section-title">Comparer les plans</h3>
+    <div class="compare-grid">
+        <!-- Standard -->
+        <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
+            <div class="compare-header">
+                <span class="compare-name">Standard</span>
+                <span class="compare-price">Gratuit</span>
+            </div>
+            <ul class="compare-features">
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Accès aux profils des professeurs vérifiés
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Création et envoi gratuit de propositions d’engagement
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Suivi de vos engagements (historique, statuts, accords)
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Accès à la messagerie et au journal de séance après activation
+                </li>
+                <li class="feature-item">
+                    <span style="font-size: 1.2rem; margin-right: 0.5rem;">💳</span>
+                    <strong>2000 F</strong> uniquement après confirmation du professeur (déblocage de l’engagement)
+                </li>
+            </ul>
+            <p style="font-size: 0.8rem; color: var(--text-gray); font-style: italic; margin-top: 0.5rem; line-height: 1.4;">
+                ℹ️ En Plan Standard, ce frais d’activation de 2000 F CFA après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
+            </p>
+            {% if abonnement.type_abonnement != TypeAbonnement.STANDARD %}
+                <a href="#" class="btn-action btn-outline">Revenir au Standard</a>
+            {% endif %}
+        </div>
+
+        <!-- Premium -->
+        <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
+            <div class="compare-header">
+                <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
+                <span class="compare-price">5000f<small>/mois</small></span>
+            </div>
+            <ul class="compare-features">
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <strong>Tous les avantages du Plan Standard</strong>
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Jusqu’à <strong>5 engagements confirmés</strong> par mois activés sans frais supplémentaires
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <strong>Aucun frais de 2000 F</strong> après confirmation du professeur (dans la limite du plan)
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Propositions prioritaires (relance automatique du professeur après 30 minutes)
+                </li>
+                <li class="feature-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Accès aux essais gratuits proposés par certains professeurs
+                </li>
+            </ul>
+            {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+                <a href="#" class="btn-action btn-premium-cta">Passer à Premium</a>
+            {% else %}
+                <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium);">Gérer mon abonnement</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Block 5: Historique -->
+    <h3 class="section-title">Historique & Transparence</h3>
+    <div class="history-card">
+        <div class="history-list">
+            {% for item in history %}
+            <div class="history-item">
+                <div class="hist-info">
+                    <span class="hist-type">{{ item.type }}</span>
+                    <span class="hist-meta">{{ item.libelle }} — {{ item.date|date:"d M Y" }}</span>
+                </div>
+                <div class="hist-amount">{{ item.montant }}</div>
+            </div>
+            {% empty %}
+            <p style="text-align: center; color: var(--text-gray); padding: 1rem;">Aucun historique de paiement disponible.</p>
+            {% endfor %}
+        </div>
+        {% if history %}
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="#" class="nav-link" style="font-size: 0.9rem; color: var(--primary);">Voir tout l'historique</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="faq-note">
+        Besoin d'aide ? <a href="{% url 'support' %}" style="color: var(--primary);">Contactez le support PCV</a>
+    </div>
+
+</div>
+
+<!-- Modal: Engagement Info -->
+<div class="modal-overlay" id="engagementInfoModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>L'engagement sur Prof Chez Vous</h3>
+            <button class="btn-close" onclick="closeModal('engagementInfoModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Qu’est-ce qu’un engagement sur Prof Chez Vous ?</strong></p>
+            <p>Un engagement est la manière officielle de collaborer avec un professeur sur Prof Chez Vous. Il permet de formaliser clairement les attentes entre le parent ou l’apprenant et le professeur avant le début des cours.</p>
+            
+            <p><strong>La proposition d’un engagement</strong></p>
+            <p>La première étape consiste à choisir un professeur. Vous pouvez effectuer cette recherche directement sur la page de recherche, où sont listés les professeurs vérifiés correspondant à vos besoins.</p>
+            
+            <p>Vous pouvez également sélectionner un professeur depuis votre espace personnel. En cliquant sur « Voir le profil », vous accédez à son profil public, puis vous pouvez initier la collaboration via le bouton « Proposer un engagement ».</p>
+            
+            <p>Vous remplissez alors un formulaire structuré précisant notamment :<br>
+            – la matière<br>
+            – le niveau<br>
+            – les disponibilités<br>
+            – les objectifs attendus</p>
+            
+            <p>👉 <strong>Selon votre plan, la proposition d’un engagement est toujours gratuite.</strong><br>
+            Aucun paiement n’est demandé au moment de l’envoi.</p>
+            
+            <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>2000 F CFA</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
+            * messagerie sécurisée<br>
+            * planification des séances<br>
+            * journal de suivi pédagogique (pour les parents)</p>
+            
+            <p>– <strong>Avec les plans Access+</strong>, ces frais ne s’appliquent pas : les engagements confirmés sont inclus dans la limite prévue par votre abonnement.</p>
+            
+            <p>Une fois la proposition envoyée, le professeur est notifié et peut l’accepter ou la refuser.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-close" onclick="closeModal('engagementInfoModal')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal on overlay click
+    window.onclick = function(event) {
+        if (event.target.className === 'modal-overlay') {
+            event.target.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+</script>
+{% endblock %}

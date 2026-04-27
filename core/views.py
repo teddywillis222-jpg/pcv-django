@@ -850,6 +850,80 @@ def apprenant_dashboard(request):
     return render(request, "core/apprenant_dashboard.html", context)
 
 
+@login_required
+def gestion_plan(request):
+    from django.utils import timezone
+    from datetime import datetime
+    from .models import Profile
+    
+    # Sécurité Rôle
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        return redirect("finalisation_compte")
+    
+    # Plan actuel
+    abonnement = request.user.abonnements.order_by('-date_debut').first()
+    if not abonnement:
+        # Créer un abonnement standard par défaut
+        abonnement = Abonnement.objects.create(
+            user=request.user,
+            type_abonnement=TypeAbonnement.STANDARD,
+            prix="2000f par engagement"
+        )
+
+    # Consommation mensuelle (confirmations ce mois-ci)
+    now = timezone.now()
+    first_day_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    confirmations_ce_mois = Engagement.objects.filter(
+        parent_apprenant=request.user,
+        date_confirmation__gte=first_day_of_month
+    ).count()
+    
+    # Historique de paiements (synthétique)
+    history = []
+    
+    # 1. Engagements payés
+    engagements_payes = Engagement.objects.filter(
+        parent_apprenant=request.user,
+        paiement_effectue=True
+    ).order_by('-date_confirmation')[:10]
+    
+    for eng in engagements_payes:
+        history.append({
+            'type': 'Déblocage conversation',
+            'libelle': f"Prof. {eng.professeur.nom}" if eng.professeur else "Professeur PCV",
+            'montant': '2000f',
+            'date': eng.date_confirmation
+        })
+    
+    # 2. Abonnements Premium (si existants)
+    abonnements_premium = request.user.abonnements.filter(
+        type_abonnement=TypeAbonnement.ACCESS_PREMIUM
+    ).order_by('-date_debut')[:5]
+    
+    for ab in abonnements_premium:
+        history.append({
+            'type': 'Abonnement Premium',
+            'libelle': 'Plan Access+ Premium',
+            'montant': '5000f',
+            'date': ab.date_debut
+        })
+    
+    # Trier l'historique par date
+    history.sort(key=lambda x: x['date'] if x['date'] else datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+
+    context = {
+        'abonnement': abonnement,
+        'confirmations_ce_mois': confirmations_ce_mois,
+        'history': history,
+        'TypeAbonnement': TypeAbonnement,
+    }
+    return render(request, "core/gestion_plan.html", context)
+
+
+
 # Vues pour le système de recherche et profils hybride
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
