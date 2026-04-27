@@ -17,7 +17,7 @@
         </div>
         
         <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <a href="{% url 'prof_dashboard' %}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; background: var(--dash-accent-soft); color: var(--dash-accent); text-decoration: none; font-weight: 700;">
+            <a href="javascript:void(0)" onclick="showSection('section-main', this)" class="active" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 Tableau de bord
             </a>
@@ -28,6 +28,10 @@
             <a href="{% url 'messagerie' %}" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 Messagerie
+            </a>
+            <a href="javascript:void(0)" onclick="showSection('section-settings', this)" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Paramètres
             </a>
         </nav>
 
@@ -55,92 +59,124 @@
                 </div>
             </div>
 
-            <div class="dash-actions">
-                <button class="btn-dash btn-dash-outline" onclick="copyProfileLink('{{ request.build_absolute_uri|slice:':-1' }}{% url 'professeur_detail' teacher.slug %}')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                    Lien
-                </button>
-                <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" class="btn-dash btn-dash-primary">
-                    Profil Public
-                </a>
+
+        </div>
+
+        <div id="section-main" class="dash-section">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ teacher.nb_vues_total }}</div>
+                    <div class="stat-label">Vues totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ nb_actifs }}</div>
+                    <div class="stat-label">Contrats actifs</div>
+                </div>
+                <div class="stat-card" id="desktop-only-stat">
+                    <div class="stat-value">{{ nb_termines }}</div>
+                    <div class="stat-label">Cours terminés</div>
+                </div>
+            </div>
+
+            <!-- Engagement Management Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">En cours ({{ engs_en_cours.count }})</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs ({{ engs_actifs.count }})</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Terminé</button>
+                </div>
+
+                <!-- Tab: Demandes -->
+                <div id="tab-pending" class="tab-content active">
+                    {% if engs_en_cours %}
+                        {% for eng in engs_en_cours %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucune demande en cours.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Actifs -->
+                <div id="tab-active" class="tab-content">
+                    {% if engs_actifs %}
+                        {% for eng in engs_actifs %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun contrat actif.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Essais -->
+                <div id="tab-trials" class="tab-content">
+                    {% if engs_essais %}
+                        {% for eng in engs_essais %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Historique -->
+                <div id="tab-history" class="tab-content">
+                    {% if engs_termines %}
+                        {% for eng in engs_termines %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Historique vide.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">{{ teacher.nb_vues_total }}</div>
-                <div class="stat-label">Vues totales</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ nb_actifs }}</div>
-                <div class="stat-label">Contrats actifs</div>
-            </div>
-            <div class="stat-card" id="desktop-only-stat">
-                <div class="stat-value">{{ nb_termines }}</div>
-                <div class="stat-label">Cours terminés</div>
-            </div>
-        </div>
+        <div id="section-settings" class="dash-section" style="display:none;">
+            <div class="settings-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Option: Copy Link -->
+                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Lien de profil</h3>
+                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Partagez votre profil pour attirer des clients.</p>
+                    </div>
+                    <button class="btn-dash btn-dash-outline" onclick="copyProfileLink('{{ request.build_absolute_uri|slice:':-1' }}{% url 'professeur_detail' teacher.slug %}')" style="white-space: nowrap;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        Copier le lien
+                    </button>
+                </div>
 
-        <!-- Engagement Management Tabs -->
-        <div class="tabs-container">
-            <div class="tabs-header">
-                <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">En cours ({{ engs_en_cours.count }})</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs ({{ engs_actifs.count }})</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Terminé</button>
-            </div>
+                <!-- Option: Public Profile -->
+                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Aperçu public</h3>
+                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Voir comment les parents voient votre profil.</p>
+                    </div>
+                    <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" class="btn-dash btn-dash-primary" style="text-decoration: none; white-space: nowrap;">
+                        Voir mon profil
+                    </a>
+                </div>
 
-            <!-- Tab: Demandes -->
-            <div id="tab-pending" class="tab-content active">
-                {% if engs_en_cours %}
-                    {% for eng in engs_en_cours %}
-                        {% if not eng.masque_pour_professeur %}
-                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucune demande en cours.</p>
-                {% endif %}
-            </div>
-
-            <!-- Tab: Actifs -->
-            <div id="tab-active" class="tab-content">
-                {% if engs_actifs %}
-                    {% for eng in engs_actifs %}
-                        {% if not eng.masque_pour_professeur %}
-                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun contrat actif.</p>
-                {% endif %}
-            </div>
-
-            <!-- Tab: Essais -->
-            <div id="tab-trials" class="tab-content">
-                {% if engs_essais %}
-                    {% for eng in engs_essais %}
-                        {% if not eng.masque_pour_professeur %}
-                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
-                {% endif %}
-            </div>
-
-            <!-- Tab: Historique -->
-            <div id="tab-history" class="tab-content">
-                {% if engs_termines %}
-                    {% for eng in engs_termines %}
-                        {% if not eng.masque_pour_professeur %}
-                            {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Historique vide.</p>
-                {% endif %}
+                <!-- Option: Toggle Trial -->
+                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Essai gratuit</h3>
+                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Offrir une séance d'essai gratuite aux nouveaux parents.</p>
+                    </div>
+                    <button id="btnToggleEssai" class="btn-dash" onclick="toggleEssai()" style="background: {% if teacher.essai_gratuit_actif %}#ef4444{% else %}var(--dash-accent){% endif %}; color: white; border: none; font-weight: 700; min-width: 160px;">
+                        {% if teacher.essai_gratuit_actif %}Désactiver l'essai gratuit{% else %}Activer l'essai gratuit{% endif %}
+                    </button>
+                </div>
             </div>
         </div>
     </main>
@@ -148,7 +184,7 @@
 
 <!-- Bottom Navigation (Mobile) -->
 <nav class="dash-bottom-nav">
-    <a href="{% url 'prof_dashboard' %}" class="nav-item active">
+    <a href="javascript:void(0)" onclick="showSection('section-main', this)" class="nav-item active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
         <span>Tableau</span>
     </a>
@@ -159,6 +195,10 @@
     <a href="{% url 'messagerie' %}" class="nav-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Messages</span>
+    </a>
+    <a href="javascript:void(0)" onclick="showSection('section-settings', this)" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Paramètres</span>
     </a>
 </nav>
 
@@ -206,6 +246,57 @@
 </style>
 
 <script>
+    // Section Switching Logic
+    function showSection(sectionId, btn) {
+        // Hide all sections
+        document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
+        // Show target section
+        document.getElementById(sectionId).style.display = 'block';
+        
+        // Update nav active states
+        document.querySelectorAll('.dash-sidebar nav a, .dash-bottom-nav .nav-item').forEach(a => {
+            a.classList.remove('active');
+            if (a.getAttribute('onclick') && a.getAttribute('onclick').includes(sectionId)) {
+                a.classList.add('active');
+            }
+        });
+
+        // Close sidebar on mobile if needed (optional)
+    }
+
+    async function toggleEssai() {
+        const btn = document.getElementById('btnToggleEssai');
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        try {
+            const response = await fetch("{% url 'api_toggle_essai' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                btn.innerHTML = data.label;
+                if (data.actif) {
+                    btn.style.background = '#ef4444'; // Red for "Désactiver"
+                } else {
+                    btn.style.background = 'var(--dash-accent)'; // Default for "Activer"
+                }
+            } else {
+                alert(data.error || "Une erreur est survenue");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Erreur de connexion");
+        } finally {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    }
+
     // Tab Switching Logic
     function switchTab(evt, tabId) {
         // Hide all contents

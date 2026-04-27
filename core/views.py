@@ -1304,23 +1304,34 @@ def conversation_detail(request, conversation_id):
     # Déterminer le rôle
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
     
-    # Logique de blocage et éligibilité à la finalisation
+    # Logique de blocage et visibilité de l'input
     is_blocked = False
     is_eligible_to_finalize = False
+    hide_input = False
     blocking_message = ""
     
     if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
         active_eng = conversation.engagement_actif
-        
-        # Vérifier si premium
         is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
         
-        # Un parent est bloqué s'il n'est pas premium ET n'a pas payé l'engagement actif
-        if active_eng and not active_eng.paiement_effectue and not is_premium:
+        # Visibilité de l'input
+        if active_eng:
+            if active_eng.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.REFUSE]:
+                hide_input = True
+            elif active_eng.statut_general == StatutGeneral.EN_COURS:
+                if not active_eng.paiement_effectue and not is_premium:
+                    hide_input = True
+        
+        # Blocage (bandeau de paiement)
+        if active_eng and active_eng.statut_general == StatutGeneral.EN_COURS and not active_eng.paiement_effectue and not is_premium:
             is_blocked = True
-            blocking_message = "Ce professeur vous a laissé un message. Réglez les frais ou passez au Plan Premium afin de continuer les échanges."
+            has_prof_messaged = conversation.messages.filter(auteur=conversation.professeur.user).exists() if conversation.professeur else False
+            if has_prof_messaged:
+                blocking_message = "Ce professeur vous a laissé un message. Réglez les frais ou passez au Plan Premium afin de continuer les échanges."
+            else:
+                blocking_message = "Le professeur a confirmé votre demande ! Réglez les frais ou passez au Plan Premium afin de pouvoir lui envoyer un message."
             
-        # Éligibilité à la finalisation : Premium OU paiement effectué
+        # Éligibilité à la finalisation
         if is_premium or (active_eng and active_eng.paiement_effectue):
             is_eligible_to_finalize = True
 
@@ -1355,11 +1366,14 @@ def conversation_detail(request, conversation_id):
         else:
             display_name = conversation.parent.first_name if conversation.parent else "Parent/Apprenant PCV"
 
+    from .choices import ClassLevel, CourseMode, DureeSeance, FrequenceHebdomadaire, PeriodeEngagement
+
     return render(request, "core/conversation_detail.html", {
         "conversation": conversation,
         "messages": chat_messages,
         "engagements": linked_engagements,
         "is_blocked": is_blocked,
+        "hide_input": hide_input,
         "is_eligible_to_finalize": is_eligible_to_finalize,
         "blocking_message": blocking_message,
         "other_participant": other_user,
@@ -1370,6 +1384,11 @@ def conversation_detail(request, conversation_id):
         "ROLE_PROF": Role.ROLE_PROF,
         "ROLE_PARENT": Role.ROLE_PARENT,
         "ROLE_APPRENANT": Role.ROLE_APPRENANT,
+        "CHOICES_CLASSE": ClassLevel.CHOICES,
+        "CHOICES_MODE": CourseMode.CHOICES,
+        "CHOICES_DUREE": DureeSeance.CHOICES,
+        "CHOICES_FREQ": FrequenceHebdomadaire.CHOICES,
+        "CHOICES_PERIODE": PeriodeEngagement.CHOICES,
     })
 
 
@@ -1531,7 +1550,7 @@ def api_fetch_new_messages(request, conversation_id):
 @require_http_methods(["POST"])
 def api_update_engagement(request, engagement_id):
     """API pour modifier les termes d'un engagement (Parent)"""
-    from .models import Engagement
+    from .models import Engagement, Enfant
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
     if engagement.parent_apprenant != request.user:
@@ -1543,6 +1562,20 @@ def api_update_engagement(request, engagement_id):
         engagement.budget_convenu = data.get('budget', engagement.budget_convenu)
         engagement.frequence_hebdomadaire = data.get('frequence', engagement.frequence_hebdomadaire)
         engagement.duree_seance = data.get('duree_seance', engagement.duree_seance)
+        engagement.classe = data.get('classe', engagement.classe)
+        engagement.mode_de_cours = data.get('mode', engagement.mode_de_cours)
+        engagement.periode_engagement = data.get('periode', engagement.periode_engagement)
+        engagement.localisation_option = data.get('localisation', engagement.localisation_option)
+        engagement.plateforme_visio_preferee = data.get('visio', engagement.plateforme_visio_preferee)
+        
+        enfant_id = data.get('enfant_id')
+        if enfant_id:
+            enfant = Enfant.objects.filter(id=enfant_id).first()
+            if enfant:
+                engagement.enfants_concernes.set([enfant])
+        else:
+            engagement.enfants_concernes.clear()
+
         engagement.save()
         return JsonResponse({'success': True})
     except Exception as e:

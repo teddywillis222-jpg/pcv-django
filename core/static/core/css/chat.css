@@ -4,14 +4,14 @@
 */
 
 :root {
-    --chat-bg: #e5ddd5;
-    --msg-sent-bg: #dcf8c6;
+    --chat-bg: #f8fafc;
+    --msg-sent-bg: #dcfce7; /* Brand accent soft */
     --msg-received-bg: #ffffff;
-    --msg-text-color: #303030;
-    --msg-time-color: #999999;
-    --accent-color: #16a34a;
+    --msg-text-color: #1e293b; /* Brand text */
+    --msg-time-color: #64748b; /* Brand text muted */
+    --accent-color: #15803d; /* Brand accent */
     --header-bg: #ffffff;
-    --input-area-bg: #f0f2f5;
+    --input-area-bg: #f1f5f9;
 }
 
 /* Structure de base - Mobile First */
@@ -35,7 +35,6 @@
     flex-direction: column;
     height: 100%;
     min-width: 0;
-    background: url('../img/chat-bg.png');
     background-color: var(--chat-bg);
     position: relative;
 }
@@ -222,8 +221,8 @@
     background: var(--accent-color);
     color: white;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
 }
 
 /* Sidebar & Sheets */

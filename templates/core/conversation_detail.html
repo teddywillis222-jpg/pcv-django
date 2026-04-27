@@ -206,15 +206,16 @@
 
             {% if is_blocked %}
             <div class="blocked-banner"
-                style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                <p style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">{{ blocking_message }}</p>
+                style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #fee2e2;">
+                <p style="color: #1e293b; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.5;">{{ blocking_message }}</p>
                 <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()"
-                    style="padding: 0.75rem 2rem; width: 100%; max-width: 300px;">Procéder au paiement</button>
+                    style="padding: 0; width: 100%; max-width: 320px; height: 56px; font-size: 1rem;">Procéder au paiement</button>
             </div>
             {% endif %}
         </div>
 
         <!-- Zone de saisie -->
+        {% if not hide_input or role == ROLE_PROF %}
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
                 <input type="file" id="fileInput" name="fichier" style="display: none;"
@@ -230,9 +231,9 @@
                 </button>
                 <div class="chat-input-wrapper">
                     <textarea class="chat-input" id="messageInput" placeholder="Écrivez votre message..." rows="1"
-                        style="max-height: 120px; overflow-y: auto;" {% if is_blocked %}disabled{% endif %}></textarea>
+                        style="max-height: 120px; overflow-y: auto;"></textarea>
                 </div>
-                <button type="submit" class="btn-send" {% if is_blocked %}disabled{% endif %}>
+                <button type="submit" class="btn-send">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         style="transform: rotate(45deg); margin-top: -2px; margin-left: -2px;">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -241,6 +242,19 @@
                 </button>
             </form>
         </footer>
+        {% else %}
+        <div style="padding: 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+            <p style="font-size: 0.85rem; color: #64748b; font-weight: 600; margin: 0;">
+                {% if conversation.engagement_actif.statut_general == 'EN_ATTENTE' %}
+                    L'envoi de messages est désactivé tant que la proposition est en attente.
+                {% elif conversation.engagement_actif.statut_general == 'REFUSE' %}
+                    Cette demande a été refusée.
+                {% else %}
+                    Paiement requis pour envoyer un message.
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
     </main>
 
     <!-- Zone Latérale: Masquée sur Mobile (On utilise le sheet à la place) -->
@@ -291,7 +305,8 @@
 
         <div id="engSheetList">
             {% for eng in engagements %}
-            <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}">
+            <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}" 
+                 data-eng-json='{"id": {{ eng.id }}, "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.classe }}", "mode": "{{ eng.mode_de_cours }}", "budget": {{ eng.budget_convenu|default:0 }}, "frequence": "{{ eng.frequence_hebdomadaire }}", "duree": "{{ eng.duree_seance }}", "localisation": "{{ eng.localisation_option|escapejs }}", "visio": "{{ eng.plateforme_visio_preferee|escapejs }}", "periode": "{{ eng.periode_engagement }}", "enfant_id": "{{ eng.enfants_concernes.first.id|default:"" }}"}'>
                 <div class="eng-row-main" onclick="toggleEngRow(this)">
                     {% if other_profile.photo_de_profil %}
                     <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img"
@@ -324,12 +339,12 @@
                     <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
                         <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-
-                <div class="eng-row-details">
-                    <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                    </svg>                <div class="eng-row-details">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                        <div>
+                            <span style="color: #64748b;">Matière :</span><br>
+                            <span style="font-weight: 700;">{{ eng.matiere }}</span>
+                        </div>
                         <div>
                             <span style="color: #64748b;">Classe :</span><br>
                             <span style="font-weight: 700;">{{ eng.get_classe_display }}</span>
@@ -343,35 +358,51 @@
                             <span style="font-weight: 700;">{{ eng.get_duree_seance_display }}</span>
                         </div>
                         <div>
-                            <span style="color: #64748b;">Budget :</span><br>
-                            <span style="font-weight: 800; color: #16a34a;">{{ eng.budget_convenu }} FCFA/h</span>
+                            <span style="color: #64748b;">Mode :</span><br>
+                            <span style="font-weight: 700;">{{ eng.get_mode_de_cours_display }}</span>
                         </div>
+                        <div>
+                            <span style="color: #64748b;">Budget :</span><br>
+                            <span style="font-weight: 800; color: #15803d;">{{ eng.budget_convenu }} FCFA/h</span>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <span style="color: #64748b;">Lieu/Ville :</span><br>
+                            <span style="font-weight: 700;">{{ eng.localisation_option|default:"Non spécifié" }}</span>
+                        </div>
+                        {% if eng.plateforme_visio_preferee %}
+                        <div style="grid-column: span 2;">
+                            <span style="color: #64748b;">Plateforme visio :</span><br>
+                            <span style="font-weight: 700;">{{ eng.plateforme_visio_preferee }}</span>
+                        </div>
+                        {% endif %}
                     </div>
 
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
                         {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
-                        {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
-                        <button onclick='finalizeEngagement({{ eng.id }})'
-                            class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}"
-                            style="width: 100%;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
-                            Finaliser l'engagement
-                        </button>
-                        {% if not is_eligible_to_finalize %}
-                        <p
-                            style="font-size: 0.7rem; color: #ef4444; text-align: center; margin-top: 0.5rem; font-weight: 600;">
-                            Paiement requis pour débloquer
-                        </p>
-                        {% endif %}
-                        {% elif eng.statut_general == 'EN_ATTENTE' %}
-                        <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline"
-                            style="width: 100%;">
-                            Modifier ma proposition
-                        </button>
-                        {% endif %}
+                            {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                                <button onclick='finalizeEngagement({{ eng.id }})'
+                                    class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}"
+                                    style="width: 100%; height: 52px;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
+                                    Finaliser l'engagement
+                                </button>
+                                {% if not is_eligible_to_finalize %}
+                                    <p style="font-size: 0.75rem; color: #ef4444; text-align: center; margin-top: 0.75rem; font-weight: 700;">
+                                        Paiement requis pour débloquer la finalisation
+                                    </p>
+                                {% endif %}
+                                <button onclick='showEditProposal({{ eng.id }}, true)' class="btn-dash btn-dash-outline" style="width: 100%; margin-top: 0.5rem;">
+                                    Modifier les détails
+                                </button>
+                            {% elif eng.statut_general == 'EN_ATTENTE' %}
+                                <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline"
+                                    style="width: 100%;">
+                                    Modifier ma proposition
+                                </button>
+                            {% endif %}
                         {% else %}
-                        <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
-                            En attente de finalisation par le parent
-                        </div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
+                                Consultation en lecture seule (Parent/Apprenant gère la modification/finalisation)
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -396,18 +427,17 @@
                 <div style="font-weight: 800; font-size: 1.1rem;">Plan Standard</div>
                 <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Accès à cette conversation uniquement.
                 </p>
-                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">2 000 FCFA</div>
+                <div style="margin-top: 0.75rem; font-weight: 900; color: #15803d; font-size: 1.2rem;">2 000 FCFA</div>
             </div>
-            <div style="border: 2px solid #16a34a; background: #f0fdf4; padding: 1.25rem; border-radius: 16px; cursor: pointer;"
+            <div style="border: 2px solid #15803d; background: #f0fdf4; padding: 1.25rem; border-radius: 16px; cursor: pointer;"
                 onclick="selectPlan('premium')">
-                <div style="font-weight: 800; color: #16a34a; font-size: 1.1rem;">Access+ Premium</div>
+                <div style="font-weight: 800; color: #15803d; font-size: 1.1rem;">Access+ Premium</div>
                 <p style="font-size: 0.85rem; color: #64748b; margin: 0.25rem 0;">Jusqu'à 5 propositions par mois.</p>
-                <div style="margin-top: 0.75rem; font-weight: 900; color: #16a34a; font-size: 1.2rem;">5 000 FCFA / mois
+                <div style="margin-top: 0.75rem; font-weight: 900; color: #15803d; font-size: 1.2rem;">5 000 FCFA / mois
                 </div>
             </div>
         </div>
-        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 52px;">Continuer vers le
-            paiement</button>
+        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 56px;">Continuer vers le paiement</button>
     </div>
 </div>
 
@@ -417,70 +447,109 @@
     <div
         style="background: white; border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
         <button onclick="hideEngReviewModal()"
-            style="position: absolute; top: 1rem; right: 1rem; border: none; background: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-        <h3 id="rev_title" style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 800;">Détails de l'engagement
-        </h3>
+            style="position: absolute; top: 1rem; right: 1rem; border: none; background: #f1f5f9; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">✕</button>
+        <h3 id="rev_title" style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 800;">Détails de l'engagement</h3>
 
         <form id="revForm">
             <input type="hidden" id="rev_id">
             <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
                 {% if is_eligible_to_finalize or role == ROLE_PROF %}
                 <div id="eligibility_info"
-                    style="display: none; padding: 0.75rem; background: #f0fdf4; color: #16a34a; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
+                    style="display: none; padding: 0.75rem; background: #f0fdf4; color: #15803d; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">
                     ✓ Éligible à la finalisation
                 </div>
                 {% else %}
-                <div id="eligibility_info"
-                    style="padding: 0.75rem; background: #fffbeb; color: #b45309; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem;">
+                <div id="eligibility_info_warning"
+                    style="padding: 0.75rem; background: #fffbeb; color: #b45309; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">
                     ⚠ Paiement ou Premium requis pour finaliser
                 </div>
                 {% endif %}
 
+                {% if role == ROLE_PARENT %}
                 <div>
-                    <label
-                        style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Matière</label>
-                    <input type="text" id="rev_matiere"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Enfant concerné</label>
+                    <select id="rev_enfant" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;">
+                        <option value="">L'élève lui-même (Apprenant)</option>
+                        {% for enfant in parent_children %}
+                        <option value="{{ enfant.id }}">{{ enfant.prenom }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                {% endif %}
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
-                        <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Budget
-                            (FCFA/h)</label>
-                        <input type="number" id="rev_budget"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}readonly{% endif %}>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Matière</label>
+                        <input type="text" id="rev_matiere" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}readonly{% endif %}>
                     </div>
                     <div>
-                        <label
-                            style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Fréquence
-                            (/sem)</label>
-                        <select id="rev_frequence"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
-                            <option value="1">1 fois</option>
-                            <option value="2">2 fois</option>
-                            <option value="3">3 fois</option>
-                            <option value="4">4 fois</option>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Classe</label>
+                        <select id="rev_classe" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}disabled{% endif %}>
+                            {% for val, label in CHOICES_CLASSE %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Mode de cours</label>
+                        <select id="rev_mode" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}disabled{% endif %}>
+                            {% for val, label in CHOICES_MODE %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Budget (FCFA/h)</label>
+                        <input type="number" id="rev_budget" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 800; color: #15803d;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}readonly{% endif %}>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Fréquence (/sem)</label>
+                        <select id="rev_frequence" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}disabled{% endif %}>
+                            {% for val, label in CHOICES_FREQ %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Durée séance</label>
+                        <select id="rev_duree" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}disabled{% endif %}>
+                            {% for val, label in CHOICES_DUREE %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <div>
-                    <label style="display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 0.3rem;">Durée
-                        séance</label>
-                    <select id="rev_duree"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px;" {% if role != ROLE_PARENT %}disabled{% endif %}>
-                        <option value="1H">1h</option>
-                        <option value="1H30">1h30</option>
-                        <option value="2H">2h</option>
-                        <option value="3H">3h</option>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Période d'engagement</label>
+                    <select id="rev_periode" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}disabled{% endif %}>
+                        {% for val, label in CHOICES_PERIODE %}
+                        <option value="{{ val }}">{{ label }}</option>
+                        {% endfor %}
                     </select>
+                </div>
+
+                <div id="visio_platform_container" style="display: none;">
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Plateforme visio préférée</label>
+                    <input type="text" id="rev_visio" placeholder="ex: Google Meet, Zoom..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}readonly{% endif %}>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.3rem;">Quartier & Ville</label>
+                    <input type="text" id="rev_localisation" placeholder="ex: Akpakpa, Cotonou" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;" {% if role != ROLE_PARENT and role != ROLE_APPRENANT %}readonly{% endif %}>
                 </div>
             </div>
 
-            {% if role == ROLE_PARENT %}
-            <div id="rev_parent_actions" style="display: flex; gap: 1rem;">
-                <button type="button" onclick="updateEngagement()" class="btn-dash btn-dash-outline"
-                    style="flex: 1;">Enregistrer</button>
-                <button type="button" id="btn_finalize" onclick="finalizeEngagement()" class="btn-dash btn-dash-primary"
-                    style="flex: 1; display: none;">Finaliser</button>
+            {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+            <div id="rev_parent_actions" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button type="button" onclick="updateEngagement()" class="btn-dash btn-dash-primary" style="width: 100%; height: 52px;">Enregistrer les modifications</button>
+                <button type="button" id="btn_modal_finalize" onclick="finalizeEngagement()" class="btn-dash btn-dash-outline" style="width: 100%; height: 52px; display: none;">Finaliser maintenant</button>
             </div>
             {% endif %}
         </form>
@@ -743,12 +812,48 @@
     }
 
     // Afficher le modal d'édition de proposition (Parent)
-    function showEditProposal(engId) {
+    function showEditProposal(engId, isOngoing = false) {
         const modal = document.getElementById('engReviewModal');
         if (!modal) return;
 
+        // Récupérer les données depuis le data-attribute de la ligne
+        const row = document.querySelector(`.eng-row[data-eng-json*='"id": ${engId},']`) || document.querySelector(`.eng-row[data-eng-json*='"id": ${engId}}']`);
+        if (!row) return alert("Données introuvables.");
+
+        const data = JSON.parse(row.getAttribute('data-eng-json'));
+        
         document.getElementById('rev_id').value = engId;
-        document.getElementById('rev_title').textContent = "Modifier ma proposition";
+        document.getElementById('rev_title').textContent = isOngoing ? "Détails de l'engagement" : "Modifier ma proposition";
+
+        // Remplir les champs
+        if (document.getElementById('rev_enfant')) document.getElementById('rev_enfant').value = data.enfant_id;
+        document.getElementById('rev_matiere').value = data.matiere;
+        document.getElementById('rev_classe').value = data.classe;
+        document.getElementById('rev_mode').value = data.mode;
+        document.getElementById('rev_budget').value = data.budget;
+        document.getElementById('rev_frequence').value = data.frequence;
+        document.getElementById('rev_duree').value = data.duree;
+        document.getElementById('rev_periode').value = data.periode;
+        document.getElementById('rev_localisation').value = data.localisation;
+        document.getElementById('rev_visio').value = data.visio;
+
+        // Gérer visibilité visio
+        const visioContainer = document.getElementById('visio_platform_container');
+        if (data.mode === 'EN_LIGNE') visioContainer.style.display = 'block';
+        else visioContainer.style.display = 'none';
+
+        // Gérer bouton finalisation dans le modal
+        const btnFinalize = document.getElementById('btn_modal_finalize');
+        if (isOngoing && btnFinalize) {
+            btnFinalize.style.display = 'block';
+            // Vérifier éligibilité
+            {% if not is_eligible_to_finalize %}
+                btnFinalize.disabled = true;
+                btnFinalize.classList.add('btn-dash-disabled');
+            {% endif %}
+        } else if (btnFinalize) {
+            btnFinalize.style.display = 'none';
+        }
 
         modal.style.display = 'flex';
 
@@ -759,16 +864,29 @@
         if (sheet) sheet.classList.remove('active');
     }
 
+    // Écouteur pour changer visibilité visio
+    document.getElementById('rev_mode').addEventListener('change', function() {
+        const visioContainer = document.getElementById('visio_platform_container');
+        if (this.value === 'EN_LIGNE') visioContainer.style.display = 'block';
+        else visioContainer.style.display = 'none';
+    });
+
     // Enregistrer les modifications d'un engagement (Parent)
     function updateEngagement() {
         const engId = document.getElementById('rev_id').value;
         if (!engId) return alert("Aucun engagement sélectionné.");
 
         const payload = {
+            enfant_id: document.getElementById('rev_enfant') ? document.getElementById('rev_enfant').value : null,
             matiere: document.getElementById('rev_matiere').value,
+            classe: document.getElementById('rev_classe').value,
+            mode: document.getElementById('rev_mode').value,
             budget: document.getElementById('rev_budget').value,
             frequence: document.getElementById('rev_frequence').value,
-            duree_seance: document.getElementById('rev_duree').value
+            duree_seance: document.getElementById('rev_duree').value,
+            periode: document.getElementById('rev_periode').value,
+            localisation: document.getElementById('rev_localisation').value,
+            visio: document.getElementById('rev_visio').value
         };
 
         fetch(`/api/engagement/${engId}/update/`, {

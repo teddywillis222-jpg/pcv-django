@@ -54,6 +54,12 @@ body {
     flex-direction: column;
 }
 
+.dash-sidebar nav a.active {
+    background: var(--dash-accent-soft) !important;
+    color: var(--dash-accent) !important;
+    font-weight: 700 !important;
+}
+
 /* Main Content Container */
 .dash-main {
     flex: 1;
