@@ -23,14 +23,33 @@
 
     <!-- Détails de l'engagement -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--dash-text-muted);">
-        <div>
-            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Localisation</span>
-            <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
-        </div>
-        <div>
-            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
-            <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
-        </div>
+        {% if eng.type_engagement == 'ESSAI' %}
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📅 Date & Heure</span>
+                <span style="color: var(--dash-text-dark); font-weight: 600;">
+                    {{ eng.date_heure_essai|date:"d/m/Y" }} à {{ eng.date_heure_essai|date:"H:i" }}
+                    {% if eng.date_heure_fin_essai %}- {{ eng.date_heure_fin_essai|date:"H:i" }}{% endif %}
+                </span>
+            </div>
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">💻 Mode</span>
+                <span style="color: var(--dash-text-dark); font-weight: 600;">
+                    {{ eng.get_mode_de_cours_display }}
+                    {% if eng.mode_de_cours == 'ONLINE' and eng.plateforme_visio_preferee %}
+                        ({{ eng.plateforme_visio_preferee }})
+                    {% endif %}
+                </span>
+            </div>
+        {% else %}
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Localisation</span>
+                <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
+            </div>
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
+                <span style="color: var(--dash-text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
+            </div>
+        {% endif %}
     </div>
 
     <!-- Footer : Actions -->
@@ -40,10 +59,14 @@
             <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
                 Voir les détails
             </button>
-        {% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'FINALISE' or eng.statut_general == 'EN_COURS' %}
+        {% elif eng.statut_general != 'REFUSE' and eng.type_engagement != 'ESSAI' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-dash btn-dash-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem;">
-                Accéder à l'espace
+                Accéder à l'engagement
             </a>
+        {% elif eng.type_engagement == 'ESSAI' and eng.statut_general != 'REFUSE' %}
+            <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
+                Voir l'essai
+            </button>
         {% endif %}
         
         <div style="position: relative;">
@@ -55,7 +78,7 @@
                 </svg>
             </button>
             
-            <div class="options-menu" style="display: none; position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
+            <div class="options-menu" style="position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
                 
                 <!-- Voir détails (toujours utile pour le prof) -->
                 <button type="button" class="menu-item" onclick="openEngModal({{ eng.id }})" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">

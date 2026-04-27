@@ -651,6 +651,8 @@ class Engagement(models.Model):
         null=True,
         blank=True,
     )
+    description_essai = models.TextField(blank=True)
+    date_heure_fin_essai = models.DateTimeField(null=True, blank=True)
 
     masque_par_parent = models.BooleanField(
         default=False,

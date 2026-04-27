@@ -23,21 +23,50 @@
 
     <!-- Détails de l'engagement -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-gray);">
-        <div>
-            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Quartier</span>
-            <span style="color: var(--text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
-        </div>
-        <div>
-            <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
-            <span style="color: var(--text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
-        </div>
+        {% if eng.type_engagement == 'ESSAI' %}
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📅 Date & Heure</span>
+                <span style="color: var(--text-dark); font-weight: 600;">
+                    {{ eng.date_heure_essai|date:"d/m/Y" }} à {{ eng.date_heure_essai|date:"H:i" }}
+                    {% if eng.date_heure_fin_essai %}- {{ eng.date_heure_fin_essai|date:"H:i" }}{% endif %}
+                </span>
+            </div>
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">💻 Mode</span>
+                <span style="color: var(--text-dark); font-weight: 600;">
+                    {{ eng.get_mode_de_cours_display }}
+                    {% if eng.mode_de_cours == 'ONLINE' and eng.plateforme_visio_preferee %}
+                        ({{ eng.plateforme_visio_preferee }})
+                    {% endif %}
+                </span>
+            </div>
+        {% else %}
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Quartier</span>
+                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
+            </div>
+            <div>
+                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
+                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
+            </div>
+        {% endif %}
     </div>
 
     <!-- Footer : Bouton principal et Options -->
-    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
-        <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; margin-right: 0.75rem;">
-            Accéder à l'espace
-        </a>
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
+        {% if eng.statut_general != 'REFUSE' and eng.type_engagement != 'ESSAI' and eng.statut_general != 'EN_ATTENTE' %}
+            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none;">
+                Accéder à l'engagement
+            </a>
+        {% elif eng.type_engagement == 'ESSAI' and eng.statut_general == 'CONFIRME' %}
+             <button onclick="convertirEnEngagement({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
+                ✨ Engager ce professeur
+             </button>
+        {% else %}
+             <button onclick="openDetailModal({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-dark); padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer;">
+                Voir les détails
+             </button>
+        {% endif %}
         
         <div style="position: relative;">
             <button class="options-btn" onclick="toggleOptions(this)" style="background: #f1f5f9; border: none; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-gray);">

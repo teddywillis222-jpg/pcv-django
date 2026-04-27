@@ -1134,7 +1134,11 @@ def api_engagement(request):
             if date_essai_str:
                 from django.utils.dateparse import parse_datetime
                 engagement.date_heure_essai = parse_datetime(date_essai_str)
-            engagement.lien_cours_essai = data.get('description_essai', '')
+            
+            date_fin_essai_str = data.get('date_fin_essai')
+            if date_fin_essai_str:
+                engagement.date_heure_fin_essai = parse_datetime(date_fin_essai_str)
+            engagement.description_essai = data.get('description_essai', '')
         else:
             budget = data.get('budget')
             if budget: engagement.budget_convenu = budget
@@ -1749,7 +1753,7 @@ def suivi_engagement(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
     is_parent_apprenant = engagement.parent_apprenant == request.user
-    is_prof = hasattr(request.user, 'profile') and engagement.professeur == request.user.profile
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     if not (is_parent_apprenant or is_prof):
         raise Http404("Accès refusé.")
         
@@ -1943,13 +1947,26 @@ def api_engagement_details(request, engagement_id):
         'matiere': engagement.matiere,
         'classe': engagement.get_classe_display(),
         'mode': engagement.get_mode_de_cours_display(),
+        'mode_raw': engagement.mode_de_cours,
         'lieu': engagement.localisation_option,
         'budget': str(engagement.budget_convenu) if engagement.budget_convenu else None,
         'frequence': engagement.get_frequence_hebdomadaire_display(),
         'duree': engagement.get_duree_seance_display(),
         'date_debut': engagement.date_debut.strftime("%d/%m/%Y") if engagement.date_debut else None,
         'status': engagement.statut_general,
-        'type': engagement.get_type_engagement_display(),
+        'type': engagement.type_engagement,
+        'type_label': engagement.get_type_engagement_display(),
+        'plateforme': engagement.plateforme_visio_preferee,
+        # IDs for conversion logic
+        'teacher_id': engagement.professeur.id,
+        'teacher_name': f"{engagement.professeur.prenom} {engagement.professeur.nom}",
+        'student_id': engagement.apprenant.id if engagement.apprenant else None,
+        'student_name': engagement.apprenant.nom if engagement.apprenant else "Moi-même",
+        # Essai specific fields
+        'date_essai': engagement.date_heure_essai.strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
+        'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
+        'heure_fin': engagement.date_heure_fin_essai.strftime("%H:%M") if engagement.date_heure_fin_essai else None,
+        'description_essai': engagement.description_essai,
     }
     
     return JsonResponse({'success': True, 'engagement': data})

@@ -156,6 +156,55 @@
 // Logic for engagement modal (used in both search and detail pages)
 let currentTeacherData = {};
 
+function openEngagementFromTrial(trialData) {
+    // Cette fonction permet de convertir un essai en engagement standard
+    document.getElementById('eng_teacher_id').value = trialData.teacher_id;
+    document.getElementById('eng_teacher_name').value = trialData.teacher_name;
+    
+    currentTeacherData = { 
+        is_parent: true, 
+        is_premium: true, // Forcé car accès+premium requis pour essai
+        essai_actif: false, // On désactive l'essai puisqu'on convertit
+        children: [{id: trialData.student_id, prenom: trialData.student_name}],
+        existing_engagement: null 
+    };
+
+    // Gérer l'enfant
+    const enfantSelect = document.getElementById('eng_enfant_id');
+    enfantSelect.innerHTML = '';
+    const opt = new Option(trialData.student_name, trialData.student_id, true, true);
+    enfantSelect.add(opt);
+    enfantSelect.disabled = true;
+    document.getElementById('eng_field_enfants').style.display = 'block';
+
+    // Gérer la matière
+    const matiereSelect = document.getElementById('eng_matiere');
+    matiereSelect.innerHTML = '';
+    matiereSelect.add(new Option(trialData.matiere, trialData.matiere, true, true));
+    matiereSelect.disabled = true;
+
+    document.getElementById('engagementForm').reset();
+    
+    // Forcer le type Standard et bloquer Essai
+    const typeSelect = document.getElementById('eng_type');
+    typeSelect.value = 'standard';
+    for(let i=0; i<typeSelect.options.length; i++) {
+        if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
+    }
+    typeSelect.disabled = true; // Bloqué sur standard
+
+    // Pré-remplir le mode
+    document.getElementById('eng_mode').value = trialData.mode_raw || 'domicile';
+    if (trialData.lieu) {
+        document.getElementById('eng_localisation').value = trialData.lieu;
+    }
+
+    document.getElementById('eng_submit_btn').textContent = 'Finaliser l\'engagement';
+    
+    toggleEngagementFields();
+    document.getElementById('engagementModal').style.display = 'flex';
+}
+
 function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null) {
     requireAuth(() => {
         document.getElementById('eng_teacher_id').value = teacherId;
