@@ -116,7 +116,7 @@
                     Voir le profil
                 </a>
                 {% else %}
-                {% with eng=linked_engagements.first %}
+                {% with eng=engagements.first %}
                 {% if eng %}
                     {% if eng.enfants_concernes.all %}
                     <a href="{% url 'profil_eleve' 'enfant' eng.enfants_concernes.first.id %}" class="focus-item" style="text-decoration: none; color: inherit;">
@@ -215,7 +215,7 @@
         </div>
 
         <!-- Zone de saisie -->
-        {% if not hide_input or role == ROLE_PROF %}
+        {% if role == ROLE_PROF or not hide_input %}
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
                 <input type="file" id="fileInput" name="fichier" style="display: none;"
@@ -318,7 +318,7 @@
                     </div>
                     {% endif %}
 
-                    <div style="flex: 1;">
+                    <div style="flex: 1; min-width: 0;">
                         <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">
                             {% if role == ROLE_PROF %}
                             {{ conversation.parent.get_full_name|default:conversation.parent.username }}
@@ -332,7 +332,7 @@
                     </div>
 
                     <div class="eng-status-badge {% if eng.statut_general == 'FINALISE' %}status-active{% else %}status-pending{% endif %}"
-                        style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800;">
+                        style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800; white-space: nowrap; flex-shrink: 0;">
                         {{ eng.get_statut_general_display }}
                     </div>
 
@@ -340,7 +340,7 @@
                         stroke-width="2.5">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>                <div class="eng-row-details">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
                         <div>
                             <span style="color: #64748b;">Matière :</span><br>
                             <span style="font-weight: 700;">{{ eng.matiere }}</span>

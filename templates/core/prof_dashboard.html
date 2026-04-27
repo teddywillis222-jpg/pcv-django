@@ -142,41 +142,41 @@
             </div>
         </div>
 
-        <div id="section-settings" class="dash-section" style="display:none;">
-            <div class="settings-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+        <div id="section-settings" class="dash-section" style="display:none; padding: 1.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                
                 <!-- Option: Copy Link -->
-                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                    <div>
-                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Lien de profil</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Partagez votre profil pour attirer des clients.</p>
+                <div onclick="copyProfileLink('{{ request.scheme }}://{{ request.get_host }}{% url 'professeur_detail' teacher.slug %}')" 
+                     style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
+                        <span style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Copier le lien de mon profil</span>
                     </div>
-                    <button class="btn-dash btn-dash-outline" onclick="copyProfileLink('{{ request.build_absolute_uri|slice:':-1' }}{% url 'professeur_detail' teacher.slug %}')" style="white-space: nowrap;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                        Copier le lien
-                    </button>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Partagez votre lien de profil pour attirer de nouveaux clients.</p>
                 </div>
 
                 <!-- Option: Public Profile -->
-                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                    <div>
-                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Aperçu public</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Voir comment les parents voient votre profil.</p>
+                <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" 
+                   style="text-decoration: none; background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; display: block; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
+                        <span style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Voir mon profil public</span>
                     </div>
-                    <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" class="btn-dash btn-dash-primary" style="text-decoration: none; white-space: nowrap;">
-                        Voir mon profil
-                    </a>
-                </div>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Consultez votre profil tel qu'il est vu par les parents et apprenants.</p>
+                </a>
 
                 <!-- Option: Toggle Trial -->
-                <div class="settings-card" style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
-                    <div>
-                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--dash-text);">Essai gratuit</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--dash-text-muted);">Offrir une séance d'essai gratuite aux nouveaux parents.</p>
+                <div id="btnToggleEssaiContainer" onclick="toggleEssai()" 
+                     style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
+                        <span id="txtToggleEssai" style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">
+                            {% if teacher.essai_gratuit_actif %}Désactiver l'essai gratuit{% else %}Activer l'essai gratuit{% endif %}
+                        </span>
                     </div>
-                    <button id="btnToggleEssai" class="btn-dash" onclick="toggleEssai()" style="background: {% if teacher.essai_gratuit_actif %}#ef4444{% else %}var(--dash-accent){% endif %}; color: white; border: none; font-weight: 700; min-width: 160px;">
-                        {% if teacher.essai_gratuit_actif %}Désactiver l'essai gratuit{% else %}Activer l'essai gratuit{% endif %}
-                    </button>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Autoriser ou non les parents à solliciter une séance d'essai gratuite.</p>
                 </div>
+
             </div>
         </div>
     </main>
@@ -265,9 +265,12 @@
     }
 
     async function toggleEssai() {
-        const btn = document.getElementById('btnToggleEssai');
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
+        const container = document.getElementById('btnToggleEssaiContainer');
+        const txt = document.getElementById('txtToggleEssai');
+        if (container.dataset.loading === 'true') return;
+
+        container.dataset.loading = 'true';
+        container.style.opacity = '0.7';
 
         try {
             const response = await fetch("{% url 'api_toggle_essai' %}", {
@@ -279,23 +282,23 @@
             });
             const data = await response.json();
             if (data.success) {
-                btn.innerHTML = data.label;
                 if (data.actif) {
-                    btn.style.background = '#ef4444'; // Red for "Désactiver"
+                    txt.textContent = "Désactiver l'essai gratuit";
                 } else {
-                    btn.style.background = 'var(--dash-accent)'; // Default for "Activer"
+                    txt.textContent = "Activer l'essai gratuit";
                 }
             } else {
                 alert(data.error || "Une erreur est survenue");
             }
-        } catch (e) {
-            console.error(e);
-            alert("Erreur de connexion");
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Erreur de connexion.");
         } finally {
-            btn.disabled = false;
-            btn.style.opacity = '1';
+            container.dataset.loading = 'false';
+            container.style.opacity = '1';
         }
     }
+
 
     // Tab Switching Logic
     function switchTab(evt, tabId) {

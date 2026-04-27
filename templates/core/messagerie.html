@@ -14,9 +14,6 @@
     <header class="msg-header">
         <div class="msg-header-top">
             <h1>Discussions</h1>
-            <a href="#" class="filter-more" id="searchToggle">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </a>
         </div>
         <p>
             {% if role == ROLE_PROF %}
@@ -25,12 +22,12 @@
                 Vos échanges avec vos professeurs.
             {% endif %}
         </p>
-        <form method="GET" class="search-bar" id="searchBar" {% if not search_query %}style="display: none;"{% endif %}>
+        <form method="GET" class="search-bar" id="searchBar">
             <input type="hidden" name="tab" value="{{ current_tab }}">
             <div class="search-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
-            <input type="text" name="q" class="search-input" placeholder="Nom, matière, ville..." value="{{ search_query }}">
+            <input type="text" name="q" class="search-input" placeholder="Rechercher une conversation, matière..." value="{{ search_query }}">
         </form>
     </header>
 
@@ -139,14 +136,7 @@
 </div>
 
 <script>
-    document.getElementById('searchToggle').addEventListener('click', function(e) {
-        e.preventDefault();
-        const bar = document.getElementById('searchBar');
-        bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
-        if (bar.style.display === 'block') {
-            bar.querySelector('input').focus();
-        }
-    });
+
 
     function toggleConvMenu(btn) {
         const menu = btn.nextElementSibling;
