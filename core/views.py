@@ -1964,6 +1964,26 @@ def masquer_engagement_prof(request, eng_id):
 
 
 @login_required
+def api_toggle_essai(request):
+    """Bascule l'activation de l'essai gratuit pour le professeur connecté."""
+    try:
+        teacher = request.user.teacher_profile
+    except TeacherProfile.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Accès réservé aux professeurs.'}, status=403)
+
+    if request.method == 'POST':
+        teacher.essai_gratuit_actif = not teacher.essai_gratuit_actif
+        teacher.save()
+        return JsonResponse({
+            'success': True,
+            'actif': teacher.essai_gratuit_actif,
+            'message': 'Statut de l\'essai gratuit mis à jour.'
+        })
+    
+    return JsonResponse({'success': False, 'error': 'Méthode non autorisée.'}, status=405)
+
+
+@login_required
 def api_engagement_details(request, engagement_id):
     """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
     engagement = get_object_or_404(Engagement, id=engagement_id)
