@@ -1304,64 +1304,13 @@ def conversation_detail(request, conversation_id):
     
     # Déterminer le rôle
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
+    is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
     
-    # Détection robuste du professeur
-    is_user_prof = False
-    if user_role == Role.ROLE_PROF:
-        is_user_prof = True
-    elif conversation.professeur and conversation.professeur.user == request.user:
-        is_user_prof = True
-    
-    # Logique de blocage et visibilité de l'input
+    # Logique de blocage supprimée (Remise à zéro)
     is_blocked = False
-    is_eligible_to_finalize = False
+    is_eligible_to_finalize = True # On autorise par défaut
     hide_input = False
     blocking_message = ""
-    
-    if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
-        active_eng = conversation.engagement_actif
-        is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
-        
-        # Visibilité de l'input
-        if active_eng:
-            if active_eng.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.REFUSE]:
-                hide_input = True
-            elif active_eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]:
-                if not active_eng.paiement_effectue and not is_premium:
-                    hide_input = True
-        
-        # Blocage (bandeau de paiement)
-        if active_eng and active_eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not active_eng.paiement_effectue and not is_premium:
-            is_blocked = True
-            blocking_message = "Paiement requis pour débloquer la messagerie."
-            
-            has_prof_messaged = conversation.messages.filter(auteur=conversation.professeur.user).exists() if conversation.professeur else False
-            if has_prof_messaged:
-                system_text = "Le professeur vous a laissé un message. Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et lire son contenu."
-            else:
-                system_text = "Le professeur a confirmé votre proposition ! Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et démarrer les échanges."
-            
-        # Éligibilité à la finalisation
-        if is_premium or (active_eng and active_eng.paiement_effectue):
-            is_eligible_to_finalize = True
-    
-    # Sécurité supplémentaire pour le professeur : accès total garanti
-    if is_user_prof:
-        is_blocked = False
-        hide_input = False
-        is_eligible_to_finalize = True
-    
-    # Message système virtuel dans le flux si bloqué pour le parent
-    if is_blocked and not is_user_prof:
-        # On n'ajoute pas un vrai message en DB, juste un objet temporaire pour le template
-        system_msg = Message(
-            contenu_texte=system_text,
-            type_message="SYSTEME",
-            date_envoi=timezone.now(),
-            conversation=conversation,
-            auteur=None # Indique un message système
-        )
-        chat_messages.append(system_msg)
 
     # Autres infos pour le header
     if request.user == conversation.parent:
@@ -1564,31 +1513,11 @@ def api_fetch_new_messages(request, conversation_id):
             'lu': msg.lu
         })
         
-    # Calculer l'état de blocage pour le polling
-    from .choices import StatutGeneral, TypeAbonnement
-    from .models import Profile as Role
-    
-    is_blocked = False
-    blocking_msg = ""
-    
-    user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
-    is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
-    
-    if not is_user_prof:
-        active_eng = conversation.engagement_actif
-        is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
-        
-        if active_eng and active_eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not active_eng.paiement_effectue and not is_premium:
-            is_blocked = True
-            blocking_msg = "Paiement requis pour débloquer la messagerie."
-            # On ne renvoie pas le message système complet ici pour ne pas encombrer le polling
-            # Le rechargement de la page s'en occupera
-
     return JsonResponse({
         'messages': messages_data, 
         'newly_read': newly_read,
-        'is_blocked': is_blocked,
-        'blocking_message': blocking_msg
+        'is_blocked': False,
+        'blocking_message': ""
     })
 
 

@@ -221,18 +221,9 @@
             </div>
             {% endfor %}
 
-            {% if is_blocked and not is_user_prof %}
-            <div class="blocked-banner"
-                style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #fee2e2;">
-                <p style="color: #1e293b; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.5;">{{ blocking_message }}</p>
-                <button class="btn-dash btn-dash-primary" onclick="showPaymentModal()"
-                    style="padding: 0; width: 100%; max-width: 320px; height: 56px; font-size: 1rem;">Procéder au paiement</button>
-            </div>
-            {% endif %}
         </div>
 
         <!-- Zone de saisie -->
-        {% if is_user_prof or not hide_input %}
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
                 <input type="file" id="fileInput" name="fichier" style="display: none;"
@@ -259,19 +250,6 @@
                 </button>
             </form>
         </footer>
-        {% else %}
-        <div style="padding: 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
-            <p style="font-size: 0.85rem; color: #64748b; font-weight: 600; margin: 0;">
-                {% if conversation.engagement_actif.statut_general == 'EN_ATTENTE' %}
-                    L'envoi de messages est désactivé tant que la proposition est en attente.
-                {% elif conversation.engagement_actif.statut_general == 'REFUSE' %}
-                    Cette demande a été refusée.
-                {% else %}
-                    Paiement requis pour envoyer un message.
-                {% endif %}
-            </p>
-        </div>
-        {% endif %}
     </main>
 
     <!-- Zone Latérale: Masquée sur Mobile (On utilise le sheet à la place) -->
