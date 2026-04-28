@@ -577,8 +577,10 @@
     // Navigation UI
 
     function toggleSheet() {
-        document.getElementById('engSheetOverlay').classList.toggle('active');
-        document.getElementById('engSheet').classList.toggle('active');
+        const overlay = document.getElementById('engSheetOverlay');
+        const sheet = document.getElementById('engSheet');
+        if (overlay) overlay.classList.toggle('active');
+        if (sheet) sheet.classList.toggle('active');
     }
 
     function toggleEngRow(header) {
@@ -601,7 +603,7 @@
     // Options Dropdown
     function toggleOptions() {
         const dropdown = document.getElementById('optionsDropdown');
-        dropdown.classList.toggle('active');
+        if (dropdown) dropdown.classList.toggle('active');
     }
 
     // Payment Sheet
@@ -667,12 +669,16 @@
     }
 
     function showPaymentModal() {
-        document.getElementById('paymentModal').classList.add('active');
-        document.getElementById('paymentSheet').classList.add('active');
+        const modal = document.getElementById('paymentModal');
+        const sheet = document.getElementById('paymentSheet');
+        if (modal) modal.classList.add('active');
+        if (sheet) sheet.classList.add('active');
     }
     function hidePaymentModal() {
-        document.getElementById('paymentModal').classList.remove('active');
-        document.getElementById('paymentSheet').classList.remove('active');
+        const modal = document.getElementById('paymentModal');
+        const sheet = document.getElementById('paymentSheet');
+        if (modal) modal.classList.remove('active');
+        if (sheet) sheet.classList.remove('active');
     }
 
     // Close on escape or outside click
@@ -695,78 +701,81 @@
     };
 
     // Handle form submission
-    document.getElementById('chatForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const input = document.getElementById('messageInput');
-        const fileInput = document.getElementById('fileInput');
-        const text = input.value.trim();
-        const file = fileInput.files[0];
-        if (text === '' && !file) return;
+    const chatForm = document.getElementById('chatForm');
+    if (chatForm) {
+        chatForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const fileInput = document.getElementById('fileInput');
+            const text = input.value.trim();
+            const file = fileInput.files[0];
+            if (text === '' && !file) return;
 
-        // Désactiver le bouton pendant l'envoi
-        const sendBtn = this.querySelector('.btn-send');
-        sendBtn.disabled = true;
+            // Désactiver le bouton pendant l'envoi
+            const sendBtn = this.querySelector('.btn-send');
+            if (sendBtn) sendBtn.disabled = true;
 
-        try {
-            const formData = new FormData();
-            if (text) formData.append('texte', text);
-            if (file) formData.append('fichier', file);
+            try {
+                const formData = new FormData();
+                if (text) formData.append('texte', text);
+                if (file) formData.append('fichier', file);
 
-            const response = await fetch("{% url 'api_send_message' conversation.id %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
+                const response = await fetch("{% url 'api_send_message' conversation.id %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.message_id > lastMsgId) lastMsgId = data.message_id;
+                    // Injecter la bulle de message dans le DOM
+                    const container = document.getElementById('messagesList');
+                    const bubble = document.createElement('div');
+                    bubble.className = 'msg-bubble msg-sent';
+                    bubble.setAttribute('data-id', data.message_id);
+
+                    let contentHtml = '';
+                    if (file) {
+                        contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem; font-weight: 600;">📎 ${file.name}</div>`;
+                    }
+                    if (text) {
+                        contentHtml += `<div class="msg-content">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                    }
+
+                    bubble.innerHTML = `
+                        ${contentHtml}
+                        <div class="msg-meta">
+                            <span class="msg-time">${data.date}</span>
+                            <span class="msg-status">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                                </svg>
+                            </span>
+                        </div>
+                    `;
+                    if (container) container.appendChild(bubble);
+
+                    // Vider l'input et scroller en bas
+                    input.value = '';
+                    input.style.height = 'auto';
+                    fileInput.value = ''; // Reset file
+                    scrollToBottom();
+                } else {
+                    if (response.status === 402) showPaymentModal();
+                    else alert(data.error || "Erreur lors de l'envoi");
                 }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                if (data.message_id > lastMsgId) lastMsgId = data.message_id;
-                // Injecter la bulle de message dans le DOM
-                const container = document.getElementById('messagesList');
-                const bubble = document.createElement('div');
-                bubble.className = 'msg-bubble msg-sent';
-                bubble.setAttribute('data-id', data.message_id);
-
-                let contentHtml = '';
-                if (file) {
-                    contentHtml += `<div class="msg-file" style="margin-bottom: 0.25rem; font-weight: 600;">📎 ${file.name}</div>`;
-                }
-                if (text) {
-                    contentHtml += `<div class="msg-content">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
-                }
-
-                bubble.innerHTML = `
-                    ${contentHtml}
-                    <div class="msg-meta">
-                        <span class="msg-time">${data.date}</span>
-                        <span class="msg-status">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-                            </svg>
-                        </span>
-                    </div>
-                `;
-                container.appendChild(bubble);
-
-                // Vider l'input et scroller en bas
-                input.value = '';
-                input.style.height = 'auto';
-                fileInput.value = ''; // Reset file
-                scrollToBottom();
-            } else {
-                if (response.status === 402) showPaymentModal();
-                else alert(data.error || "Erreur lors de l'envoi");
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Erreur de connexion. Veuillez réessayer.");
+            } finally {
+                if (sendBtn) sendBtn.disabled = false;
             }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Erreur de connexion. Veuillez réessayer.");
-        } finally {
-            sendBtn.disabled = false;
-        }
-    });
+        });
+    }
 
     // Auto-resize textarea
     const textarea = document.getElementById('messageInput');
@@ -782,14 +791,17 @@
     }
 
     // Afficher une indication si un fichier est sélectionné
-    document.getElementById('fileInput').addEventListener('change', function () {
-        if (this.files.length > 0) {
-            const fileName = this.files[0].name;
-            textarea.placeholder = `Fichier joint: ${fileName} - Tapez un message...`;
-        } else {
-            textarea.placeholder = "Écrivez votre message...";
-        }
-    });
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                if (textarea) textarea.placeholder = `Fichier joint: ${fileName} - Tapez un message...`;
+            } else {
+                if (textarea) textarea.placeholder = "Écrivez votre message...";
+            }
+        });
+    }
 
     // === POLLING AJAX ===
     let lastMsgId = {% if messages %}{{ messages.last.id }}{% else %}0{% endif %};
@@ -949,11 +961,16 @@
     }
 
     // Écouteur pour changer visibilité visio
-    document.getElementById('rev_mode').addEventListener('change', function() {
-        const visioContainer = document.getElementById('visio_platform_container');
-        if (this.value === 'EN_LIGNE') visioContainer.style.display = 'block';
-        else visioContainer.style.display = 'none';
-    });
+    const revMode = document.getElementById('rev_mode');
+    if (revMode) {
+        revMode.addEventListener('change', function() {
+            const visioContainer = document.getElementById('visio_platform_container');
+            if (visioContainer) {
+                if (this.value === 'EN_LIGNE') visioContainer.style.display = 'block';
+                else visioContainer.style.display = 'none';
+            }
+        });
+    }
 
     // Enregistrer les modifications d'un engagement (Parent)
     function updateEngagement() {

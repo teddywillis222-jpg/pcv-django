@@ -1304,7 +1304,13 @@ def conversation_detail(request, conversation_id):
     
     # Déterminer le rôle
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
-    is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
+    
+    # Détection robuste du professeur
+    is_user_prof = False
+    if user_role == Role.ROLE_PROF:
+        is_user_prof = True
+    elif conversation.professeur and conversation.professeur.user == request.user:
+        is_user_prof = True
     
     # Logique de blocage et visibilité de l'input
     is_blocked = False
@@ -1327,11 +1333,13 @@ def conversation_detail(request, conversation_id):
         # Blocage (bandeau de paiement)
         if active_eng and active_eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not active_eng.paiement_effectue and not is_premium:
             is_blocked = True
+            blocking_message = "Paiement requis pour débloquer la messagerie."
+            
             has_prof_messaged = conversation.messages.filter(auteur=conversation.professeur.user).exists() if conversation.professeur else False
             if has_prof_messaged:
-                blocking_message = "Le professeur vous a laissé un message. Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et lire son contenu."
+                system_text = "Le professeur vous a laissé un message. Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et lire son contenu."
             else:
-                blocking_message = "Le professeur a confirmé votre proposition ! Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et démarrer les échanges."
+                system_text = "Le professeur a confirmé votre proposition ! Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et démarrer les échanges."
             
         # Éligibilité à la finalisation
         if is_premium or (active_eng and active_eng.paiement_effectue):
@@ -1347,7 +1355,7 @@ def conversation_detail(request, conversation_id):
     if is_blocked and not is_user_prof:
         # On n'ajoute pas un vrai message en DB, juste un objet temporaire pour le template
         system_msg = Message(
-            contenu_texte=blocking_message,
+            contenu_texte=system_text,
             type_message="SYSTEME",
             date_envoi=timezone.now(),
             conversation=conversation,
@@ -1572,11 +1580,9 @@ def api_fetch_new_messages(request, conversation_id):
         
         if active_eng and active_eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not active_eng.paiement_effectue and not is_premium:
             is_blocked = True
-            has_prof_messaged = conversation.messages.filter(auteur=conversation.professeur.user).exists() if conversation.professeur else False
-            if has_prof_messaged:
-                blocking_msg = "Le professeur vous a laissé un message. Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et lire son contenu."
-            else:
-                blocking_msg = "Le professeur a confirmé votre proposition ! Réglez les frais de 2000 FCFA ou passez au Plan Premium afin de débloquer la messagerie et démarrer les échanges."
+            blocking_msg = "Paiement requis pour débloquer la messagerie."
+            # On ne renvoie pas le message système complet ici pour ne pas encombrer le polling
+            # Le rechargement de la page s'en occupera
 
     return JsonResponse({
         'messages': messages_data, 
