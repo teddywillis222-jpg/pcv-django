@@ -204,7 +204,7 @@
             </div>
             {% endfor %}
 
-            {% if is_blocked %}
+            {% if is_blocked and role != ROLE_PROF %}
             <div class="blocked-banner"
                 style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #fee2e2;">
                 <p style="color: #1e293b; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.5;">{{ blocking_message }}</p>
@@ -437,7 +437,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn-dash btn-dash-primary" style="width: 100%; margin-top: 2rem; height: 56px;">Continuer vers le paiement</button>
+        <button class="btn-dash btn-dash-primary" id="confirmPaymentBtn" onclick="processFictionalPayment()" style="width: 100%; margin-top: 2rem; height: 56px;">Continuer vers le paiement</button>
     </div>
 </div>
 
@@ -588,6 +588,67 @@
     }
 
     // Payment Sheet
+    let selectedPlan = 'standard';
+
+    function selectPlan(plan) {
+        selectedPlan = plan;
+        // Mise à jour visuelle (optionnel mais recommandé)
+        const plans = document.querySelectorAll('#paymentSheet [onclick^="selectPlan"]');
+        plans.forEach(p => {
+            p.style.borderColor = '#e2e8f0';
+            p.style.background = 'white';
+        });
+        
+        // On cible l'élément cliqué (on utilise event.currentTarget si possible ou on cherche par l'argument)
+        // Pour faire simple ici, on va juste changer les styles des deux plans connus
+        const stdPlan = document.querySelector('[onclick="selectPlan(\'standard\')"]');
+        const prmPlan = document.querySelector('[onclick="selectPlan(\'premium\')"]');
+        
+        if (plan === 'standard') {
+            stdPlan.style.borderColor = '#15803d';
+            stdPlan.style.background = '#f0fdf4';
+        } else {
+            prmPlan.style.borderColor = '#15803d';
+            prmPlan.style.background = '#f0fdf4';
+        }
+    }
+
+    async function processFictionalPayment() {
+        const btn = document.getElementById('confirmPaymentBtn');
+        btn.disabled = true;
+        btn.innerText = "Traitement en cours...";
+
+        try {
+            const response = await fetch("{% url 'api_fictional_payment' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    conversation_id: "{{ conversation.id }}",
+                    payment_type: selectedPlan
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message || "Paiement réussi !");
+                location.reload();
+            } else {
+                alert(data.error || "Erreur lors du paiement fictif");
+                btn.disabled = false;
+                btn.innerText = "Continuer vers le paiement";
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Erreur de connexion au serveur.");
+            btn.disabled = false;
+            btn.innerText = "Continuer vers le paiement";
+        }
+    }
+
     function showPaymentModal() {
         document.getElementById('paymentModal').classList.add('active');
         document.getElementById('paymentSheet').classList.add('active');

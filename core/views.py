@@ -189,7 +189,8 @@ def messagerie(request):
                 if not is_premium:
                     is_blocked = True
             else:
-                is_blocked = True
+                # Le professeur n'est jamais bloqué
+                is_blocked = False
 
         # Non-lus (utilise le compteur annoté pour performance)
         has_unread = conv.unread_count > 0
@@ -1334,6 +1335,12 @@ def conversation_detail(request, conversation_id):
         # Éligibilité à la finalisation
         if is_premium or (active_eng and active_eng.paiement_effectue):
             is_eligible_to_finalize = True
+    
+    # Sécurité supplémentaire pour le professeur : accès total garanti
+    if user_role == Role.ROLE_PROF:
+        is_blocked = False
+        hide_input = False
+        is_eligible_to_finalize = True
 
     # Autres infos pour le header
     if request.user == conversation.parent:
@@ -2024,3 +2031,50 @@ def api_engagement_details(request, engagement_id):
     
     return JsonResponse({'success': True, 'engagement': data})
 
+@login_required
+@require_http_methods(["POST"])
+def api_fictional_payment(request):
+    """API de paiement fictif interne pour les tests."""
+    import json
+    from .choices import TypeAbonnement
+    from .models import Conversation, Abonnement
+    
+    try:
+        data = json.loads(request.body)
+        conversation_id = data.get('conversation_id')
+        payment_type = data.get('payment_type') # 'standard' ou 'premium'
+        
+        if payment_type == 'standard':
+            if not conversation_id:
+                return JsonResponse({'error': 'ID de conversation requis'}, status=400)
+            
+            conversation = get_object_or_404(Conversation, id=conversation_id)
+            if request.user not in conversation.participants.all():
+                return JsonResponse({'error': 'Accès non autorisé'}, status=403)
+                
+            eng = conversation.engagement_actif
+            if not eng:
+                return JsonResponse({'error': 'Aucun engagement actif pour cette conversation'}, status=400)
+                
+            eng.paiement_effectue = True
+            eng.save()
+            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectué (fictif)'})
+            
+        elif payment_type == 'premium':
+            # Upgrade vers premium pour le mois en cours
+            from datetime import timedelta
+            abonnement = request.user.abonnements.first()
+            if not abonnement:
+                abonnement = Abonnement.objects.create(user=request.user)
+            
+            abonnement.type_abonnement = TypeAbonnement.ACCESS_PREMIUM
+            abonnement.date_debut = timezone.now().date()
+            abonnement.date_fin = timezone.now().date() + timedelta(days=30)
+            abonnement.save()
+            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectué (fictif)'})
+            
+        else:
+            return JsonResponse({'error': 'Type de paiement invalide'}, status=400)
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

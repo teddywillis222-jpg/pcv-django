@@ -66,6 +66,7 @@ urlpatterns = [
     
     path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
     path("api/professeur/toggle-essai/", core_views.api_toggle_essai, name="api_toggle_essai"),
+    path("api/fictional-payment/", core_views.api_fictional_payment, name="api_fictional_payment"),
 
     # Suivi Pédagogique
     path("engagement/<int:engagement_id>/suivi/", core_views.suivi_engagement, name="suivi_engagement"),
