@@ -4,6 +4,21 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
 <style>
+    .msg-system {
+        align-self: center !important;
+        background: #fffbeb !important;
+        color: #92400e !important;
+        border: 1px solid #fde68a !important;
+        font-size: 0.85rem !important;
+        padding: 10px 16px !important;
+        border-radius: 12px !important;
+        margin: 15px 0 !important;
+        text-align: center !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        max-width: 90% !important;
+        font-weight: 600;
+    }
+
     /* Correction responsive pour le chat - Mobile First */
     body,
     html {
@@ -164,7 +179,7 @@
                 <span>{{ msg.date_envoi|date:"d F Y" }}</span>
             </div>
             {% endif %}
-            <div class="msg-bubble {% if msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}"
+            <div class="msg-bubble {% if msg.type_message == 'SYSTEME' %}msg-system{% elif msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}"
                 data-id="{{ msg.id }}">
                 {% if msg.contenu_media %}
                 <div class="msg-file" style="margin-bottom: 0.25rem;">
@@ -177,7 +192,9 @@
                 <div class="msg-content">{{ msg.contenu_texte }}</div>
                 {% endif %}
                 <div class="msg-meta">
+                    {% if msg.type_message != 'SYSTEME' %}
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
+                    {% endif %}
                     {% if msg.auteur == request.user %}
                     <span class="msg-status {% if msg.lu %}status-read{% endif %}">
                         {% if msg.lu %}
@@ -204,7 +221,7 @@
             </div>
             {% endfor %}
 
-            {% if is_blocked and role != ROLE_PROF %}
+            {% if is_blocked and not is_user_prof %}
             <div class="blocked-banner"
                 style="margin: 1rem; background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #fee2e2;">
                 <p style="color: #1e293b; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.5;">{{ blocking_message }}</p>
@@ -215,7 +232,7 @@
         </div>
 
         <!-- Zone de saisie -->
-        {% if role == ROLE_PROF or not hide_input %}
+        {% if is_user_prof or not hide_input %}
         <footer class="chat-input-area">
             <form id="chatForm" class="chat-input-container">
                 <input type="file" id="fileInput" name="fichier" style="display: none;"
@@ -776,6 +793,7 @@
 
     // === POLLING AJAX ===
     let lastMsgId = {% if messages %}{{ messages.last.id }}{% else %}0{% endif %};
+    let initialIsBlocked = {% if is_blocked %}true{% else %}false{% endif %};
     const pollInterval = 5000; // 5 secondes
 
     async function fetchNewMessages() {
@@ -833,6 +851,11 @@
             }
 
             if (hasNew) scrollToBottom();
+            
+            // 3. Gérer le changement d'état de blocage
+            if (data.is_blocked !== initialIsBlocked) {
+                location.reload();
+            }
 
         } catch (e) {
             console.error("Erreur Polling:", e);
@@ -979,23 +1002,6 @@
     function hideEngReviewModal() {
         const modal = document.getElementById('engReviewModal');
         if (modal) modal.style.display = 'none';
-    }
-
-    // Sélection de plan de paiement
-    let selectedPlan = null;
-
-    function selectPlan(plan) {
-        selectedPlan = plan;
-        const cards = document.querySelectorAll('#paymentSheet [onclick^="selectPlan"]');
-        cards.forEach(card => {
-            if (card.getAttribute('onclick').includes(plan)) {
-                card.style.borderColor = '#16a34a';
-                card.style.background = '#f0fdf4';
-            } else {
-                card.style.borderColor = '#e2e8f0';
-                card.style.background = 'white';
-            }
-        });
     }
 </script>
 {% endblock %}
