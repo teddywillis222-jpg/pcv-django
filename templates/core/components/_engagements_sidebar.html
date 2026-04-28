@@ -1,0 +1,120 @@
+<!-- Zone Latérale Desktop -->
+<aside class="chat-sidebar">
+    <h3 class="sidebar-title">Engagements liés</h3>
+    <div class="eng-list">
+        {% for eng in engagements %}
+        <div class="eng-mini-card {% if eng == conversation.engagement_actif %}active{% endif %}" onclick="toggleSheet()">
+            <div class="eng-mini-status {% if eng.statut_general == 'FINALISE' %}status-active{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}status-pending{% endif %}">
+                {{ eng.get_statut_general_display }}
+            </div>
+            <div class="eng-mini-title">{{ eng.matiere }}</div>
+            <div style="font-size: 0.75rem; color: #64748b;">
+                {{ eng.get_classe_display }} – {{ eng.date_creation|date:"d M" }}
+            </div>
+        </div>
+        {% empty %}
+        <div style="padding: 1rem; color: #64748b; font-size: 0.85rem; text-align: center;">
+            Aucun engagement lié.
+        </div>
+        {% endfor %}
+    </div>
+</aside>
+
+<!-- Bottom Sheet Engagements Mobile -->
+<div id="engSheetOverlay" class="eng-sheet-overlay" onclick="toggleSheet()"></div>
+<div id="engSheet" class="eng-sheet">
+    <div class="eng-sheet-header">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Engagements pour cette conversation</h3>
+        <button onclick="toggleSheet()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">✕</button>
+    </div>
+
+    <div class="eng-sheet-content">
+        {% if role == ROLE_PARENT and parent_children %}
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrer par enfant</label>
+            <select id="childFilter" onchange="filterEngagements()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 600;">
+                <option value="all">Tous les enfants</option>
+                {% for enfant in parent_children %}
+                <option value="{{ enfant.id }}">{{ enfant.prenom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div id="engSheetList">
+            {% for eng in engagements %}
+            <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}" 
+                 data-eng-json='{"id": {{ eng.id }}, "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.classe }}", "mode": "{{ eng.mode_de_cours }}", "budget": {{ eng.budget_convenu|default:0 }}, "frequence": "{{ eng.frequence_hebdomadaire }}", "duree": "{{ eng.duree_seance }}", "localisation": "{{ eng.localisation_option|escapejs }}", "visio": "{{ eng.plateforme_visio_preferee|escapejs }}", "periode": "{{ eng.periode_engagement }}", "enfant_id": "{{ eng.enfants_concernes.first.id|default:"" }}"}'>
+                
+                <div class="eng-row-main" onclick="toggleEngRow(this)">
+                    {% if other_profile.photo_de_profil %}
+                    <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" style="width: 38px; height: 38px;" alt="">
+                    {% else %}
+                    <div class="chat-avatar-img" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #16a34a; font-size: 0.9rem;">
+                        {{ other_participant.first_name|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">
+                            {% if role == ROLE_PROF %}
+                                {{ conversation.parent.get_full_name|default:conversation.parent.username }}
+                            {% else %}
+                                Prof. {{ conversation.professeur.prenom }}
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 0.8rem; color: #64748b;">
+                            {{ eng.matiere }} • {{ eng.localisation_option|default:"Lieu à définir" }}
+                        </div>
+                    </div>
+
+                    <div class="eng-status-badge {% if eng.statut_general == 'FINALISE' %}status-active{% else %}status-pending{% endif %}" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800; white-space: nowrap; flex-shrink: 0;">
+                        {{ eng.get_statut_general_display }}
+                    </div>
+
+                    <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+
+                <div class="eng-row-details">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
+                        <div><span style="color: #64748b;">Matière :</span><br><span style="font-weight: 700;">{{ eng.matiere }}</span></div>
+                        <div><span style="color: #64748b;">Classe :</span><br><span style="font-weight: 700;">{{ eng.get_classe_display }}</span></div>
+                        <div><span style="color: #64748b;">Fréquence :</span><br><span style="font-weight: 700;">{{ eng.get_frequence_hebdomadaire_display }}</span></div>
+                        <div><span style="color: #64748b;">Durée :</span><br><span style="font-weight: 700;">{{ eng.get_duree_seance_display }}</span></div>
+                        <div><span style="color: #64748b;">Mode :</span><br><span style="font-weight: 700;">{{ eng.get_mode_de_cours_display }}</span></div>
+                        <div><span style="color: #64748b;">Budget :</span><br><span style="font-weight: 800; color: #15803d;">{{ eng.budget_convenu }} FCFA/h</span></div>
+                        <div style="grid-column: span 2;"><span style="color: #64748b;">Lieu :</span><br><span style="font-weight: 700;">{{ eng.localisation_option|default:"Non spécifié" }}</span></div>
+                        {% if eng.plateforme_visio_preferee %}
+                        <div style="grid-column: span 2;"><span style="color: #64748b;">Visio :</span><br><span style="font-weight: 700;">{{ eng.plateforme_visio_preferee }}</span></div>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+                        {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                            {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                                <button onclick='finalizeEngagement({{ eng.id }})' class="btn-dash {% if is_eligible_to_finalize %}btn-dash-primary{% else %}btn-dash-disabled{% endif %}" style="width: 100%; height: 52px;" {% if not is_eligible_to_finalize %}disabled{% endif %}>
+                                    Finaliser l'engagement
+                                </button>
+                                {% if not is_eligible_to_finalize %}
+                                    <p style="font-size: 0.75rem; color: #ef4444; text-align: center; margin-top: 0.75rem; font-weight: 700;">
+                                        Paiement requis pour débloquer
+                                    </p>
+                                {% endif %}
+                                <button onclick='showEditProposal({{ eng.id }}, true)' class="btn-dash btn-dash-outline" style="width: 100%; margin-top: 0.5rem;">Modifier les détails</button>
+                            {% elif eng.statut_general == 'EN_ATTENTE' %}
+                                <button onclick='showEditProposal({{ eng.id }})' class="btn-dash btn-dash-outline" style="width: 100%;">Modifier ma proposition</button>
+                            {% endif %}
+                        {% else %}
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; font-style: italic;">
+                                Consultation en lecture seule
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
