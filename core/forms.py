@@ -220,7 +220,7 @@ class EnfantForm(forms.ModelForm):
         required=False
     )
     difficultes_predefinies = forms.MultipleChoiceField(
-        choices=Difficulties.CHOICES,
+        choices=DIFFICULTES_CHOICES,
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quelles difficultés ?'}),
         required=False
     )
