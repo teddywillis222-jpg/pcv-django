@@ -1,49 +1,57 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Ton parcours d'excellence commence ici - Prof Chez Vous{% endblock %}
+{% block title %}Finalise ton profil apprenant - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
 <style>
-/* Design moderne pour profil apprenant */
-.apprenant-profile-container {
-    width: 100%;
-    min-height: calc(100vh - 80px); /* Espace pour la navbar */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 0;
-    margin: 0;
-    margin-top: 80px; /* Espace pour la navbar */
+/* Variables de couleurs basées sur l'identité Prof Chez Vous */
+:root {
+    --pcv-primary: #15803d; /* Vert foncé */
+    --pcv-primary-light: #16a34a; /* Vert clair */
+    --pcv-bg-light: #f0fdf4; /* Fond vert très clair */
+    --pcv-border: #bbf7d0;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
 }
 
+body {
+    background-color: #f9fafb;
+}
+
+.apprenant-profile-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    padding-top: 100px; /* Espace pour la navbar */
+}
+
+/* Header */
 .apprenant-header {
     text-align: center;
-    padding: 3rem 1.5rem 2rem;
-    color: white;
+    margin-bottom: 2.5rem;
 }
 
 .apprenant-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 1rem;
-    line-height: 1.2;
+    color: var(--pcv-primary);
+    margin-bottom: 0.5rem;
 }
 
 .apprenant-header p {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
+    font-size: 1.05rem;
+    color: var(--text-muted);
 }
 
+/* Barre de progression */
 .progress-container {
-    max-width: 800px;
-    margin: 0 auto 2rem;
-    padding: 0 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .progress-bar {
-    background: rgba(255, 255, 255, 0.2);
+    background: #e5e7eb;
     height: 8px;
     border-radius: 10px;
     overflow: hidden;
@@ -51,51 +59,42 @@
 
 .progress-fill {
     height: 100%;
-    background: white;
+    background: var(--pcv-primary-light);
     border-radius: 10px;
-    transition: width 0.5s ease;
+    transition: width 0.4s ease;
     width: 50%;
 }
 
 .progress-steps {
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
-    color: white;
+    margin-top: 0.75rem;
+    color: var(--text-muted);
     font-size: 0.9rem;
+    font-weight: 600;
 }
 
-.step-number {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.step-label.active {
+    color: var(--pcv-primary);
 }
 
-.step-number.active {
-    font-weight: 700;
-}
-
-.form-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-}
-
+/* Formulaire */
 .step-form {
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 2rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f3f4f6;
     display: none;
 }
 
 .step-form.active {
     display: block;
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.4s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -105,21 +104,23 @@
 
 .form-group label {
     display: block;
-    font-weight: 600;
-    color: #374151;
+    font-weight: 700;
+    color: var(--text-main);
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
 
-.form-group input,
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"],
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     border: 2px solid #e5e7eb;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
     background: #f9fafb;
 }
 
@@ -127,41 +128,75 @@
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--pcv-primary-light);
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--pcv-bg-light);
 }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
+/* Checkboxes stylisées */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
 }
 
+.checkbox-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.checkbox-item:hover {
+    border-color: var(--pcv-border);
+    background: var(--pcv-bg-light);
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--pcv-primary);
+}
+
+.checkbox-label-text {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* Photo Upload */
 .photo-upload {
     text-align: center;
-    padding: 2rem;
-    border: 2px dashed #e5e7eb;
+    padding: 1.5rem;
+    border: 2px dashed #d1d5db;
     border-radius: 12px;
     background: #f9fafb;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
 }
 
 .photo-upload:hover {
-    border-color: #667eea;
-    background: #f3f4f6;
+    border-color: var(--pcv-primary-light);
+    background: var(--pcv-bg-light);
 }
 
 .photo-preview {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin: 0 auto 1rem;
     background: #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: #9ca3af;
     overflow: hidden;
 }
@@ -172,338 +207,403 @@
     object-fit: cover;
 }
 
+/* Boutons */
 .button-group {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
 }
 
 .btn {
     flex: 1;
-    padding: 1rem 2rem;
+    padding: 0.85rem 1.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
+    transition: all 0.2s;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--pcv-primary);
     color: white;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    background: var(--pcv-primary-light);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
     background: #f3f4f6;
-    color: #6b7280;
+    color: var(--text-main);
 }
 
 .btn-secondary:hover {
     background: #e5e7eb;
 }
 
-.error-list {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
+.btn-disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Erreurs */
+.error-msg {
     color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    display: none;
 }
 
-.error-list li {
-    margin-bottom: 0.5rem;
+.input-error {
+    border-color: #dc2626 !important;
 }
 
-.error-list li:last-child {
-    margin-bottom: 0;
+/* Modal Succès */
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Mobile First */
-@media (max-width: 768px) {
+.success-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.success-modal {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    transform: scale(0.9);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.success-overlay.active .success-modal {
+    transform: scale(1);
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--pcv-bg-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--pcv-primary);
+}
+
+.success-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
     .apprenant-profile-container {
-        margin-top: 60px; /* Navbar plus petite sur mobile */
-        min-height: calc(100vh - 60px);
-    }
-    
-    .apprenant-header h1 {
-        font-size: 2rem;
-    }
-    
-    .apprenant-header p {
-        font-size: 1rem;
-    }
-    
-    .apprenant-header {
-        padding: 2rem 1rem 1.5rem;
-    }
-    
-    .form-container {
-        padding: 0 1rem 2rem;
+        padding-top: 80px;
     }
     
     .step-form {
         padding: 1.5rem;
+        border-radius: 12px;
     }
     
     .button-group {
-        flex-direction: column;
+        flex-direction: column-reverse;
     }
     
-    .btn {
-        width: 100%;
-    }
-}
-
-/* Pleine largeur sur mobile */
-@media (max-width: 768px) {
-    .apprenant-profile-container {
-        padding: 0;
-    }
-    
-    .progress-container,
-    .form-container {
-        padding-left: 0;
-        padding-right: 0;
-        max-width: 100%;
-    }
-    
-    .step-form {
-        border-radius: 0;
-        margin: 0 1rem;
+    .checkbox-group {
+        grid-template-columns: 1fr;
     }
 }
 </style>
 {% endblock %}
 
-
-
 {% block content %}
 <div class="apprenant-profile-container">
-    <!-- Header psychologique -->
+    
+    <!-- Header -->
     <div class="apprenant-header">
-        <h1>ton parcours d'excellence commence ici</h1>
-        <p>Révéle ton potentiel et atteins tes objectifs avec l'accompagnement parfait. Nous sommes là pour guider chaque étape de ta réussite.</p>
+        <h1>Finalise ton profil apprenant</h1>
+        <p>Ces informations nous permettront d'adapter ton espace personnel.</p>
     </div>
 
-    <!-- Barre de progression -->
+    <!-- Progression -->
     <div class="progress-container">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
         <div class="progress-steps">
-            <div class="step-number active">
-                <span>1</span>
-                <span>Identité</span>
-            </div>
-            <div class="step-number">
-                <span>2</span>
-                <span>Parcours</span>
-            </div>
+            <div class="step-label active" id="labelStep1">1. Identité</div>
+            <div class="step-label" id="labelStep2">2. Besoins & Dispos</div>
         </div>
     </div>
 
     <!-- Formulaire -->
-    <div class="form-container">
-        {% if form.errors %}
-        <div class="error-list">
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <li><strong>{{ field.label }} :</strong> {{ error }}</li>
-                {% endfor %}
-            {% endfor %}
-        </div>
-        <script>
-            // Si des erreurs surviennent à l'étape 2, on affiche directement l'étape 2
-            const step2Fields = ['matieres_recherchees', 'objectifs_motivations', 'description_difficultes', 'preference_de_cours', 'disponibilites'];
-            let hasStep2Error = false;
-            {% for field in form %}
-                {% if field.errors %}
-                    if (step2Fields.includes('{{ field.name }}')) {
-                        hasStep2Error = true;
-                    }
-                {% endif %}
-            {% endfor %}
+    <form id="apprenantForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- ================= ETAPE 1 ================= -->
+        <div class="step-form active" id="step1">
+            <h2 style="color: var(--text-main); font-size: 1.25rem; margin-bottom: 1.5rem;">Tes informations de base</h2>
             
-            window.addEventListener('DOMContentLoaded', (event) => {
-                if (hasStep2Error) {
-                    document.getElementById('step1').classList.remove('active');
-                    document.getElementById('step2').classList.add('active');
-                    document.getElementById('progressFill').style.width = '100%';
-                    document.querySelectorAll('.step-number')[0].classList.remove('active');
-                    document.querySelectorAll('.step-number')[1].classList.add('active');
-                    currentStep = 2;
-                }
-            });
-        </script>
-        {% endif %}
+            <div class="form-group">
+                <label for="{{ form.nom.id_for_label }}">Nom complet *</label>
+                {{ form.nom }}
+                <div class="error-msg" id="error_nom">Veuillez renseigner votre nom.</div>
+            </div>
 
-        <form method="post" enctype="multipart/form-data" id="apprenantForm">
-            {% csrf_token %}
-            
-            <!-- Étape 1: Identité (5 infos) -->
-            <div class="step-form active" id="step1">
-                <h2 style="color: #374151; margin-bottom: 1.5rem;">Parle-nous de toi</h2>
-                
-                <div class="form-group">
-                    <label for="{{ form.nom.id_for_label }}">Ton nom complet *</label>
-                    {{ form.nom }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Comment tu préfères être appelé(e)</small>
-                </div>
+            <div class="form-group">
+                <label for="{{ form.telephone.id_for_label }}">Numéro WhatsApp *</label>
+                {{ form.telephone }}
+                <div class="error-msg" id="error_telephone">Veuillez renseigner un numéro valide.</div>
+            </div>
 
-                <div class="form-group">
-                    <label for="{{ form.telephone.id_for_label }}">Ton numéro WhatsApp *</label>
-                    {{ form.telephone }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Pour que les professeurs puissent te contacter</small>
-                </div>
+            <div class="form-group">
+                <label for="{{ form.classe.id_for_label }}">Classe actuelle *</label>
+                {{ form.classe }}
+                <div class="error-msg" id="error_classe">Veuillez sélectionner votre classe.</div>
+            </div>
 
-                <div class="form-group">
-                    <label>Ta photo</label>
-                    <div class="photo-upload" onclick="document.getElementById('id_photo_de_profil').click()">
-                        <div class="photo-preview" id="photoPreview">
-                            <span>+</span>
-                        </div>
-                        <p style="color: #6b7280; margin: 0;">Ajoute ta photo (optionnel)</p>
-                        {{ form.photo_de_profil }}
+            <div class="form-group">
+                <label for="{{ form.quartier_ville.id_for_label }}">Quartier et Ville *</label>
+                {{ form.quartier_ville }}
+                <div class="error-msg" id="error_quartier_ville">Veuillez renseigner votre quartier et ville.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Photo de profil (Optionnel)</label>
+                <div class="photo-upload" onclick="document.getElementById('id_photo_de_profil').click()">
+                    <div class="photo-preview" id="photoPreview">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.classe.id_for_label }}">Ta classe actuelle *</label>
-                    {{ form.classe }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Pour trouver le professeur adapté à ton niveau</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.quartier_ville.id_for_label }}">Où habites-tu ? *</label>
-                    {{ form.quartier_ville }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Format: Quartier-Ville (ex: Cocody-Abidjan)</small>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" class="btn btn-primary" onclick="nextStep()">
-                        Continuer vers mon parcours
-                    </button>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Cliquez pour ajouter une photo</p>
+                    <div style="display: none;">{{ form.photo_de_profil }}</div>
                 </div>
             </div>
 
-            <!-- Étape 2: Parcours (5 infos) -->
-            <div class="step-form" id="step2">
-                <h2 style="color: #374151; margin-bottom: 1.5rem;">Ton parcours académique</h2>
-                
-                <div class="form-group">
-                    <label for="{{ form.matieres_recherchees.id_for_label }}">Tes matières prioritaires</label>
-                    {{ form.matieres_recherchees }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Choisis jusqu'à 5 matières (max)</small>
-                </div>
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" onclick="goToStep2()">
+                    Suivant
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="{{ form.objectifs_motivations.id_for_label }}">Tes objectifs</label>
-                    {{ form.objectifs_motivations }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Ce que tu veux accomplir cette année</small>
-                </div>
+        <!-- ================= ETAPE 2 ================= -->
+        <div class="step-form" id="step2">
+            <h2 style="color: var(--text-main); font-size: 1.25rem; margin-bottom: 1.5rem;">Tes besoins d'accompagnement</h2>
+            
+            <div class="form-group">
+                <label for="{{ form.preference_de_cours.id_for_label }}">Format de cours souhaité *</label>
+                {{ form.preference_de_cours }}
+                <div class="error-msg" id="error_preference_de_cours">Veuillez choisir un format.</div>
+            </div>
 
-                <div class="form-group">
-                    <label for="{{ form.description_difficultes.id_for_label }}">Tes difficultés</label>
-                    {{ form.description_difficultes }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Sois honnête, ça nous aide à mieux t'accompagner</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.preference_de_cours.id_for_label }}">Comment tu préfères apprendre ? *</label>
-                    {{ form.preference_de_cours }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">En ligne, à domicile, ou les deux ?</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.disponibilites.id_for_label }}">Tes disponibilités</label>
-                    {{ form.disponibilites }}
-                    <small style="color: #6b7280; font-size: 0.875rem;">Quand es-tu libre pour les cours ?</small>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="previousStep()">
-                        Retour
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Finaliser mon profil
-                    </button>
+            <div class="form-group">
+                <label>Matières à renforcer (Optionnel)</label>
+                <div class="checkbox-group">
+                    {% for checkbox in form.matieres_recherchees %}
+                    <label class="checkbox-item">
+                        {{ checkbox.tag }}
+                        <span class="checkbox-label-text">{{ checkbox.choice_label }}</span>
+                    </label>
+                    {% endfor %}
                 </div>
             </div>
-        </form>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label>Tes objectifs principaux (Optionnel)</label>
+                <div class="checkbox-group">
+                    {% for checkbox in form.objectifs_motivations %}
+                    <label class="checkbox-item">
+                        {{ checkbox.tag }}
+                        <span class="checkbox-label-text">{{ checkbox.choice_label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label for="{{ form.description_difficultes.id_for_label }}">Précise tes difficultés (Optionnel)</label>
+                {{ form.description_difficultes }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.disponibilites.id_for_label }}">Tes disponibilités (Optionnel)</label>
+                {{ form.disponibilites }}
+            </div>
+
+            <div id="global_error" class="error-msg" style="text-align: center; margin-bottom: 1rem; font-weight: bold; padding: 0.5rem; background: #fef2f2; border-radius: 8px;"></div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="goToStep1()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Retour
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    Enregistrer mon profil
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de succès -->
+<div class="success-overlay" id="successModal">
+    <div class="success-modal">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <h2 style="color: var(--pcv-primary); margin-bottom: 0.5rem; font-size: 1.5rem; font-weight: 800;">Félicitations !</h2>
+        <p style="color: var(--text-muted); margin-bottom: 0;">Ton profil apprenant a été créé avec succès.</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Redirection vers ton tableau de bord...</p>
     </div>
 </div>
 
 <script>
-let currentStep = 1;
-
-function nextStep() {
-    // Validation basique de l'étape 1
-    const requiredFields = ['id_nom', 'id_telephone', 'id_classe', 'id_quartier_ville'];
-    let valid = true;
-    
-    for (const fieldId of requiredFields) {
-        const field = document.getElementById(fieldId);
-        if (!field.value.trim()) {
-            field.style.borderColor = '#ef4444';
-            valid = false;
-        } else {
-            field.style.borderColor = '#e5e7eb';
-        }
-    }
-    
-    if (!valid) {
-        alert('Veuillez remplir tous les champs obligatoires');
-        return;
-    }
-    
-    // Passer à l'étape 2
-    document.getElementById('step1').classList.remove('active');
-    document.getElementById('step2').classList.add('active');
-    
-    // Mettre à jour la progression
-    document.getElementById('progressFill').style.width = '100%';
-    document.querySelectorAll('.step-number')[0].classList.remove('active');
-    document.querySelectorAll('.step-number')[1].classList.add('active');
-    
-    currentStep = 2;
-}
-
-function previousStep() {
-    document.getElementById('step2').classList.remove('active');
-    document.getElementById('step1').classList.add('active');
-    
-    // Mettre à jour la progression
-    document.getElementById('progressFill').style.width = '50%';
-    document.querySelectorAll('.step-number')[1].classList.remove('active');
-    document.querySelectorAll('.step-number')[0].classList.add('active');
-    
-    currentStep = 1;
-}
-
-// Preview photo
+// Prévisualisation Photo
 document.getElementById('id_photo_de_profil').addEventListener('change', function(e) {
     const file = e.target.files[0];
     const preview = document.getElementById('photoPreview');
-    
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            preview.innerHTML = `<img src="${e.target.result}" alt="Photo">`;
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Masquer le champ file original
-document.getElementById('id_photo_de_profil').style.display = 'none';
+// Navigation entre les étapes
+function validateStep1() {
+    let isValid = true;
+    const required = ['nom', 'telephone', 'classe', 'quartier_ville'];
+    
+    required.forEach(field => {
+        const el = document.getElementById(`id_${field}`);
+        const err = document.getElementById(`error_${field}`);
+        if (!el.value.trim()) {
+            el.classList.add('input-error');
+            err.style.display = 'block';
+            isValid = false;
+        } else {
+            el.classList.remove('input-error');
+            err.style.display = 'none';
+        }
+    });
+    return isValid;
+}
+
+function goToStep2() {
+    if (!validateStep1()) return;
+    
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('labelStep1').classList.remove('active');
+    document.getElementById('labelStep2').classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+function goToStep1() {
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    
+    document.getElementById('progressFill').style.width = '50%';
+    document.getElementById('labelStep2').classList.remove('active');
+    document.getElementById('labelStep1').classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+// Soumission AJAX
+document.getElementById('apprenantForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Validation finale requise
+    const pref = document.getElementById('id_preference_de_cours');
+    if (!pref.value) {
+        pref.classList.add('input-error');
+        document.getElementById('error_preference_de_cours').style.display = 'block';
+        return;
+    } else {
+        pref.classList.remove('input-error');
+        document.getElementById('error_preference_de_cours').style.display = 'none';
+    }
+
+    const btn = document.getElementById('submitBtn');
+    const globalErr = document.getElementById('global_error');
+    btn.classList.add('btn-disabled');
+    btn.innerHTML = 'Enregistrement...';
+    globalErr.style.display = 'none';
+
+    try {
+        const formData = new FormData(this);
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            // Afficher le modal de succès
+            document.getElementById('successModal').classList.add('active');
+            
+            // Rediriger après 2 secondes
+            setTimeout(() => {
+                window.location.href = data.redirect_url;
+            }, 2000);
+            
+        } else {
+            // Afficher les erreurs
+            console.error(data.errors);
+            globalErr.textContent = "Certains champs sont invalides. Veuillez vérifier vos saisies.";
+            globalErr.style.display = 'block';
+            btn.classList.remove('btn-disabled');
+            btn.innerHTML = 'Enregistrer mon profil <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>';
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        globalErr.textContent = "Erreur de connexion au serveur. Veuillez réessayer.";
+        globalErr.style.display = 'block';
+        btn.classList.remove('btn-disabled');
+        btn.innerHTML = 'Enregistrer mon profil <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>';
+    }
+});
 </script>
 {% endblock %}

@@ -306,6 +306,29 @@ class EnfantForm(forms.ModelForm):
 
 class ApprenantCreateProfileForm(forms.ModelForm):
     """Formulaire en 2 étapes pour le profil apprenant."""
+    from .choices import ObjectifMotivation
+
+    MATIERES_CHOICES = [
+        ("Mathématiques", "Mathématiques"),
+        ("Physique-Chimie", "Physique-Chimie (PCT)"),
+        ("SVT", "SVT"),
+        ("Français", "Français"),
+        ("Anglais", "Anglais"),
+        ("Philosophie", "Philosophie"),
+        ("Histoire-Géo", "Histoire-Géographie"),
+    ]
+
+    matieres_recherchees = forms.MultipleChoiceField(
+        choices=MATIERES_CHOICES,
+        widget=forms.CheckboxSelectMultiple(),
+        required=False
+    )
+    
+    objectifs_motivations = forms.MultipleChoiceField(
+        choices=ObjectifMotivation.CHOICES,
+        widget=forms.CheckboxSelectMultiple(),
+        required=False
+    )
 
     class Meta:
         model = Apprenant
@@ -324,14 +347,22 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         widgets = {
             'classe': forms.Select(choices=ClassLevel.CHOICES),
             'preference_de_cours': forms.Select(choices=CourseMode.CHOICES),
-            'matieres_recherchees': forms.CheckboxSelectMultiple(),
-            'objectifs_motivations': forms.CheckboxSelectMultiple(),
-            'description_difficultes': forms.Textarea(attrs={'rows': 4}),
+            'description_difficultes': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.'}),
             'disponibilites': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Lundi 16h-18h, Mercredi 14h-16h...'}),
+            'quartier_ville': forms.TextInput(attrs={'placeholder': 'Ex: Cotonou - Agla'}),
+            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Ajout d'options par défaut pour les select (placeholders)
+        classe_choices = [("", "Ex : 4ème")] + list(self.fields["classe"].choices)[1:]
+        self.fields["classe"].choices = classe_choices
+        
+        mode_choices = [("", "Ex : A domicile")] + list(self.fields["preference_de_cours"].choices)[1:]
+        self.fields["preference_de_cours"].choices = mode_choices
+
         # Champs obligatoires pour les 2 étapes
         required_fields = ["nom", "telephone", "classe", "quartier_ville", "preference_de_cours"]
         for field_name in required_fields:
@@ -345,7 +376,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
                 self.fields[field_name].required = False
         
         if "telephone" in self.fields:
-            self.fields["telephone"].widget.attrs.update({"class": "phone-input"})
+            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89"})
+
 
 
 from .models import TeacherProfile

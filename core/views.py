@@ -776,8 +776,21 @@ def apprenant_create_profile(request):
             apprenant = form.save(commit=False)
             apprenant.user = request.user
             apprenant.nom = apprenant.nom or request.user.first_name
+            
+            # Nettoyage explicite des listes JSONField pour éviter des bugs de sérialisation
+            apprenant.matieres_recherchees = form.cleaned_data.get('matieres_recherchees', [])
+            apprenant.objectifs_motivations = form.cleaned_data.get('objectifs_motivations', [])
+            
             apprenant.save()
+            
+            from django.urls import reverse
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.headers.get('Accept') == 'application/json':
+                return JsonResponse({"success": True, "redirect_url": reverse("apprenant_dashboard")})
+            
             return redirect("apprenant_dashboard")
+        else:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.headers.get('Accept') == 'application/json':
+                return JsonResponse({"success": False, "errors": form.errors}, status=400)
     else:
         initial = {"nom": request.user.first_name}
         form = ApprenantCreateProfileForm(instance=apprenant_instance, initial=initial)
