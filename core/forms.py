@@ -223,13 +223,21 @@ class EnfantForm(forms.ModelForm):
             'placeholder': 'Ex : Bases fragiles non acquises'
         })
     )
-    objectifs_motivations = DynamicMultipleChoiceField(
+    objectifs_motivations = forms.MultipleChoiceField(
         label="Objectifs & Motivations",
         required=True,
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.SelectMultiple(attrs={
-            'class': 'form-input multi-select', 
-            'placeholder': 'Ex : Remise à niveau'
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'pill-checkbox-group',
+        })
+    )
+    motivation_custom = forms.CharField(
+        label="Autre motivation",
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Précisez votre besoin...',
+            'class': 'form-input motivation-custom-input',
+            'style': 'display: none;'
         })
     )
 
@@ -293,9 +301,14 @@ class EnfantForm(forms.ModelForm):
                     matieres.append(m.strip())
         instance.matieres = matieres[:5]
         
-        objectifs = ", ".join(self.cleaned_data.get('objectifs_motivations', []))
+        objectifs = self.cleaned_data.get('objectifs_motivations', [])
+        motivation_custom = self.cleaned_data.get('motivation_custom', '').strip()
+        if motivation_custom:
+            objectifs = list(objectifs) + [motivation_custom]
+        
+        objectifs_str = ", ".join(objectifs)
         difficultes = ", ".join(self.cleaned_data.get('difficultes_predefinies', []))
-        instance.objectif_principal = f"OBJECTIFS: {objectifs}\nDIFFICULTÉS: {difficultes}"
+        instance.objectif_principal = f"OBJECTIFS: {objectifs_str}\nDIFFICULTÉS: {difficultes}"
         
         if commit:
             instance.save()
@@ -304,7 +317,7 @@ class EnfantForm(forms.ModelForm):
 
 class ApprenantCreateProfileForm(forms.ModelForm):
     """Formulaire en 2 étapes pour le profil apprenant."""
-    from .choices import ObjectifMotivation
+    from .choices import ObjectifApprenant
 
     MATIERES_CHOICES = [
         ("Mathématiques", "Mathématiques"),
@@ -336,10 +349,18 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         required=False
     )
     
-    objectifs_motivations = DynamicMultipleChoiceField(
-        choices=ObjectifMotivation.CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
+    objectifs_motivations = forms.MultipleChoiceField(
+        choices=ObjectifApprenant.CHOICES,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'pill-checkbox-group'}),
         required=False
+    )
+    motivation_custom = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Précisez votre objectif...',
+            'class': 'form-input motivation-custom-input',
+            'style': 'display: none;'
+        })
     )
     
     quartier_ville = forms.ChoiceField(

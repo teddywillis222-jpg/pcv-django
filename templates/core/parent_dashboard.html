@@ -4,7 +4,7 @@
 {% block title %}Espace Parent - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
 <style>
     :root {
         --dash-bg: #f8fafc;
@@ -811,7 +811,16 @@
             </div>
             <div class="form-group">
                 <label>Objectifs</label>
-                {{ enfant_form.objectifs_motivations }}
+                <div class="pill-checkbox-group">
+                    {% for checkbox in enfant_form.objectifs_motivations %}
+                        <label>
+                            {{ checkbox.tag }} {{ checkbox.choice_label }}
+                        </label>
+                    {% endfor %}
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    {{ enfant_form.motivation_custom }}
+                </div>
             </div>
             <button type="submit"
                 style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
@@ -1126,25 +1135,37 @@
             }, 1200);
         }
     });
+    // Initialization of Tom Select
     document.addEventListener('DOMContentLoaded', function() {
         const multiSelects = document.querySelectorAll('.multi-select');
         multiSelects.forEach(select => {
-            new Choices(select, {
-                removeItemButton: true,
-                searchEnabled: true,
-                searchPlaceholderValue: 'Rechercher ou ajouter...',
-                placeholder: true,
-                placeholderValue: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
-                addItems: true,
-                editItems: false,
-                duplicateItemsAllowed: false,
-                noResultsText: 'Aucun résultat',
-                noChoicesText: 'Plus aucun choix disponible',
-                itemSelectText: 'Cliquer pour sélectionner',
-                addItemText: (value) => `Appuyez sur Entrée pour ajouter "${value}"`
+            new TomSelect(select, {
+                plugins: ['remove_button'],
+                create: true,
+                persist: false,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+                onItemAdd: function() {
+                    this.setTextboxValue('');
+                    this.refreshOptions();
+                }
             });
         });
+
+        // Logic for "Autre" Pills (Enfant form)
+        const motivationCheckboxes = document.querySelectorAll('#addChildForm .pill-checkbox-group input[type="checkbox"]');
+        const customInput = document.querySelector('#addChildForm .motivation-custom-input');
+        
+        function toggleCustomInput() {
+            let show = false;
+            motivationCheckboxes.forEach(cb => {
+                if (cb.value === 'AUTRE' && cb.checked) show = true;
+            });
+            if (customInput) customInput.style.display = show ? 'block' : 'none';
+        }
+
+        motivationCheckboxes.forEach(cb => cb.addEventListener('change', toggleCustomInput));
+        toggleCustomInput();
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

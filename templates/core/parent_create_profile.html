@@ -4,8 +4,21 @@
 {% block title %}Création Profil Parent - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
 <style>
+/* Tom Select Customization */
+.ts-control {
+    border-radius: 10px !important;
+    padding: 10px !important;
+    border: 1px solid #d1d5db !important;
+    background: #fff !important;
+}
+.ts-wrapper.multi .ts-control > div {
+    background: #22c55e !important;
+    color: white !important;
+    border-radius: 5px !important;
+}
+
     /* Stepper & Onboarding Styles */
     .onboarding-page-wrapper {
         min-height: 100vh;
@@ -155,50 +168,43 @@
         border-color: #e2e8f0;
     }
 
-    /* Checkboxes for Objectifs & Difficultes - PILLS STYLE */
-    .checkbox-group {
+    /* Style pour les Pills (Badges cliquables) */
+    .pill-checkbox-group {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.8rem;
+        gap: 0.75rem;
         margin-top: 0.5rem;
     }
 
-    .checkbox-group div {
-        display: inline-block;
-        margin-bottom: 0.6rem;
-        margin-right: 0.6rem;
-    }
-
-    .checkbox-group label {
-        display: inline-block;
-        font-weight: 500;
-        font-size: 0.85rem;
-        color: #334155;
-        background: #f8fafc;
+    .pill-checkbox-group label {
+        display: flex;
+        align-items: center;
         padding: 0.6rem 1.2rem;
-        border-radius: 9999px;
+        background: #f8fafc;
         border: 1px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
         cursor: pointer;
-        transition: all 0.2s;
-        margin: 0.4rem 0.5rem 0.5rem 0;
+        transition: all 0.2s ease;
+        margin: 0 !important;
     }
 
-    .checkbox-group label.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background: #f1f5f9;
-        border-color: #e2e8f0;
-    }
-
-    .checkbox-group label:hover:not(.disabled) {
-        border-color: #94a3b8;
-    }
-
-    .checkbox-group input[type="checkbox"] {
+    .pill-checkbox-group input[type="checkbox"] {
         display: none;
     }
 
-    /* Style active injecté via JS pour max compatibilité avec Django structure */
+    .pill-checkbox-group label:has(input[type="checkbox"]:checked) {
+        background: #dcfce7;
+        border-color: #22c55e;
+        color: #166534;
+    }
+
+    .pill-checkbox-group label:hover {
+        background: #f1f5f9;
+    }
+
 
     .btn-wrapper {
         display: flex;
@@ -405,8 +411,15 @@
 
                 <div class="form-group">
                     <label>Objectifs & Motivations <span style="color: #ef4444;">*</span></label>
-                    <div class="checkbox-group">
-                        {{ enfant_form.objectifs_motivations }}
+                    <div class="pill-checkbox-group">
+                        {% for checkbox in enfant_form.objectifs_motivations %}
+                            <label>
+                                {{ checkbox.tag }} {{ checkbox.choice_label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        {{ enfant_form.motivation_custom }}
                     </div>
                 </div>
 
@@ -624,25 +637,37 @@
         checkStep1();
         checkStep2();
     });
+    // Initialization of Tom Select
     document.addEventListener('DOMContentLoaded', function() {
         const multiSelects = document.querySelectorAll('.multi-select');
         multiSelects.forEach(select => {
-            new Choices(select, {
-                removeItemButton: true,
-                searchEnabled: true,
-                searchPlaceholderValue: 'Rechercher ou ajouter...',
-                placeholder: true,
-                placeholderValue: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
-                addItems: true,
-                editItems: false,
-                duplicateItemsAllowed: false,
-                noResultsText: 'Aucun résultat',
-                noChoicesText: 'Plus aucun choix disponible',
-                itemSelectText: 'Cliquer pour sélectionner',
-                addItemText: (value) => `Appuyez sur Entrée pour ajouter "${value}"`
+            new TomSelect(select, {
+                plugins: ['remove_button'],
+                create: true,
+                persist: false,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+                onItemAdd: function() {
+                    this.setTextboxValue('');
+                    this.refreshOptions();
+                }
             });
         });
+
+        // Logic for "Autre" Pills (Enfant form)
+        const motivationCheckboxes = document.querySelectorAll('#onboardingForm .pill-checkbox-group input[type="checkbox"]');
+        const customInput = document.querySelector('#onboardingForm .motivation-custom-input');
+        
+        function toggleCustomInput() {
+            let show = false;
+            motivationCheckboxes.forEach(cb => {
+                if (cb.value === 'AUTRE' && cb.checked) show = true;
+            });
+            if (customInput) customInput.style.display = show ? 'block' : 'none';
+        }
+
+        motivationCheckboxes.forEach(cb => cb.addEventListener('change', toggleCustomInput));
+        toggleCustomInput();
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

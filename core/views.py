@@ -779,7 +779,12 @@ def apprenant_create_profile(request):
             
             # Nettoyage explicite des listes JSONField pour éviter des bugs de sérialisation
             apprenant.matieres_recherchees = form.cleaned_data.get('matieres_recherchees', [])
-            apprenant.objectifs_motivations = form.cleaned_data.get('objectifs_motivations', [])
+            
+            objectifs = form.cleaned_data.get('objectifs_motivations', [])
+            motivation_custom = form.cleaned_data.get('motivation_custom', '').strip()
+            if motivation_custom:
+                objectifs = list(objectifs) + [motivation_custom]
+            apprenant.objectifs_motivations = objectifs
             
             apprenant.save()
             

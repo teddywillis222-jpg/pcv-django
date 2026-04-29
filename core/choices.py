@@ -299,17 +299,59 @@ def validate_matieres_max_5(value):
 
 # --- Apprenant ---
 class ObjectifMotivation:
-    PREPARER_EXAMEN = "PREPARER_EXAMEN"
-    AMELIORER_NOTES = "AMELIORER_NOTES"
     REMISE_NIVEAU = "REMISE_NIVEAU"
-    PERFECTIONNEMENT = "PERFECTIONNEMENT"
-    METHODO_ORGANISATION = "METHODO"
+    PREPARER_EXAMEN = "PREPARER_EXAMEN"
+    AIDE_DEVOIRS = "AIDE_DEVOIRS"
+    METHODOLOGIE = "METHODOLOGIE"
+    RENFORCEMENT_MATIERE = "RENFORCEMENT_MATIERE"
+    PREPA_CLASSE_SUP = "PREPA_CLASSE_SUP"
+    TROUBLES_APPRENTISSAGE = "TROUBLES_APPRENTISSAGE"
+    EVEIL_CURIOSITE = "EVEIL_CURIOSITE"
+    SUIVI_ABSENCE = "SUIVI_ABSENCE"
+    CONCOURS_EXCELLENCE = "CONCOURS_EXCELLENCE"
+    AUTRE = "AUTRE"
+
     CHOICES = [
-        (PREPARER_EXAMEN, "Préparer un examen"),
-        (AMELIORER_NOTES, "Améliorer mes notes"),
-        (REMISE_NIVEAU, "Remise à niveau"),
-        (PERFECTIONNEMENT, "Perfectionnement"),
-        (METHODO_ORGANISATION, "Méthodologie et organisation"),
+        (REMISE_NIVEAU, "Remise à niveau globale"),
+        (PREPARER_EXAMEN, "Préparation à un examen (CEP, BEPC, etc.)"),
+        (AIDE_DEVOIRS, "Aide aux devoirs quotidiens"),
+        (METHODOLOGIE, "Amélioration de la méthodologie"),
+        (RENFORCEMENT_MATIERE, "Renforcement dans une matière spécifique"),
+        (PREPA_CLASSE_SUP, "Préparation à l'entrée dans une classe supérieure"),
+        (TROUBLES_APPRENTISSAGE, "Accompagnement pour troubles d'apprentissage (Dys, attention)"),
+        (EVEIL_CURIOSITE, "Éveil et curiosité intellectuelle"),
+        (SUIVI_ABSENCE, "Suivi durant une absence prolongée"),
+        (CONCOURS_EXCELLENCE, "Préparation à un concours d'excellence"),
+        (AUTRE, "Autre..."),
+    ]
+    VALUES = [c[0] for c in CHOICES]
+
+
+class ObjectifApprenant:
+    REUSSITE_UNIV = "REUSSITE_UNIV"
+    TEST_CERTIF = "TEST_CERTIF"
+    COMPETENCES_PRO = "COMPETENCES_PRO"
+    RECONVERSION = "RECONVERSION"
+    PERFECTIONNEMENT_LING = "PERFECTIONNEMENT_LING"
+    SOUTIEN_MEMOIRE = "SOUTIEN_MEMOIRE"
+    OUTILS_NUMERIQUES = "OUTILS_NUMERIQUES"
+    CULTURE_GENERALE = "CULTURE_GENERALE"
+    CONCOURS_FONCTION_PUBLIQUE = "CONCOURS_FONCTION_PUBLIQUE"
+    AUTO_FORMATION = "AUTO_FORMATION"
+    AUTRE = "AUTRE"
+
+    CHOICES = [
+        (REUSSITE_UNIV, "Réussite aux examens universitaires"),
+        (TEST_CERTIF, "Préparation à un test de certification (TOEIC, DELF, etc.)"),
+        (COMPETENCES_PRO, "Acquisition de compétences professionnelles"),
+        (RECONVERSION, "Reconversion vers un nouveau domaine"),
+        (PERFECTIONNEMENT_LING, "Perfectionnement linguistique (Anglais, Français, etc.)"),
+        (SOUTIEN_MEMOIRE, "Soutien pour la rédaction d'un mémoire ou thèse"),
+        (OUTILS_NUMERIQUES, "Maîtrise d'outils numériques ou logiciels"),
+        (CULTURE_GENERALE, "Développement de la culture générale"),
+        (CONCOURS_FONCTION_PUBLIQUE, "Préparation aux concours de la fonction publique"),
+        (AUTO_FORMATION, "Accompagnement pour une formation en autodidacte"),
+        (AUTRE, "Autre..."),
     ]
     VALUES = [c[0] for c in CHOICES]
 
