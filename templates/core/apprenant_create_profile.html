@@ -6,61 +6,31 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
 <style>
-/* Style pour les Pills (Badges cliquables) */
-.pill-checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-.pill-checkbox-group label {
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 1.2rem;
-    background: #f3f4f6;
-    border: 2px solid transparent;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-main);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0 !important; /* Override standard label margin */
-}
-
-.pill-checkbox-group input[type="checkbox"] {
-    display: none;
-}
-
-.pill-checkbox-group label:has(input[type="checkbox"]:checked) {
-    background: var(--pcv-bg-light);
-    border-color: var(--pcv-primary);
-    color: var(--pcv-primary);
-}
-
-.pill-checkbox-group label:hover {
-    background: #e5e7eb;
-}
-
 /* Tom Select Customization */
 .ts-control {
-    border-radius: 10px !important;
-    padding: 10px !important;
-    border: 2px solid #e5e7eb !important;
-    background: #f9fafb !important;
-}
-.ts-control input {
-    font-size: 0.95rem !important;
-}
-.ts-dropdown {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    border: 1px solid #d1d5db !important;
+    background: #fff !important;
+    min-height: 52px !important;
+    font-size: 1rem !important;
 }
 .ts-wrapper.multi .ts-control > div {
     background: var(--pcv-primary) !important;
     color: white !important;
-    border-radius: 5px !important;
+    border-radius: 6px !important;
+    padding: 2px 8px !important;
+    white-space: normal !important;
+    height: auto !important;
 }
+.ts-dropdown {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+.ts-dropdown .option {
+    padding: 10px 16px !important;
+}
+
 :root {
     --pcv-primary: #15803d;
     --pcv-primary-light: #16a34a;
@@ -459,17 +429,9 @@ body {
             </div>
 
             <div class="form-group">
-                <label>Tes objectifs principaux (Optionnel)</label>
-                <div class="pill-checkbox-group">
-                    {% for checkbox in form.objectifs_motivations %}
-                        <label>
-                            {{ checkbox.tag }} {{ checkbox.choice_label }}
-                        </label>
-                    {% endfor %}
-                </div>
-                <div style="margin-top: 1rem;">
-                    {{ form.motivation_custom }}
-                </div>
+                <label class="form-label">Mes objectifs et besoins <span class="required">*</span></label>
+                {{ form.objectifs_motivations }}
+                <div class="helper-text" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Appuyez sur Entrée pour ajouter un besoin personnalisé.</div>
             </div>
 
             <div class="form-group">
@@ -625,47 +587,24 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
     }
 });
 
-// Initialization of Tom Select
-document.addEventListener('DOMContentLoaded', function() {
-    const multiSelects = document.querySelectorAll('.multi-select');
-    multiSelects.forEach(select => {
-        new TomSelect(select, {
-            plugins: ['remove_button'],
-            create: true,
-            persist: false,
-            placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
-            onItemAdd: function() {
-                this.setTextboxValue('');
-                this.refreshOptions();
-            }
+function initTomSelect() {
+        const multiSelects = document.querySelectorAll('.multi-select');
+        multiSelects.forEach(select => {
+            if (select.tomselect) return;
+            new TomSelect(select, {
+                plugins: ['remove_button', 'dropdown_input'],
+                create: true,
+                persist: false,
+                maxOptions: 15,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                onItemAdd: function() {
+                    this.setTextboxValue('');
+                    this.refreshOptions();
+                }
+            });
         });
-    });
-
-    // Logic for "Autre" Pills
-    const motivationCheckboxes = document.querySelectorAll('.pill-checkbox-group input[type="checkbox"]');
-    const customInput = document.querySelector('.motivation-custom-input');
-    
-    function toggleCustomInput() {
-        let show = false;
-        motivationCheckboxes.forEach(cb => {
-            // "AUTRE" is the value defined in choices.py
-            if (cb.value === 'AUTRE' && cb.checked) {
-                show = true;
-            }
-        });
-        
-        if (customInput && customInput.closest('.form-group')) {
-            customInput.style.display = show ? 'block' : 'none';
-            if (show) customInput.focus();
-        }
     }
 
-    motivationCheckboxes.forEach(cb => {
-        cb.addEventListener('change', toggleCustomInput);
-    });
-    
-    // Initial check
-    toggleCustomInput();
-});
+    document.addEventListener('DOMContentLoaded', initTomSelect);
 </script>
 {% endblock %}

@@ -810,17 +810,12 @@
                 {{ enfant_form.difficultes_predefinies }}
             </div>
             <div class="form-group">
+                <label>Difficultés rencontrées</label>
+                {{ enfant_form.difficultes_predefinies }}
+            </div>
+            <div class="form-group">
                 <label>Objectifs</label>
-                <div class="pill-checkbox-group">
-                    {% for checkbox in enfant_form.objectifs_motivations %}
-                        <label>
-                            {{ checkbox.tag }} {{ checkbox.choice_label }}
-                        </label>
-                    {% endfor %}
-                </div>
-                <div style="margin-top: 0.5rem;">
-                    {{ enfant_form.motivation_custom }}
-                </div>
+                {{ enfant_form.objectifs_motivations }}
             </div>
             <button type="submit"
                 style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
@@ -1135,37 +1130,33 @@
             }, 1200);
         }
     });
-    // Initialization of Tom Select
-    document.addEventListener('DOMContentLoaded', function() {
+    function initTomSelects() {
         const multiSelects = document.querySelectorAll('.multi-select');
         multiSelects.forEach(select => {
+            if (select.tomselect) return;
             new TomSelect(select, {
-                plugins: ['remove_button'],
+                plugins: ['remove_button', 'dropdown_input'],
                 create: true,
                 persist: false,
-                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+                maxOptions: 15,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                 onItemAdd: function() {
                     this.setTextboxValue('');
                     this.refreshOptions();
                 }
             });
         });
+    }
 
-        // Logic for "Autre" Pills (Enfant form)
-        const motivationCheckboxes = document.querySelectorAll('#addChildForm .pill-checkbox-group input[type="checkbox"]');
-        const customInput = document.querySelector('#addChildForm .motivation-custom-input');
-        
-        function toggleCustomInput() {
-            let show = false;
-            motivationCheckboxes.forEach(cb => {
-                if (cb.value === 'AUTRE' && cb.checked) show = true;
-            });
-            if (customInput) customInput.style.display = show ? 'block' : 'none';
-        }
+    document.addEventListener('DOMContentLoaded', initTomSelects);
 
-        motivationCheckboxes.forEach(cb => cb.addEventListener('change', toggleCustomInput));
-        toggleCustomInput();
-    });
+    // Re-init when offcanvas opens
+    const offcanvasAddChild = document.getElementById('offcanvasAddChild');
+    if (offcanvasAddChild) {
+        offcanvasAddChild.addEventListener('shown.bs.offcanvas', function () {
+            initTomSelects();
+        });
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

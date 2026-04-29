@@ -8,16 +8,29 @@
 <style>
 /* Tom Select Customization */
 .ts-control {
-    border-radius: 10px !important;
-    padding: 10px !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
     border: 1px solid #d1d5db !important;
     background: #fff !important;
+    min-height: 52px !important;
+    font-size: 1rem !important;
 }
 .ts-wrapper.multi .ts-control > div {
     background: #22c55e !important;
     color: white !important;
-    border-radius: 5px !important;
+    border-radius: 6px !important;
+    padding: 2px 8px !important;
+    white-space: normal !important;
+    height: auto !important;
 }
+.ts-dropdown {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+.ts-dropdown .option {
+    padding: 10px 16px !important;
+}
+
 
     /* Stepper & Onboarding Styles */
     .onboarding-page-wrapper {
@@ -403,24 +416,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Difficultés principales observées <span style="color: #ef4444;">*</span></label>
-                    <div class="checkbox-group">
-                        {{ enfant_form.difficultes_predefinies }}
-                    </div>
+                    <label>Difficultés observées <span style="color: #ef4444;">*</span></label>
+                    {{ enfant_form.difficultes_predefinies }}
                 </div>
 
                 <div class="form-group">
                     <label>Objectifs & Motivations <span style="color: #ef4444;">*</span></label>
-                    <div class="pill-checkbox-group">
-                        {% for checkbox in enfant_form.objectifs_motivations %}
-                            <label>
-                                {{ checkbox.tag }} {{ checkbox.choice_label }}
-                            </label>
-                        {% endfor %}
-                    </div>
-                    <div style="margin-top: 1rem;">
-                        {{ enfant_form.motivation_custom }}
-                    </div>
+                    {{ enfant_form.objectifs_motivations }}
                 </div>
 
                 <div class="btn-wrapper">
@@ -637,37 +639,25 @@
         checkStep1();
         checkStep2();
     });
-    // Initialization of Tom Select
-    document.addEventListener('DOMContentLoaded', function() {
+    function initTomSelects() {
         const multiSelects = document.querySelectorAll('.multi-select');
         multiSelects.forEach(select => {
+            if (select.tomselect) return;
             new TomSelect(select, {
-                plugins: ['remove_button'],
+                plugins: ['remove_button', 'dropdown_input'],
                 create: true,
                 persist: false,
-                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+                maxOptions: 15,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                 onItemAdd: function() {
                     this.setTextboxValue('');
                     this.refreshOptions();
                 }
             });
         });
+    }
 
-        // Logic for "Autre" Pills (Enfant form)
-        const motivationCheckboxes = document.querySelectorAll('#onboardingForm .pill-checkbox-group input[type="checkbox"]');
-        const customInput = document.querySelector('#onboardingForm .motivation-custom-input');
-        
-        function toggleCustomInput() {
-            let show = false;
-            motivationCheckboxes.forEach(cb => {
-                if (cb.value === 'AUTRE' && cb.checked) show = true;
-            });
-            if (customInput) customInput.style.display = show ? 'block' : 'none';
-        }
-
-        motivationCheckboxes.forEach(cb => cb.addEventListener('change', toggleCustomInput));
-        toggleCustomInput();
-    });
+    document.addEventListener('DOMContentLoaded', initTomSelects);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

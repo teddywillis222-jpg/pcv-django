@@ -219,26 +219,15 @@ class EnfantForm(forms.ModelForm):
         required=True,
         choices=DIFFICULTES_CHOICES,
         widget=forms.SelectMultiple(attrs={
-            'class': 'form-input multi-select', 
-            'placeholder': 'Ex : Bases fragiles non acquises'
-        })
-    )
     objectifs_motivations = forms.MultipleChoiceField(
-        label="Objectifs & Motivations",
-        required=True,
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.CheckboxSelectMultiple(attrs={
-            'class': 'pill-checkbox-group',
-        })
+        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
+        required=False
     )
-    motivation_custom = forms.CharField(
-        label="Autre motivation",
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Précisez votre besoin...',
-            'class': 'form-input motivation-custom-input',
-            'style': 'display: none;'
-        })
+    difficultes_predefinies = forms.MultipleChoiceField(
+        choices=Difficulties.CHOICES,
+        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quelles difficultés ?'}),
+        required=False
     )
 
     class Meta:
@@ -302,9 +291,6 @@ class EnfantForm(forms.ModelForm):
         instance.matieres = matieres[:5]
         
         objectifs = self.cleaned_data.get('objectifs_motivations', [])
-        motivation_custom = self.cleaned_data.get('motivation_custom', '').strip()
-        if motivation_custom:
-            objectifs = list(objectifs) + [motivation_custom]
         
         objectifs_str = ", ".join(objectifs)
         difficultes = ", ".join(self.cleaned_data.get('difficultes_predefinies', []))
@@ -351,16 +337,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifApprenant.CHOICES,
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'pill-checkbox-group'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont vos objectifs ?'}),
         required=False
-    )
-    motivation_custom = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Précisez votre objectif...',
-            'class': 'form-input motivation-custom-input',
-            'style': 'display: none;'
-        })
     )
     
     quartier_ville = forms.ChoiceField(
