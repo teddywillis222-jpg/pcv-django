@@ -214,11 +214,6 @@ class EnfantForm(forms.ModelForm):
         required=False,
         widget=forms.HiddenInput() # Rendu caché, on gère l'UI custom
     )
-    difficultes_predefinies = DynamicMultipleChoiceField(
-        label="Difficultés principales observées",
-        required=True,
-        choices=DIFFICULTES_CHOICES,
-        widget=forms.SelectMultiple(attrs={
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
