@@ -777,16 +777,8 @@ def apprenant_create_profile(request):
             apprenant.user = request.user
             apprenant.nom = apprenant.nom or request.user.first_name
             
-            # Nettoyage explicite des listes JSONField pour éviter des bugs de sérialisation
-            apprenant.matieres_recherchees = form.cleaned_data.get('matieres_recherchees', [])
-            
-            objectifs = form.cleaned_data.get('objectifs_motivations', [])
-            motivation_custom = form.cleaned_data.get('motivation_custom', '').strip()
-            if motivation_custom:
-                objectifs = list(objectifs) + [motivation_custom]
-            apprenant.objectifs_motivations = objectifs
-            
             apprenant.save()
+            form.save_m2m()
             
             from django.urls import reverse
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.headers.get('Accept') == 'application/json':
