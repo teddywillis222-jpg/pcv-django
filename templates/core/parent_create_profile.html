@@ -4,8 +4,6 @@
 {% block title %}Création Profil Parent - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
-<style>
 /* Tom Select Customization */
 .ts-control {
     border-radius: 12px !important;
@@ -30,6 +28,7 @@
 .ts-dropdown .option {
     padding: 10px 16px !important;
 }
+
 
 
     /* Stepper & Onboarding Styles */
@@ -416,7 +415,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Difficultés observées <span style="color: #ef4444;">*</span></label>
+                    <label>Difficultés principales <span style="color: #ef4444;">*</span></label>
                     {{ enfant_form.difficultes_predefinies }}
                 </div>
 

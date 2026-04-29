@@ -19,6 +19,32 @@
         --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
+    /* Tom Select Customization */
+    .ts-control {
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        border: 1px solid #d1d5db !important;
+        background: #fff !important;
+        min-height: 52px !important;
+        font-size: 1rem !important;
+    }
+    .ts-wrapper.multi .ts-control > div {
+        background: var(--primary) !important;
+        color: white !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        white-space: normal !important;
+        height: auto !important;
+    }
+    .ts-dropdown {
+        border-radius: 12px !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        z-index: 2000 !important; /* Ensure visibility over offcanvas */
+    }
+    .ts-dropdown .option {
+        padding: 10px 16px !important;
+    }
+
     body {
         background-color: var(--dash-bg);
         padding-bottom: 70px;
@@ -806,11 +832,7 @@
                 {{ enfant_form.matieres_predefinies }}
             </div>
             <div class="form-group">
-                <label>Difficultés</label>
-                {{ enfant_form.difficultes_predefinies }}
-            </div>
-            <div class="form-group">
-                <label>Difficultés rencontrées</label>
+                <label>Difficultés principales</label>
                 {{ enfant_form.difficultes_predefinies }}
             </div>
             <div class="form-group">
