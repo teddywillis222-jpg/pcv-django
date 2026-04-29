@@ -5,49 +5,50 @@
 
 {% block extra_css %}
 <style>
-/* Variables de couleurs basées sur l'identité Prof Chez Vous */
 :root {
-    --pcv-primary: #15803d; /* Vert foncé */
-    --pcv-primary-light: #16a34a; /* Vert clair */
-    --pcv-bg-light: #f0fdf4; /* Fond vert très clair */
-    --pcv-border: #bbf7d0;
+    --pcv-primary: #15803d;
+    --pcv-primary-light: #16a34a;
+    --pcv-bg-light: #f0fdf4;
     --text-main: #1f2937;
     --text-muted: #6b7280;
 }
 
 body {
     background-color: #f9fafb;
+    margin: 0;
+    padding: 0;
 }
 
 .apprenant-profile-container {
     width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    padding-top: 100px; /* Espace pour la navbar */
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem;
+    padding-top: 65px; /* Réduit drastiquement pour s'approcher du header */
 }
 
 /* Header */
 .apprenant-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .apprenant-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 800;
     color: var(--pcv-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .apprenant-header p {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
+    margin: 0;
 }
 
 /* Barre de progression */
 .progress-container {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .progress-bar {
@@ -68,9 +69,9 @@ body {
 .progress-steps {
     display: flex;
     justify-content: space-between;
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
 }
 
@@ -81,11 +82,12 @@ body {
 /* Formulaire */
 .step-form {
     background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     border: 1px solid #f3f4f6;
     display: none;
+    width: 100%;
 }
 
 .step-form.active {
@@ -99,29 +101,45 @@ body {
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
+    width: 100%;
 }
 
 .form-group label {
     display: block;
     font-weight: 700;
     color: var(--text-main);
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
 }
 
+/* Uniformisation des inputs et dropdowns */
 .form-group input[type="text"],
 .form-group input[type="tel"],
 .form-group input[type="email"],
-.form-group select,
-.form-group textarea {
+.form-group select {
     width: 100%;
-    padding: 0.85rem 1rem;
+    height: 52px; /* Dimension unique pour tous */
+    padding: 0 1rem;
     border: 2px solid #e5e7eb;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.2s;
     background: #f9fafb;
+    box-sizing: border-box;
+}
+
+/* Spécificité pour les textarea (ils ont la même largeur mais une hauteur plus grande si besoin) */
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: #f9fafb;
+    box-sizing: border-box;
+    resize: none;
 }
 
 .form-group input:focus,
@@ -133,53 +151,20 @@ body {
     box-shadow: 0 0 0 3px var(--pcv-bg-light);
 }
 
-/* Checkboxes stylisées */
-.checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-.checkbox-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    padding: 0.75rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.checkbox-item:hover {
-    border-color: var(--pcv-border);
-    background: var(--pcv-bg-light);
-}
-
-.checkbox-item input[type="checkbox"] {
-    margin-top: 0.2rem;
-    width: 1.1rem;
-    height: 1.1rem;
-    accent-color: var(--pcv-primary);
-}
-
-.checkbox-label-text {
-    font-size: 0.9rem;
-    color: var(--text-main);
-    font-weight: 500;
-}
-
-/* Photo Upload */
+/* Photo Upload - Même dimension que les inputs (52px de hauteur) */
 .photo-upload {
-    text-align: center;
-    padding: 1.5rem;
+    width: 100%;
+    height: 52px;
+    padding: 0 1rem;
     border: 2px dashed #d1d5db;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #f9fafb;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    gap: 0.75rem;
 }
 
 .photo-upload:hover {
@@ -188,17 +173,16 @@ body {
 }
 
 .photo-preview {
-    width: 100px;
-    height: 100px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    margin: 0 auto 1rem;
     background: #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
     color: #9ca3af;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .photo-preview img {
@@ -210,20 +194,20 @@ body {
 /* Boutons */
 .button-group {
     display: flex;
-    gap: 1rem;
-    margin-top: 2.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
 }
 
 .btn {
-    flex: 1;
-    padding: 0.85rem 1.5rem;
+    width: 100%;
+    height: 52px;
     border: none;
     border-radius: 10px;
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -237,7 +221,6 @@ body {
 
 .btn-primary:hover {
     background: var(--pcv-primary-light);
-    transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -257,8 +240,8 @@ body {
 /* Erreurs */
 .error-msg {
     color: #dc2626;
-    font-size: 0.85rem;
-    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
     display: none;
 }
 
@@ -266,18 +249,18 @@ body {
     border-color: #dc2626 !important;
 }
 
-/* Modal Succès */
+/* Modal Succès Fixé et Centré sur tout l'écran */
 .success-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 10000;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -293,10 +276,11 @@ body {
     padding: 2.5rem;
     border-radius: 20px;
     text-align: center;
-    max-width: 400px;
-    width: 90%;
+    max-width: 90%;
+    width: 350px;
     transform: scale(0.9);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .success-overlay.active .success-modal {
@@ -304,39 +288,25 @@ body {
 }
 
 .success-icon {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     background: var(--pcv-bg-light);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 1.25rem;
     color: var(--pcv-primary);
 }
 
 .success-icon svg {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
 }
 
-/* Mobile Adjustments */
-@media (max-width: 640px) {
-    .apprenant-profile-container {
-        padding-top: 80px;
-    }
-    
-    .step-form {
-        padding: 1.5rem;
-        border-radius: 12px;
-    }
-    
+@media (min-width: 641px) {
     .button-group {
-        flex-direction: column-reverse;
-    }
-    
-    .checkbox-group {
-        grid-template-columns: 1fr;
+        flex-direction: row;
     }
 }
 </style>
@@ -368,7 +338,7 @@ body {
         
         <!-- ================= ETAPE 1 ================= -->
         <div class="step-form active" id="step1">
-            <h2 style="color: var(--text-main); font-size: 1.25rem; margin-bottom: 1.5rem;">Tes informations de base</h2>
+            <h2 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1.25rem;">Tes informations de base</h2>
             
             <div class="form-group">
                 <label for="{{ form.nom.id_for_label }}">Nom complet *</label>
@@ -398,12 +368,12 @@ body {
                 <label>Photo de profil (Optionnel)</label>
                 <div class="photo-upload" onclick="document.getElementById('id_photo_de_profil').click()">
                     <div class="photo-preview" id="photoPreview">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                     </div>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Cliquez pour ajouter une photo</p>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Ajouter une photo</span>
                     <div style="display: none;">{{ form.photo_de_profil }}</div>
                 </div>
             </div>
@@ -418,7 +388,7 @@ body {
 
         <!-- ================= ETAPE 2 ================= -->
         <div class="step-form" id="step2">
-            <h2 style="color: var(--text-main); font-size: 1.25rem; margin-bottom: 1.5rem;">Tes besoins d'accompagnement</h2>
+            <h2 style="color: var(--text-main); font-size: 1.15rem; margin-bottom: 1.25rem;">Tes besoins d'accompagnement</h2>
             
             <div class="form-group">
                 <label for="{{ form.preference_de_cours.id_for_label }}">Format de cours souhaité *</label>
@@ -427,37 +397,18 @@ body {
             </div>
 
             <div class="form-group">
-                <label>Matières à renforcer (Optionnel)</label>
-                <div class="checkbox-group">
-                    {% for checkbox in form.matieres_recherchees %}
-                    <label class="checkbox-item">
-                        {{ checkbox.tag }}
-                        <span class="checkbox-label-text">{{ checkbox.choice_label }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 1.5rem;">
-                <label>Tes objectifs principaux (Optionnel)</label>
-                <div class="checkbox-group">
-                    {% for checkbox in form.objectifs_motivations %}
-                    <label class="checkbox-item">
-                        {{ checkbox.tag }}
-                        <span class="checkbox-label-text">{{ checkbox.choice_label }}</span>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 1.5rem;">
-                <label for="{{ form.description_difficultes.id_for_label }}">Précise tes difficultés (Optionnel)</label>
-                {{ form.description_difficultes }}
+                <label for="{{ form.matieres_recherchees.id_for_label }}">Matières à renforcer (Optionnel)</label>
+                {{ form.matieres_recherchees }}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.disponibilites.id_for_label }}">Tes disponibilités (Optionnel)</label>
-                {{ form.disponibilites }}
+                <label for="{{ form.objectifs_motivations.id_for_label }}">Tes objectifs principaux (Optionnel)</label>
+                {{ form.objectifs_motivations }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description_difficultes.id_for_label }}">Précise tes difficultés (Optionnel)</label>
+                {{ form.description_difficultes }}
             </div>
 
             <div id="global_error" class="error-msg" style="text-align: center; margin-bottom: 1rem; font-weight: bold; padding: 0.5rem; background: #fef2f2; border-radius: 8px;"></div>
@@ -476,7 +427,7 @@ body {
     </form>
 </div>
 
-<!-- Modal de succès -->
+<!-- Modal de succès (Centré et recouvrant l'écran) -->
 <div class="success-overlay" id="successModal">
     <div class="success-modal">
         <div class="success-icon">
@@ -484,9 +435,9 @@ body {
                 <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
         </div>
-        <h2 style="color: var(--pcv-primary); margin-bottom: 0.5rem; font-size: 1.5rem; font-weight: 800;">Félicitations !</h2>
-        <p style="color: var(--text-muted); margin-bottom: 0;">Ton profil apprenant a été créé avec succès.</p>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Redirection vers ton tableau de bord...</p>
+        <h2 style="color: var(--pcv-primary); margin-bottom: 0.5rem; font-size: 1.4rem; font-weight: 800;">Félicitations !</h2>
+        <p style="color: var(--text-muted); margin-bottom: 0; font-size: 0.95rem;">Ton profil apprenant a été créé avec succès.</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.75rem;">Redirection vers ton tableau de bord...</p>
     </div>
 </div>
 
@@ -512,13 +463,13 @@ function validateStep1() {
     required.forEach(field => {
         const el = document.getElementById(`id_${field}`);
         const err = document.getElementById(`error_${field}`);
-        if (!el.value.trim()) {
-            el.classList.add('input-error');
-            err.style.display = 'block';
+        if (!el || !el.value.trim()) {
+            if(el) el.classList.add('input-error');
+            if(err) err.style.display = 'block';
             isValid = false;
         } else {
             el.classList.remove('input-error');
-            err.style.display = 'none';
+            if(err) err.style.display = 'none';
         }
     });
     return isValid;
@@ -552,13 +503,15 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
     
     // Validation finale requise
     const pref = document.getElementById('id_preference_de_cours');
-    if (!pref.value) {
-        pref.classList.add('input-error');
-        document.getElementById('error_preference_de_cours').style.display = 'block';
+    if (!pref || !pref.value) {
+        if(pref) pref.classList.add('input-error');
+        const errPref = document.getElementById('error_preference_de_cours');
+        if(errPref) errPref.style.display = 'block';
         return;
     } else {
         pref.classList.remove('input-error');
-        document.getElementById('error_preference_de_cours').style.display = 'none';
+        const errPref = document.getElementById('error_preference_de_cours');
+        if(errPref) errPref.style.display = 'none';
     }
 
     const btn = document.getElementById('submitBtn');
@@ -581,7 +534,7 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
         const data = await response.json();
 
         if (response.ok && data.success) {
-            // Afficher le modal de succès
+            // Afficher le modal de succès (qui est fixé en Z-index très haut)
             document.getElementById('successModal').classList.add('active');
             
             // Rediriger après 2 secondes
@@ -590,7 +543,6 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
             }, 2000);
             
         } else {
-            // Afficher les erreurs
             console.error(data.errors);
             globalErr.textContent = "Certains champs sont invalides. Veuillez vérifier vos saisies.";
             globalErr.style.display = 'block';

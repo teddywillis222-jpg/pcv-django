@@ -318,16 +318,36 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         ("Histoire-Géo", "Histoire-Géographie"),
     ]
 
+    VILLE_QUARTIER_CHOICES = [
+        ("", "Ex : Cotonou - Agla"),
+        ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
+        ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
+        ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
+        ("Cotonou - Cadjèhoun", "Cotonou - Cadjèhoun"),
+        ("Cotonou - Agla", "Cotonou - Agla"),
+        ("Abomey-Calavi - Arimbo", "Abomey-Calavi - Arimbo"),
+        ("Abomey-Calavi - Zoca", "Abomey-Calavi - Zoca"),
+        ("Abomey-Calavi - Godomey", "Abomey-Calavi - Godomey"),
+        ("Porto-Novo - Centre", "Porto-Novo - Centre"),
+        ("Autre", "Autre")
+    ]
+
     matieres_recherchees = forms.MultipleChoiceField(
         choices=MATIERES_CHOICES,
-        widget=forms.CheckboxSelectMultiple(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
         required=False
     )
     
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.CheckboxSelectMultiple(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
         required=False
+    )
+    
+    quartier_ville = forms.ChoiceField(
+        choices=VILLE_QUARTIER_CHOICES,
+        widget=forms.Select(attrs={'style': 'height: 52px;'}),
+        required=True
     )
 
     class Meta:
@@ -342,15 +362,12 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             "description_difficultes",
             "quartier_ville",
             "preference_de_cours",
-            "disponibilites",
         ]
         widgets = {
-            'classe': forms.Select(choices=ClassLevel.CHOICES),
-            'preference_de_cours': forms.Select(choices=CourseMode.CHOICES),
-            'description_difficultes': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.'}),
-            'disponibilites': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Lundi 16h-18h, Mercredi 14h-16h...'}),
-            'quartier_ville': forms.TextInput(attrs={'placeholder': 'Ex: Cotonou - Agla'}),
-            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont'}),
+            'classe': forms.Select(choices=ClassLevel.CHOICES, attrs={'style': 'height: 52px;'}),
+            'preference_de_cours': forms.Select(choices=CourseMode.CHOICES, attrs={'style': 'height: 52px;'}),
+            'description_difficultes': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.', 'style': 'height: 52px; padding-top: 14px;'}),
+            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont', 'style': 'height: 52px;'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -370,13 +387,13 @@ class ApprenantCreateProfileForm(forms.ModelForm):
                 self.fields[field_name].required = True
         
         # Champs optionnels
-        optional_fields = ["photo_de_profil", "matieres_recherchees", "objectifs_motivations", "description_difficultes", "disponibilites"]
+        optional_fields = ["photo_de_profil", "matieres_recherchees", "objectifs_motivations", "description_difficultes"]
         for field_name in optional_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = False
         
         if "telephone" in self.fields:
-            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89"})
+            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89", "style": "height: 52px;"})
 
 
 
