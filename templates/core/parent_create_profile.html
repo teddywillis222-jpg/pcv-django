@@ -4,6 +4,7 @@
 {% block title %}Création Profil Parent - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 <style>
     /* Stepper & Onboarding Styles */
     .onboarding-page-wrapper {
@@ -623,5 +624,25 @@
         checkStep1();
         checkStep2();
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const multiSelects = document.querySelectorAll('.multi-select');
+        multiSelects.forEach(select => {
+            new Choices(select, {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchPlaceholderValue: 'Rechercher ou ajouter...',
+                placeholder: true,
+                placeholderValue: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+                addItems: true,
+                editItems: false,
+                duplicateItemsAllowed: false,
+                noResultsText: 'Aucun résultat',
+                noChoicesText: 'Plus aucun choix disponible',
+                itemSelectText: 'Cliquer pour sélectionner',
+                addItemText: (value) => `Appuyez sur Entrée pour ajouter "${value}"`
+            });
+        });
+    });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 {% endblock %}

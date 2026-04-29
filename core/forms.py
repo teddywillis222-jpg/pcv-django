@@ -7,6 +7,10 @@ import re
 from .models import Apprenant, Enfant, Parent, Profile
 from .choices import ClassLevel, CourseMode
 
+class DynamicMultipleChoiceField(forms.MultipleChoiceField):
+    def valid_value(self, value):
+        return True
+
 
 class SignUpForm(UserCreationForm):
     """Inscription : Nom complet et Rôle obligatoires."""
@@ -196,14 +200,12 @@ class EnfantForm(forms.ModelForm):
         ("Baisse de motivation", "Baisse de motivation / Confiance"),
     ]
 
-    matieres_predefinies = forms.MultipleChoiceField(
+    matieres_predefinies = DynamicMultipleChoiceField(
         label="Matières nécessitant appui (Max 5)",
         required=False,
         choices=MATIERES_CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
-            'data-max': '5',
-            'style': 'height: 50px; padding: 0.5rem;',
             'placeholder': 'Ex : Mathématiques'
         })
     )
@@ -212,25 +214,21 @@ class EnfantForm(forms.ModelForm):
         required=False,
         widget=forms.HiddenInput() # Rendu caché, on gère l'UI custom
     )
-    difficultes_predefinies = forms.MultipleChoiceField(
+    difficultes_predefinies = DynamicMultipleChoiceField(
         label="Difficultés principales observées",
         required=True,
         choices=DIFFICULTES_CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
-            'data-max': '5',
-            'style': 'height: 50px; padding: 0.5rem;',
             'placeholder': 'Ex : Bases fragiles non acquises'
         })
     )
-    objectifs_motivations = forms.MultipleChoiceField(
+    objectifs_motivations = DynamicMultipleChoiceField(
         label="Objectifs & Motivations",
         required=True,
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
-            'data-max': '5',
-            'style': 'height: 50px; padding: 0.5rem;',
             'placeholder': 'Ex : Remise à niveau'
         })
     )
@@ -332,13 +330,13 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         ("Autre", "Autre")
     ]
 
-    matieres_recherchees = forms.MultipleChoiceField(
+    matieres_recherchees = DynamicMultipleChoiceField(
         choices=MATIERES_CHOICES,
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
         required=False
     )
     
-    objectifs_motivations = forms.MultipleChoiceField(
+    objectifs_motivations = DynamicMultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
         required=False
@@ -366,7 +364,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         widgets = {
             'classe': forms.Select(choices=ClassLevel.CHOICES, attrs={'style': 'height: 52px;'}),
             'preference_de_cours': forms.Select(choices=CourseMode.CHOICES, attrs={'style': 'height: 52px;'}),
-            'description_difficultes': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.', 'style': 'height: 52px; padding-top: 14px;'}),
+            'description_difficultes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.'}),
             'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont', 'style': 'height: 52px;'}),
         }
 

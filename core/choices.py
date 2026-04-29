@@ -338,10 +338,7 @@ def validate_objectifs_motivations(value):
     """Liste de valeurs ObjectifMotivation."""
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste.")
-    valid = set(ObjectifMotivation.VALUES)
-    for v in value:
-        if v not in valid:
-            raise ValidationError(f"Objectif invalide : {v}")
+    # On autorise désormais les valeurs personnalisées ajoutées par l'utilisateur (Choices.js)
 
 
 def validate_creneaux_disponibilites(value):

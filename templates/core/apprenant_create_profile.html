@@ -4,6 +4,7 @@
 {% block title %}Finalise ton profil apprenant - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 <style>
 :root {
     --pcv-primary: #15803d;
@@ -24,7 +25,7 @@ body {
     max-width: 100%;
     margin: 0;
     padding: 1rem;
-    padding-top: 65px; /* Réduit drastiquement pour s'approcher du header */
+    padding-top: 35px; /* Réduit drastiquement pour s'approcher du header */
 }
 
 /* Header */
@@ -140,6 +141,7 @@ body {
     background: #f9fafb;
     box-sizing: border-box;
     resize: none;
+    min-height: 90px;
 }
 
 .form-group input:focus,
@@ -441,6 +443,7 @@ body {
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script>
 // Prévisualisation Photo
 document.getElementById('id_photo_de_profil').addEventListener('change', function(e) {
@@ -556,6 +559,27 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
         btn.classList.remove('btn-disabled');
         btn.innerHTML = 'Enregistrer mon profil <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>';
     }
+});
+
+// Initialization of Choices.js
+document.addEventListener('DOMContentLoaded', function() {
+    const multiSelects = document.querySelectorAll('.multi-select');
+    multiSelects.forEach(select => {
+        new Choices(select, {
+            removeItemButton: true,
+            searchEnabled: true,
+            searchPlaceholderValue: 'Rechercher ou ajouter...',
+            placeholder: true,
+            placeholderValue: select.getAttribute('placeholder') || 'Sélectionnez ou ajoutez',
+            addItems: true,
+            editItems: false,
+            duplicateItemsAllowed: false,
+            noResultsText: 'Aucun résultat',
+            noChoicesText: 'Plus aucun choix disponible',
+            itemSelectText: 'Cliquer pour sélectionner',
+            addItemText: (value) => `Appuyez sur Entrée pour ajouter "${value}"`
+        });
+    });
 });
 </script>
 {% endblock %}
