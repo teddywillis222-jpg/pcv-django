@@ -222,7 +222,7 @@ def messagerie(request):
 
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
-    from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory
+    from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
     professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
     )
@@ -291,6 +291,7 @@ def recherche(request):
         'COURSE_MODES': CourseMode.CHOICES,
         'CLASS_LEVELS': ClassLevel.CHOICES,
         'SUPPORT_CATEGORIES': SupportCategory.CHOICES,
+        'MATIERES_CHOICES': Matiere.get_choices(),
     }
     
     return render(request, "core/recherche.html", context)

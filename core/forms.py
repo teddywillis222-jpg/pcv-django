@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 import re
 
 from .models import Apprenant, Enfant, Parent, Profile
-from .choices import ClassLevel, CourseMode, Localisation
+from .choices import ClassLevel, CourseMode, Localisation, Matiere
 
 class DynamicMultipleChoiceField(forms.MultipleChoiceField):
     def valid_value(self, value):
@@ -192,7 +192,7 @@ class EnfantForm(forms.ModelForm):
     matieres_predefinies = DynamicMultipleChoiceField(
         label="Matières nécessitant appui (Max 5)",
         required=False,
-        choices=MATIERES_CHOICES,
+        choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input multi-select', 
             'placeholder': 'Ex : Mathématiques'
@@ -293,7 +293,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     ]
 
     matieres_recherchees = DynamicMultipleChoiceField(
-        choices=MATIERES_CHOICES,
+        choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
         required=False
     )
@@ -379,6 +379,11 @@ class TeacherProfileForm(forms.ModelForm):
     modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False)
     classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False)
     ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
+    matiere_enseignee = DynamicMultipleChoiceField(
+        choices=Matiere.get_choices(),
+        required=True,
+        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select', 'placeholder': 'Matières enseignées (Max 3)'})
+    )
     
     class Meta:
         model = TeacherProfile
@@ -402,12 +407,22 @@ class TeacherProfileForm(forms.ModelForm):
         self.fields["nom"].widget.attrs["readonly"] = True
         self.fields["nom"].label = "Nom Complet"
         
-        self.fields["matiere_enseignee"].widget = forms.HiddenInput()
+        # self.fields["matiere_enseignee"].widget = forms.HiddenInput()
         self.fields["categorie_de_soutien"].empty_label = "Votre catégorie d'enseignement principale"
         self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})
+
+        if self.instance and self.instance.pk and self.instance.matiere_enseignee:
+            if isinstance(self.instance.matiere_enseignee, str):
+                self.initial['matiere_enseignee'] = [m.strip() for m in self.instance.matiere_enseignee.split(',')]
         
         for field_name in ["email", "nom", "telephone_whatsapp", "categorie_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
                 self.fields[field_name].required = True
                 if field_name == "telephone_whatsapp":
                     self.fields[field_name].widget.attrs.update({"class": "phone-input"})
+
+    def clean_matiere_enseignee(self):
+        matieres = self.cleaned_data.get('matiere_enseignee')
+        if isinstance(matieres, list):
+            return ", ".join(matieres)
+        return matieres

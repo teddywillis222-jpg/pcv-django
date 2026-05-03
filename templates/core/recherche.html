@@ -526,26 +526,12 @@
                 <div class="main-filters">
                     <div class="search-inputs-row">
                         <div class="filter-group">
-                            <input 
-                                type="text" 
-                                id="matiere" 
-                                name="matiere"
-                                value="{{ matiere }}"
-                                class="filter-input" 
-                                placeholder="Matière (Ex: Mathématiques, Français...)"
-                                list="matieres-list"
-                            >
-                            <datalist id="matieres-list">
-                                <option value="Mathématiques">
-                                <option value="Français">
-                                <option value="Physique-Chimie">
-                                <option value="SVT">
-                                <option value="Histoire-Géographie">
-                                <option value="Anglais">
-                                <option value="Espagnol">
-                                <option value="Philosophie">
-                                <option value="Économie">
-                                </datalist>
+                            <select id="matiere" name="matiere" class="filter-input pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">
+                                <option value="">Matière (Ex: Mathématiques, Français...)</option>
+                                {% for mat_val, mat_label in MATIERES_CHOICES %}
+                                <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         
                         <div class="filter-group">

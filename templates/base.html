@@ -643,13 +643,14 @@
             multiSelects.forEach(select => {
                 if (select.tomselect) return;
                 
-                const isMatieres = select.id === 'id_matieres_predefinies';
+                const isMatieres = ['id_matieres_predefinies', 'id_matieres_recherchees', 'id_matiere_enseignee'].includes(select.id);
+                const isTeacherMatieres = select.id === 'id_matiere_enseignee';
                 
                 new TomSelect(select, {
                     plugins: ['remove_button', 'dropdown_input'],
                     create: true,
                     persist: false,
-                    maxItems: isMatieres ? 5 : null,
+                    maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : null),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     render: {

@@ -14,6 +14,7 @@ from .choices import (
     EngagementType,
     FrequenceHebdomadaire,
     MessageType,
+    Matiere,
     Localisation,
     NiveauPercu,
     NiveauScolaire,
@@ -32,6 +33,41 @@ from .choices import (
     validate_modes_cours,
     validate_objectifs_motivations,
 )
+
+
+def clean_subjects(subjects):
+    """
+    Nettoie une liste de matières ou une chaîne de caractères.
+    Applique .strip() et garantit l'unicité (insensible à la casse).
+    """
+    if not subjects:
+        return subjects
+
+    if isinstance(subjects, str):
+        # Pour les chaînes (ex: "Maths, Physique")
+        parts = [s.strip() for s in subjects.split(',')]
+        cleaned = []
+        seen = set()
+        for p in parts:
+            if p and p.lower() not in seen:
+                cleaned.append(p)
+                seen.add(p.lower())
+        return ", ".join(cleaned)
+
+    if isinstance(subjects, list):
+        cleaned = []
+        seen = set()
+        for s in subjects:
+            if not isinstance(s, str):
+                cleaned.append(s)
+                continue
+            s_strip = s.strip()
+            if s_strip and s_strip.lower() not in seen:
+                cleaned.append(s_strip)
+                seen.add(s_strip.lower())
+        return cleaned
+
+    return subjects
 
 
 class Profile(models.Model):
@@ -169,6 +205,10 @@ class Enfant(models.Model):
         blank=True,
     )
 
+    def save(self, *args, **kwargs):
+        self.matieres = clean_subjects(self.matieres)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.prenom} ({self.parent.nom})"
 
@@ -283,6 +323,10 @@ class Apprenant(models.Model):
         validators=[validate_creneaux_disponibilites],
         help_text="Liste de codes CreneauDisponibilite (ex: ['LUN_VEN_MATIN'])",
     )
+
+    def save(self, *args, **kwargs):
+        self.matieres_recherchees = clean_subjects(self.matieres_recherchees)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Apprenant {self.nom}"
@@ -523,6 +567,7 @@ class TeacherProfile(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
+        self.matiere_enseignee = clean_subjects(self.matiere_enseignee)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -756,6 +801,10 @@ class Engagement(models.Model):
         null=True,
         blank=True,
     )
+
+    def save(self, *args, **kwargs):
+        self.matiere = clean_subjects(self.matiere)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Engagement #{self.id} (conv {self.conversation_id})"

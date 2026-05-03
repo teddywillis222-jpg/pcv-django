@@ -438,50 +438,8 @@
         }
         initFileInputs();
 
-        // MATIERES SELECTOR LOGIC (Max 3)
-        const matiereSelect = document.getElementById('matiere_custom_select');
-        const selectedContainer = document.getElementById('selected_matieres_badges');
-        const hiddenMatiereInput = document.getElementById('id_matiere_enseignee');
-        let selectedMatieres = [];
-
-        function renderMatieres() {
-            selectedContainer.innerHTML = '';
-            selectedMatieres.forEach(mat => {
-                const badge = document.createElement('div');
-                badge.className = 'matiere-badge';
-                badge.innerHTML = `${mat} <span onclick="removeMatiere('${mat}')">✕</span>`;
-                selectedContainer.appendChild(badge);
-            });
-            hiddenMatiereInput.value = selectedMatieres.join(', ');
-
-            if (selectedMatieres.length >= 3) {
-                matiereSelect.disabled = true;
-                matiereSelect.options[0].text = "Maximum (3) atteint";
-            } else {
-                matiereSelect.disabled = false;
-                matiereSelect.options[0].text = "Sélectionnez une matière...";
-            }
-        }
-
-        window.removeMatiere = function (mat) {
-            selectedMatieres = selectedMatieres.filter(m => m !== mat);
-            renderMatieres();
-        }
-
-        matiereSelect.addEventListener('change', function () {
-            let val = this.value;
-            if (val === "AUTRE") {
-                let customVal = prompt("Saisissez la matière :");
-                if (customVal && customVal.trim() !== '') val = customVal.trim();
-                else val = '';
-            }
-
-            if (val && val !== '' && !selectedMatieres.includes(val) && selectedMatieres.length < 3) {
-                selectedMatieres.push(val);
-                renderMatieres();
-            }
-            this.value = '';
-        });
+        // Initialisation de Tom Select sur le champ matiere_enseignee (via sa classe pcv-multi-select)
+        // Note: Le script global dans base.html s'en occupe déjà si la classe est présente.
 
         // DIPLOMES DYNAMIC LOGIC
         const diplomesWrapper = document.getElementById('diplomes-wrapper');
@@ -629,19 +587,7 @@
             </div>
  
             <div class="form-group" style="margin-top: 1rem;">
-                <label>Matière principale enseignée (Max 3) *</label>
-                <select id="matiere_custom_select">
-                    <option value="">Quelle matière enseignez-vous ?</option>
-                    <option value="Mathématiques">Mathématiques</option>
-                    <option value="Physique-Chimie">Physique-Chimie</option>
-                    <option value="SVT">SVT</option>
-                    <option value="Français">Français</option>
-                    <option value="Anglais">Anglais</option>
-                    <option value="Philosophie">Philosophie</option>
-                    <option value="Histoire-Géographie">Histoire-Géographie</option>
-                    <option value="AUTRE">+ Ajouter une autre matière...</option>
-                </select>
-                <div class="selected-matieres" id="selected_matieres_badges"></div>
+                <label>Matières enseignées (Max 3) *</label>
                 {{ form.matiere_enseignee }}
             </div>
  
