@@ -14,6 +14,7 @@ from .choices import (
     EngagementType,
     FrequenceHebdomadaire,
     MessageType,
+    Localisation,
     NiveauPercu,
     NiveauScolaire,
     ObjectifMotivation,
@@ -84,7 +85,11 @@ class Parent(models.Model):
     nom = models.CharField(max_length=150)
     numero_whatsapp = models.CharField(max_length=50)
     profession = models.CharField(max_length=150, blank=True)
-    quartier_ville = models.CharField(max_length=150, blank=True)
+    quartier_ville = models.CharField(
+        max_length=150,
+        choices=Localisation.CHOICES,
+        blank=True
+    )
     photo_profil = models.ImageField(
         upload_to="parents/photos/",
         blank=True,
@@ -154,8 +159,9 @@ class Enfant(models.Model):
     # 3. Logistique et localisation
     quartier_ville = models.CharField(
         max_length=150,
+        choices=Localisation.CHOICES,
         blank=True,
-        help_text="Format « Quartier-Ville » pour matching avec professeurs",
+        help_text="Format « Quartier - Ville » pour matching avec professeurs",
     )
     mode_de_cours = models.CharField(
         max_length=30,
@@ -262,8 +268,9 @@ class Apprenant(models.Model):
     # 3. Logistique et localisation
     quartier_ville = models.CharField(
         max_length=150,
+        choices=Localisation.CHOICES,
         blank=True,
-        help_text="Format « Quartier-Ville » pour matching",
+        help_text="Format « Quartier - Ville » pour matching",
     )
     preference_de_cours = models.CharField(
         max_length=30,
@@ -413,7 +420,11 @@ class TeacherProfile(models.Model):
         validators=[validate_modes_cours],
         help_text="Liste de codes CourseMode (ex: ['ONLINE','HYBRID'])",
     )
-    ville_quartier = models.CharField(max_length=150)
+    ville_quartier = models.CharField(
+        max_length=150,
+        choices=Localisation.CHOICES,
+        help_text="Format « Quartier - Ville »"
+    )
     disponibilites = models.ManyToManyField(
         Disponibilite,
         blank=True,

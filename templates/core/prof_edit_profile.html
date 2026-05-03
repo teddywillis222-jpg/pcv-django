@@ -154,7 +154,11 @@
 
             <div class="form-group">
                 <label class="form-label">Ville & Quartier</label>
-                <input type="text" name="ville_quartier" class="form-input" value="{{ teacher.ville_quartier }}">
+                <select name="ville_quartier" class="form-input pcv-multi-select">
+                    {% for val, label in localisation_choices %}
+                        <option value="{{ val }}" {% if teacher.ville_quartier == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">

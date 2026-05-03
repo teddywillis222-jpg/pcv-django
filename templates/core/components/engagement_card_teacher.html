@@ -56,17 +56,19 @@
     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
         
         {% if eng.statut_general == 'EN_ATTENTE' %}
-            <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
-                Voir les détails
-            </button>
+            {% if eng.type_engagement == 'ESSAI' %}
+                <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
+                    Voir l'essai
+                </button>
+            {% else %}
+                <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
+                    Voir les détails
+                </button>
+            {% endif %}
         {% elif eng.statut_general != 'REFUSE' and eng.type_engagement != 'ESSAI' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-dash btn-dash-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem;">
                 Accéder à l'engagement
             </a>
-        {% elif eng.type_engagement == 'ESSAI' and eng.statut_general != 'REFUSE' %}
-            <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
-                Voir l'essai
-            </button>
         {% endif %}
         
         <div style="position: relative;">

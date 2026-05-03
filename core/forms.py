@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 import re
 
 from .models import Apprenant, Enfant, Parent, Profile
-from .choices import ClassLevel, CourseMode
+from .choices import ClassLevel, CourseMode, Localisation
 
 class DynamicMultipleChoiceField(forms.MultipleChoiceField):
     def valid_value(self, value):
@@ -150,20 +150,9 @@ class FinalisationCompteForm(forms.Form):
 
 class ParentForm(forms.ModelForm):
     quartier_ville = forms.ChoiceField(
-        choices=[
-            ("", "Sélectionnez votre quartier-ville"),
-            ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
-            ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
-            ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
-            ("Cotonou - Cadjèhoun", "Cotonou - Cadjèhoun"),
-            ("Cotonou - Agla", "Cotonou - Agla"),
-            ("Abomey-Calavi - Arimbo", "Abomey-Calavi - Arimbo"),
-            ("Abomey-Calavi - Zoca", "Abomey-Calavi - Zoca"),
-            ("Abomey-Calavi - Godomey", "Abomey-Calavi - Godomey"),
-            ("Porto-Novo - Centre", "Porto-Novo - Centre"),
-            ("Autre", "Autre (à préciser ultérieurement)")
-        ],
-        required=True
+        choices=Localisation.CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'pcv-multi-select'})
     )
 
     class Meta:
@@ -243,19 +232,8 @@ class EnfantForm(forms.ModelForm):
         for field in ["prenom", "classe", "quartier_ville", "mode_de_cours"]:
             self.fields[field].required = True
             
-        self.fields["quartier_ville"].widget = forms.Select(choices=[
-            ("", "Ex : Cotonou-Agla"),
-            ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
-            ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
-            ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
-            ("Cotonou - Cadjèhoun", "Cotonou - Cadjèhoun"),
-            ("Cotonou - Agla", "Cotonou - Agla"),
-            ("Abomey-Calavi - Arimbo", "Abomey-Calavi - Arimbo"),
-            ("Abomey-Calavi - Zoca", "Abomey-Calavi - Zoca"),
-            ("Abomey-Calavi - Godomey", "Abomey-Calavi - Godomey"),
-            ("Porto-Novo - Centre", "Porto-Novo - Centre"),
-            ("Autre", "Autre")
-        ])
+        self.fields["quartier_ville"].widget = forms.Select(choices=Localisation.CHOICES, attrs={'class': 'pcv-multi-select'})
+        self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select'})
 
     def clean(self):
         cleaned_data = super().clean()
@@ -327,8 +305,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     )
     
     quartier_ville = forms.ChoiceField(
-        choices=VILLE_QUARTIER_CHOICES,
-        widget=forms.Select(attrs={'style': 'height: 52px;'}),
+        choices=Localisation.CHOICES,
+        widget=forms.Select(attrs={'style': 'height: 52px;', 'class': 'pcv-multi-select'}),
         required=True
     )
 
@@ -400,7 +378,7 @@ class TeacherProfileForm(forms.ModelForm):
     
     modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False)
     classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False)
-    ville_quartier = forms.ChoiceField(choices=VILLE_QUARTIER_CHOICES, required=True)
+    ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
     
     class Meta:
         model = TeacherProfile

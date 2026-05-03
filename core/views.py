@@ -17,7 +17,7 @@ from .forms import (
     ParentForm,
     SignUpForm,
 )
-from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus
+from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation
 from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -222,7 +222,7 @@ def messagerie(request):
 
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
-    from .choices import ValidationStatus
+    from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory
     professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
     )
@@ -238,13 +238,13 @@ def recherche(request):
     if matiere:
         professeurs = professeurs.filter(matiere_enseignee__icontains=matiere)
     if localisation:
-        professeurs = professeurs.filter(ville_quartier__icontains=localisation)
+        professeurs = professeurs.filter(ville_quartier=localisation)
     if classe:
         professeurs = professeurs.filter(classes_enseignees__icontains=classe)
     if mode:
         professeurs = professeurs.filter(modes_de_cours__icontains=mode)
     if soutien:
-        professeurs = professeurs.filter(categorie_de_soutien__icontains=soutien)
+        professeurs = professeurs.filter(categorie_de_soutien=soutien)
         
     if prix:
         if prix == "0-2000":
@@ -287,6 +287,10 @@ def recherche(request):
         'soutien': soutien,
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
+        'LOCALISATION_CHOICES': Localisation.CHOICES,
+        'COURSE_MODES': CourseMode.CHOICES,
+        'CLASS_LEVELS': ClassLevel.CHOICES,
+        'SUPPORT_CATEGORIES': SupportCategory.CHOICES,
     }
     
     return render(request, "core/recherche.html", context)
@@ -555,7 +559,10 @@ def prof_edit_profile(request):
         teacher.save()
         return redirect("prof_dashboard")
 
-    return render(request, "core/prof_edit_profile.html", {"teacher": teacher})
+    return render(request, "core/prof_edit_profile.html", {
+        "teacher": teacher,
+        "localisation_choices": Localisation.CHOICES
+    })
 
 
 @login_required

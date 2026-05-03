@@ -63,26 +63,63 @@
             <div style="margin-bottom: 1.25rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
                 <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
-                    <option value="domicile">À domicile / Présentiel</option>
-                    <option value="enligne">En ligne / Visio</option>
-                    <option value="mixte">Mixte (Présentiel & Visio)</option>
+                    <option value="">Sélectionnez le mode de cours</option>
+                    <option value="PARENT_HOME">À domicile (chez le parent)</option>
+                    <option value="APPRENANT_HOME">À domicile (chez l'apprenant)</option>
+                    <option value="ONLINE">En ligne (visioconférence)</option>
+                    <option value="THIRD_PLACE">Lieu tiers (bibliothèque, café, etc.)</option>
+                    <option value="TEACHER_HOME">Au domicile du professeur</option>
+                    <option value="SMALL_GROUP">Petit groupe (max 5)</option>
+                    <option value="REMOTE">À distance (sans visio directe)</option>
                 </select>
             </div>
 
             <div id="eng_field_localisation" style="margin-bottom: 1.25rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
-                <select id="eng_localisation" name="localisation" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
+                <select id="eng_localisation" name="localisation" class="pcv-multi-select" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
                     <option value="">Sélectionnez un quartier-ville</option>
-                    <option value="Cotonou - Akpakpa">Cotonou - Akpakpa</option>
-                    <option value="Cotonou - Haie Vive">Cotonou - Haie Vive</option>
-                    <option value="Cotonou - Fidjrossè">Cotonou - Fidjrossè</option>
-                    <option value="Cotonou - Cadjèhoun">Cotonou - Cadjèhoun</option>
-                    <option value="Cotonou - Agla">Cotonou - Agla</option>
-                    <option value="Abomey-Calavi - Arimbo">Abomey-Calavi - Arimbo</option>
-                    <option value="Abomey-Calavi - Zoca">Abomey-Calavi - Zoca</option>
-                    <option value="Abomey-Calavi - Godomey">Abomey-Calavi - Godomey</option>
-                    <option value="Porto-Novo - Centre">Porto-Novo - Centre</option>
-                    <option value="Autre">Autre</option>
+                    <option value="Abomey - Abomey">Abomey - Abomey</option>
+                    <option value="Agla - Cotonou">Agla - Cotonou</option>
+                    <option value="Ahouansori - Cotonou">Ahouansori - Cotonou</option>
+                    <option value="Akpakpa - Cotonou">Akpakpa - Cotonou</option>
+                    <option value="Allada - Allada">Allada - Allada</option>
+                    <option value="Avedji - Abomey-Calavi">Avedji - Abomey-Calavi</option>
+                    <option value="Avotrou - Cotonou">Avotrou - Cotonou</option>
+                    <option value="Bohicon - Bohicon">Bohicon - Bohicon</option>
+                    <option value="Cadjèhoun - Cotonou">Cadjèhoun - Cotonou</option>
+                    <option value="Calavi - Abomey-Calavi">Calavi - Abomey-Calavi</option>
+                    <option value="Dantokpa - Cotonou">Dantokpa - Cotonou</option>
+                    <option value="Dassa - Dassa-Zoumè">Dassa - Dassa-Zoumè</option>
+                    <option value="Djidja - Abomey-Calavi">Djidja - Abomey-Calavi</option>
+                    <option value="Djougou - Djougou">Djougou - Djougou</option>
+                    <option value="Enagnon - Cotonou">Enagnon - Cotonou</option>
+                    <option value="Fidjrossè - Cotonou">Fidjrossè - Cotonou</option>
+                    <option value="Gbagba - Cotonou">Gbagba - Cotonou</option>
+                    <option value="Gbegamey - Cotonou">Gbegamey - Cotonou</option>
+                    <option value="Godomey - Abomey-Calavi">Godomey - Abomey-Calavi</option>
+                    <option value="Guinkomey - Cotonou">Guinkomey - Cotonou</option>
+                    <option value="Haie Vive - Cotonou">Haie Vive - Cotonou</option>
+                    <option value="Houeyiho - Cotonou">Houeyiho - Cotonou</option>
+                    <option value="Jéricho - Cotonou">Jéricho - Cotonou</option>
+                    <option value="Kandi - Kandi">Kandi - Kandi</option>
+                    <option value="Kpondéhou - Cotonou">Kpondéhou - Cotonou</option>
+                    <option value="Ladji - Cotonou">Ladji - Cotonou</option>
+                    <option value="Lokossa - Lokossa">Lokossa - Lokossa</option>
+                    <option value="Ménontin - Cotonou">Ménontin - Cotonou</option>
+                    <option value="Missebo - Cotonou">Missebo - Cotonou</option>
+                    <option value="Natitingou - Natitingou">Natitingou - Natitingou</option>
+                    <option value="Ouidah - Ouidah">Ouidah - Ouidah</option>
+                    <option value="Parakou - Parakou">Parakou - Parakou</option>
+                    <option value="Plakodji - Cotonou">Plakodji - Cotonou</option>
+                    <option value="Porto-Novo - Porto-Novo">Porto-Novo - Porto-Novo</option>
+                    <option value="Saint-Michel - Cotonou">Saint-Michel - Cotonou</option>
+                    <option value="Sainte-Rita - Cotonou">Sainte-Rita - Cotonou</option>
+                    <option value="Savalou - Savalou">Savalou - Savalou</option>
+                    <option value="Ste Cécile - Cotonou">Ste Cécile - Cotonou</option>
+                    <option value="Tokpa-Hoho - Cotonou">Tokpa-Hoho - Cotonou</option>
+                    <option value="Vedoko - Cotonou">Vedoko - Cotonou</option>
+                    <option value="Wonkoro - Parakou">Wonkoro - Parakou</option>
+                    <option value="Zogbo - Cotonou">Zogbo - Cotonou</option>
                 </select>
             </div>
 
@@ -397,7 +434,7 @@ function toggleModeFields() {
     const locField = document.getElementById('eng_field_localisation');
     const locInput = document.getElementById('eng_localisation');
 
-    if (mode === 'enligne') {
+    if (mode === 'ONLINE') {
         visioField.style.display = 'block';
         locField.style.display = 'none';
         locInput.required = false;
@@ -472,7 +509,6 @@ async function submitEngagement(event) {
     if (btn.disabled) return;
     
     // Récupérer les selects désactivés car FormData les ignore
-    const form = event.target;
     const disabledInputs = form.querySelectorAll('select:disabled');
     disabledInputs.forEach(input => input.disabled = false);
     

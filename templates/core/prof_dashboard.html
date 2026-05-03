@@ -382,6 +382,7 @@
                     </div>
 
                     <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.8;">
+                        ${!isTrial ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Matière</span>
                             <span style="font-weight: 700;">${eng.matiere}</span>
@@ -431,10 +432,11 @@
     }
 
     function toggleOptions(btn) {
-        document.querySelectorAll('.options-menu').forEach(menu => {
-            if (menu !== btn.nextElementSibling) menu.classList.remove('active');
+        const menu = btn.parentElement.querySelector('.options-menu');
+        document.querySelectorAll('.options-menu').forEach(m => {
+            if (m !== menu) m.classList.remove('active');
         });
-        btn.nextElementSibling.classList.toggle('active');
+        if (menu) menu.classList.toggle('active');
     }
 
     async function handleEngAction(id, action) {

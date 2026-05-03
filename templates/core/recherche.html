@@ -549,18 +549,11 @@
                         </div>
                         
                         <div class="filter-group">
-                            <select id="localisation" name="localisation" class="filter-input">
-                                <option value="">Quartier / Ville (Ex : Cotonou, Agla)</option>
-                                <option value="Cotonou" {% if localisation == 'Cotonou' %}selected{% endif %}>Cotonou</option>
-                                <option value="Abomey-Calavi" {% if localisation == 'Abomey-Calavi' %}selected{% endif %}>Abomey-Calavi</option>
-                                <option value="Akpakpa" {% if localisation == 'Akpakpa' %}selected{% endif %}>Akpakpa</option>
-                                <option value="Fidjrossè" {% if localisation == 'Fidjrossè' %}selected{% endif %}>Fidjrossè</option>
-                                <option value="Gbegamey" {% if localisation == 'Gbegamey' %}selected{% endif %}>Gbegamey</option>
-                                <option value="Saint-Michel" {% if localisation == 'Saint-Michel' %}selected{% endif %}>Saint-Michel</option>
-                                <option value="Zogbo" {% if localisation == 'Zogbo' %}selected{% endif %}>Zogbo</option>
-                                <option value="Jéricho" {% if localisation == 'Jéricho' %}selected{% endif %}>Jéricho</option>
-                                <option value="Missebo" {% if localisation == 'Missebo' %}selected{% endif %}>Missebo</option>
-                                <option value="Agla" {% if localisation == 'Agla' %}selected{% endif %}>Agla</option>
+                            <select id="localisation" name="localisation" class="filter-input pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)">
+                                <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
+                                {% for loc_val, loc_label in LOCALISATION_CHOICES %}
+                                <option value="{{ loc_val }}" {% if localisation == loc_val %}selected{% endif %}>{{ loc_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -583,19 +576,9 @@
                             <label class="filter-label" for="classe">Classe</label>
                             <select id="classe" name="classe" class="filter-input">
                                 <option value="">Toutes les classes</option>
-                                <option value="CP" {% if classe == 'CP' %}selected{% endif %}>CP</option>
-                                <option value="CE1" {% if classe == 'CE1' %}selected{% endif %}>CE1</option>
-                                <option value="CE2" {% if classe == 'CE2' %}selected{% endif %}>CE2</option>
-                                <option value="CM1" {% if classe == 'CM1' %}selected{% endif %}>CM1</option>
-                                <option value="CM2" {% if classe == 'CM2' %}selected{% endif %}>CM2</option>
-                                <option value="6ème" {% if classe == '6ème' %}selected{% endif %}>6ème</option>
-                                <option value="5ème" {% if classe == '5ème' %}selected{% endif %}>5ème</option>
-                                <option value="4ème" {% if classe == '4ème' %}selected{% endif %}>4ème</option>
-                                <option value="3ème" {% if classe == '3ème' %}selected{% endif %}>3ème</option>
-                                <option value="Seconde" {% if classe == 'Seconde' %}selected{% endif %}>Seconde</option>
-                                <option value="Première" {% if classe == 'Première' %}selected{% endif %}>Première</option>
-                                <option value="Terminale" {% if classe == 'Terminale' %}selected{% endif %}>Terminale</option>
-                                <option value="Supérieur" {% if classe == 'Supérieur' %}selected{% endif %}>Supérieur</option>
+                                {% for c_val, c_label in CLASS_LEVELS %}
+                                <option value="{{ c_val }}" {% if classe == c_val %}selected{% endif %}>{{ c_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         
@@ -614,9 +597,9 @@
                             <label class="filter-label" for="mode">Mode de cours</label>
                             <select id="mode" name="mode" class="filter-input">
                                 <option value="">Tous les modes</option>
-                                <option value="domicile" {% if mode == 'domicile' %}selected{% endif %}>À domicile</option>
-                                <option value="enligne" {% if mode == 'enligne' %}selected{% endif %}>En ligne</option>
-                                <option value="mixte" {% if mode == 'mixte' %}selected{% endif %}>Mixte</option>
+                                {% for m_val, m_label in COURSE_MODES %}
+                                <option value="{{ m_val }}" {% if mode == m_val %}selected{% endif %}>{{ m_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         
@@ -624,10 +607,9 @@
                             <label class="filter-label" for="soutien">Type de soutien</label>
                             <select id="soutien" name="soutien" class="filter-input">
                                 <option value="">Tous les types</option>
-                                <option value="scolaire" {% if soutien == 'scolaire' %}selected{% endif %}>Soutien scolaire</option>
-                                <option value="examen" {% if soutien == 'examen' %}selected{% endif %}>Préparation examen</option>
-                                <option value="remise-a-niveau" {% if soutien == 'remise-a-niveau' %}selected{% endif %}>Remise à niveau</option>
-                                <option value="loisir" {% if soutien == 'loisir' %}selected{% endif %}>Loisir</option>
+                                {% for s_val, s_label in SUPPORT_CATEGORIES %}
+                                <option value="{{ s_val }}" {% if soutien == s_val %}selected{% endif %}>{{ s_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
