@@ -1739,9 +1739,10 @@ def admin_api_prof_action(request, prof_id):
 @login_required
 def profil_eleve(request, type_eleve, id_eleve):
     from django.http import Http404
-    from .choices import ObjectifMotivation
+    from .choices import ObjectifMotivation, ObjectifApprenant
     
     obj_dict = dict(ObjectifMotivation.CHOICES)
+    obj_dict.update(dict(ObjectifApprenant.CHOICES))
     is_owner = False
     is_teacher = getattr(request.user.profile, 'role', '') == Profile.ROLE_PROF
     eleve_data = {}
