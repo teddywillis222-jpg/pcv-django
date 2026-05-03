@@ -979,8 +979,8 @@ def professeur_detail(request, teacher_slug):
     existing_conversation_id = None
     
     if request.user.is_authenticated:
-        # is_premium est vrai si l'utilisateur a un abonnement actif
-        if request.user.abonnements.exists():
+        # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
+        if request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists():
             is_premium = True
 
         # Vérifier conversation existante
@@ -1093,8 +1093,8 @@ def api_teacher_profile(request, teacher_slug):
                 existing_conversation_id = conv.id
                 
             try:
-                # is_premium est vrai si l'utilisateur a un abonnement actif
-                if request.user.abonnements.exists():
+                # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
+                if request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists():
                     is_premium = True
 
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
@@ -1214,6 +1214,7 @@ def api_engagement(request):
             
         engagement.type_engagement = type_eng
         engagement.matiere = data.get('matiere', '')
+        engagement.classe = data.get('classe', '')
         engagement.mode_de_cours = data.get('course_mode', '')
         engagement.localisation_option = data.get('localisation', '')
         engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')

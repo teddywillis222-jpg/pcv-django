@@ -32,7 +32,7 @@
             </a>
         {% elif user.is_authenticated and user.profile.role != 'PROF' %}
         <button class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: all 0.3s;" 
-            onclick="openEngagementForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null)">
+            onclick="openEngagementForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
             Proposer un engagement
         </button>
         {% elif not user.is_authenticated %}

@@ -1,62 +1,77 @@
 <!-- Modal Engagement Dynamique -->
 <div id="engagementModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 4000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto;">
-        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10;">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Proposer un engagement</h3>
-            <button type="button" onclick="closeEngagementModal()" style="background: none; border: none; cursor: pointer; color: #64748b;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+        <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 20;">
+            <div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Proposer un engagement</h3>
+                <div id="eng_prof_display" style="font-size: 0.9rem; color: #64748b; margin-top: 0.25rem; font-weight: 500;"></div>
+            </div>
+            <button type="button" onclick="closeEngagementModal()" style="background: #f1f5f9; border: none; cursor: pointer; color: #64748b; padding: 0.5rem; border-radius: 50%; transition: all 0.2s;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
         </div>
         
-        <!-- Bannière dynamique (gérée par JS) -->
-        <div id="eng_banner" style="display: none; padding: 1rem 1.5rem; background: var(--success-50); border-bottom: 1px solid var(--success-200); font-size: 0.9rem; color: var(--success-700);">
-            <p id="eng_banner_text" style="margin: 0; line-height: 1.5;"></p>
-            <a id="eng_banner_btn" href="#" style="display: none; margin-top: 0.5rem; font-weight: bold; text-decoration: underline; color: var(--success-700);">Gérer mon plan</a>
+        <!-- Bannière dynamique d'essai (TOUJOURS EN HAUT) -->
+        <div id="eng_banner" style="display: none; padding: 1rem 1.5rem; background: #f0fdf4; border-bottom: 1px solid #dcfce7; font-size: 0.95rem; color: #166534;">
+            <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                <div style="background: #16a34a; color: white; padding: 0.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div>
+                    <p id="eng_banner_text" style="margin: 0; line-height: 1.4; font-weight: 600;"></p>
+                    <a id="eng_banner_btn" href="#" style="display: none; margin-top: 0.4rem; font-weight: 700; text-decoration: underline; color: #166534; font-size: 0.85rem;">Passer en Premium pour en bénéficier</a>
+                </div>
+            </div>
         </div>
 
         <form id="engagementForm" onsubmit="submitEngagement(event)" style="padding: 1.5rem;">
             <input type="hidden" id="eng_teacher_id" name="teacher_id">
+            <input type="hidden" id="eng_teacher_name_hidden" name="teacher_name">
             
             <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Type d'engagement</label>
-                <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc;" required>
-                    <option value="standard">Engagement Standard</option>
-                    <option value="essai">Engagement d'Essai</option>
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Type d'engagement <span style="color:#ef4444">*</span></label>
+                <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; cursor: pointer; font-weight: 600; color: #1e293b; transition: border-color 0.2s;" required>
+                    <option value="standard">Engagement Standard (Cours réguliers)</option>
+                    <option value="essai">Engagement d'Essai (Cours de test unique)</option>
                 </select>
+                <p id="eng_type_notice" style="display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #ef4444; font-weight: 500;">L'option essai requiert un abonnement Access+ Premium.</p>
             </div>
 
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Professeur</label>
-                <input type="text" id="eng_teacher_name" readonly style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; background: #f8fafc; color: #64748b;">
-            </div>
-            
             <!-- Champs Communs -->
-            <div id="eng_field_enfants" style="margin-bottom: 1rem; display: none;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Enfant concerné <span style="color:#ef4444">*</span></label>
-                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+            <div id="eng_field_enfants" style="margin-bottom: 1.25rem; display: none;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Élève / Enfant bénéficiaire <span style="color:#ef4444">*</span></label>
+                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
                     <!-- Rempli par JS -->
                 </select>
             </div>
 
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Matière ciblée <span style="color:#ef4444">*</span></label>
-                <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
-                    <!-- Rempli par JS -->
-                </select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
+                    <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                        <!-- Rempli par JS -->
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Classe de l'élève <span style="color:#ef4444">*</span></label>
+                    <select id="eng_classe" name="classe" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                        <!-- Rempli par JS -->
+                    </select>
+                </div>
             </div>
             
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Mode de cours <span style="color:#ef4444">*</span></label>
-                <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
-                    <option value="domicile">À domicile</option>
-                    <option value="enligne">En ligne</option>
-                    <option value="mixte">Mixte</option>
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
+                <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <option value="domicile">À domicile / Présentiel</option>
+                    <option value="enligne">En ligne / Visio</option>
+                    <option value="mixte">Mixte (Présentiel & Visio)</option>
                 </select>
             </div>
 
-            <div id="eng_field_localisation" style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
-                <select id="eng_localisation" name="localisation" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+            <div id="eng_field_localisation" style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
+                <select id="eng_localisation" name="localisation" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
                     <option value="">Sélectionnez un quartier-ville</option>
                     <option value="Cotonou - Akpakpa">Cotonou - Akpakpa</option>
                     <option value="Cotonou - Haie Vive">Cotonou - Haie Vive</option>
@@ -71,9 +86,9 @@
                 </select>
             </div>
 
-            <div id="eng_field_visio" style="margin-bottom: 1rem; display: none;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Plateforme visio préférée</label>
-                <select name="plateforme_visio" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+            <div id="eng_field_visio" style="margin-bottom: 1.25rem; display: none;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Plateforme visio préférée</label>
+                <select name="plateforme_visio" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
                     <option value="">Sélectionnez une plateforme</option>
                     <option value="zoom">Zoom</option>
                     <option value="google_meet">Google Meet</option>
@@ -84,10 +99,10 @@
 
             <!-- Champs Spécifiques STANDARD -->
             <div id="eng_group_standard">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Fréquence <span style="color:#ef4444">*</span></label>
-                        <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Fréquence <span style="color:#ef4444">*</span></label>
+                        <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
                             <option value="1">1 fois / semaine</option>
                             <option value="2">2 fois / semaine</option>
                             <option value="3">3 fois / semaine</option>
@@ -98,8 +113,8 @@
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Durée par séance <span style="color:#ef4444">*</span></label>
-                        <select id="eng_duree" name="duree_seance" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée par séance <span style="color:#ef4444">*</span></label>
+                        <select id="eng_duree" name="duree_seance" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
                             <option value="1H">1h</option>
                             <option value="1H30">1h30</option>
                             <option value="2H">2h</option>
@@ -111,40 +126,40 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Date de début souhaitée <span style="color:#ef4444">*</span></label>
-                        <input type="date" name="date_debut" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date de début souhaitée <span style="color:#ef4444">*</span></label>
+                        <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Durée totale (mois)</label>
-                        <input type="number" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée totale (mois)</label>
+                        <input type="number" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Budget proposé (FCFA / heure)</label>
-                    <input type="number" name="budget" placeholder="Laissez vide pour accepter le tarif du prof" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Budget proposé (FCFA / heure)</label>
+                    <input type="number" name="budget" placeholder="Laissez vide pour accepter le tarif du prof" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                 </div>
             </div>
 
             <!-- Champs Spécifiques ESSAI -->
-            <div id="eng_group_essai" style="display: none; background: #fafafa; padding: 1rem; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin-bottom: 1.5rem;">
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Date et Heure de l'essai souhaitée <span style="color:#ef4444">*</span></label>
-                    <input type="datetime-local" id="eng_date_essai" name="date_essai" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
+            <div id="eng_group_essai" style="display: none; background: #f8fafc; padding: 1.25rem; border-radius: 1rem; border: 2px dashed #cbd5e1; margin-bottom: 1.5rem;">
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date et Heure de l'essai souhaitée <span style="color:#ef4444">*</span></label>
+                    <input type="datetime-local" id="eng_date_essai" name="date_essai" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Description détaillée (Lieu ou lien provisoire)</label>
-                    <textarea name="description_essai" rows="3" placeholder="Précisez un lieu de rencontre ou une adresse exacte si à domicile..." style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; resize: vertical;"></textarea>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Précisions pour l'essai</label>
+                    <textarea name="description_essai" rows="3" placeholder="Précisez un lieu de rencontre, vos attentes spécifiques pour ce test..." style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit;"></textarea>
                 </div>
             </div>
             
-            <div style="display: flex; gap: 1rem;">
-                <button type="button" onclick="closeEngagementModal()" style="flex: 1; padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+            <div style="display: flex; gap: 1rem; position: sticky; bottom: 0; background: white; padding-top: 1rem; z-index: 10; border-top: 1px solid #f1f5f9;">
+                <button type="button" onclick="closeEngagementModal()" style="flex: 1; padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">
                     Annuler
                 </button>
-                <button type="submit" id="eng_submit_btn" style="flex: 2; padding: 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                <button type="submit" id="eng_submit_btn" style="flex: 2; padding: 1rem; background: #16a34a; color: white; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2);">
                     Envoyer la proposition
                 </button>
             </div>
@@ -172,6 +187,11 @@
     from { transform: scale(0); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+#engagementModal input:focus, #engagementModal select:focus, #engagementModal textarea:focus {
+    outline: none;
+    border-color: #16a34a !important;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
+}
 </style>
 
 <script>
@@ -181,14 +201,16 @@ let currentTeacherData = {};
 function openEngagementFromTrial(trialData) {
     // Cette fonction permet de convertir un essai en engagement standard
     document.getElementById('eng_teacher_id').value = trialData.teacher_id;
-    document.getElementById('eng_teacher_name').value = trialData.teacher_name;
+    document.getElementById('eng_prof_display').textContent = 'Prof. ' + trialData.teacher_name;
+    document.getElementById('eng_teacher_name_hidden').value = trialData.teacher_name;
     
     currentTeacherData = { 
         is_parent: true, 
-        is_premium: true, // Forcé car accès+premium requis pour essai
-        essai_actif: false, // On désactive l'essai puisqu'on convertit
+        is_premium: true, 
+        essai_actif: false,
         children: [{id: trialData.student_id, prenom: trialData.student_name}],
-        existing_engagement: null 
+        existing_engagement: null,
+        classes: trialData.classe ? [trialData.classe] : []
     };
 
     // Gérer l'enfant
@@ -205,17 +227,23 @@ function openEngagementFromTrial(trialData) {
     matiereSelect.add(new Option(trialData.matiere, trialData.matiere, true, true));
     matiereSelect.disabled = true;
 
+    // Gérer la classe
+    const classeSelect = document.getElementById('eng_classe');
+    classeSelect.innerHTML = '';
+    if (trialData.classe) {
+        classeSelect.add(new Option(trialData.classe, trialData.classe, true, true));
+    }
+    classeSelect.disabled = true;
+
     document.getElementById('engagementForm').reset();
     
-    // Forcer le type Standard et bloquer Essai
     const typeSelect = document.getElementById('eng_type');
     typeSelect.value = 'standard';
     for(let i=0; i<typeSelect.options.length; i++) {
         if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
     }
-    typeSelect.disabled = true; // Bloqué sur standard
+    typeSelect.disabled = true;
 
-    // Pré-remplir le mode
     document.getElementById('eng_mode').value = trialData.mode_raw || 'domicile';
     if (trialData.lieu) {
         document.getElementById('eng_localisation').value = trialData.lieu;
@@ -227,17 +255,23 @@ function openEngagementFromTrial(trialData) {
     document.getElementById('engagementModal').style.display = 'flex';
 }
 
-function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null) {
+function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null, classesStr = '') {
     requireAuth(() => {
+        document.getElementById('engagementForm').reset();
+        
         document.getElementById('eng_teacher_id').value = teacherId;
-        document.getElementById('eng_teacher_name').value = teacherName;
+        document.getElementById('eng_prof_display').textContent = 'Prof. ' + teacherName;
+        document.getElementById('eng_teacher_name_hidden').value = teacherName;
+        
+        const classes = classesStr ? classesStr.split(',').map(c => c.trim()) : [];
         
         currentTeacherData = { 
             is_parent: isParent, 
             is_premium: isPremium, 
             essai_actif: essaiActif,
             children: children,
-            existing_engagement: existingEng
+            existing_engagement: existingEng,
+            classes: classes
         };
 
         // Gérer le dropdown des enfants
@@ -245,21 +279,17 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         enfantSelect.innerHTML = '';
         if (children && children.length > 0) {
             document.getElementById('eng_field_enfants').style.display = 'block';
-            enfantSelect.required = true;
             if (children.length === 1) {
                 const opt = new Option(children[0].prenom, children[0].id, true, true);
                 enfantSelect.add(opt);
                 enfantSelect.disabled = true;
-                enfantSelect.style.backgroundColor = '#f8fafc';
             } else {
                 enfantSelect.add(new Option('Sélectionnez un enfant', ''));
                 children.forEach(c => enfantSelect.add(new Option(c.prenom, c.id)));
                 enfantSelect.disabled = false;
-                enfantSelect.style.backgroundColor = 'white';
             }
         } else {
             document.getElementById('eng_field_enfants').style.display = 'none';
-            enfantSelect.required = false;
         }
 
         // Gérer le dropdown des matières
@@ -269,44 +299,89 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         if (matList.length === 1) {
             matiereSelect.add(new Option(matList[0], matList[0], true, true));
             matiereSelect.disabled = true;
-            matiereSelect.style.backgroundColor = '#f8fafc';
         } else {
             matiereSelect.add(new Option('Sélectionnez une matière', ''));
             matList.forEach(m => matiereSelect.add(new Option(m, m)));
             matiereSelect.disabled = false;
-            matiereSelect.style.backgroundColor = 'white';
         }
 
-        document.getElementById('engagementForm').reset();
+        // Gérer le dropdown des classes
+        const classeSelect = document.getElementById('eng_classe');
+        classeSelect.innerHTML = '';
+        const classMap = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'};
+        if (classes.length > 0) {
+            if (classes.length === 1) {
+                const label = classMap[classes[0]] || classes[0];
+                classeSelect.add(new Option(label, classes[0], true, true));
+                classeSelect.disabled = true;
+            } else {
+                classeSelect.add(new Option('Sélectionnez la classe', ''));
+                classes.forEach(c => {
+                    const label = classMap[c] || c;
+                    classeSelect.add(new Option(label, c));
+                });
+                classeSelect.disabled = false;
+            }
+        } else {
+            // Toutes les classes si vide
+            classeSelect.add(new Option('Sélectionnez la classe', ''));
+            Object.keys(classMap).forEach(c => classeSelect.add(new Option(classMap[c], c)));
+            classeSelect.disabled = false;
+        }
         
+        // Gérer la bannière d'essai (TOUJOURS VISIBLE SI PROF LE PROPOSE)
+        const banner = document.getElementById('eng_banner');
+        const bannerText = document.getElementById('eng_banner_text');
+        const bannerBtn = document.getElementById('eng_banner_btn');
+        const typeSelect = document.getElementById('eng_type');
+        const typeNotice = document.getElementById('eng_type_notice');
+
+        if (essaiActif) {
+            banner.style.display = 'block';
+            if (isPremium) {
+                bannerText.textContent = "Ce professeur propose un essai gratuit. Vous pouvez sélectionner 'Engagement d'Essai' ci-dessous.";
+                bannerBtn.style.display = 'none';
+                typeNotice.style.display = 'none';
+                // Activer l'option essai
+                for(let i=0; i<typeSelect.options.length; i++) {
+                    if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = false;
+                }
+            } else {
+                bannerText.textContent = "Ce professeur propose un essai gratuit aux membres Access+ Premium.";
+                bannerBtn.style.display = 'inline-block';
+                bannerBtn.href = '/gestion-plan/'; // Lien vers abonnement
+                typeNotice.style.display = 'block';
+                // Désactiver l'option essai
+                typeSelect.value = 'standard';
+                for(let i=0; i<typeSelect.options.length; i++) {
+                    if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
+                }
+            }
+        } else {
+            banner.style.display = 'none';
+            typeNotice.style.display = 'none';
+            typeSelect.value = 'standard';
+            for(let i=0; i<typeSelect.options.length; i++) {
+                if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
+            }
+        }
+
         // Pré-remplissage si un engagement existe déjà
         if (existingEng) {
-            document.getElementById('eng_type').value = existingEng.type || 'standard';
+            typeSelect.value = existingEng.type || 'standard';
             matiereSelect.value = existingEng.matiere;
+            if (existingEng.classe) classeSelect.value = existingEng.classe;
             document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'domicile';
             if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
             if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1';
             
             document.getElementById('eng_submit_btn').textContent = 'Modifier ma proposition';
         } else {
-            document.getElementById('eng_type').value = 'standard';
             document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
         }
 
-        // Verrouillage du type si conditions non remplies
-        const typeSelect = document.getElementById('eng_type');
-        if (!essaiActif || !isPremium) {
-            typeSelect.value = 'standard';
-            // On désactive l'option essai si elle est présente
-            for(let i=0; i<typeSelect.options.length; i++) {
-                if(typeSelect.options[i].value === 'essai') typeSelect.options[i].disabled = true;
-            }
-        } else {
-            for(let i=0; i<typeSelect.options.length; i++) {
-                typeSelect.options[i].disabled = false;
-            }
-        }
-
+        typeSelect.disabled = false; // Par défaut
+        
         toggleEngagementFields();
         document.getElementById('engagementModal').style.display = 'flex';
     });
@@ -318,19 +393,28 @@ function closeEngagementModal() {
 
 function toggleModeFields() {
     const mode = document.getElementById('eng_mode').value;
-    document.getElementById('eng_field_visio').style.display = mode === 'enligne' ? 'block' : 'none';
-    document.getElementById('eng_field_localisation').style.display = mode === 'enligne' ? 'none' : 'block';
+    const visioField = document.getElementById('eng_field_visio');
+    const locField = document.getElementById('eng_field_localisation');
+    const locInput = document.getElementById('eng_localisation');
+
+    if (mode === 'enligne') {
+        visioField.style.display = 'block';
+        locField.style.display = 'none';
+        locInput.required = false;
+    } else {
+        visioField.style.display = 'none';
+        locField.style.display = 'block';
+        locInput.required = true;
+    }
 }
 
 function toggleEngagementFields() {
     const type = document.getElementById('eng_type').value;
     const stdGroup = document.getElementById('eng_group_standard');
     const essaiGroup = document.getElementById('eng_group_essai');
-    const banner = document.getElementById('eng_banner');
-    const bannerText = document.getElementById('eng_banner_text');
-    const bannerBtn = document.getElementById('eng_banner_btn');
     const submitBtn = document.getElementById('eng_submit_btn');
 
+    // Reset required
     stdGroup.querySelectorAll('input, select').forEach(el => el.required = false);
     document.getElementById('eng_date_essai').required = false;
 
@@ -339,40 +423,27 @@ function toggleEngagementFields() {
         essaiGroup.style.display = 'block';
         document.getElementById('eng_date_essai').required = true;
         
-        banner.style.display = 'block';
-        if (currentTeacherData.essai_actif) {
-            if (currentTeacherData.is_premium) {
-                bannerText.textContent = "Ce professeur propose un essai gratuit, vous pouvez opter pour un engagement de type essai pour en programmer un.";
-                banner.style.background = "var(--success-50)";
-                banner.style.color = "var(--success-700)";
-                bannerBtn.style.display = "none";
-                submitBtn.disabled = false;
-            } else {
-                bannerText.textContent = "Ce professeur propose un essai gratuit. Passez à un abonnement access+premium pour pouvoir programmer un essai et plus encore.";
-                banner.style.background = "#fffbeb";
-                banner.style.color = "#b45309";
-                bannerBtn.style.display = "inline-block";
-                bannerBtn.href = "#";
-                submitBtn.disabled = true;
-            }
-        } else {
-            bannerText.textContent = "Ce professeur ne propose pas d'essai gratuit actuellement.";
-            banner.style.background = "#fef2f2";
-            banner.style.color = "#b91c1c";
-            bannerBtn.style.display = "none";
+        // Vérifier si autorisé (double sécurité)
+        if (!currentTeacherData.is_premium) {
             submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.title = "Access+ Premium requis";
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.title = "";
         }
-
     } else {
         stdGroup.style.display = 'block';
         essaiGroup.style.display = 'none';
         
-        document.querySelector('select[name="frequence"]').required = true;
-        document.querySelector('select[name="duree_seance"]').required = true;
-        document.querySelector('input[name="date_debut"]').required = true;
+        document.getElementById('eng_frequence').required = true;
+        document.getElementById('eng_duree').required = true;
+        document.getElementById('eng_date_debut').required = true;
         
-        banner.style.display = 'none';
         submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.title = "";
     }
     toggleModeFields();
 }
@@ -382,12 +453,20 @@ async function submitEngagement(event) {
     const btn = document.getElementById('eng_submit_btn');
     if (btn.disabled) return;
     
-    btn.disabled = true;
-    btn.textContent = 'Envoi...';
-    
+    // Récupérer les selects désactivés car FormData les ignore
     const form = event.target;
+    const disabledInputs = form.querySelectorAll('select:disabled');
+    disabledInputs.forEach(input => input.disabled = false);
+    
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    
+    // Re-désactiver après capture
+    disabledInputs.forEach(input => input.disabled = true);
+    
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Envoi...';
     
     try {
         const response = await fetch('/api/engagement/', {
@@ -402,14 +481,12 @@ async function submitEngagement(event) {
         const result = await response.json();
         
         if (response.ok && result.success) {
-            // Afficher le modal de succès au lieu de l'alert
             closeEngagementModal();
             if (typeof closeSidePanel === 'function') closeSidePanel();
             
             const successModal = document.getElementById('engagementSuccessModal');
             const dashBtn = document.getElementById('btn_go_dashboard');
             
-            // Déterminer l'URL de redirection selon le rôle
             const isParent = currentTeacherData && currentTeacherData.is_parent;
             dashBtn.href = isParent ? '/parent/dashboard/' : '/apprenant/dashboard/';
             
@@ -421,7 +498,7 @@ async function submitEngagement(event) {
         alert('Erreur de connexion réseau. Veuillez réessayer.');
     } finally {
         btn.disabled = false;
-        btn.textContent = 'Envoyer la proposition';
+        btn.textContent = originalText;
     }
 }
 
