@@ -228,12 +228,12 @@ def recherche(request):
     )
     
     # Récupération des paramètres de recherche
-    matiere = request.GET.get('matiere', '')
-    localisation = request.GET.get('localisation', '')
-    classe = request.GET.get('classe', '')
-    prix = request.GET.get('prix', '')
-    mode = request.GET.get('mode', '')
-    soutien = request.GET.get('soutien', '')
+    matiere = request.GET.get('matiere', '').strip()
+    localisation = request.GET.get('localisation', '').strip()
+    classe = request.GET.get('classe', '').strip()
+    prix = request.GET.get('prix', '').strip()
+    mode = request.GET.get('mode', '').strip()
+    soutien = request.GET.get('soutien', '').strip()
 
     if matiere:
         professeurs = professeurs.filter(matiere_enseignee__icontains=matiere)
@@ -256,11 +256,19 @@ def recherche(request):
         elif prix == "10000+":
             professeurs = professeurs.filter(tarif_horaire__gt=10000)
 
-    professeurs = professeurs.order_by('-est_certifie', '-id')
+    from django.db.models import Avg, Count
+    professeurs = professeurs.annotate(
+        real_note=Avg('evaluations_recues__note'),
+        real_avis_count=Count('evaluations_recues')
+    ).order_by('-est_certifie', '-id')
 
     for prof in professeurs:
-        prof.moyenne_avis = 4.8 if prof.est_certifie else 4.5
-        prof.nombre_avis = 12 if prof.est_certifie else 3
+        if prof.real_avis_count > 0:
+            prof.moyenne_avis = round(prof.real_note, 1)
+            prof.nombre_avis = prof.real_avis_count
+        else:
+            prof.moyenne_avis = prof.note_initiale_equipe
+            prof.nombre_avis = 1
 
     # Contexte Parent/Enfants
     parent_children = []
@@ -941,13 +949,25 @@ def professeur_detail(request, teacher_slug):
     teacher = get_object_or_404(TeacherProfile, slug=teacher_slug)
     
     # Calcul des stats sécurisé
-    from django.db.models import Avg
+    from django.db.models import Avg, Count
     engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
     temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
     
     engagements_actifs = teacher.engagements.filter(
         statut_general__in=[StatutGeneral.EN_COURS, StatutGeneral.CONFIRME, StatutGeneral.FINALISE]
     ).count()
+
+    # Moyenne avis dynamique
+    evals_stats = teacher.evaluations_recues.aggregate(
+        real_note=Avg('note'),
+        real_count=Count('id')
+    )
+    if evals_stats['real_count'] > 0:
+        teacher.moyenne_avis = round(evals_stats['real_note'], 1)
+        teacher.nombre_avis = evals_stats['real_count']
+    else:
+        teacher.moyenne_avis = teacher.note_initiale_equipe
+        teacher.nombre_avis = 1
     
     # Auth context
     is_parent = False
@@ -956,8 +976,15 @@ def professeur_detail(request, teacher_slug):
     parent_children_json = "[]"
     existing_engagement = None
     existing_engagement_json = "null"
+    existing_conversation_id = None
     
     if request.user.is_authenticated:
+        # Vérifier conversation existante
+        from .models import Conversation
+        conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
+        if conv:
+            existing_conversation_id = conv.id
+
         if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
             is_parent = True
             if request.user.abonnements.exists():
@@ -1002,7 +1029,8 @@ def professeur_detail(request, teacher_slug):
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
         'existing_engagement': existing_engagement,
-        'existing_engagement_json': existing_engagement_json
+        'existing_engagement_json': existing_engagement_json,
+        'existing_conversation_id': existing_conversation_id
     }
     
     return render(request, "core/professeur_detail.html", context)
@@ -1015,9 +1043,10 @@ def api_teacher_profile(request, teacher_slug):
         teacher = TeacherProfile.objects.get(slug=teacher_slug)
         
         # Calcul des stats sécurisé
+        from django.db.models import Avg, Count
+        
         engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
         if engs_stats.exists():
-            from django.db.models import Avg
             temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg']
         else:
             temps_moyen_reponse = None
@@ -1026,13 +1055,32 @@ def api_teacher_profile(request, teacher_slug):
             statut_general__in=[StatutGeneral.EN_COURS, StatutGeneral.CONFIRME, StatutGeneral.FINALISE]
         ).count()
         
+        # Moyenne avis dynamique
+        evals_stats = teacher.evaluations_recues.aggregate(
+            real_note=Avg('note'),
+            real_count=Count('id')
+        )
+        if evals_stats['real_count'] > 0:
+            teacher.moyenne_avis = round(evals_stats['real_note'], 1)
+            teacher.nombre_avis = evals_stats['real_count']
+        else:
+            teacher.moyenne_avis = teacher.note_initiale_equipe
+            teacher.nombre_avis = 1
+        
         # Contexte d'authentification sécurisé
         is_parent = False
         is_premium = False
         parent_children = []
         existing_engagement = None
+        existing_conversation_id = None
         
         if request.user.is_authenticated:
+            # Vérifier conversation existante
+            from .models import Conversation
+            conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
+            if conv:
+                existing_conversation_id = conv.id
+                
             try:
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
                     is_parent = True
@@ -1072,6 +1120,7 @@ def api_teacher_profile(request, teacher_slug):
             'engagements_actifs': engagements_actifs,
             'is_parent': is_parent,
             'is_premium': is_premium,
+            'existing_conversation_id': existing_conversation_id,
             'readable_modes': readable_modes,
             'readable_classes': readable_classes,
             'parent_children': parent_children,
@@ -1081,7 +1130,8 @@ def api_teacher_profile(request, teacher_slug):
         return JsonResponse({
             'html': html,
             'parent_children': parent_children,
-            'existing_engagement': existing_engagement
+            'existing_engagement': existing_engagement,
+            'existing_conversation_id': existing_conversation_id,
         })
         
     except TeacherProfile.DoesNotExist:

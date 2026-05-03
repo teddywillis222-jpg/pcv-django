@@ -455,6 +455,12 @@ class TeacherProfile(models.Model):
     nb_engagements_finalises = models.PositiveIntegerField(default=0)
     nb_engagements_termines = models.PositiveIntegerField(default=0)
     nb_engagements_total = models.PositiveIntegerField(default=0)
+    note_initiale_equipe = models.DecimalField(
+        max_digits=3, 
+        decimal_places=1, 
+        default=4.5, 
+        help_text="Note attribuée par l'équipe à la validation"
+    )
     temps_moyen_reponse = models.DecimalField(
         max_digits=10,
         decimal_places=2,

@@ -26,7 +26,11 @@
     
     <!-- Boutons d'action -->
     <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem;">
-        {% if user.is_authenticated and user.profile.role != 'PROF' %}
+        {% if existing_conversation_id %}
+            <a href="{% url 'conversation_detail' existing_conversation_id %}" class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: var(--secondary); color: white; border: none; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); transition: all 0.3s;">
+                Rejoindre la conversation
+            </a>
+        {% elif user.is_authenticated and user.profile.role != 'PROF' %}
         <button class="btn-view-profile" style="width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 12px; background: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: all 0.3s;" 
             onclick="openEngagementForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null)">
             Proposer un engagement
@@ -182,7 +186,7 @@
                 </div>
             {% else %}
                 <p style="color: #64748b; text-align: center; padding: 2rem; background: #f8fafc; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin: 0;">
-                    Ce professeur n'a pas encore reçu d'avis.
+                    Ce profil a été certifié par notre équipe. Soyez le premier parent à laisser un avis écrit après votre cours !
                 </p>
             {% endif %}
         </div>

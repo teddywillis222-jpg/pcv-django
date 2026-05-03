@@ -104,6 +104,30 @@
     height: 18px;
 }
 
+.reset-filters-btn {
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    height: auto;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.reset-filters-btn:hover {
+    background: #e2e8f0;
+    color: #334155;
+}
+
 /* Filtres Avancés */
 .advanced-filters {
     background: white;
@@ -185,11 +209,21 @@
     flex: 1;
 }
 
+.teacher-name-container {
+    display: flex;
+    align-items: center;
+    margin: 0 0 0.25rem 0;
+    max-width: 100%;
+}
+
 .teacher-name {
     font-size: 1.1rem;
     font-weight: 700;
     color: #1e293b;
-    margin: 0 0 0.25rem 0;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .teacher-subjects {
@@ -531,10 +565,15 @@
                         </div>
                     </div>
                     
-                    <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                        Plus de filtres
-                    </button>
+                    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
+                        <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                            Plus de filtres
+                        </button>
+                        <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
+                            🧹 Réinitialiser
+                        </a>
+                    </div>
                 </div>
                 
                 <!-- Filtres Avancés -->
@@ -608,13 +647,15 @@
                         {{ teacher.prenom|first }}{{ teacher.nom|first }}
                     </div>
                     {% endif %}
-                    <div class="teacher-info">
-                        <h3 class="teacher-name">
-                            {{ teacher.prenom }} {{ teacher.nom }}
-                            {% if teacher.statut_de_validation == 'APPROVED' %}
-                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-left: 6px; vertical-align: middle;">✓</span>
+                    <div class="teacher-info" style="min-width: 0;">
+                        <div class="teacher-name-container">
+                            <h3 class="teacher-name" title="{{ teacher.prenom }} {{ teacher.nom }}">
+                                {{ teacher.prenom }} {{ teacher.nom }}
+                            </h3>
+                            {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
+                            <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; width: 18px; height: 18px; background: #16a34a; color: white; border-radius: 50%; font-size: 10px; margin-left: 6px; vertical-align: middle; flex-shrink: 0;" title="Profil vérifié">✓</span>
                             {% endif %}
-                        </h3>
+                        </div>
                         <p class="teacher-subjects">{{ teacher.matiere_enseignee }}</p>
                         <p style="margin: 2px 0; font-size: 0.8rem; color: #64748b; font-weight: 400; text-transform: lowercase;">
                             {% if teacher.classes_enseignees %}
