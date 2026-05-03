@@ -33,7 +33,7 @@
             <!-- Champs Communs -->
             <div id="eng_field_enfants" style="margin-bottom: 1rem; display: none;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">Enfant concerné <span style="color:#ef4444">*</span></label>
-                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;" required>
+                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;">
                     <!-- Rempli par JS -->
                 </select>
             </div>
@@ -152,6 +152,28 @@
     </div>
 </div>
 
+<!-- Modal Succès Engagement -->
+<div id="engagementSuccessModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 450px; text-align: center; padding: 2.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Proposition envoyée !</h3>
+        <p style="color: #64748b; margin-bottom: 2rem; line-height: 1.6;">Votre proposition d'engagement a été soumise avec succès. Le professeur a été notifié et vous répondra très bientôt.</p>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a id="btn_go_dashboard" href="#" style="padding: 1rem; background: #16a34a; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s;">Accéder à mon espace</a>
+            <button onclick="document.getElementById('engagementSuccessModal').style.display='none'" style="padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer;">Rester sur cette page</button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+</style>
+
 <script>
 // Logic for engagement modal (used in both search and detail pages)
 let currentTeacherData = {};
@@ -223,6 +245,7 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         enfantSelect.innerHTML = '';
         if (children && children.length > 0) {
             document.getElementById('eng_field_enfants').style.display = 'block';
+            enfantSelect.required = true;
             if (children.length === 1) {
                 const opt = new Option(children[0].prenom, children[0].id, true, true);
                 enfantSelect.add(opt);
@@ -236,6 +259,7 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             }
         } else {
             document.getElementById('eng_field_enfants').style.display = 'none';
+            enfantSelect.required = false;
         }
 
         // Gérer le dropdown des matières
@@ -378,9 +402,18 @@ async function submitEngagement(event) {
         const result = await response.json();
         
         if (response.ok && result.success) {
-            alert(result.message || 'Engagement soumis avec succès !');
+            // Afficher le modal de succès au lieu de l'alert
             closeEngagementModal();
             if (typeof closeSidePanel === 'function') closeSidePanel();
+            
+            const successModal = document.getElementById('engagementSuccessModal');
+            const dashBtn = document.getElementById('btn_go_dashboard');
+            
+            // Déterminer l'URL de redirection selon le rôle
+            const isParent = currentTeacherData && currentTeacherData.is_parent;
+            dashBtn.href = isParent ? '/parent/dashboard/' : '/apprenant/dashboard/';
+            
+            successModal.style.display = 'flex';
         } else {
             alert(result.error || 'Erreur lors de l\'envoi');
         }

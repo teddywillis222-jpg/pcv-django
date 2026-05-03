@@ -979,6 +979,10 @@ def professeur_detail(request, teacher_slug):
     existing_conversation_id = None
     
     if request.user.is_authenticated:
+        # is_premium est vrai si l'utilisateur a un abonnement actif
+        if request.user.abonnements.exists():
+            is_premium = True
+
         # Vérifier conversation existante
         from .models import Conversation
         conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
@@ -987,17 +991,23 @@ def professeur_detail(request, teacher_slug):
 
         if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
             is_parent = True
-            if request.user.abonnements.exists():
-                is_premium = True
             if hasattr(request.user, 'parent'):
                 parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
                 parent_children_json = json.dumps(parent_children)
                 
-        # Vérifier engagement existant
+        # Vérifier engagement existant (priorité à l'attente pour modification)
         existing_engagement_obj = teacher.engagements.filter(
             parent_apprenant=request.user,
             statut_general=StatutGeneral.EN_ATTENTE
         ).first()
+        
+        if not existing_engagement_obj:
+            # Sinon vérifier s'il y a un engagement actif
+            existing_engagement_obj = teacher.engagements.filter(
+                parent_apprenant=request.user,
+                statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+            ).first()
+
         if existing_engagement_obj:
             existing_engagement = existing_engagement_obj
             existing_engagement_json = json.dumps({
@@ -1006,6 +1016,7 @@ def professeur_detail(request, teacher_slug):
                 'mode_de_cours': existing_engagement_obj.mode_de_cours,
                 'frequence': existing_engagement_obj.frequence_hebdomadaire,
                 'duree': existing_engagement_obj.duree_seance,
+                'status': existing_engagement_obj.statut_general,
                 'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard'
             })
 
@@ -1082,18 +1093,28 @@ def api_teacher_profile(request, teacher_slug):
                 existing_conversation_id = conv.id
                 
             try:
+                # is_premium est vrai si l'utilisateur a un abonnement actif
+                if request.user.abonnements.exists():
+                    is_premium = True
+
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
                     is_parent = True
-                    if request.user.abonnements.exists():
-                        is_premium = True
                     if hasattr(request.user, 'parent'):
                         parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
                 
-                # Vérifier engagement existant
+                # Vérifier engagement existant (priorité à l'attente pour modification)
                 existing_engagement_obj = teacher.engagements.filter(
                     parent_apprenant=request.user,
                     statut_general=StatutGeneral.EN_ATTENTE
                 ).first()
+                
+                if not existing_engagement_obj:
+                    # Sinon vérifier s'il y a un engagement actif
+                    existing_engagement_obj = teacher.engagements.filter(
+                        parent_apprenant=request.user,
+                        statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+                    ).first()
+
                 if existing_engagement_obj:
                     existing_engagement = {
                         'id': existing_engagement_obj.id,
@@ -1101,6 +1122,7 @@ def api_teacher_profile(request, teacher_slug):
                         'mode_de_cours': existing_engagement_obj.mode_de_cours,
                         'frequence': existing_engagement_obj.frequence_hebdomadaire,
                         'duree': existing_engagement_obj.duree_seance,
+                        'status': existing_engagement_obj.statut_general,
                         'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard'
                     }
             except Exception:
@@ -1170,12 +1192,18 @@ def api_engagement(request):
         engagement_type_str = data.get('engagement_type', 'standard')
         type_eng = EngagementType.ESSAI if engagement_type_str == 'essai' else EngagementType.NORMAL
         
-        # Recherche d'un engagement existant en attente pour mise à jour
-        engagement = Engagement.objects.filter(
+        # Recherche d'un engagement existant non terminé
+        existing = Engagement.objects.filter(
             professeur=teacher,
-            parent_apprenant=request.user,
-            statut_general=StatutGeneral.EN_ATTENTE
-        ).first()
+            parent_apprenant=request.user
+        ).exclude(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE, StatutGeneral.FINALISE]).first()
+
+        engagement = None
+        if existing:
+            if existing.statut_general == StatutGeneral.EN_ATTENTE:
+                engagement = existing
+            else:
+                return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
 
         if not engagement:
             engagement = Engagement(
@@ -2050,8 +2078,8 @@ def api_engagement_details(request, engagement_id):
         # IDs for conversion logic
         'teacher_id': engagement.professeur.id,
         'teacher_name': f"{engagement.professeur.prenom} {engagement.professeur.nom}",
-        'student_id': engagement.apprenant.id if engagement.apprenant else None,
-        'student_name': engagement.apprenant.nom if engagement.apprenant else "Moi-même",
+        'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
+        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-même"),
         # Essai specific fields
         'date_essai': engagement.date_heure_essai.strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
         'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
