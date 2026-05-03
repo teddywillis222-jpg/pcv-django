@@ -176,3 +176,20 @@ a:hover {
 .footer-links a {
   margin: 0 0.5rem;
 }
+
+/* Stabilisation du Viewport globale */
+html, body {
+    overflow-x: hidden; /* Empêche le défilement horizontal indésirable */
+    width: 100%;
+    position: relative;
+}
+
+/* Empêche le zoom auto sur iOS Safari pour tous les formulaires */
+@media screen and (max-width: 768px) {
+    input,
+    select,
+    textarea,
+    .ts-control input {
+        font-size: 16px !important; /* Taille minimale pour éviter le zoom iOS */
+    }
+}

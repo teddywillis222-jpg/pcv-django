@@ -4,8 +4,6 @@
 {% block title %}Finalise ton profil apprenant - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
 <style>
 /* Tom Select Customization */
 .ts-control {
@@ -470,7 +468,6 @@ body {
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
 // Prévisualisation Photo
 document.getElementById('id_photo_de_profil').addEventListener('change', function(e) {
@@ -587,25 +584,5 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
         btn.innerHTML = 'Enregistrer mon profil <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>';
     }
 });
-
-function initTomSelect() {
-        const multiSelects = document.querySelectorAll('.multi-select');
-        multiSelects.forEach(select => {
-            if (select.tomselect) return;
-            new TomSelect(select, {
-                plugins: ['remove_button', 'dropdown_input'],
-                create: true,
-                persist: false,
-                maxOptions: 15,
-                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
-                onItemAdd: function() {
-                    this.setTextboxValue('');
-                    this.refreshOptions();
-                }
-            });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', initTomSelect);
 </script>
 {% endblock %}

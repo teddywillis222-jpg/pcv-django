@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Prof Chez Vous{% endblock %}</title>
     
     <!-- Google Fonts - Raleway -->
@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
     {% block extra_css %}{% endblock %}
     
     <style>
@@ -31,11 +32,8 @@
             font-family: 'Raleway', sans-serif !important;
         }
 
-        body {
-            overflow-x: hidden;
-            width: 100%;
-        }
-
+        /* Removed body local styles, handled globally in base.css */
+        
         /* Prevent iOS zoom on input focus */
         input, select, textarea {
             font-size: 16px !important;
@@ -594,6 +592,36 @@
     </div>
 
 {% block extra_js %}{% endblock %}
+    
+    <!-- Script Global pour Tom Select -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const multiSelects = document.querySelectorAll('.multi-select, .pcv-multi-select');
+            multiSelects.forEach(select => {
+                if (select.tomselect) return;
+                
+                const isMatieres = select.id === 'id_matieres_predefinies';
+                
+                new TomSelect(select, {
+                    plugins: ['remove_button', 'dropdown_input'],
+                    create: true,
+                    persist: false,
+                    maxItems: isMatieres ? 5 : null,
+                    maxOptions: 15,
+                    placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                    onChange: function(value) {
+                        select.dispatchEvent(new Event('change'));
+                    },
+                    onItemAdd: function() {
+                        this.setTextboxValue('');
+                        this.refreshOptions();
+                    }
+                });
+            });
+        });
+    </script>
+
     <!-- Script Global pour Initialiser les Téléphones Premium -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
