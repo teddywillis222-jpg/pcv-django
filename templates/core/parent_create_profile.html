@@ -5,6 +5,8 @@
 
 {% block extra_css %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
+<style>
 /* Tom Select Customization */
 .ts-control {
     border-radius: 12px !important;
@@ -395,24 +397,15 @@
 
                 <div class="form-group">
                     <label>Matières nécessitant un appui <span style="color: #ef4444;">*</span></label>
-                    <div class="checkbox-group" style="margin-bottom: 0.75rem;">
+                    <div style="margin-bottom: 0.75rem;">
                         {{ enfant_form.matieres_predefinies }}
                     </div>
 
-                    <!-- Ajout Personnalisé -->
-                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.75rem;">
-                        <input type="text" id="customMatiereInput" placeholder="Autres matières..."
-                            style="flex:1; border: 1px solid #d1d5db; padding: 0.6rem; border-radius: 8px;">
-                        <button type="button" id="btnAddMatiere"
-                            style="padding: 0.55rem 1.2rem; background: #16a34a; color: white; border: none; border-radius:8px; font-weight:600; cursor:pointer;">Ajouter</button>
+                    {% if enfant_form.matieres_predefinies.errors %}
+                    <div style="color: #ef4444; font-size: 0.85em; margin-top: 0.25rem;">
+                        {{ enfant_form.matieres_predefinies.errors }}
                     </div>
-                    <div id="customMatieresContainer"
-                        style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem;"></div>
-                    {{ enfant_form.matieres_autre }}
-
-                    {% if enfant_form.matieres_predefinies.errors %}<div
-                        style="color:var(--error);font-size:0.85em;margin-top:0.25rem;">{{
-                        enfant_form.matieres_predefinies.errors }}</div>{% endif %}
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
@@ -436,6 +429,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Éléments UI
@@ -459,14 +453,8 @@
         const eQuartierQuery = document.querySelector('#step2 [name="quartier_ville"]');
         const pQuartierQuery = document.querySelector('#step1 [name="quartier_ville"]');
         const eMode = document.querySelector('[name="mode_de_cours"]');
-        const eMatieresAutre = document.getElementById('id_matieres_autre');
-
-        // Autre matieres variables globales
-        let customMatieres = [];
-        const btnAddMatiere = document.getElementById('btnAddMatiere');
-        const customMatiereInput = document.getElementById('customMatiereInput');
-        const customMatieresContainer = document.getElementById('customMatieresContainer');
-        const hiddenMatiereInput = document.getElementById('id_matieres_autre');
+        const eMatieres = document.getElementById('id_matieres_predefinies');
+        const eObjectifs = document.getElementById('id_objectifs_motivations');
 
         // Vérification Étape 1
         function checkStep1() {
@@ -476,44 +464,10 @@
             btnNext.disabled = !isValid;
         }
 
-        // Limiteur de matières (Max 5)
-        function checkMatieresLimit() {
-            const matieresChecked = document.querySelectorAll('[name="matieres_predefinies"]:checked');
-            const total = matieresChecked.length + customMatieres.length;
-            const limitReached = total >= 5;
-
-            document.querySelectorAll('[name="matieres_predefinies"]').forEach(input => {
-                if (!input.checked) {
-                    input.disabled = limitReached;
-                    if (limitReached) {
-                        input.parentElement.classList.add('disabled');
-                    } else {
-                        input.parentElement.classList.remove('disabled');
-                    }
-                }
-            });
-
-            if (customMatiereInput) {
-                customMatiereInput.disabled = limitReached;
-                customMatiereInput.placeholder = limitReached ? "Limite de 5 atteinte" : "Autres matières...";
-                customMatiereInput.style.background = limitReached ? "#f1f5f9" : "white";
-                customMatiereInput.style.cursor = limitReached ? "not-allowed" : "text";
-            }
-            if (btnAddMatiere) {
-                btnAddMatiere.disabled = limitReached;
-                btnAddMatiere.style.background = limitReached ? "#cbd5e1" : "#16a34a";
-                btnAddMatiere.style.cursor = limitReached ? "not-allowed" : "pointer";
-            }
-        }
-
         // Vérification Étape 2
         function checkStep2() {
-            checkMatieresLimit();
-
-            // Selection de checkbox
-            const objectifsChecked = document.querySelectorAll('[name="objectifs_motivations"]:checked');
-            const matieresChecked = document.querySelectorAll('[name="matieres_predefinies"]:checked');
-            const hasMatieres = matieresChecked.length > 0 || customMatieres.length > 0;
+            const hasMatieres = eMatieres && eMatieres.selectedOptions && eMatieres.selectedOptions.length > 0;
+            const hasObjectifs = eObjectifs && eObjectifs.selectedOptions && eObjectifs.selectedOptions.length > 0;
 
             const isValid =
                 ePrenom && ePrenom.value.trim() !== '' &&
@@ -521,7 +475,7 @@
                 eQuartierQuery && eQuartierQuery.value !== '' &&
                 eMode && eMode.value !== '' &&
                 hasMatieres &&
-                objectifsChecked.length > 0;
+                hasObjectifs;
 
             if (btnSubmit) btnSubmit.disabled = !isValid;
         }
@@ -536,66 +490,8 @@
         if (eClasse) eClasse.addEventListener('change', checkStep2);
         if (eQuartierQuery) eQuartierQuery.addEventListener('change', checkStep2);
         if (eMode) eMode.addEventListener('change', checkStep2);
-
-        // Visual check toggle for UI Pills
-        document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(function (input) {
-            input.addEventListener('change', function () {
-                if (this.checked) {
-                    this.parentElement.style.background = '#22c55e';
-                    this.parentElement.style.color = 'white';
-                    this.parentElement.style.borderColor = '#16a34a';
-                } else {
-                    this.parentElement.style.background = '#f8fafc';
-                    this.parentElement.style.color = '#334155';
-                    this.parentElement.style.borderColor = '#e2e8f0';
-                }
-                checkStep2();
-            });
-            // Initial styling trick
-            if (input.checked) {
-                input.parentElement.style.background = '#22c55e';
-                input.parentElement.style.color = 'white';
-                input.parentElement.style.borderColor = '#16a34a';
-            }
-        });
-
-        // Autre matieres Logic processing
-        function renderCustomMatieres() {
-            customMatieresContainer.innerHTML = '';
-            customMatieres.forEach(m => {
-                let pill = document.createElement('span');
-                pill.innerHTML = m + ' <strong style="margin-left:5px; font-size:1.1em;">&times;</strong>';
-                pill.style.cssText = 'background:#16a34a; color:white; padding:0.45rem 1rem; border-radius:9999px; font-size:0.85rem; cursor:pointer; font-weight:500; display:inline-flex; align-items:center;';
-                pill.onclick = function () {
-                    customMatieres = customMatieres.filter(x => x !== m);
-                    hiddenMatiereInput.value = customMatieres.join(',');
-                    renderCustomMatieres();
-                    checkStep2();
-                };
-                customMatieresContainer.appendChild(pill);
-            });
-        }
-
-        if (btnAddMatiere) {
-            btnAddMatiere.addEventListener('click', function (e) {
-                e.preventDefault();
-                const countPredefinies = document.querySelectorAll('[name="matieres_predefinies"]:checked').length;
-                if (customMatieres.length + countPredefinies >= 5) {
-                    return; // Sécurité si bouton forcé
-                }
-
-                let val = customMatiereInput.value.trim();
-                // Check format to be safe (no commas because we use them as delimiters in backend mapping safely)
-                val = val.replace(/,/g, '');
-                if (val && !customMatieres.includes(val)) {
-                    customMatieres.push(val);
-                    hiddenMatiereInput.value = customMatieres.join(',');
-                    customMatiereInput.value = '';
-                    renderCustomMatieres();
-                    checkStep2();
-                }
-            });
-        }
+        if (eMatieres) eMatieres.addEventListener('change', checkStep2);
+        if (eObjectifs) eObjectifs.addEventListener('change', checkStep2);
 
         // Navigations transition
         btnNext.addEventListener('click', function () {
@@ -643,12 +539,19 @@
         const multiSelects = document.querySelectorAll('.multi-select');
         multiSelects.forEach(select => {
             if (select.tomselect) return;
+            
+            const isMatieres = select.id === 'id_matieres_predefinies';
+            
             new TomSelect(select, {
                 plugins: ['remove_button', 'dropdown_input'],
                 create: true,
                 persist: false,
+                maxItems: isMatieres ? 5 : null,
                 maxOptions: 15,
                 placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                onChange: function(value) {
+                    select.dispatchEvent(new Event('change'));
+                },
                 onItemAdd: function() {
                     this.setTextboxValue('');
                     this.refreshOptions();
@@ -659,5 +562,4 @@
 
     document.addEventListener('DOMContentLoaded', initTomSelects);
 </script>
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

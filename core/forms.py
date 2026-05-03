@@ -209,11 +209,6 @@ class EnfantForm(forms.ModelForm):
             'placeholder': 'Ex : Mathématiques'
         })
     )
-    matieres_autre = forms.CharField(
-        label="Autre(s) matière(s)",
-        required=False,
-        widget=forms.HiddenInput() # Rendu caché, on gère l'UI custom
-    )
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
@@ -265,8 +260,7 @@ class EnfantForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         matieres = cleaned_data.get("matieres_predefinies", [])
-        autre = cleaned_data.get("matieres_autre", "")
-        total_mat = len(matieres) + (1 if autre.strip() else 0)
+        total_mat = len(matieres)
         
         if total_mat == 0:
             self.add_error("matieres_predefinies", "Sélectionnez au moins une matière.")
@@ -278,11 +272,7 @@ class EnfantForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         matieres = list(self.cleaned_data.get('matieres_predefinies', []))
-        autre = self.cleaned_data.get('matieres_autre', '').strip()
-        if autre:
-            for m in autre.split(','):
-                if m.strip() and m.strip() not in matieres:
-                    matieres.append(m.strip())
+        
         instance.matieres = matieres[:5]
         
         objectifs = self.cleaned_data.get('objectifs_motivations', [])
