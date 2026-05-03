@@ -351,6 +351,7 @@ function updateEngagement() {
         budget: document.getElementById('rev_budget').value,
         frequence: document.getElementById('rev_frequence').value,
         duree_seance: document.getElementById('rev_duree').value,
+        duree_mois: document.getElementById('rev_duree_mois').value,
         periode: document.getElementById('rev_periode').value,
         localisation: document.getElementById('rev_localisation').value,
         visio: document.getElementById('rev_visio').value
@@ -388,16 +389,22 @@ function showEditProposal(engId, isOngoing = false) {
     document.getElementById('rev_id').value = engId;
     document.getElementById('rev_title').textContent = isOngoing ? "Détails de l'engagement" : "Modifier ma proposition";
 
-    if (document.getElementById('rev_enfant')) document.getElementById('rev_enfant').value = data.enfant_id;
+    if (document.getElementById('rev_enfant')) {
+        document.getElementById('rev_enfant').value = data.enfant_id || "";
+    } else if (document.getElementById('rev_student_display')) {
+        document.getElementById('rev_student_display').value = data.student_name || "Non précisé";
+    }
+    
     document.getElementById('rev_matiere').value = data.matiere;
     document.getElementById('rev_classe').value = data.classe;
-    document.getElementById('rev_mode').value = data.mode;
+    document.getElementById('rev_mode').value = data.mode_raw || data.mode;
     document.getElementById('rev_budget').value = data.budget;
-    document.getElementById('rev_frequence').value = data.frequence;
-    document.getElementById('rev_duree').value = data.duree;
-    document.getElementById('rev_periode').value = data.periode;
-    document.getElementById('rev_localisation').value = data.localisation;
-    document.getElementById('rev_visio').value = data.visio;
+    document.getElementById('rev_frequence').value = data.frequence_raw || data.frequence;
+    document.getElementById('rev_duree').value = data.duree_raw || data.duree;
+    document.getElementById('rev_duree_mois').value = data.duree_mois || "";
+    document.getElementById('rev_periode').value = data.periode_raw || data.periode;
+    document.getElementById('rev_localisation').value = data.localisation || data.lieu;
+    document.getElementById('rev_visio').value = data.visio || data.plateforme;
 
     const visioContainer = document.getElementById('visio_platform_container');
     if (visioContainer) {

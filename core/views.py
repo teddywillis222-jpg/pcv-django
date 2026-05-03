@@ -1234,6 +1234,7 @@ def api_engagement(request):
             if budget: engagement.budget_convenu = budget
             engagement.frequence_hebdomadaire = data.get('frequence', '')
             engagement.duree_seance = data.get('duree_seance', '')
+            engagement.duree_mois = data.get('duree_mois')
             date_debut_str = data.get('date_debut')
             if date_debut_str:
                 from django.utils.dateparse import parse_date
@@ -1630,6 +1631,7 @@ def api_update_engagement(request, engagement_id):
         engagement.classe = data.get('classe', engagement.classe)
         engagement.mode_de_cours = data.get('mode', engagement.mode_de_cours)
         engagement.periode_engagement = data.get('periode', engagement.periode_engagement)
+        engagement.duree_mois = data.get('duree_mois', engagement.duree_mois)
         engagement.localisation_option = data.get('localisation', engagement.localisation_option)
         engagement.plateforme_visio_preferee = data.get('visio', engagement.plateforme_visio_preferee)
         
@@ -2071,6 +2073,7 @@ def api_engagement_details(request, engagement_id):
         'budget': str(engagement.budget_convenu) if engagement.budget_convenu else None,
         'frequence': engagement.get_frequence_hebdomadaire_display(),
         'duree': engagement.get_duree_seance_display(),
+        'duree_mois': engagement.duree_mois,
         'date_debut': engagement.date_debut.strftime("%d/%m/%Y") if engagement.date_debut else None,
         'status': engagement.statut_general,
         'type': engagement.type_engagement,

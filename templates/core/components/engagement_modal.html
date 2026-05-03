@@ -40,7 +40,7 @@
             <!-- Champs Communs -->
             <div id="eng_field_enfants" style="margin-bottom: 1.25rem; display: none;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Élève / Enfant bénéficiaire <span style="color:#ef4444">*</span></label>
-                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
+                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
                     <!-- Rempli par JS -->
                 </select>
             </div>
@@ -132,14 +132,14 @@
                         <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée totale (mois)</label>
-                        <input type="number" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée totale (mois) <span style="color:#ef4444">*</span></label>
+                        <input type="number" id="eng_duree_mois" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Budget proposé (FCFA / heure)</label>
-                    <input type="number" name="budget" placeholder="Laissez vide pour accepter le tarif du prof" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Budget proposé (FCFA / séance) <span style="color:#ef4444">*</span></label>
+                    <input type="number" name="budget" placeholder="Indiquez le prix par séance souhaité" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;" required>
                 </div>
             </div>
 
@@ -440,16 +440,34 @@ function toggleEngagementFields() {
         document.getElementById('eng_frequence').required = true;
         document.getElementById('eng_duree').required = true;
         document.getElementById('eng_date_debut').required = true;
+        document.getElementById('eng_duree_mois').required = true;
         
         submitBtn.disabled = false;
         submitBtn.style.opacity = '1';
         submitBtn.title = "";
     }
+
+    // Gérer le required de l'enfant uniquement si parent
+    const enfantSelect = document.getElementById('eng_enfant_id');
+    if (currentTeacherData.is_parent && currentTeacherData.children && currentTeacherData.children.length > 0) {
+        enfantSelect.required = true;
+    } else {
+        enfantSelect.required = false;
+    }
+
     toggleModeFields();
 }
 
 async function submitEngagement(event) {
     event.preventDefault();
+    const form = event.target;
+    
+    // Validation stricte avant envoi
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
     const btn = document.getElementById('eng_submit_btn');
     if (btn.disabled) return;
     

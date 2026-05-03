@@ -403,10 +403,17 @@
                             <span style="color: #64748b;">Lieu</span>
                             <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
                         </div>
-                        ${!isTrial ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Budget</span>
-                            <span style="font-weight: 800; color: #16a34a;">${eng.budget || 'À négocier'} FCFA/h</span>
+                            <span style="font-weight: 800; color: #16a34a;">${eng.budget || 'À négocier'} FCFA/séance</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Élève / Enfant</span>
+                            <span style="font-weight: 700;">${eng.student_name || 'Non précisé'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Durée souhaitée</span>
+                            <span style="font-weight: 700;">${eng.duree_mois ? eng.duree_mois + ' mois' : 'Non précisée'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <span style="color: #64748b;">Début souhaité</span>

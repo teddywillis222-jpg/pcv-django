@@ -5,8 +5,10 @@
             <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--text-dark);">
                 {% if eng.professeur %}
                     Prof. {{ eng.professeur.prenom }} {{ eng.professeur.nom }}
-                    {% if eng.professeur.statut_de_validation == 'APPROVED' %}
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #16a34a; color: white; border-radius: 50%; font-size: 9px; margin-left: 5px; vertical-align: middle;">✓</span>
+                    {% if eng.professeur.statut_de_validation == 'APPROVED' or eng.professeur.est_certifie %}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#16a34a" style="margin-left: 5px; vertical-align: middle;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
                     {% endif %}
                 {% else %}
                     Affectation en cours...

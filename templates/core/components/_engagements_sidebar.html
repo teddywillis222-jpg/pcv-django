@@ -44,7 +44,7 @@
         <div id="engSheetList">
             {% for eng in engagements %}
             <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}" 
-                 data-eng-json='{"id": {{ eng.id }}, "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.classe }}", "mode": "{{ eng.mode_de_cours }}", "budget": {{ eng.budget_convenu|default:0 }}, "frequence": "{{ eng.frequence_hebdomadaire }}", "duree": "{{ eng.duree_seance }}", "localisation": "{{ eng.localisation_option|escapejs }}", "visio": "{{ eng.plateforme_visio_preferee|escapejs }}", "periode": "{{ eng.periode_engagement }}", "enfant_id": "{{ eng.enfants_concernes.first.id|default:"" }}"}'>
+                 data-eng-json='{"id": {{ eng.id }}, "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.classe }}", "mode": "{{ eng.mode_de_cours }}", "budget": {{ eng.budget_convenu|default:0 }}, "frequence": "{{ eng.frequence_hebdomadaire }}", "duree": "{{ eng.duree_seance }}", "duree_mois": "{{ eng.duree_mois|default:"" }}", "localisation": "{{ eng.localisation_option|escapejs }}", "visio": "{{ eng.plateforme_visio_preferee|escapejs }}", "periode": "{{ eng.periode_engagement }}", "enfant_id": "{{ eng.enfants_concernes.first.id|default:"" }}", "student_name": "{% if eng.enfants_concernes.exists %}{{ eng.enfants_concernes.first.prenom }}{% else %}{{ eng.parent_apprenant.apprenant.nom|default:"L'apprenant" }}{% endif %}"}'>
                 
                 <div class="eng-row-main" onclick="toggleEngRow(this)">
                     {% if other_profile.photo_de_profil %}
@@ -81,10 +81,12 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; font-size: 0.85rem; line-height: 1.6;">
                         <div><span style="color: #64748b;">Matière :</span><br><span style="font-weight: 700;">{{ eng.matiere }}</span></div>
                         <div><span style="color: #64748b;">Classe :</span><br><span style="font-weight: 700;">{{ eng.get_classe_display }}</span></div>
+                        <div><span style="color: #64748b;">Élève :</span><br><span style="font-weight: 700;">{% if eng.enfants_concernes.exists %}{{ eng.enfants_concernes.first.prenom }}{% else %}L'apprenant{% endif %}</span></div>
                         <div><span style="color: #64748b;">Fréquence :</span><br><span style="font-weight: 700;">{{ eng.get_frequence_hebdomadaire_display }}</span></div>
-                        <div><span style="color: #64748b;">Durée :</span><br><span style="font-weight: 700;">{{ eng.get_duree_seance_display }}</span></div>
+                        <div><span style="color: #64748b;">Durée séance :</span><br><span style="font-weight: 700;">{{ eng.get_duree_seance_display }}</span></div>
+                        <div><span style="color: #64748b;">Durée contrat :</span><br><span style="font-weight: 700;">{% if eng.duree_mois %}{{ eng.duree_mois }} mois{% else %}Non précisée{% endif %}</span></div>
                         <div><span style="color: #64748b;">Mode :</span><br><span style="font-weight: 700;">{{ eng.get_mode_de_cours_display }}</span></div>
-                        <div><span style="color: #64748b;">Budget :</span><br><span style="font-weight: 800; color: #15803d;">{{ eng.budget_convenu }} FCFA/h</span></div>
+                        <div><span style="color: #64748b;">Budget :</span><br><span style="font-weight: 800; color: #15803d;">{{ eng.budget_convenu }} FCFA/séance</span></div>
                         <div style="grid-column: span 2;"><span style="color: #64748b;">Lieu :</span><br><span style="font-weight: 700;">{{ eng.localisation_option|default:"Non spécifié" }}</span></div>
                         {% if eng.plateforme_visio_preferee %}
                         <div style="grid-column: span 2;"><span style="color: #64748b;">Visio :</span><br><span style="font-weight: 700;">{{ eng.plateforme_visio_preferee }}</span></div>

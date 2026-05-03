@@ -613,6 +613,11 @@ class Engagement(models.Model):
         choices=ClassLevel.CHOICES,
         blank=True,
     )
+    duree_mois = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="Durée souhaitée en mois"
+    )
 
     # 2. Logistique et localisation
     mode_de_cours = models.CharField(
