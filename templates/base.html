@@ -47,6 +47,57 @@
         .ts-control input::placeholder {
             font-size: 14px;
         }
+
+        /* Fix Tom Select duplication */
+        .tomselected,
+        .ts-wrapper + select,
+        .ts-control + select {
+            display: none !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            position: absolute !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+        /* Harmonisation Tom Select avec le design premium */
+        .ts-wrapper.pcv-multi-select .ts-control,
+        .ts-wrapper.multi-select .ts-control {
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            padding: 0.5rem 1rem !important;
+            min-height: 3.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: none !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .ts-wrapper.pcv-multi-select.focus .ts-control,
+        .ts-wrapper.multi-select.focus .ts-control {
+            border-color: var(--success-600) !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+        }
+
+        /* Fix placeholder display in Tom Select */
+        .ts-wrapper .ts-control input {
+            font-size: 1rem !important;
+            color: #1e293b !important;
+        }
+
+        .ts-wrapper .ts-control input::placeholder {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
+        
+        /* Assure que le wrapper prend toute la place */
+        .ts-wrapper.pcv-multi-select,
+        .ts-wrapper.multi-select {
+            width: 100% !important;
+        }
     </style>
     <style>
         /* Header Navigation - Prof Chez Vous */
@@ -653,6 +704,8 @@
                     maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : null),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                    hideSelected: true,
+                    hidePlaceholder: false,
                     render: {
                         option_create: function(data, escape) {
                             return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>&hellip;</div>';
