@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 from .choices import (
     BesoinPrioritaire,
@@ -246,7 +247,7 @@ class Abonnement(models.Model):
     )
     prix = models.CharField(
         max_length=100,
-        default="2000f par engagement",
+        default=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
     )
     date_debut = models.DateField(null=True, blank=True)
     date_fin = models.DateField(null=True, blank=True)

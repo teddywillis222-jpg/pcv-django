@@ -86,6 +86,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.global_choices',
             ],
         },
     },
@@ -192,3 +193,7 @@ CLOUDINARY_STORAGE = {
 
 # Indique à Django d'utiliser Cloudinary pour les fichiers MEDIA
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# --- Configuration Business (Déploiement) ---
+DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
+DEFAULT_CURRENCY = os.getenv('CURRENCY', 'FCFA')

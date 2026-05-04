@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
+from django.conf import settings
 
 from django.utils import timezone
 from .forms import (
@@ -287,11 +288,6 @@ def recherche(request):
         'soutien': soutien,
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
-        'LOCALISATION_CHOICES': Localisation.CHOICES,
-        'COURSE_MODES': CourseMode.CHOICES,
-        'CLASS_LEVELS': ClassLevel.CHOICES,
-        'SUPPORT_CATEGORIES': SupportCategory.CHOICES,
-        'MATIERES_CHOICES': Matiere.get_choices(),
     }
     
     return render(request, "core/recherche.html", context)
@@ -311,7 +307,7 @@ def signup(request):
             Abonnement.objects.create(
                 user=user,
                 type_abonnement=TypeAbonnement.STANDARD,
-                prix="2000f par engagement",
+                prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
                 date_debut=date.today(),
             )
             from django.contrib import messages
@@ -369,7 +365,7 @@ def finalisation_compte(request):
                 Abonnement.objects.create(
                     user=request.user,
                     type_abonnement=TypeAbonnement.STANDARD,
-                    prix="2000f par engagement",
+                    prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
                     date_debut=date.today(),
                 )
             return redirect("post_signup_redirect")

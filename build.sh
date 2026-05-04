@@ -13,13 +13,9 @@ pip install -r requirements.txt
 echo "Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 
-# 3. Forcer la détection des changements dans 'core' (Crucial pour ton erreur 500)
-echo "Génération des migrations pour l'application core..."
-python manage.py makemigrations core
-
-# 4. Exécution des migrations générales
-echo "Application des migrations à la base de données..."
-python manage.py migrate
+# 3. Application des migrations à la base de données
+echo "Application des migrations..."
+python manage.py migrate --noinput
 
 # 5. Vérification finale
 echo "Vérification de la configuration Django..."

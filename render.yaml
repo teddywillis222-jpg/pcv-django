@@ -22,6 +22,10 @@ services:
         fromDatabase:
           name: prof-chez-vous-db
           property: connectionString
+      - key: ENGAGEMENT_PRICE
+        value: 2000
+      - key: CURRENCY
+        value: FCFA
     
 # Configuration du service de base de données
 databases:

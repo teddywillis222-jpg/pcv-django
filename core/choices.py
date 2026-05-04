@@ -574,6 +574,14 @@ class MessageType:
         (SYSTEME, "Système"),
     ]
 
+class PriceRange:
+    CHOICES = [
+        ("0-2000", "Moins de 2000 FCFA"),
+        ("2000-5000", "2000 - 5000 FCFA"),
+        ("5000-10000", "5000 - 10000 FCFA"),
+        ("10000+", "Plus de 10000 FCFA"),
+    ]
+
 
 # --- Validateurs pour champs liste (JSONField) ---
 def validate_modes_cours(value):

@@ -528,7 +528,7 @@
                         <div class="filter-group">
                             <select id="matiere" name="matiere" class="filter-input pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">
                                 <option value="">Matière (Ex: Mathématiques, Français...)</option>
-                                {% for mat_val, mat_label in MATIERES_CHOICES %}
+                                {% for mat_val, mat_label in MATIERE_CHOICES %}
                                 <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
                                 {% endfor %}
                             </select>
@@ -562,7 +562,7 @@
                             <label class="filter-label" for="classe">Classe</label>
                             <select id="classe" name="classe" class="filter-input">
                                 <option value="">Toutes les classes</option>
-                                {% for c_val, c_label in CLASS_LEVELS %}
+                                {% for c_val, c_label in CLASS_LEVEL_CHOICES %}
                                 <option value="{{ c_val }}" {% if classe == c_val %}selected{% endif %}>{{ c_label }}</option>
                                 {% endfor %}
                             </select>
@@ -572,10 +572,9 @@
                             <label class="filter-label" for="prix">Prix par heure</label>
                             <select id="prix" name="prix" class="filter-input">
                                 <option value="">Tous les prix</option>
-                                <option value="0-2000" {% if prix == '0-2000' %}selected{% endif %}>Moins de 2000 FCFA</option>
-                                <option value="2000-5000" {% if prix == '2000-5000' %}selected{% endif %}>2000 - 5000 FCFA</option>
-                                <option value="5000-10000" {% if prix == '5000-10000' %}selected{% endif %}>5000 - 10000 FCFA</option>
-                                <option value="10000+" {% if prix == '10000+' %}selected{% endif %}>Plus de 10000 FCFA</option>
+                                {% for p_val, p_label in PRICE_RANGE_CHOICES %}
+                                <option value="{{ p_val }}" {% if prix == p_val %}selected{% endif %}>{{ p_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         
@@ -583,7 +582,7 @@
                             <label class="filter-label" for="mode">Mode de cours</label>
                             <select id="mode" name="mode" class="filter-input">
                                 <option value="">Tous les modes</option>
-                                {% for m_val, m_label in COURSE_MODES %}
+                                {% for m_val, m_label in COURSE_MODE_CHOICES %}
                                 <option value="{{ m_val }}" {% if mode == m_val %}selected{% endif %}>{{ m_label }}</option>
                                 {% endfor %}
                             </select>
@@ -593,7 +592,7 @@
                             <label class="filter-label" for="soutien">Type de soutien</label>
                             <select id="soutien" name="soutien" class="filter-input">
                                 <option value="">Tous les types</option>
-                                {% for s_val, s_label in SUPPORT_CATEGORIES %}
+                                {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
                                 <option value="{{ s_val }}" {% if soutien == s_val %}selected{% endif %}>{{ s_label }}</option>
                                 {% endfor %}
                             </select>

@@ -538,16 +538,9 @@ main.container {
                     <label for="localisation">Localisation</label>
                     <select id="localisation" name="localisation" required>
                         <option value="">Sélectionnez un quartier...</option>
-                        <option value="Cotonou">Cotonou (Toute la ville)</option>
-                        <option value="Abomey-Calavi">Abomey-Calavi</option>
-                        <option value="Akpakpa">Akpakpa</option>
-                        <option value="Fidjrossè">Fidjrossè</option>
-                        <option value="Gbegamey">Gbegamey</option>
-                        <option value="Saint-Michel">Saint-Michel</option>
-                        <option value="Zogbo">Zogbo</option>
-                        <option value="Jéricho">Jéricho</option>
-                        <option value="Missebo">Missebo</option>
-                        <option value="Agla">Agla</option>
+                        {% for code, label in LOCALISATION_CHOICES %}
+                        <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 

@@ -171,15 +171,7 @@ class ParentForm(forms.ModelForm):
 class EnfantForm(forms.ModelForm):
     from .choices import ObjectifMotivation
     
-    MATIERES_CHOICES = [
-        ("Mathématiques", "Mathématiques"),
-        ("Physique-Chimie", "Physique-Chimie (PCT)"),
-        ("SVT", "SVT"),
-        ("Français", "Français"),
-        ("Anglais", "Anglais"),
-        ("Philosophie", "Philosophie"),
-        ("Histoire-Géo", "Histoire-Géographie"),
-    ]
+    
     
     DIFFICULTES_CHOICES = [
         ("Bases fragiles non acquises", "Bases fragiles non acquises"),
@@ -268,29 +260,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     """Formulaire en 2 étapes pour le profil apprenant."""
     from .choices import ObjectifApprenant
 
-    MATIERES_CHOICES = [
-        ("Mathématiques", "Mathématiques"),
-        ("Physique-Chimie", "Physique-Chimie (PCT)"),
-        ("SVT", "SVT"),
-        ("Français", "Français"),
-        ("Anglais", "Anglais"),
-        ("Philosophie", "Philosophie"),
-        ("Histoire-Géo", "Histoire-Géographie"),
-    ]
+    
 
-    VILLE_QUARTIER_CHOICES = [
-        ("", "Ex : Cotonou - Agla"),
-        ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
-        ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
-        ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
-        ("Cotonou - Cadjèhoun", "Cotonou - Cadjèhoun"),
-        ("Cotonou - Agla", "Cotonou - Agla"),
-        ("Abomey-Calavi - Arimbo", "Abomey-Calavi - Arimbo"),
-        ("Abomey-Calavi - Zoca", "Abomey-Calavi - Zoca"),
-        ("Abomey-Calavi - Godomey", "Abomey-Calavi - Godomey"),
-        ("Porto-Novo - Centre", "Porto-Novo - Centre"),
-        ("Autre", "Autre")
-    ]
 
     matieres_recherchees = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
@@ -362,19 +333,6 @@ from .models import TeacherProfile
 from .choices import CourseMode, ClassLevel
 
 class TeacherProfileForm(forms.ModelForm):
-    VILLE_QUARTIER_CHOICES = [
-        ("", "Votre zone de résidence au Bénin"),
-        ("Cotonou - Haie Vive", "Cotonou - Haie Vive"),
-        ("Cotonou - Fidjrossè", "Cotonou - Fidjrossè"),
-        ("Cotonou - Akpakpa", "Cotonou - Akpakpa"),
-        ("Cotonou - Cadjèhoun", "Cotonou - Cadjèhoun"),
-        ("Cotonou - Agla", "Cotonou - Agla"),
-        ("Abomey-Calavi - Arsat", "Abomey-Calavi - Arsat"),
-        ("Abomey-Calavi - Zoca", "Abomey-Calavi - Zoca"),
-        ("Abomey-Calavi - Godomey", "Abomey-Calavi - Godomey"),
-        ("Porto-Novo", "Porto-Novo"),
-        ("Autre Quartier", "Autre Quartier"),
-    ]
     
     modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False)
     classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False)
