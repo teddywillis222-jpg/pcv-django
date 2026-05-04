@@ -265,18 +265,26 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
+    .teacher-profile-page {
+        padding: 0.5rem 0; /* Réduit drastiquement l'espace en haut */
+    }
+    
     .profile-container {
-        padding: 0 1rem;
+        padding: 0 0.5rem; /* Marges latérales minimales (95-100% de largeur) */
+        width: 100%;
+        max-width: none;
     }
     
     .profile-header {
-        padding: 1.5rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
     }
-    
+
     .profile-photo {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
     }
 }
 </style>

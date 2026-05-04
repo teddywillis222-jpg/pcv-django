@@ -209,6 +209,20 @@ body {
     }
 }
 
+@media (max-width: 576px) {
+    .dash-main {
+        padding: 0.5rem; /* Réduit drastiquement l'espace extérieur */
+    }
+    .eng-card {
+        padding: 1rem 0.75rem;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
+    }
+    .tabs-content {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
 .tabs-header {
     display: flex;
     background: #fafafa;
