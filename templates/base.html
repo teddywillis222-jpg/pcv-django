@@ -98,6 +98,33 @@
         .ts-wrapper.multi-select {
             width: 100% !important;
         }
+
+        /* RESET filter-input styles on the wrapper to avoid double borders/backgrounds */
+        .ts-wrapper.filter-input {
+            border: none !important;
+            background: transparent !important;
+            height: auto !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .ts-dropdown {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 5px !important;
+            z-index: 2000 !important;
+        }
+
+        .ts-dropdown .option {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.95rem !important;
+        }
+
+        .ts-dropdown .active {
+            background-color: var(--success-50) !important;
+            color: var(--success-700) !important;
+        }
     </style>
     <style>
         /* Header Navigation - Prof Chez Vous */
@@ -694,11 +721,12 @@
             multiSelects.forEach(select => {
                 if (select.tomselect) return;
                 
-                const isMatieres = ['id_matieres_predefinies', 'id_matieres_recherchees', 'id_matiere_enseignee'].includes(select.id);
+                const isMatieres = ['id_matieres_predefinies', 'id_matieres_recherchees', 'id_matiere_enseignee', 'matiere'].includes(select.id);
                 const isTeacherMatieres = select.id === 'id_matiere_enseignee';
+                const isMultiple = select.hasAttribute('multiple');
                 
                 new TomSelect(select, {
-                    plugins: ['remove_button', 'dropdown_input'],
+                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : [],
                     create: true,
                     persist: false,
                     maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : null),
