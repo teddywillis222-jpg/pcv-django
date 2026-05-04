@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/teacher_card.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
     {% block extra_css %}{% endblock %}
     
@@ -717,7 +718,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const multiSelects = document.querySelectorAll('.multi-select, .pcv-multi-select');
+            const multiSelects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
             multiSelects.forEach(select => {
                 if (select.tomselect) return;
                 
@@ -726,7 +727,7 @@
                 const isMultiple = select.hasAttribute('multiple');
                 
                 new TomSelect(select, {
-                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : [],
+                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : ['clear_button'],
                     create: true,
                     persist: false,
                     maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : null),

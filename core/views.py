@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 from django.conf import settings
+from django.db.models import Avg, Count
 
 from django.utils import timezone
 from .forms import (
@@ -24,17 +25,31 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 
 
+def annotate_teachers_with_ratings(queryset):
+    """Annote un queryset de TeacherProfile avec les moyennes d'avis réels ou d'équipe."""
+    queryset = queryset.annotate(
+        real_moyenne=Avg('evaluations_recues__note'),
+        real_nombre=Count('evaluations_recues')
+    )
+    for prof in queryset:
+        if prof.real_nombre == 0:
+            prof.moyenne_avis = settings.RATING_DEFAULT_CERTIFIED if prof.est_certifie else settings.RATING_DEFAULT_STANDARD
+            prof.nombre_avis = 0
+        else:
+            prof.moyenne_avis = prof.real_moyenne
+            prof.nombre_avis = prof.real_nombre
+    return queryset
+
+
 def home(request):
     from .choices import ValidationStatus
+    
     # On récupère 6 professeurs validés aléatoirement (ou les plus récents)
     top_professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
     ).order_by('?')[:6]
 
-    for prof in top_professeurs:
-        # Valeurs par défaut pour l'affichage home si non définies
-        prof.moyenne_avis = settings.RATING_DEFAULT_CERTIFIED if prof.est_certifie else settings.RATING_DEFAULT_STANDARD
-        prof.nombre_avis = 12 if prof.est_certifie else 3
+    top_professeurs = annotate_teachers_with_ratings(top_professeurs)
 
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
 
@@ -258,19 +273,8 @@ def recherche(request):
         elif prix == f"{thresholds[2]}+":
             professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
 
-    from django.db.models import Avg, Count
-    professeurs = professeurs.annotate(
-        real_note=Avg('evaluations_recues__note'),
-        real_avis_count=Count('evaluations_recues')
-    ).order_by('-est_certifie', '-id')
-
-    for prof in professeurs:
-        if prof.real_avis_count > 0:
-            prof.moyenne_avis = round(prof.real_note, 1)
-            prof.nombre_avis = prof.real_avis_count
-        else:
-            prof.moyenne_avis = prof.note_initiale_equipe
-            prof.nombre_avis = 1
+    # 3. Annotation des ratings via le helper centralisé
+    professeurs = annotate_teachers_with_ratings(professeurs).order_by('-est_certifie', '-id')
 
     # Contexte Parent/Enfants
     parent_children = []
@@ -743,11 +747,9 @@ def parent_dashboard(request):
     # Onglet "Essais"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
-    # 4. Abonnement & Favoris
-    abonnement = request.user.abonnements.first()
-    favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
-
-    enfant_form = EnfantForm()
+    # Annotation des ratings pour le composant teacher_card
+    recommandations = annotate_teachers_with_ratings(recommandations)
+    favoris = annotate_teachers_with_ratings(favoris)
 
     return render(
         request,
@@ -858,6 +860,10 @@ def apprenant_dashboard(request):
     # 3. Abonnement & Favoris
     abonnement = request.user.abonnements.first()
     favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
+
+    # Annotation des ratings pour le composant teacher_card
+    recommandations = annotate_teachers_with_ratings(recommandations)
+    favoris = annotate_teachers_with_ratings(favoris)
 
     context = {
         "apprenant": apprenant,

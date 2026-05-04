@@ -1,0 +1,164 @@
+/* Teacher Card Component Styles */
+.teacher-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.teacher-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.teacher-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.teacher-photo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0fdf4;
+    flex-shrink: 0;
+}
+
+.teacher-info {
+    flex: 1;
+    min-width: 0; /* Important for ellipsis */
+}
+
+.teacher-name-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    max-width: 100%;
+}
+
+.teacher-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.teacher-subjects {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.teacher-location {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0.25rem 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stars {
+    color: #fbbf24;
+    font-size: 0.9rem;
+}
+
+.rating-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.teacher-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-verified { background: #dbeafe; color: #2563eb; }
+.badge-available { background: #f0fdf4; color: #16a34a; }
+.badge-trial { background: #fef3c7; color: #d97706; }
+.badge-exp { background: #f1f5f9; color: #475569; }
+
+.teacher-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-view-profile {
+    flex: 1;
+    background: var(--success-600);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.btn-view-profile:hover {
+    background: var(--success-700);
+    transform: translateY(-1px);
+}
+
+.btn-favorite {
+    background: transparent;
+    border: 2px solid #e2e8f0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.btn-favorite:hover, .btn-favorite.active {
+    border-color: var(--success-600);
+    background: var(--success-50);
+    color: var(--success-600);
+}
