@@ -180,13 +180,12 @@ a:hover {
 /* Grille standard pour les cartes professeurs */
 .teachers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.5rem;
     width: 100%;
     margin: 0 auto;
     padding: 1.5rem 0;
-    justify-items: center;
-    align-items: start;
+    justify-content: center; /* Centre les colonnes dans la grille */
 }
 
 @media (max-width: 480px) {

@@ -748,7 +748,7 @@ def parent_dashboard(request):
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
     # 4. Données additionnelles
-    favoris = parent.professeurs_favoris.all()
+    favoris = request.user.professeurs_favoris.all()
     abonnement = getattr(parent, "abonnement", None)
     enfant_form = EnfantForm()
 

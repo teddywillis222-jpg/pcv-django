@@ -18,9 +18,11 @@
 }
 
 .search-container {
-    max-width: 1400px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
 }
 
 .search-title {
@@ -154,6 +156,7 @@
         transform: translateY(0);
     }
 }
+
 
 .advanced-filters-grid {
     display: grid;
@@ -478,8 +481,7 @@
             </form>
     
     <!-- Résultats de Recherche -->
-    <div class="search-container">
-        <div class="teachers-grid" id="teachersGrid">
+    <div class="teachers-grid" id="teachersGrid" style="margin-top: 1rem;">
             {% for teacher in professeurs %}
                 {% include "core/components/_teacher_card.html" %}
             {% empty %}
