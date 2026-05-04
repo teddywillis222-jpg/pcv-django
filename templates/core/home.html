@@ -103,16 +103,16 @@ main.container {
 .search-input-group input, 
 .search-input-group select {
     width: 100%;
-    height: 56px; /* HAUTEUR STRICTE identique pour tous */
-    padding: 0 1.25rem;
+    height: 48px; /* RÉDUIT : plus ergonomique */
+    padding: 0 1rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #ffffff;
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: #0f172a;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    box-sizing: border-box; /* Essentiel pour maintenir les dimensions */
+    box-sizing: border-box;
     font-family: inherit;
 }
 
@@ -126,16 +126,16 @@ main.container {
     background: var(--success-600);
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 0 2rem;
-    height: 56px; /* Hauteur identique aux inputs */
+    border-radius: 10px;
+    padding: 0 1.5rem;
+    height: 48px; /* RÉDUIT : identique aux inputs */
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     margin-top: 1.6rem; 
     transition: all 0.3s ease;
     box-shadow: 0 8px 16px rgba(22, 163, 74, 0.3);
@@ -469,7 +469,7 @@ main.container {
                 <div class="search-input-group">
                     <label for="matiere-hero">Matière</label>
                     <select id="matiere-hero" name="matiere" class="pcv-multi-select">
-                        <option value="">Quelle matière ?</option>
+                        <option value="">Ex: Mathématiques, Piano, Anglais...</option>
                         {% for val, label in MATIERE_CHOICES %}
                         <option value="{{ val }}">{{ label }}</option>
                         {% endfor %}
@@ -479,7 +479,7 @@ main.container {
                 <div class="search-input-group">
                     <label for="localisation-hero">Localisation</label>
                     <select id="localisation-hero" name="localisation" class="pcv-multi-select">
-                        <option value="">Quel quartier ?</option>
+                        <option value="">Ex: Agla, Calavi, Cotonou...</option>
                         {% for code, label in LOCALISATION_CHOICES %}
                         <option value="{{ code }}">{{ label }}</option>
                         {% endfor %}
