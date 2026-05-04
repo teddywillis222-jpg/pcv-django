@@ -197,3 +197,13 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
 DEFAULT_CURRENCY = os.getenv('CURRENCY', 'FCFA')
+
+# Paramètres de notation par défaut
+RATING_DEFAULT_CERTIFIED = float(os.getenv('RATING_DEFAULT_CERTIFIED', '4.8'))
+RATING_DEFAULT_STANDARD = float(os.getenv('RATING_DEFAULT_STANDARD', '4.5'))
+
+# Seuils de prix pour la recherche
+PRICE_THRESHOLDS = os.getenv('PRICE_THRESHOLDS', '2000,5000,10000').split(',')
+
+# Chemins des données
+LOCALISATIONS_FILE = os.path.join(BASE_DIR, 'core', 'localisations.json')

@@ -230,6 +230,9 @@ class Enfant(models.Model):
 
 
 
+def get_default_abonnement_price():
+    return f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement"
+
 class Abonnement(models.Model):
     """Contrat d'abonnement, créé automatiquement à l'inscription."""
 
@@ -247,7 +250,7 @@ class Abonnement(models.Model):
     )
     prix = models.CharField(
         max_length=100,
-        default=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
+        default=get_default_abonnement_price,
     )
     date_debut = models.DateField(null=True, blank=True)
     date_fin = models.DateField(null=True, blank=True)
@@ -514,7 +517,7 @@ class TeacherProfile(models.Model):
     note_initiale_equipe = models.DecimalField(
         max_digits=3, 
         decimal_places=1, 
-        default=4.5, 
+        default=settings.RATING_DEFAULT_STANDARD, 
         help_text="Note attribuée par l'équipe à la validation"
     )
     temps_moyen_reponse = models.DecimalField(

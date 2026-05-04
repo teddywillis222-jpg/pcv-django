@@ -33,7 +33,7 @@ def home(request):
 
     for prof in top_professeurs:
         # Valeurs par défaut pour l'affichage home si non définies
-        prof.moyenne_avis = 4.8 if prof.est_certifie else 4.5
+        prof.moyenne_avis = settings.RATING_DEFAULT_CERTIFIED if prof.est_certifie else settings.RATING_DEFAULT_STANDARD
         prof.nombre_avis = 12 if prof.est_certifie else 3
 
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
@@ -248,14 +248,15 @@ def recherche(request):
         professeurs = professeurs.filter(categorie_de_soutien=soutien)
         
     if prix:
-        if prix == "0-2000":
-            professeurs = professeurs.filter(tarif_horaire__lt=2000)
-        elif prix == "2000-5000":
-            professeurs = professeurs.filter(tarif_horaire__gte=2000, tarif_horaire__lte=5000)
-        elif prix == "5000-10000":
-            professeurs = professeurs.filter(tarif_horaire__gte=5000, tarif_horaire__lte=10000)
-        elif prix == "10000+":
-            professeurs = professeurs.filter(tarif_horaire__gt=10000)
+        thresholds = [int(t) for t in settings.PRICE_THRESHOLDS]
+        if prix == f"0-{thresholds[0]}":
+            professeurs = professeurs.filter(tarif_horaire__lt=thresholds[0])
+        elif prix == f"{thresholds[0]}-{thresholds[1]}":
+            professeurs = professeurs.filter(tarif_horaire__gte=thresholds[0], tarif_horaire__lte=thresholds[1])
+        elif prix == f"{thresholds[1]}-{thresholds[2]}":
+            professeurs = professeurs.filter(tarif_horaire__gte=thresholds[1], tarif_horaire__lte=thresholds[2])
+        elif prix == f"{thresholds[2]}+":
+            professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
 
     from django.db.models import Avg, Count
     professeurs = professeurs.annotate(

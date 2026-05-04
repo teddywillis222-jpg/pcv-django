@@ -3,6 +3,9 @@ Choix centralisés pour toute l'application.
 Les mêmes option sets sont utilisés partout pour faciliter filtres et formulaires.
 """
 from django.core.exceptions import ValidationError
+import json
+import os
+from django.conf import settings
 
 
 # --- Profil & compte ---
@@ -175,109 +178,37 @@ class CourseMode:
 
 
 class Localisation:
-    CHOICES = [
-        ("Abokicodji - Cotonou", "Abokicodji - Cotonou"),
-        ("Adidogomé - Abomey-Calavi", "Adidogomé - Abomey-Calavi"),
-        ("Adjagbo - Abomey-Calavi", "Adjagbo - Abomey-Calavi"),
-        ("Adjamé - Cotonou", "Adjamé - Cotonou"),
-        ("Adjégounlè - Porto-Novo", "Adjégounlè - Porto-Novo"),
-        ("Adogéta - Porto-Novo", "Adogéta - Porto-Novo"),
-        ("Agblangandan - Sèmè-Kpodji", "Agblangandan - Sèmè-Kpodji"),
-        ("Agla - Cotonou", "Agla - Cotonou"),
-        ("Agontikon - Cotonou", "Agontikon - Cotonou"),
-        ("Agori - Abomey-Calavi", "Agori - Abomey-Calavi"),
-        ("Agouako - Abomey-Calavi", "Agouako - Abomey-Calavi"),
-        ("Ahogbohouè - Cotonou", "Ahogbohouè - Cotonou"),
-        ("Aidjèdo - Cotonou", "Aidjèdo - Cotonou"),
-        ("Akassato - Abomey-Calavi", "Akassato - Abomey-Calavi"),
-        ("Akpakpa - Cotonou", "Akpakpa - Cotonou"),
-        ("Akron - Porto-Novo", "Akron - Porto-Novo"),
-        ("Alaga - Parakou", "Alaga - Parakou"),
-        ("Albarika - Parakou", "Albarika - Parakou"),
-        ("Amanwignon - Parakou", "Amanwignon - Parakou"),
-        ("Atchakpa - Porto-Novo", "Atchakpa - Porto-Novo"),
-        ("Atrokpocodji - Abomey-Calavi", "Atrokpocodji - Abomey-Calavi"),
-        ("Avakpa - Porto-Novo", "Avakpa - Porto-Novo"),
-        ("Avotrou - Cotonou", "Avotrou - Cotonou"),
-        ("Awansouri - Cotonou", "Awansouri - Cotonou"),
-        ("Ayélawadjè - Cotonou", "Ayélawadjè - Cotonou"),
-        ("Bakinkoura - Parakou", "Bakinkoura - Parakou"),
-        ("Banikanni - Parakou", "Banikanni - Parakou"),
-        ("Bidossessi - Abomey-Calavi", "Bidossessi - Abomey-Calavi"),
-        ("Cadjèhoun - Cotonou", "Cadjèhoun - Cotonou"),
-        ("Camp Adagbé - Porto-Novo", "Camp Adagbé - Porto-Novo"),
-        ("Cocotomey - Abomey-Calavi", "Cocotomey - Abomey-Calavi"),
-        ("Dandji - Cotonou", "Dandji - Cotonou"),
-        ("Davatin - Porto-Novo", "Davatin - Porto-Novo"),
-        ("Dépôt - Parakou", "Dépôt - Parakou"),
-        ("Djassin - Porto-Novo", "Djassin - Porto-Novo"),
-        ("Djidjè - Cotonou", "Djidjè - Cotonou"),
-        ("Djifa-Prix - Cotonou", "Djifa-Prix - Cotonou"),
-        ("Djougou-Kpota - Djougou", "Djougou-Kpota - Djougou"),
-        ("Dokparou - Parakou", "Dokparou - Parakou"),
-        ("Donaten - Cotonou", "Donaten - Cotonou"),
-        ("Dowa - Porto-Novo", "Dowa - Porto-Novo"),
-        ("Enagnon - Cotonou", "Enagnon - Cotonou"),
-        ("Fidjrossè - Cotonou", "Fidjrossè - Cotonou"),
-        ("Fonkpame - Porto-Novo", "Fonkpame - Porto-Novo"),
-        ("Ganhoto - Porto-Novo", "Ganhoto - Porto-Novo"),
-        ("Ganhi - Cotonou", "Ganhi - Cotonou"),
-        ("Gbèdjromèdé - Cotonou", "Gbèdjromèdé - Cotonou"),
-        ("Gbégamey - Cotonou", "Gbégamey - Cotonou"),
-        ("Gbégnigan - Cotonou", "Gbégnigan - Cotonou"),
-        ("Gbodjé - Abomey-Calavi", "Gbodjé - Abomey-Calavi"),
-        ("Glo-Djigbé - Abomey-Calavi", "Glo-Djigbé - Abomey-Calavi"),
-        ("Godomey - Abomey-Calavi", "Godomey - Abomey-Calavi"),
-        ("Gorobani - Parakou", "Gorobani - Parakou"),
-        ("Guéma - Parakou", "Guéma - Parakou"),
-        ("Haie Vive - Cotonou", "Haie Vive - Cotonou"),
-        ("Hindé - Cotonou", "Hindé - Cotonou"),
-        ("Hogbonou - Porto-Novo", "Hogbonou - Porto-Novo"),
-        ("Houéyiho - Cotonou", "Houéyiho - Cotonou"),
-        ("Houézoumè - Cotonou", "Houézoumè - Cotonou"),
-        ("Houinmè - Porto-Novo", "Houinmè - Porto-Novo"),
-        ("Hounsa - Porto-Novo", "Hounsa - Porto-Novo"),
-        ("Jéricho - Cotonou", "Jéricho - Cotonou"),
-        ("Kadébou - Parakou", "Kadébou - Parakou"),
-        ("Kindonou - Cotonou", "Kindonou - Cotonou"),
-        ("Komè - Porto-Novo", "Komè - Porto-Novo"),
-        ("Kouhounou - Cotonou", "Kouhounou - Cotonou"),
-        ("Kpébié - Parakou", "Kpébié - Parakou"),
-        ("Kpékpédji - Abomey-Calavi", "Kpékpédji - Abomey-Calavi"),
-        ("Kpondehou - Cotonou", "Kpondehou - Cotonou"),
-        ("Ladji - Cotonou", "Ladji - Cotonou"),
-        ("Ladjifarani - Parakou", "Ladjifarani - Parakou"),
-        ("Les Cocotiers - Cotonou", "Les Cocotiers - Cotonou"),
-        ("Lobozounkpa - Abomey-Calavi", "Lobozounkpa - Abomey-Calavi"),
-        ("Madina - Parakou", "Madina - Parakou"),
-        ("Maria-Gléta - Abomey-Calavi", "Maria-Gléta - Abomey-Calavi"),
-        ("Maro-Militaire - Cotonou", "Maro-Militaire - Cotonou"),
-        ("Menontin - Cotonou", "Menontin - Cotonou"),
-        ("Missébo - Cotonou", "Missébo - Cotonou"),
-        ("Missessin - Cotonou", "Missessin - Cotonou"),
-        ("Missité - Cotonou", "Missité - Cotonou"),
-        ("Moumouni - Parakou", "Moumouni - Parakou"),
-        ("Nato - Cotonou", "Nato - Cotonou"),
-        ("Okpè-Oyouré - Porto-Novo", "Okpè-Oyouré - Porto-Novo"),
-        ("Ouando - Porto-Novo", "Ouando - Porto-Novo"),
-        ("Ouinmeko - Porto-Novo", "Ouinmeko - Porto-Novo"),
-        ("Padonou - Abomey-Calavi", "Padonou - Abomey-Calavi"),
-        ("Parana - Parakou", "Parana - Parakou"),
-        ("Placodji - Cotonou", "Placodji - Cotonou"),
-        ("Saint Hubert - Cotonou", "Saint Hubert - Cotonou"),
-        ("Sainte Rita - Cotonou", "Sainte Rita - Cotonou"),
-        ("Segbeya - Cotonou", "Segbeya - Cotonou"),
-        ("Sodohomè - Bohicon", "Sodohomè - Bohicon"),
-        ("Somankpon - Abomey-Calavi", "Somankpon - Abomey-Calavi"),
-        ("Tankpè - Abomey-Calavi", "Tankpè - Abomey-Calavi"),
-        ("Titirou - Parakou", "Titirou - Parakou"),
-        ("Togoudo - Abomey-Calavi", "Togoudo - Abomey-Calavi"),
-        ("Tokpa-Hoho - Cotonou", "Tokpa-Hoho - Cotonou"),
-        ("Vedoko - Cotonou", "Vedoko - Cotonou"),
-        ("Wonkoro - Parakou", "Wonkoro - Parakou"),
-        ("Zogbo - Cotonou", "Zogbo - Cotonou"),
-    ]
-    VALUES = [c[0] for c in CHOICES]
+    _choices = None
+
+    @classmethod
+    def load_choices(cls):
+        if cls._choices is not None:
+            return cls._choices
+        
+        filepath = getattr(settings, 'LOCALISATIONS_FILE', None)
+        if filepath and os.path.exists(filepath):
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    cls._choices = json.load(f)
+                    return cls._choices
+            except Exception:
+                pass
+        
+        # Fallback minimal si le fichier est absent
+        return [("Cotonou", "Cotonou"), ("Porto-Novo", "Porto-Novo")]
+
+    @property
+    def CHOICES(self):
+        # Pour compatibilité avec l'accès instance.CHOICES si besoin (rare en Django)
+        return self.load_choices()
+    
+    # Pour l'accès statique Localisation.CHOICES utilisé dans les modèles/forms
+    # On utilise une ruse : redéfinir CHOICES comme une property de classe ou juste appeler load_choices
+    # Mais en Django, CHOICES est souvent attendu comme une liste simple à l'importation.
+    # On va donc le charger une fois à l'importation du module.
+    
+Localisation.CHOICES = Localisation.load_choices()
+Localisation.VALUES = [c[0] for c in Localisation.CHOICES]
 
 
 # --- Validation prof ---
@@ -575,12 +506,19 @@ class MessageType:
     ]
 
 class PriceRange:
-    CHOICES = [
-        ("0-2000", "Moins de 2000 FCFA"),
-        ("2000-5000", "2000 - 5000 FCFA"),
-        ("5000-10000", "5000 - 10000 FCFA"),
-        ("10000+", "Plus de 10000 FCFA"),
-    ]
+    @classmethod
+    def get_choices(cls):
+        currency = getattr(settings, 'DEFAULT_CURRENCY', 'FCFA')
+        thresholds = getattr(settings, 'PRICE_THRESHOLDS', ['2000', '5000', '10000'])
+        
+        return [
+            (f"0-{thresholds[0]}", f"Moins de {thresholds[0]} {currency}"),
+            (f"{thresholds[0]}-{thresholds[1]}", f"{thresholds[0]} - {thresholds[1]} {currency}"),
+            (f"{thresholds[1]}-{thresholds[2]}", f"{thresholds[1]} - {thresholds[2]} {currency}"),
+            (f"{thresholds[2]}+", f"Plus de {thresholds[2]} {currency}"),
+        ]
+
+PriceRange.CHOICES = PriceRange.get_choices()
 
 
 # --- Validateurs pour champs liste (JSONField) ---
