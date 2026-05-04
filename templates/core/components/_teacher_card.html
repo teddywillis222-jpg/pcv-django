@@ -65,6 +65,8 @@
         <button class="btn-favorite {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" 
             {% if user.is_authenticated and user.professeur %}
                 style="opacity: 0.5; cursor: not-allowed;" onclick="event.stopPropagation(); return false;"
+            {% elif not user.is_authenticated %}
+                onclick="event.stopPropagation(); showAuthModal()"
             {% else %}
                 onclick="event.stopPropagation(); toggleFavorite(this, '{{ teacher.id }}')"
             {% endif %}>

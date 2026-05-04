@@ -582,48 +582,10 @@
                         <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
                         <a href="{% url 'professeur_detail' prof.slug %}" style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir le profil</a>
                     </div>
-{% comment %}
-                    {% for prof in recommandations %}
-                    <div class="prof-card" style="text-align: center; padding: 1.2rem; min-width: 180px;">
-                        {% if prof.photo_de_profil %}
-                        <img src="{{ prof.photo_de_profil.url }}" alt=""
-                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 0.8rem;">
-                        {% else %}
-                        <div
-                            style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem;">
-                            👨‍🏫</div>
-                        {% endif %}
-                        <h4 style="margin: 0; font-size: 0.9rem;">
-                            {{ prof.prenom }}
-                            {% if prof.statut_de_validation == 'APPROVED' or prof.est_certifie %}
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#16a34a" style="vertical-align: middle; margin-left: 2px;">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                            {% endif %}
-                        </h4>
-                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
-                        <p style="margin: 0 0 1rem; font-size: 0.7rem; color: #64748b; text-transform: lowercase;">
-                            {% if prof.classes_enseignees %}
-                                {% for c in prof.classes_enseignees|slice:":2" %}
-                                    {{ c }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                                {% if prof.classes_enseignees|length > 2 %}...{% endif %}
-                            {% else %}
-                                toutes classes
-                            {% endif %}
-                        </p>
-                        <a href="{% url 'professeur_detail' prof.slug %}"
-                            style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir
-                            le profil</a>
-                    </div>
-{% endcomment %}
                     {% empty %}
-                    <div
-                        style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
-                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne
-                            correspond exactement.</p>
-                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche
-                            manuelle</a>
+                    <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
+                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
+                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
                     </div>
                     {% endfor %}
                 </div>
@@ -686,15 +648,11 @@
             </header>
 
             {% if favoris %}
-            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem 0; justify-content: center; width: 100%; box-sizing: border-box;">
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; padding: 1.5rem 0; width: 100%; box-sizing: border-box; justify-items: center; align-items: start;">
                 {% for teacher in favoris %}
                     {% include "core/components/_teacher_card.html" %}
                 {% endfor %}
             </div>
-{% comment %}
-                {% endfor %}
-            </div>
-{% endcomment %}
             {% else %}
             <div
                 style="padding: 2rem; text-align: center; background: white; border-radius: 24px; box-shadow: var(--shadow-sm);">

@@ -50,18 +50,62 @@
         }
 
         /* Fix Tom Select duplication */
-        .tomselected,
         .ts-wrapper + select,
         .ts-control + select {
             display: none !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
-            padding: 0 !important;
+        }
+
+        /* Tom Select Premium Design */
+        .ts-control {
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            padding: 0 0.75rem !important;
+            min-height: 3.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            background: white !important;
+            box-shadow: none !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            border-color: var(--success-600) !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+        }
+
+        .ts-control .item {
+            background: #f1f5f9 !important;
+            color: #1e293b !important;
             border: none !important;
-            position: absolute !important;
-            pointer-events: none !important;
-            visibility: hidden !important;
+            border-radius: 8px !important;
+            padding: 0 10px 0 15px !important;
+            margin: 0 5px 0 0 !important;
+            font-weight: 700 !important;
+            height: 3.5rem !important; /* Même hauteur que l'input */
+            display: flex !important;
+            align-items: center !important;
+            font-size: 1rem !important;
+            line-height: 1 !important;
+        }
+
+        .ts-control .item .remove {
+            border: none !important;
+            margin-left: 10px !important;
+            font-size: 1.4rem !important;
+            opacity: 0.5 !important;
+            padding: 0 5px !important;
+        }
+
+        .ts-control .item .remove:hover {
+            opacity: 1 !important;
+            background: transparent !important;
+        }
+
+        .ts-dropdown {
+            border-radius: 0.75rem !important;
+            margin-top: 5px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e2e8f0 !important;
         }
 
         /* Harmonisation Tom Select avec le design premium */
@@ -727,10 +771,10 @@
                 const isMultiple = select.hasAttribute('multiple');
                 
                 new TomSelect(select, {
-                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : ['clear_button'],
-                    create: true,
+                    plugins: ['remove_button'],
+                    create: isMatieres || isTeacherMatieres,
                     persist: false,
-                    maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : null),
+                    maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : 1),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     hideSelected: true,
@@ -745,10 +789,6 @@
                     },
                     onChange: function(value) {
                         select.dispatchEvent(new Event('change'));
-                    },
-                    onItemAdd: function() {
-                        this.setTextboxValue('');
-                        this.refreshOptions();
                     }
                 });
             });

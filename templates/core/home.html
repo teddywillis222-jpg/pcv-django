@@ -250,6 +250,15 @@ main.container {
 }
 
 /* --- PROFESSEURS DISPONIBLES --- */
+.prof-scroll-container::-webkit-scrollbar { display: none; }
+
+.prof-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    width: max-content;
+}
+
 .prof-scroll-container {
     max-width: 1300px;
     margin: 0 auto;
@@ -260,7 +269,6 @@ main.container {
     -ms-overflow-style: none; /* IE/Edge */
     scroll-behavior: smooth;
 }
-.prof-scroll-container::-webkit-scrollbar { display: none; }
 
 /* Hide scroll controls on mobile */
 .scroll-controls { display: none !important; }
@@ -418,8 +426,10 @@ main.container {
         margin: 0 -10px; /* Force l'overflow du père s'il y a un margin */
     }
     .prof-wrapper {
+        display: flex !important;
         gap: 12px;
-        padding: 0 10px; /* Remet le gap initial */
+        padding: 0 10px;
+        width: max-content;
     }
     .prof-card {
         width: 85vw;
@@ -457,14 +467,19 @@ main.container {
         <div class="search-box">
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
                 <div class="search-input-group">
-                    <label for="matiere">Matière</label>
-                    <input type="text" id="matiere" name="matiere" placeholder="Quelle matière souhaitez-vous maîtriser ?" required>
+                    <label for="matiere-hero">Matière</label>
+                    <select id="matiere-hero" name="matiere" class="pcv-multi-select">
+                        <option value="">Quelle matière ?</option>
+                        {% for val, label in MATIERE_CHOICES %}
+                        <option value="{{ val }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 
                 <div class="search-input-group">
-                    <label for="localisation">Localisation</label>
-                    <select id="localisation" name="localisation" required>
-                        <option value="">Sélectionnez un quartier...</option>
+                    <label for="localisation-hero">Localisation</label>
+                    <select id="localisation-hero" name="localisation" class="pcv-multi-select">
+                        <option value="">Quel quartier ?</option>
                         {% for code, label in LOCALISATION_CHOICES %}
                         <option value="{{ code }}">{{ label }}</option>
                         {% endfor %}
@@ -601,6 +616,10 @@ main.container {
             } else {
                 container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
             }
+        }
+
+        function openTeacherProfile(slug) {
+            window.location.href = `/professeur/${slug}/`;
         }
     </script>
     

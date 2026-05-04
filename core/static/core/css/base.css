@@ -177,19 +177,36 @@ a:hover {
   margin: 0 0.5rem;
 }
 
+/* Grille standard pour les cartes professeurs */
+.teachers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+    justify-items: center;
+    align-items: start;
+}
+
+@media (max-width: 480px) {
+    .teachers-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+}
+
 /* Stabilisation du Viewport globale */
 html, body {
-    overflow-x: hidden; /* Empêche le défilement horizontal indésirable */
+    overflow-x: hidden;
     width: 100%;
     position: relative;
 }
 
-/* Empêche le zoom auto sur iOS Safari pour tous les formulaires */
+/* Empêche le zoom auto sur iOS Safari */
 @media screen and (max-width: 768px) {
-    input,
-    select,
-    textarea,
-    .ts-control input {
-        font-size: 16px !important; /* Taille minimale pour éviter le zoom iOS */
+    input, select, textarea, .ts-control input {
+        font-size: 16px !important;
     }
 }

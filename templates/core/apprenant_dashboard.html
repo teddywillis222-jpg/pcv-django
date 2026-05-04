@@ -435,7 +435,7 @@
             </header>
             
             {% if favoris %}
-            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 335px), 1fr)); gap: 1.5rem; padding: 1rem 0; justify-content: center; width: 100%; box-sizing: border-box;">
+            <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; padding: 1.5rem 0; width: 100%; box-sizing: border-box; justify-items: center; align-items: start;">
                 {% for teacher in favoris %}
                 <div class="teacher-card" onclick="location.href='{% url 'professeur_detail' teacher.slug %}'" style="background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between;">
                     <div class="teacher-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
