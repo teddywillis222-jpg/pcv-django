@@ -747,6 +747,11 @@ def parent_dashboard(request):
     # Onglet "Essais"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
+    # 4. Données additionnelles
+    favoris = parent.professeurs_favoris.all()
+    abonnement = getattr(parent, "abonnement", None)
+    enfant_form = EnfantForm()
+
     # Annotation des ratings pour le composant teacher_card
     recommandations = annotate_teachers_with_ratings(recommandations)
     favoris = annotate_teachers_with_ratings(favoris)
