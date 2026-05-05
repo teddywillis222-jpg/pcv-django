@@ -18,7 +18,7 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100dvh; /* dvh fixes the mobile Safari URL bar issue */
     width: 100vw;
     background: var(--chat-bg);
     overflow: hidden;
@@ -37,6 +37,7 @@
     min-width: 0;
     background-color: var(--chat-bg);
     position: relative;
+    overflow: hidden; /* Added to keep child flex working properly */
 }
 
 /* Sidebar - Mobile First (caché par défaut) */
@@ -175,7 +176,11 @@
     padding: 10px;
     background: var(--input-area-bg);
     border-top: 1px solid rgba(0,0,0,0.1);
-    padding-bottom: calc(10px + 20px + env(safe-area-inset-bottom, 0px)); /* Espace pour footer navigateur mobile + safe area */
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); /* Espace pour safe area */
+    margin-top: auto; /* Force to bottom */
+    flex-shrink: 0; /* Prevent shrinking */
+    position: relative; /* Create stacking context */
+    z-index: 10;
 }
 
 .chat-input-container {
@@ -352,6 +357,10 @@
     .focus-group {
         right: 10px;
         min-width: 200px;
+    }
+    
+    .btn-eng-toggle {
+        display: none !important;
     }
 }
 

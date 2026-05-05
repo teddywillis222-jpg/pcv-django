@@ -206,7 +206,10 @@ function appendMessageBubble(id, text, file, date) {
 }
 
 // === GESTION DES MODALES / SHEETS ===
-function toggleOptions() {
+function toggleOptions(event) {
+    if (event) {
+        event.stopPropagation();
+    }
     const dropdown = document.getElementById('optionsDropdown');
     if (dropdown) dropdown.classList.toggle('active');
 }
