@@ -271,14 +271,14 @@
     }
     
     .profile-container {
-        padding: 0; /* Full width */
+        padding: 0 10px; /* Petit espacement de 10px */
         width: 100%;
         max-width: none;
     }
     
     .profile-header {
         padding: 1rem;
-        border-radius: 0; /* Pas de bords arrondis sur mobile pour le 100% */
+        border-radius: 12px; /* Restaure un léger arrondi */
         margin-bottom: 0.5rem;
     }
 
@@ -287,11 +287,11 @@
         height: 100px;
     }
 
-    /* Supprimer l'arrondi et l'ombre du wrapper pour le 100% mobile */
+    /* Restaurer un léger arrondi pour ne pas "mordre" l'écran */
     .profile-wrapper {
-        border-radius: 0 !important;
-        margin-bottom: 0 !important;
-        box-shadow: none !important;
+        border-radius: 12px !important;
+        margin-bottom: 0.5rem !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
     }
 }
 </style>
