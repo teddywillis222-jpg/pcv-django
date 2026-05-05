@@ -18,14 +18,17 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100dvh; /* dvh fixes the mobile Safari URL bar issue */
+    height: 100%; /* Better than 100dvh for virtual keyboard */
     width: 100vw;
     background: var(--chat-bg);
     overflow: hidden;
     position: fixed;
     top: 0;
+    bottom: 0;
     left: 0;
+    right: 0;
     z-index: 9999;
+    overscroll-behavior: none;
 }
 
 /* Main Chat Area - Mobile First */
@@ -69,7 +72,7 @@
     align-items: center;
     background: var(--header-bg);
     border-bottom: 1px solid rgba(0,0,0,0.1);
-    z-index: 10;
+    z-index: 1000; /* Increased to avoid overlap with yellow welcome text */
     position: relative;
 }
 
@@ -112,6 +115,7 @@
     flex-direction: column;
     gap: 4px;
     scrollbar-width: thin;
+    overscroll-behavior-y: none;
 }
 
 .date-separator {
@@ -274,7 +278,7 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     border: 1px solid rgba(0,0,0,0.1);
     min-width: 200px;
-    z-index: 1000;
+    z-index: 1010;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
@@ -498,7 +502,10 @@
     margin: 0;
     padding: 0;
     height: 100%;
+    width: 100%;
     overflow: hidden;
+    position: fixed;
+    overscroll-behavior: none;
 }
 
 .chat-hide-nav { display: none !important; }

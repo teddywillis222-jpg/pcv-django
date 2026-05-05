@@ -1666,6 +1666,14 @@ def api_fetch_new_messages(request, conversation_id):
         except Exception:
             pass
 
+    # Gérer newly_read: les messages de l'utilisateur qui étaient non lus et qui sont passés à lu
+    unread_ids_str = request.GET.get('unread_ids', '')
+    newly_read = []
+    if unread_ids_str:
+        unread_ids = [int(x) for x in unread_ids_str.split(',') if x.strip().isdigit()]
+        if unread_ids:
+            newly_read = list(conversation.messages.filter(id__in=unread_ids, lu=True).values_list('id', flat=True))
+
     messages_data = []
     for msg in new_messages:
         file_url = msg.contenu_media.url if msg.contenu_media else None

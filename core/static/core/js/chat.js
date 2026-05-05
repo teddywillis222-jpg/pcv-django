@@ -91,7 +91,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!config.urls || !config.urls.fetchMessages) return;
 
         try {
-            const response = await fetch(`${config.urls.fetchMessages}?last_msg_id=${config.lastMsgId}`);
+            const unreadElements = document.querySelectorAll('.msg-sent .msg-status:not(.status-read)');
+            const unreadIds = Array.from(unreadElements).map(el => el.closest('.msg-bubble').getAttribute('data-id')).filter(id => id).join(',');
+
+            const response = await fetch(`${config.urls.fetchMessages}?last_msg_id=${config.lastMsgId}&unread_ids=${unreadIds}`);
             if (!response.ok) return;
             const data = await response.json();
 
