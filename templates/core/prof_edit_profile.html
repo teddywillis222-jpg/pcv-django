@@ -5,11 +5,12 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 <style>
     .edit-container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
-        padding: 1.25rem 0.875rem; /* Reduced padding synced with dashboard */
+        padding: 1.25rem 0.875rem;
         background: white;
         border-radius: 20px;
         box-shadow: var(--dash-shadow);
@@ -26,6 +27,24 @@
             margin-right: calc(-1 * 0.875rem);
             width: calc(100% + 1.75rem);
         }
+    }
+
+    .form-section {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
     .form-group {
@@ -57,43 +76,117 @@
         cursor: not-allowed;
     }
     
-    /* Beautiful Upload Button */
+    /* File Upload Styling */
     .file-upload-wrapper {
         position: relative;
         display: flex;
         align-items: center;
         gap: 1rem;
-    }
-    .file-upload-input {
-        position: absolute;
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        z-index: -1;
-    }
-    .file-upload-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.625rem 1.25rem;
-        background: var(--dash-accent-soft);
-        color: var(--dash-accent);
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 0.875rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.2s;
     }
-    .file-upload-label:hover {
-        background: var(--dash-accent);
-        color: white;
+    .file-upload-wrapper:hover {
+        border-color: var(--dash-accent);
+        background: var(--dash-accent-soft);
     }
-    
+    .file-upload-input {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .file-upload-text {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #64748b;
+    }
+    .file-name-display {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--dash-accent);
+        display: none;
+    }
+
+    /* Diploma Group */
+    .diplome-group {
+        position: relative;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        margin-bottom: 1rem;
+    }
+    .remove-diplome {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 24px;
+        height: 24px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-add-diplome {
+        width: 100%;
+        padding: 1rem;
+        background: white;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        color: #64748b;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+    }
+    .btn-add-diplome:hover {
+        border-color: var(--dash-accent);
+        color: var(--dash-accent);
+        background: var(--dash-accent-soft);
+    }
+
+    /* Grid layout */
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
+    }
+
     .help-text {
         font-size: 0.75rem;
         color: var(--dash-text-muted);
         margin-top: 0.35rem;
+    }
+
+    /* Choices.js Customization */
+    .choices__inner {
+        border-radius: 12px !important;
+        border: 1px solid var(--dash-border) !important;
+        background-color: white !important;
+        padding: 0.4rem 0.8rem !important;
+        min-height: 48px !important;
+    }
+    .choices__input {
+        background-color: transparent !important;
+    }
+    .choices__list--multiple .choices__item {
+        background-color: var(--dash-accent) !important;
+        border: none !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
     }
 </style>
 {% endblock %}
@@ -101,109 +194,245 @@
 {% block content %}
 <div class="dash-main" style="padding-top: 1rem;">
     <div class="edit-container">
-        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-            <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex;">
+        <!-- Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+            <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </a>
-            <h1 style="font-size: 1.25rem; font-weight: 800;">Modifier mon profil</h1>
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">Modifier mon profil</h1>
+                <p style="font-size: 0.875rem; color: #64748b;">Mettez à jour vos informations pour rester attractif.</p>
+            </div>
         </div>
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <!-- Photo Section (Premium Look) -->
-            <div class="form-group" style="padding: 1.25rem; background: #fafafa; border-radius: 16px; margin-bottom: 2rem;">
-                <label class="form-label">Photo de profil</label>
-                <div class="file-upload-wrapper">
-                    <div style="position: relative;">
-                        {% if teacher.photo_de_profil %}
-                        <img id="photo-preview" src="{{ teacher.photo_de_profil.url }}" style="width: 70px; height: 70px; border-radius: 20px; object-fit: cover; border: 2px solid white; box-shadow: var(--dash-shadow);">
-                        {% else %}
-                        <div id="photo-preview" style="width: 70px; height: 70px; border-radius: 20px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <!-- SECTION 1 : IDENTITÉ & PHOTO -->
+            <div class="form-section">
+                <h3 class="section-title"><span>👤</span> Identité & Visibilité</h3>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Photo de profil (Recommandé)</label>
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="position: relative; flex-shrink: 0;">
+                                {% if teacher.photo_de_profil %}
+                                <img id="photo-preview" src="{{ teacher.photo_de_profil.url }}" style="width: 90px; height: 90px; border-radius: 24px; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                {% else %}
+                                <div id="photo-preview" style="width: 90px; height: 90px; border-radius: 24px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8; border: 2px dashed #cbd5e1;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="file-upload-wrapper" style="padding: 0.5rem 1rem;">
+                                    <span class="file-upload-text">Changer la photo</span>
+                                    <span class="file-name-display" style="font-size: 0.8rem;"></span>
+                                    <input type="file" name="photo_de_profil" id="photo-input" class="file-upload-input" accept="image/*" onchange="previewImage(this)">
+                                </div>
+                                <p class="help-text">JPG ou PNG. Un portrait souriant attire 3x plus de parents.</p>
+                            </div>
                         </div>
-                        {% endif %}
                     </div>
-                    <div>
-                        <input type="file" name="photo_de_profil" id="photo-input" class="file-upload-input" accept="image/*" onchange="previewImage(this)">
-                        <label for="photo-input" class="file-upload-label">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                            Changer la photo
-                        </label>
-                        <p class="help-text">JPG, PNG ou WebP. Max 2Mo.</p>
+                    <div class="form-group">
+                        <label class="form-label">Pièce d'identité (Vérification)</label>
+                        <div class="file-upload-wrapper" style="padding: 0.5rem 1rem; border-style: solid; border-width: 1px; background: #f8fafc; cursor: default;">
+                            <span class="file-upload-icon">🔒</span>
+                            <span style="font-size: 0.875rem; color: #1e293b; font-weight: 600;">Document déjà transmis</span>
+                        </div>
+                        <p class="help-text">Contactez le support pour modifier votre CNI.</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Identity (Read Only) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
-                <div class="form-group">
-                    <label class="form-label">Nom complet</label>
-                    <input type="text" class="form-input" value="{{ teacher.prenom }} {{ teacher.nom }}" readonly>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Email (Lecture seule)</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nom complet (Lecture seule)</label>
+                        {{ form.nom }}
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Matière principale</label>
-                    <input type="text" class="form-input" value="{{ teacher.matiere_enseignee }}" readonly>
+                    <label class="form-label">Téléphone / WhatsApp *</label>
+                    {{ form.telephone_whatsapp }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ville & Quartier *</label>
+                    {{ form.ville_quartier }}
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Téléphone / WhatsApp</label>
-                <input type="text" name="telephone_whatsapp" class="form-input phone-input" value="{{ teacher.telephone_whatsapp }}">
+            <!-- SECTION 2 : EXPERTISE & TARIFS -->
+            <div class="form-section">
+                <h3 class="section-title"><span>🎯</span> Expertise & Modalités</h3>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Matières enseignées *</label>
+                        {{ form.matiere_enseignee }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catégorie principale *</label>
+                        {{ form.categorie_de_soutien }}
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Classes / Niveaux *</label>
+                        {{ form.classes_enseignees }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Modes de cours *</label>
+                        {{ form.modes_de_cours }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tarif horaire (FCFA) *</label>
+                    {{ form.tarif_horaire }}
+                    <p class="help-text">Ce tarif sert de base à vos propositions d'engagement.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Ville & Quartier</label>
-                <select name="ville_quartier" class="form-input pcv-multi-select">
-                    {% for val, label in localisation_choices %}
-                        <option value="{{ val }}" {% if teacher.ville_quartier == val %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+            <!-- SECTION 3 : PRÉSENTATION -->
+            <div class="form-section">
+                <h3 class="section-title"><span>✍️</span> Présentation & Méthodologie</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Ma présentation (Bio)</label>
+                    {{ form.presentation }}
+                    <p class="help-text">Parlez de votre parcours et de votre passion pour l'enseignement.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ma méthodologie</label>
+                    {{ form.methodologie }}
+                    <p class="help-text">Comment aidez-vous vos élèves à progresser ?</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Tarif horaire (FCFA)</label>
-                <input type="number" name="tarif_horaire" class="form-input" value="{{ teacher.tarif_horaire|floatformat:0 }}">
-                <p class="help-text">Ce tarif sera affiché sur votre profil public.</p>
+            <!-- SECTION 4 : DIPLÔMES & VÉRIFICATION (LECTURE SEULE) -->
+            <div class="form-section">
+                <h3 class="section-title"><span>🎓</span> Documents de Vérification</h3>
+                
+                <div class="grid-2" style="margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label class="form-label">Pièce d'identité (Vérifiée)</label>
+                        <div style="background: #f8fafc; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="color: #16a34a;">✅</span>
+                            <span style="font-size: 0.875rem; color: #1e293b; font-weight: 600;">Document validé par l'équipe</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut du profil</label>
+                        <div style="background: #f0fdf4; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #bbf7d0; color: #166534; font-weight: 700; font-size: 0.875rem; text-align: center;">
+                            {{ teacher.get_statut_de_validation_display }}
+                        </div>
+                    </div>
+                </div>
+
+                {% if teacher.diplomes.all %}
+                <div>
+                    <h4 style="font-size: 0.875rem; font-weight: 700; color: #64748b; margin-bottom: 1rem; text-transform: uppercase;">Vos Diplômes & Certifications :</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                        {% for diplome in teacher.diplomes.all %}
+                        <div style="background: #ffffff; padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--dash-accent-soft); color: var(--dash-accent); display: flex; align-items: center; justify-content: center;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">{{ diplome.nom_diplome }}</div>
+                                <a href="{{ diplome.fichier_preuve.url }}" target="_blank" style="font-size: 0.75rem; color: var(--dash-accent); font-weight: 700; text-decoration: none;">Voir le document</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <p style="font-size: 0.875rem; color: #64748b; font-style: italic;">Aucun diplôme additionnel enregistré.</p>
+                {% endif %}
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #fffbeb; border-radius: 12px; border: 1px solid #fde68a; display: flex; gap: 0.75rem;">
+                    <span style="font-size: 1.25rem;">ℹ️</span>
+                    <p style="font-size: 0.8rem; color: #92400e; margin: 0;">
+                        Pour modifier vos documents officiels (CNI ou Diplômes), veuillez contacter directement le support administratif de ProfChezVous.
+                    </p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Ma présentation</label>
-                <textarea name="presentation" class="form-textarea" rows="4">{{ teacher.presentation }}</textarea>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Ma méthodologie</label>
-                <textarea name="methodologie" class="form-textarea" rows="4">{{ teacher.methodologie }}</textarea>
-            </div>
-
-            <div style="margin-top: 2.5rem; display: flex; gap: 0.75rem;">
-                <button type="submit" class="btn-dash btn-dash-primary" style="flex: 2; height: 48px;">Enregistrer</button>
-                <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 48px;">Annuler</a>
+            <!-- Actions -->
+            <div style="margin-top: 3rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn-dash btn-dash-primary" style="flex: 2; height: 56px; font-size: 1.1rem; border-radius: 16px;">
+                    Enregistrer les modifications
+                </button>
+                <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 56px; font-size: 1.1rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Annuler
+                </a>
             </div>
         </form>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script>
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('photo-preview');
-                if (preview.tagName === 'IMG') {
-                    preview.src = e.target.result;
-                } else {
-                    const img = document.createElement('img');
-                    img.id = 'photo-preview';
-                    img.src = e.target.result;
-                    img.style = preview.style.cssText;
-                    img.style.objectFit = 'cover';
-                    preview.replaceWith(img);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuration Choices.js
+        const selectConfigs = {
+            removeItemButton: true,
+            placeholder: true,
+            searchEnabled: false,
+            shouldSort: false,
+            itemSelectText: '',
+            classNames: { containerOuter: 'choices pcv-choices' }
+        };
+
+        const elClasses = document.getElementById('id_classes_enseignees');
+        if (elClasses) { new Choices(elClasses, { ...selectConfigs, placeholderValue: "Classes" }); }
+
+        const elModes = document.getElementById('id_modes_de_cours');
+        if (elModes) { new Choices(elModes, { ...selectConfigs, placeholderValue: "Modes de cours" }); }
+
+        const elCat = document.getElementById('id_categorie_de_soutien');
+        if (elCat) { new Choices(elCat, { ...selectConfigs, removeItemButton: false }); }
+
+        const elVille = document.getElementById('id_ville_quartier');
+        if (elVille) { new Choices(elVille, { ...selectConfigs, removeItemButton: false, searchEnabled: true }); }
+
+        // Preview Image
+        window.previewImage = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photo-preview');
+                    if (preview.tagName === 'IMG') {
+                        preview.src = e.target.result;
+                    } else {
+                        const img = document.createElement('img');
+                        img.id = 'photo-preview';
+                        img.src = e.target.result;
+                        img.style = preview.style.cssText;
+                        img.style.objectFit = 'cover';
+                        preview.replaceWith(img);
+                    }
+                    
+                    // Show file name
+                    const nameDisplay = input.parentElement.querySelector('.file-name-display');
+                    const textLabel = input.parentElement.querySelector('.file-upload-text');
+                    if (nameDisplay) {
+                        nameDisplay.textContent = input.files[0].name;
+                        nameDisplay.style.display = 'block';
+                        if (textLabel) textLabel.style.display = 'none';
+                    }
                 }
+                reader.readAsDataURL(input.files[0]);
             }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+        };
+    });
 </script>
 {% endblock %}

@@ -354,6 +354,9 @@ class TeacherProfileForm(forms.ModelForm):
             "classes_enseignees",
             "categorie_de_soutien",
             "modes_de_cours",
+            "presentation",
+            "methodologie",
+            "tarif_horaire",
             "photo_de_profil",
             "fichier_cni",
             "autorisation_publicitaire",
@@ -361,8 +364,13 @@ class TeacherProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Champs en lecture seule
         self.fields["email"].widget.attrs["readonly"] = True
         self.fields["nom"].widget.attrs["readonly"] = True
+
+        if self.instance and self.instance.pk:
+            if "fichier_cni" in self.fields:
+                del self.fields["fichier_cni"]
         self.fields["nom"].label = "Nom Complet"
         
         # self.fields["matiere_enseignee"].widget = forms.HiddenInput()
