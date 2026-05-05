@@ -34,7 +34,30 @@
         gap: 0.75rem;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0.5rem;
+        padding: 1.5rem 1rem;
+    }
+    @media (max-width: 768px) {
+        .dashboard-layout {
+            padding: 0; /* Full width mobile */
+            gap: 0.5rem;
+        }
+        .sidebar-card, .history-line, .prof-card {
+            border-radius: 0 !important;
+            border-left: none !important;
+            border-right: none !important;
+            box-shadow: none !important;
+            margin-bottom: 0.25rem;
+        }
+        .section-header {
+            padding: 1rem 1rem 0 1rem;
+        }
+        .carousel-container {
+            margin: 0;
+            padding: 0 1rem;
+        }
+        .glass-tabs {
+            margin: 0 1rem 1rem 1rem;
+        }
     }
 
     @media (min-width: 1024px) {

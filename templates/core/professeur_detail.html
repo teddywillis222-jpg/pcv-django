@@ -17,7 +17,7 @@
 .teacher-profile-page {
     min-height: 100vh;
     background: #f8fafc;
-    padding: 2rem 0;
+    padding: 1.5rem 0;
 }
 
 .profile-container {
@@ -267,24 +267,31 @@
 
 @media (max-width: 576px) {
     .teacher-profile-page {
-        padding: 0.5rem 0; /* Réduit drastiquement l'espace en haut */
+        padding: 0; /* Plus d'espace du tout en haut sur mobile */
     }
     
     .profile-container {
-        padding: 0 0.5rem; /* Marges latérales minimales (95-100% de largeur) */
+        padding: 0; /* Full width */
         width: 100%;
         max-width: none;
     }
     
     .profile-header {
         padding: 1rem;
-        border-radius: 0.75rem;
-        margin-bottom: 1rem;
+        border-radius: 0; /* Pas de bords arrondis sur mobile pour le 100% */
+        margin-bottom: 0.5rem;
     }
 
     .profile-photo {
         width: 100px;
         height: 100px;
+    }
+
+    /* Supprimer l'arrondi et l'ombre du wrapper pour le 100% mobile */
+    .profile-wrapper {
+        border-radius: 0 !important;
+        margin-bottom: 0 !important;
+        box-shadow: none !important;
     }
 }
 </style>
@@ -293,7 +300,7 @@
 {% block content %}
 <div class="teacher-profile-page">
     <div class="profile-container">
-        <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2rem;">
+        <div class="profile-wrapper" style="background: white; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2rem;">
             {% include 'core/components/teacher_profile.html' with teacher=teacher is_side_panel=False %}
         </div>
     </div>

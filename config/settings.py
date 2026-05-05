@@ -207,3 +207,8 @@ PRICE_THRESHOLDS = os.getenv('PRICE_THRESHOLDS', '2000,5000,10000').split(',')
 
 # Chemins des données
 LOCALISATIONS_FILE = os.path.join(BASE_DIR, 'core', 'localisations.json')
+MATIERES_FILE = os.path.join(BASE_DIR, 'core', 'matieres.json')
+
+# Paramètres Premium
+PREMIUM_MONTHLY_PRICE = os.getenv('PREMIUM_MONTHLY_PRICE', '5000')
+PREMIUM_ENGAGEMENT_QUOTA = int(os.getenv('PREMIUM_ENGAGEMENT_QUOTA', '5'))

@@ -904,7 +904,7 @@ def gestion_plan(request):
         abonnement = Abonnement.objects.create(
             user=request.user,
             type_abonnement=TypeAbonnement.STANDARD,
-            prix="2000f par engagement"
+            prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement"
         )
 
     # Consommation mensuelle (confirmations ce mois-ci)
@@ -929,7 +929,7 @@ def gestion_plan(request):
         history.append({
             'type': 'Déblocage conversation',
             'libelle': f"Prof. {eng.professeur.nom}" if eng.professeur else "Professeur PCV",
-            'montant': '2000f',
+            'montant': f"{settings.DEFAULT_ENGAGEMENT_PRICE} {settings.DEFAULT_CURRENCY}",
             'date': eng.date_confirmation
         })
     
@@ -942,7 +942,7 @@ def gestion_plan(request):
         history.append({
             'type': 'Abonnement Premium',
             'libelle': 'Plan Access+ Premium',
-            'montant': '5000f',
+            'montant': f"{settings.PREMIUM_MONTHLY_PRICE} {settings.DEFAULT_CURRENCY}",
             'date': ab.date_debut
         })
     
@@ -954,6 +954,10 @@ def gestion_plan(request):
         'confirmations_ce_mois': confirmations_ce_mois,
         'history': history,
         'TypeAbonnement': TypeAbonnement,
+        'DEFAULT_ENGAGEMENT_PRICE': settings.DEFAULT_ENGAGEMENT_PRICE,
+        'PREMIUM_MONTHLY_PRICE': settings.PREMIUM_MONTHLY_PRICE,
+        'PREMIUM_ENGAGEMENT_QUOTA': settings.PREMIUM_ENGAGEMENT_QUOTA,
+        'DEFAULT_CURRENCY': settings.DEFAULT_CURRENCY,
     }
     return render(request, "core/gestion_plan.html", context)
 

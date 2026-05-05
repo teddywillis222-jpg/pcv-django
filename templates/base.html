@@ -417,6 +417,9 @@
 
         /* Responsive Mobile */
         @media (max-width: 768px) {
+            .container {
+                padding: 0; /* Full width mobile by default */
+            }
             .navbar-nav {
                 display: none;
             }
@@ -448,6 +451,17 @@
 
             .navbar-container {
                 padding: 0.75rem;
+            }
+        }
+
+        /* Ajustement du padding top du contenu principal */
+        .main-content {
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding-top: 0.25rem !important; /* Réduction drastique du top spacing */
             }
         }
     </style>
@@ -580,7 +594,7 @@
         }
     </style>
 
-    <main class="container" style="padding-top: 1rem; padding-bottom: 3rem;">
+    <main class="container main-content" style="padding-bottom: 3rem;">
         {% if messages %}
         <div class="messages-container">
             {% for message in messages %}

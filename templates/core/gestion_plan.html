@@ -511,12 +511,12 @@
         <div class="usage-section">
             <div class="usage-header">
                 <span class="usage-title">Quota mensuel (Engagements confirmés)</span>
-                <span class="usage-stats">{{ confirmations_ce_mois }} / 5</span>
+                <span class="usage-stats">{{ confirmations_ce_mois }} / {{ PREMIUM_ENGAGEMENT_QUOTA }}</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: {% widthratio confirmations_ce_mois 5 100 %}%"></div>
+                <div class="progress-fill" style="width: {% widthratio confirmations_ce_mois PREMIUM_ENGAGEMENT_QUOTA 100 %}%"></div>
             </div>
-            {% if confirmations_ce_mois >= 5 %}
+            {% if confirmations_ce_mois >= PREMIUM_ENGAGEMENT_QUOTA %}
             <div class="usage-limit-msg">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 Limite atteinte. Renouvelez votre abonnement ou patientez jusqu'au mois prochain.
@@ -554,11 +554,11 @@
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>2000 F</strong> uniquement après confirmation du professeur (déblocage de l’engagement)</span>
+                    <span><strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> uniquement après confirmation du professeur (déblocage de l’engagement)</span>
                 </li>
             </ul>
             <p style="font-size: 0.8rem; color: var(--text-gray); font-style: italic; margin-top: 0.5rem; line-height: 1.4;">
-                ℹ️ En Plan Standard, ce frais d’activation de 2000 F CFA après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
+                ℹ️ En Plan Standard, ce frais d’activation de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }} après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
             </p>
             {% if abonnement.type_abonnement != TypeAbonnement.STANDARD %}
                 <a href="#" class="btn-action btn-outline">Revenir au Standard</a>
@@ -569,7 +569,7 @@
         <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
             <div class="compare-header">
                 <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
-                <span class="compare-price">5000f<small>/mois</small></span>
+                <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }}{{ DEFAULT_CURRENCY|lower }}<small>/mois</small></span>
             </div>
             <ul class="compare-features">
                 <li class="feature-item">
@@ -578,11 +578,11 @@
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Jusqu’à <strong>5 engagements confirmés</strong> par mois activés sans frais supplémentaires
+                    Jusqu’à <strong>{{ PREMIUM_ENGAGEMENT_QUOTA }} engagements confirmés</strong> par mois activés sans frais supplémentaires
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <strong>Aucun frais de 2000 F</strong> après confirmation du professeur (dans la limite du plan)
+                    <strong>Aucun frais de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> après confirmation du professeur (dans la limite du plan)
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -655,7 +655,7 @@
             <p>👉 <strong>Selon votre plan, la proposition d’un engagement est toujours gratuite.</strong><br>
             Aucun paiement n’est demandé au moment de l’envoi.</p>
             
-            <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>2000 F CFA</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
+            <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
             * messagerie sécurisée<br>
             * planification des séances<br>
             * journal de suivi pédagogique (pour les parents)</p>

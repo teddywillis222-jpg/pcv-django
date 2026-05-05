@@ -8,18 +8,21 @@
     .suivi-container {
         max-width: 800px;
         margin: 0 auto;
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
     @media (max-width: 576px) {
         .suivi-container {
-            padding: 0.5rem;
+            padding: 0; /* Full width */
             width: 100%;
         }
         .header-card, .progress-section, .journal-section {
             padding: 1rem !important;
-            border-radius: 12px !important;
-            margin-bottom: 1rem !important;
+            border-radius: 0 !important; /* Pas d'arrondi sur mobile */
+            margin-bottom: 0.5rem !important;
+            box-shadow: none !important;
+            border-left: none !important;
+            border-right: none !important;
         }
     }
     .header-card {

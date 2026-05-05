@@ -52,48 +52,36 @@ class SupportCategory:
 
 class Matiere:
     """Liste de 100 matières standardisées pour les suggestions."""
-    LISTE = [
-        "Allemand", "Anglais", "Arts Plastiques", "Biologie", "Chimie",
-        "Communication Écrite", "Communication Orale", "Dessin",
-        "Éducation Civique (ECM)", "Éducation Musicale",
-        "Éducation Physique et Sportive (EPS)", "Espagnol", "Français",
-        "Géographie", "Histoire", "Informatique", "Initiation à la Technologie",
-        "Italien", "Lecture", "Mathématiques", "Philosophie", "Physique",
-        "Rédaction", "Sciences de la Vie et de la Terre (SVT)",
-        "Agronomie", "Anatomie", "Architecture", "Bureautique",
-        "Comptabilité Analytique", "Comptabilité Générale",
-        "Construction Mécanique", "Coupe-Couture", "Dessin Technique",
-        "Droit Civil", "Droit Constitutionnel", "Droit des Affaires",
-        "Économie Générale", "Électricité", "Électronique", "Entrepreneuriat",
-        "Fiscalité", "Génie Civil", "Gestion de Projets",
-        "Gestion des Ressources Humaines", "Hôtellerie et Restauration",
-        "Hydraulique", "Maçonnerie", "Maintenance Informatique",
-        "Marketing et Communication", "Mécanique Automobile", "Menuiserie",
-        "Organisation du Travail Administratif (OTA)", "Santé et Nutrition",
-        "Secrétariat", "Statistiques", "Topographie", "Tourisme",
-        "Algèbre", "Analyse Mathématique", "Biochimie", "Biotechnologie",
-        "Cryptographie", "Économétrie", "Électromagnétisme", "Épistémologie",
-        "Finances Publiques", "Géologie", "Intelligence Artificielle",
-        "Linguistique", "Macroéconomie", "Mécanique des Fluides",
-        "Microéconomie", "Neurosciences", "Pétrochimie",
-        "Psychologie de l'Éducation", "Réseaux et Télécoms",
-        "Sciences de l'Éducation", "Sociologie", "Thermodynamique",
-        "Alphabétisation (Langues Nationales)", "Art Oratoire",
-        "Chinois (Mandarin)", "Coiffure et Esthétique", "Cuisine et Pâtisserie",
-        "Développement Mobile (Flutter/React Native)",
-        "Développement Web (HTML/CSS/JS)", "Échecs", "Éducation Financière",
-        "Entrepreneuriat Agricole", "Infographie (Photoshop/Illustrator)",
-        "Leadership et Soft Skills", "Maintenance de Panneaux Solaires",
-        "Montage Vidéo", "Musique (Guitare)", "Musique (Piano)",
-        "No-Code (Bubble/Adalo)", "Photographie", "Programmation Python",
-        "Rédaction Web / SEO", "Yoga et Bien-être"
-    ]
+    _liste = None
+
+    @classmethod
+    def load_liste(cls):
+        if cls._liste is not None:
+            return cls._liste
+        
+        filepath = getattr(settings, 'MATIERES_FILE', None)
+        if filepath and os.path.exists(filepath):
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    cls._liste = json.load(f)
+                    return cls._liste
+            except Exception:
+                pass
+        
+        # Fallback minimal
+        return ["Mathématiques", "Français", "Anglais", "Physique", "Chimie", "SVT"]
+
+    @property
+    def LISTE(self):
+        return self.load_liste()
     
     @classmethod
     def get_choices(cls):
         """Retourne la liste triée par ordre alphabétique pour les Select."""
-        sorted_list = sorted(cls.LISTE)
+        sorted_list = sorted(cls.load_liste())
         return [(m, m) for m in sorted_list]
+
+Matiere.LISTE = Matiere.load_liste()
 
 
 # --- Classe / niveau (partout : Enfant, Engagement, TeacherProfile) ---
