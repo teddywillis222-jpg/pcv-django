@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Trouvez le meilleur répétiteur à domicile au Bénin | Prof Chez Vous{% endblock %}
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ seo_description }}">
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -397,7 +401,17 @@
     <!-- Header SEO -->
     <div class="search-header">
         <div class="search-container">
-            <h1 class="search-title">Trouvez le meilleur répétiteur à domicile au Bénin</h1>
+            <h1 class="search-title">
+                {% if matiere and localisation %}
+                    Cours de {{ matiere }} à {{ localisation }}
+                {% elif matiere %}
+                    Professeurs de {{ matiere }}
+                {% elif localisation %}
+                    Professeurs à {{ localisation }}
+                {% else %}
+                    Trouvez le meilleur répétiteur à domicile au Bénin
+                {% endif %}
+            </h1>
             
             <!-- Formulaire de recherche -->
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">

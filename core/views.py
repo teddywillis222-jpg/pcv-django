@@ -283,6 +283,20 @@ def recherche(request):
         parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
         parent_children_json = json.dumps(parent_children)
 
+    # --- SEO Dynamique ---
+    seo_title = "Rechercher un professeur particulier au Bénin | ProfChezVous"
+    seo_description = "Trouvez le professeur idéal pour vos cours à domicile au Bénin. Sélectionnez votre matière, votre quartier et votre niveau."
+
+    if matiere and localisation:
+        seo_title = f"Meilleurs Professeurs de {matiere} à {localisation} | ProfChezVous"
+        seo_description = f"Découvrez nos professeurs de {matiere} certifiés disponibles à {localisation}. Soutien scolaire de qualité à domicile."
+    elif matiere:
+        seo_title = f"Cours particuliers de {matiere} au Bénin | ProfChezVous"
+        seo_description = f"Trouvez un professeur de {matiere} compétent pour des cours à domicile partout au Bénin. Tous niveaux."
+    elif localisation:
+        seo_title = f"Professeurs particuliers à {localisation} | ProfChezVous"
+        seo_description = f"Besoin d'un prof à {localisation} ? Découvrez notre sélection d'enseignants vérifiés pour vos enfants."
+
     context = {
         'professeurs': professeurs,
         'matiere': matiere,
@@ -293,6 +307,8 @@ def recherche(request):
         'soutien': soutien,
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
+        'seo_title': seo_title,
+        'seo_description': seo_description,
     }
     
     return render(request, "core/recherche.html", context)
@@ -1063,6 +1079,22 @@ def professeur_detail(request, teacher_slug):
         'existing_engagement_json': existing_engagement_json,
         'existing_conversation_id': existing_conversation_id
     }
+
+    # --- SEO: Professeurs Similaires ---
+    related_teachers = TeacherProfile.objects.filter(
+        statut_de_validation=ValidationStatus.VALIDE
+    ).exclude(id=teacher.id)
+
+    # Priorité 1: Même matière
+    same_matiere = related_teachers.filter(matiere_enseignee=teacher.matiere_enseignee)
+    if same_matiere.count() >= 4:
+        related_teachers = same_matiere.order_by('?')[:4]
+    else:
+        # Priorité 2: Même ville/quartier
+        same_loc = related_teachers.filter(ville_quartier=teacher.ville_quartier)
+        related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
+
+    context['related_teachers'] = annotate_teachers_with_ratings(related_teachers)
     
     return render(request, "core/professeur_detail.html", context)
 

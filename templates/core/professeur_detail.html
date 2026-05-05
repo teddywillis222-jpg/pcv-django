@@ -304,6 +304,23 @@
             {% include 'core/components/teacher_profile.html' with teacher=teacher is_side_panel=False %}
         </div>
     </div>
+
+    <!-- Professeurs Similaires -->
+    {% if related_teachers %}
+    <div class="profile-container" style="margin-top: 3rem; margin-bottom: 4rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 1.5rem; padding-left: 0.5rem;">D'autres professeurs pourraient vous intéresser</h2>
+        <div class="teachers-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+            {% for related in related_teachers %}
+                {% include "core/components/_teacher_card.html" with teacher=related %}
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'recherche' %}?matiere={{ teacher.matiere_enseignee }}" style="display: inline-block; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 700; transition: all 0.3s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                Voir tous les professeurs de {{ teacher.matiere_enseignee }}
+            </a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% include 'core/components/engagement_modal.html' %}

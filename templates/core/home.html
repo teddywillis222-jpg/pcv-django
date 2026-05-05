@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Accueil - Prof Chez Vous{% endblock %}
+{% block title %}Prof Chez Vous | Répétiteurs et cours particuliers à domicile au Bénin{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="Prof Chez Vous connecte les parents et élèves avec les meilleurs professeurs particuliers au Bénin. Cours de maths, anglais, français à domicile à Cotonou, Calavi et partout ailleurs.">
+{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -498,45 +502,45 @@ main.container {
     </div>
 </section>
 
-<!-- COMMENT ÇA MARCHE -->
-<section class="section-padding bg-light">
+    </div>
+</section>
+
+<!-- RECHERCHES POPULAIRES -->
+<section class="section-padding bg-white">
     <div class="section-header">
-        <h2>Comment ça marche ?</h2>
-        <p>Trois étapes simples pour trouver le professeur parfait pour vos enfants</p>
+        <h2>Recherches Populaires</h2>
+        <p>Accédez directement aux professeurs les plus recherchés près de chez vous.</p>
     </div>
     
-    <div class="grid-3">
-        <!-- Step 1 -->
-        <div class="step-card">
-            <div class="step-icon icon-green">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-            </div>
-            <h3>🎯 Trouvez le bon professeur</h3>
-            <p>Recherchez un professeur certifié selon votre niveau, votre matière et votre quartier. Tous les profils sont vérifiés pour garantir un soutien fiable.</p>
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; padding: 0 1rem;">
+        <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid var(--success-600); padding-left: 0.75rem;">Matières Phares</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><a href="{% url 'recherche' %}?matiere=Mathématiques" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Mathématiques</a></li>
+                <li><a href="{% url 'recherche' %}?matiere=Anglais" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof d'Anglais</a></li>
+                <li><a href="{% url 'recherche' %}?matiere=Français" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Français</a></li>
+                <li><a href="{% url 'recherche' %}?matiere=Physique-Chimie" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Physique-Chimie</a></li>
+            </ul>
         </div>
         
-        <!-- Step 2 -->
-        <div class="step-card">
-            <div class="step-icon icon-blue">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                </svg>
-            </div>
-            <h3>📩 Envoyez votre demande</h3>
-            <p>Envoyez une proposition d’engagement personnalisée à un professeur via un formulaire dédié. Précisez vos attentes, horaires et préférences.</p>
+        <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid #3b82f6; padding-left: 0.75rem;">Villes & Quartiers</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><a href="{% url 'recherche' %}?localisation=Cotonou" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Cotonou</a></li>
+                <li><a href="{% url 'recherche' %}?localisation=Abomey-Calavi" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Calavi</a></li>
+                <li><a href="{% url 'recherche' %}?localisation=Agla" style="color: #64748b; text-decoration: none; font-weight: 500;">Professeur à Agla</a></li>
+                <li><a href="{% url 'recherche' %}?localisation=Porto-Novo" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Porto-Novo</a></li>
+            </ul>
         </div>
         
-        <!-- Step 3 -->
-        <div class="step-card">
-            <div class="step-icon icon-amber">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-                </svg>
-            </div>
-            <h3>🏠 Commencez en confiance</h3>
-            <p>Dès validation, les cours à domicile débutent avec un suivi transparent. Chaque séance est enregistrée dans un journal accessible à tout moment.</p>
+        <div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid #8b5cf6; padding-left: 0.75rem;">Niveaux Scolaires</h3>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                <li><a href="{% url 'recherche' %}?classe=Primaire" style="color: #64748b; text-decoration: none; font-weight: 500;">Répétiteur Primaire</a></li>
+                <li><a href="{% url 'recherche' %}?classe=Collège" style="color: #64748b; text-decoration: none; font-weight: 500;">Soutien au Collège</a></li>
+                <li><a href="{% url 'recherche' %}?classe=Lycée" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours niveau Lycée</a></li>
+                <li><a href="{% url 'recherche' %}?classe=Université" style="color: #64748b; text-decoration: none; font-weight: 500;">Appui Universitaire</a></li>
+            </ul>
         </div>
     </div>
 </section>
