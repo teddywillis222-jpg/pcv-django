@@ -744,8 +744,15 @@ def parent_dashboard(request):
     # On mélange et on limite
     recommandations = recommandations.order_by("?")[:8]
 
-    # 3. Engagements filtrés selon la fiche technique (exclure ceux masqués par le parent)
-    engagements = active_enfant.engagements.filter(masque_par_parent=False).order_by("-date_creation")
+    # 3. Engagements : On prend TOUS les engagements du parent pour être sûr de ne rien rater
+    # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
+    engagements_base = request.user.engagements_client.filter(masque_par_parent=False)
+    
+    # On filtre ceux de l'enfant actif OU ceux qui n'ont AUCUN enfant lié (orphelins)
+    from django.db.models import Q
+    engagements = engagements_base.filter(
+        Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
+    ).distinct().order_by("-date_creation")
 
     # Onglet "En cours" : En attente ou Confirmé/En cours
     engs_en_cours = engagements.filter(
@@ -1313,19 +1320,21 @@ def api_engagement(request):
         
         # Lier les enfants (ManyToManyField)
         enfant_id = data.get('enfant_id')
-        if enfant_id:
+        if enfant_id and str(enfant_id).isdigit():
             from .models import Enfant
             try:
-                enfant = Enfant.objects.get(id=enfant_id)
-                engagement.enfants_concernes.clear()
-                engagement.enfants_concernes.add(enfant)
-            except Enfant.DoesNotExist:
+                enfant = Enfant.objects.get(id=int(enfant_id))
+                # Vérifier que l'enfant appartient bien au parent (sécurité)
+                if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
+                    engagement.enfants_concernes.clear()
+                    engagement.enfants_concernes.add(enfant)
+            except (Enfant.DoesNotExist, ValueError):
                 pass
-        elif hasattr(request.user, 'parent'):
-            # Si un seul enfant, on le lie par défaut
+        
+        # Fallback : si aucun enfant n'est lié et que le parent n'en a qu'un seul
+        if not engagement.enfants_concernes.exists() and hasattr(request.user, 'parent'):
             enfants = request.user.parent.enfants.all()
             if enfants.count() == 1:
-                engagement.enfants_concernes.clear()
                 engagement.enfants_concernes.add(enfants.first())
 
         engagement.save()
