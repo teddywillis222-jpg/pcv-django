@@ -1077,7 +1077,8 @@ def professeur_detail(request, teacher_slug):
         'parent_children_json': parent_children_json,
         'existing_engagement': existing_engagement,
         'existing_engagement_json': existing_engagement_json,
-        'existing_conversation_id': existing_conversation_id
+        'existing_conversation_id': existing_conversation_id,
+        'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
     }
 
     # --- SEO: Professeurs Similaires ---
@@ -1085,8 +1086,8 @@ def professeur_detail(request, teacher_slug):
         statut_de_validation=ValidationStatus.VALIDE
     ).exclude(id=teacher.id)
 
-    # Priorité 1: Même matière
-    same_matiere = related_teachers.filter(matiere_enseignee=teacher.matiere_enseignee)
+    # Priorité 1: Même matière (plus flexible avec icontains)
+    same_matiere = related_teachers.filter(matiere_enseignee__icontains=teacher.matiere_enseignee)
     if same_matiere.count() >= 4:
         related_teachers = same_matiere.order_by('?')[:4]
     else:
@@ -1109,14 +1110,25 @@ def api_teacher_profile(request, teacher_slug):
         from django.db.models import Avg, Count
         
         engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
-        if engs_stats.exists():
-            temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg']
-        else:
-            temps_moyen_reponse = None
+        temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
             
         engagements_actifs = teacher.engagements.filter(
             statut_general__in=[StatutGeneral.EN_COURS, StatutGeneral.CONFIRME, StatutGeneral.FINALISE]
         ).count()
+
+        # Professeurs similaires pour le Side Panel
+        related_teachers = TeacherProfile.objects.filter(
+            statut_de_validation=ValidationStatus.VALIDE
+        ).exclude(id=teacher.id)
+        
+        same_matiere = related_teachers.filter(matiere_enseignee__icontains=teacher.matiere_enseignee)
+        if same_matiere.count() >= 4:
+            related_teachers = same_matiere.order_by('?')[:4]
+        else:
+            same_loc = related_teachers.filter(ville_quartier=teacher.ville_quartier)
+            related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
+        
+        related_teachers = annotate_teachers_with_ratings(related_teachers)
         
         # Moyenne avis dynamique
         evals_stats = teacher.evaluations_recues.aggregate(
@@ -1197,6 +1209,8 @@ def api_teacher_profile(request, teacher_slug):
             'existing_conversation_id': existing_conversation_id,
             'readable_modes': readable_modes,
             'readable_classes': readable_classes,
+            'related_teachers': related_teachers,
+            'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
             'parent_children': parent_children,
             'existing_engagement': existing_engagement
         }, request=request)
