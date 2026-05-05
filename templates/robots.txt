@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://profchezvous.onrender.com/sitemap.xml

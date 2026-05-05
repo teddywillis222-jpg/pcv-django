@@ -17,11 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import StaticViewSitemap, TeacherProfileSitemap
 
 from core import views as core_views
+from django.views.generic import TemplateView
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'teachers': TeacherProfileSitemap,
+}
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
     path("accounts/", include("allauth.account.urls")),
     path("", core_views.home, name="home"),
     path("signup/", core_views.signup, name="signup"),

@@ -574,6 +574,10 @@ class TeacherProfile(models.Model):
         self.matiere_enseignee = clean_subjects(self.matiere_enseignee)
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('professeur_detail', kwargs={'teacher_slug': self.slug})
+
     def __str__(self):
         return f"Professeur {self.prenom} {self.nom}"
 
