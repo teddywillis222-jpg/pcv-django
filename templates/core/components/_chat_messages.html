@@ -5,47 +5,48 @@
             <span>{{ msg.date_envoi|date:"d F Y" }}</span>
         </div>
         {% endif %}
-        
-        <div class="msg-bubble {% if msg.type_message == 'SYSTEME' %}msg-system{% elif msg.auteur == request.user %}msg-sent{% else %}msg-received{% endif %}" data-id="{{ msg.id }}">
-            
+
+        <div class="msg-bubble
+            {% if msg.type_message == 'SYSTEME' %}msg-system
+            {% elif msg.auteur == request.user %}msg-sent
+            {% else %}msg-received{% endif %}"
+            data-id="{{ msg.id }}">
+
             {% if msg.contenu_media %}
-            <div class="msg-file" style="margin-bottom: 0.25rem;">
-                <a href="{{ msg.contenu_media.url }}" target="_blank" style="color: inherit; text-decoration: underline; font-weight: 600;">
-                    📎 {{ msg.contenu_media.name|slice:"15:" }}
+            <div class="msg-file">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <a href="{{ msg.contenu_media.url }}" target="_blank" rel="noopener">
+                    {{ msg.contenu_media.name|slice:"10:" }}
                 </a>
             </div>
             {% endif %}
-            
+
             {% if msg.contenu_texte %}
             <div class="msg-content">{{ msg.contenu_texte }}</div>
             {% endif %}
-            
+
+            {% if msg.type_message != 'SYSTEME' %}
             <div class="msg-meta">
-                {% if msg.type_message != 'SYSTEME' %}
                 <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
-                {% endif %}
-                
                 {% if msg.auteur == request.user %}
                 <span class="msg-status {% if msg.lu %}status-read{% endif %}">
                     {% if msg.lu %}
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z" />
-                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/></svg>
                     {% else %}
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
-                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>
                     {% endif %}
                 </span>
                 {% endif %}
             </div>
+            {% endif %}
+
         </div>
     {% empty %}
-        <div style="text-align: center; color: #54656f; margin-top: 2rem; font-size: 0.9rem; background: #fff9c4; padding: 0.5rem 1rem; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);">
-            💬 Début de votre conversation avec {{ other_participant.first_name }}.
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:0.5rem;padding:3rem 1rem;">
+        <div style="background:rgba(225,243,251,0.9);padding:0.5rem 1.25rem;border-radius:10px;font-size:0.8rem;color:#5b717d;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,0.1);">
+            💬 Début de la conversation avec {{ other_participant.first_name }}.
         </div>
-        <div style="text-align: center; color: #54656f; margin-top: 1rem; font-size: 0.9rem;">
-            Envoyez un premier message pour démarrer l'échange !
-        </div>
+        <div style="font-size:0.8rem;color:#94a3b8;">Envoyez un premier message pour démarrer !</div>
+    </div>
     {% endfor %}
 </div>

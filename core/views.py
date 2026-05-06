@@ -232,6 +232,7 @@ def messagerie(request):
         'ROLE_PARENT': Role.ROLE_PARENT,
         'ROLE_APPRENANT': Role.ROLE_APPRENANT,
         'today': timezone.now().date(),
+        'unread_total': sum(1 for c in formatted_conversations if c['has_unread']),
     }
 
     return render(request, "core/messagerie.html", context)
@@ -1474,11 +1475,20 @@ def conversation_detail(request, conversation_id):
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
     is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
     
-    # Logique de blocage supprimée (Remise à zéro)
+    # Logique de blocage (cohérente avec api_send_message)
     is_blocked = False
-    is_eligible_to_finalize = True # On autorise par défaut
     hide_input = False
     blocking_message = ""
+    eng = conversation.engagement_actif
+    if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
+        if user_role in ['PARENT', 'APPRENANT']:
+            from .choices import TypeAbonnement
+            is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+            if not is_premium:
+                is_blocked = True
+                hide_input = True
+                blocking_message = "Paiement requis pour continuer les échanges."
+    is_eligible_to_finalize = True  # On autorise par défaut
 
     # Autres infos pour le header
     if request.user == conversation.parent:
@@ -1697,7 +1707,6 @@ def api_fetch_new_messages(request, conversation_id):
     })
 
 
-@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def api_update_engagement(request, engagement_id):
@@ -1735,7 +1744,6 @@ def api_update_engagement(request, engagement_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def api_finalize_engagement(request, engagement_id):
@@ -2226,3 +2234,29 @@ def api_fictional_payment(request):
             
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def api_archive_conversation(request, conversation_id):
+    """Archive ou désarchive une conversation (soft toggle)."""
+    from .models import Conversation
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+    conversation.conversation_archivee = not conversation.conversation_archivee
+    conversation.save(update_fields=['conversation_archivee'])
+    return JsonResponse({'success': True, 'archivee': conversation.conversation_archivee})
+
+
+@login_required
+@require_http_methods(["POST"])
+def api_delete_conversation(request, conversation_id):
+    """Soft-delete : masque la conversation pour l'utilisateur courant en l'archivant."""
+    from .models import Conversation
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+    conversation.conversation_archivee = True
+    conversation.save(update_fields=['conversation_archivee'])
+    return JsonResponse({'success': True})
