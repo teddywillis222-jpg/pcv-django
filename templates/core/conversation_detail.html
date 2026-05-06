@@ -176,7 +176,15 @@
     <div class="c-overlay" id="overlay" onclick="closeSheet()"></div>
     <div class="c-bottom-sheet" id="engSheet">
         <div class="c-sheet-handle"></div>
-        <div class="c-sheet-header">Engagements liés</div>
+        <div class="c-sheet-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Engagements liés</span>
+            <button onclick="closeSheet()" class="c-icon-btn" style="background: #f1f5f9; padding: 0.5rem; border-radius: 50%; color: #64748b;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
         
         {% if role == ROLE_PARENT and parent_children|length > 0 %}
         <select style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--c-border); font-family: var(--font);">
@@ -192,7 +200,7 @@
             <div class="c-eng-card" id="eng-card-{{ eng.id }}">
                 <div class="c-eng-card-header" onclick="toggleEngCard('{{ eng.id }}')">
                     <div class="c-eng-card-info">
-                        <div class="c-eng-title">{{ eng.matiere }} {% if eng.classe %}({{ eng.classe }}){% endif %}</div>
+                        <div class="c-eng-title">{{ eng.matiere }} {% if eng.classe and eng.classe|default:""|length > 0 and eng.classe != "None" %}({{ eng.classe }}){% endif %}</div>
                         <div class="c-eng-meta">
                             {% if eng.enfants_concernes.all %}
                                 {% for enfant in eng.enfants_concernes.all %}{{ enfant.prenom }}{% if not forloop.last %}, {% endif %}{% endfor %}
@@ -407,6 +415,21 @@
         document.getElementById('eng-edit-' + engId).style.display = 'none';
     }
 
+    function getCookieCSRF(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     async function saveEngEdit(event, engId) {
         event.preventDefault();
         const form = event.target;
@@ -418,11 +441,12 @@
         btn.textContent = 'Enregistrement...';
         
         try {
+            const csrf = getCookieCSRF('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value;
             const response = await fetch(`/api/engagement/${engId}/update/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+                    'X-CSRFToken': csrf
                 },
                 body: JSON.stringify(data)
             });
@@ -452,10 +476,11 @@
     async function finalizeEng(engId) {
         if (confirm("Êtes-vous sûr de vouloir finaliser cet engagement ? Cela mettra à jour son statut définitivement.")) {
             try {
+                const csrf = getCookieCSRF('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value;
                 const response = await fetch(`/api/engagement/${engId}/finalize/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
+                        'X-CSRFToken': csrf
                     }
                 });
                 const result = await response.json();
