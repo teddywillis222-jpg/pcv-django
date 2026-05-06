@@ -1481,6 +1481,10 @@ def conversation_detail(request, conversation_id):
     blocking_message = ""
     eng = conversation.engagement_actif
     
+    # Vérifier l'abonnement
+    from .choices import TypeAbonnement, Localisation
+    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+
     if eng and user_role in ['PARENT', 'APPRENANT']:
         # 1. Bloqué si en attente ou refusé
         if eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
@@ -1489,8 +1493,6 @@ def conversation_detail(request, conversation_id):
             blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a été refusé."
         # 2. Bloqué si confirmé/en cours mais non payé (sauf Access+ Premium)
         elif eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
-            from .choices import TypeAbonnement
-            is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
             if not is_premium:
                 is_blocked = True
                 hide_input = True
@@ -1545,6 +1547,7 @@ def conversation_detail(request, conversation_id):
         "parent_children": parent_children,
         "role": user_role,
         "is_user_prof": is_user_prof,
+        "is_premium": is_premium,
         "ROLE_PROF": Role.ROLE_PROF,
         "ROLE_PARENT": Role.ROLE_PARENT,
         "ROLE_APPRENANT": Role.ROLE_APPRENANT,
@@ -1553,6 +1556,7 @@ def conversation_detail(request, conversation_id):
         "CHOICES_DUREE": DureeSeance.CHOICES,
         "CHOICES_FREQ": FrequenceHebdomadaire.CHOICES,
         "CHOICES_PERIODE": PeriodeEngagement.CHOICES,
+        "CHOICES_LOCALISATION": Localisation.CHOICES,
     })
 
 

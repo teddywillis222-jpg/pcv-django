@@ -120,7 +120,7 @@
                 <div class="msg-meta">
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
                     {% if msg.auteur == request.user %}
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="{% if msg.lu %}#34b7f1{% else %}#94a3b8{% endif %}">
+                        <svg class="msg-tick {% if msg.lu %}read{% endif %}" viewBox="0 0 24 24" width="14" height="14">
                             <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
                         </svg>
                     {% endif %}
@@ -189,20 +189,136 @@
         
         <div class="c-sheet-content">
             {% for eng in engagements %}
-            <div class="c-eng-card">
-                <div class="c-eng-title">{{ eng.matiere }} ({{ eng.classe }})</div>
-                <div class="c-eng-meta">
-                    {% if eng.enfants_concernes.all %}
-                        {% for enfant in eng.enfants_concernes.all %}{{ enfant.prenom }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                    {% else %}
-                        Apprenant
-                    {% endif %}
-                    • {{ eng.mode_de_cours }}
+            <div class="c-eng-card" id="eng-card-{{ eng.id }}">
+                <div class="c-eng-card-header" onclick="toggleEngCard('{{ eng.id }}')">
+                    <div class="c-eng-card-info">
+                        <div class="c-eng-title">{{ eng.matiere }} {% if eng.classe %}({{ eng.classe }}){% endif %}</div>
+                        <div class="c-eng-meta">
+                            {% if eng.enfants_concernes.all %}
+                                {% for enfant in eng.enfants_concernes.all %}{{ enfant.prenom }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                            {% else %}
+                                Apprenant
+                            {% endif %}
+                            • {{ eng.get_mode_de_cours_display|default:eng.mode_de_cours }}
+                        </div>
+                        <span class="c-eng-badge">{{ eng.get_statut_general_display }}</span>
+                    </div>
+                    <svg class="c-eng-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </div>
-                <span class="c-eng-badge" style="background: #f1f5f9; color: #475569;">{{ eng.get_statut_general_display }}</span>
+                
+                <div class="c-eng-card-body" id="eng-summary-{{ eng.id }}">
+                    <div class="c-eng-detail-row">
+                        <span class="c-eng-detail-label">Durée / Fréquence</span>
+                        <span class="c-eng-detail-value">{{ eng.duree_mois|default:"-" }} mois, {{ eng.get_frequence_hebdomadaire_display|default:"-" }}</span>
+                    </div>
+                    <div class="c-eng-detail-row">
+                        <span class="c-eng-detail-label">Budget convenu</span>
+                        <span class="c-eng-detail-value" style="color:var(--c-accent);">{% if eng.budget_convenu %}{{ eng.budget_convenu }} FCFA{% else %}À définir{% endif %}</span>
+                    </div>
+                    <div class="c-eng-detail-row">
+                        <span class="c-eng-detail-label">Localisation</span>
+                        <span class="c-eng-detail-value">{{ eng.localisation_option|default:"-" }}</span>
+                    </div>
+                    
+                    <!-- Boutons Actions -->
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                        <a href="{% url 'suivi_engagement' eng.id %}" class="c-eng-btn-suivi" style="flex: 1; min-width: 100%;">Ouvrir le suivi de l'engagement</a>
+                        
+                        {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                            {% if eng.statut_general == 'EN_ATTENTE' or eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                                <button type="button" class="c-eng-btn-outline" onclick="showEditForm('{{ eng.id }}')">Modifier</button>
+                            {% endif %}
+                            
+                            {% if eng.statut_general != 'FINALISE' and eng.statut_general != 'REFUSE' %}
+                                {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                                    {% if is_premium or eng.paiement_effectue %}
+                                        <button type="button" class="c-eng-btn-primary" onclick="finalizeEng('{{ eng.id }}')">Finaliser l'engagement</button>
+                                    {% else %}
+                                        <button type="button" class="c-eng-btn-disabled" onclick="alertFinalizeDisabled('payment')">Finaliser l'engagement</button>
+                                    {% endif %}
+                                {% else %}
+                                    <button type="button" class="c-eng-btn-disabled" onclick="alertFinalizeDisabled('status')">Finaliser l'engagement</button>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Formulaire d'édition (Masqué par défaut) -->
+                {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                <div class="c-eng-edit-form" id="eng-edit-{{ eng.id }}" style="display: none;">
+                    <form onsubmit="saveEngEdit(event, '{{ eng.id }}')">
+                        <div class="c-eng-edit-grid">
+                            <div>
+                                <label>Matière</label>
+                                <input type="text" name="matiere" class="c-eng-input" value="{{ eng.matiere }}" required>
+                            </div>
+                            <div>
+                                <label>Classe</label>
+                                <select name="classe" class="c-eng-select">
+                                    <option value="">Sélectionner</option>
+                                    {% for value, label in CHOICES_CLASSE %}
+                                        <option value="{{ value }}" {% if eng.classe == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label>Fréquence</label>
+                                <select name="frequence" class="c-eng-select">
+                                    <option value="">Sélectionner</option>
+                                    {% for value, label in CHOICES_FREQ %}
+                                        <option value="{{ value }}" {% if eng.frequence_hebdomadaire == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label>Durée/séance</label>
+                                <select name="duree_seance" class="c-eng-select">
+                                    <option value="">Sélectionner</option>
+                                    {% for value, label in CHOICES_DUREE %}
+                                        <option value="{{ value }}" {% if eng.duree_seance == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label>Budget (FCFA)</label>
+                                <input type="number" name="budget" class="c-eng-input" value="{{ eng.budget_convenu|default:'' }}">
+                            </div>
+                            <div>
+                                <label>Durée (mois)</label>
+                                <input type="number" name="duree_mois" class="c-eng-input" value="{{ eng.duree_mois|default:'' }}">
+                            </div>
+                            <div>
+                                <label>Mode de cours</label>
+                                <select name="mode" class="c-eng-select">
+                                    <option value="">Sélectionner</option>
+                                    {% for value, label in CHOICES_MODE %}
+                                        <option value="{{ value }}" {% if eng.mode_de_cours == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label>Localisation</label>
+                                <select name="localisation" class="c-eng-select">
+                                    <option value="">Sélectionner</option>
+                                    {% for value, label in CHOICES_LOCALISATION %}
+                                        <option value="{{ value }}" {% if eng.localisation_option == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button type="button" class="c-eng-btn-cancel" onclick="hideEditForm('{{ eng.id }}')">Annuler</button>
+                            <button type="submit" class="c-eng-btn-save">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             </div>
             {% empty %}
-            <p style="color: var(--c-text-muted); font-size: 0.9rem; text-align: center;">Aucun engagement trouvé.</p>
+            <p style="color: var(--c-text-muted); font-size: 0.95rem; text-align: center; margin-top: 2rem;">Aucun engagement trouvé.</p>
             {% endfor %}
         </div>
     </div>
@@ -264,9 +380,95 @@
         engSheet.classList.remove('visible');
     }
 
+    function toggleEngCard(engId) {
+        const card = document.getElementById('eng-card-' + engId);
+        if (card) {
+            // Optionnel : fermer les autres cartes
+            // document.querySelectorAll('.c-eng-card.expanded').forEach(c => {
+            //     if (c !== card) c.classList.remove('expanded');
+            // });
+            card.classList.toggle('expanded');
+        }
+    }
+
     function toggleMenu(e) {
         e.stopPropagation();
         optionsMenu.classList.toggle('visible');
+    }
+
+    // -- Fonctions d'édition dynamique --
+    function showEditForm(engId) {
+        document.getElementById('eng-summary-' + engId).style.display = 'none';
+        document.getElementById('eng-edit-' + engId).style.display = 'block';
+    }
+
+    function hideEditForm(engId) {
+        document.getElementById('eng-summary-' + engId).style.display = 'block';
+        document.getElementById('eng-edit-' + engId).style.display = 'none';
+    }
+
+    async function saveEngEdit(event, engId) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        const btn = form.querySelector('.c-eng-btn-save');
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement...';
+        
+        try {
+            const response = await fetch(`/api/engagement/${engId}/update/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (response.ok && result.success) {
+                location.reload();
+            } else {
+                alert(result.error || 'Erreur lors de la modification');
+            }
+        } catch(e) {
+            alert('Erreur réseau.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Enregistrer';
+        }
+    }
+
+    // -- Finalisation --
+    function alertFinalizeDisabled(reason) {
+        if (reason === 'status') {
+            alert("Vous ne pouvez pas finaliser cet engagement pour le moment. L'engagement doit être 'en cours' (confirmé par le professeur).");
+        } else if (reason === 'payment') {
+            alert("Vous devez vous acquitter des frais de mise en relation ou souscrire à un abonnement Access+ pour finaliser cet engagement.");
+        }
+    }
+
+    async function finalizeEng(engId) {
+        if (confirm("Êtes-vous sûr de vouloir finaliser cet engagement ? Cela mettra à jour son statut définitivement.")) {
+            try {
+                const response = await fetch(`/api/engagement/${engId}/finalize/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    alert("Engagement finalisé avec succès !");
+                    location.reload();
+                } else {
+                    alert(result.error || "Erreur lors de la finalisation.");
+                }
+            } catch(e) {
+                alert("Erreur de connexion.");
+            }
+        }
     }
 
     document.addEventListener('click', (e) => {
