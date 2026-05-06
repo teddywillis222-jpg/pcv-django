@@ -12,11 +12,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const sendErrorText = document.getElementById('chatSendErrorText');
     const retryBtn = document.getElementById('chatRetryBtn');
     const config = window.chatConfig || {};
+    const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
     let lastFailedPayload = null;
 
     function updateViewportHeight() {
         const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
         document.documentElement.style.setProperty('--chat-viewport-height', `${Math.round(viewportHeight)}px`);
+    }
+
+    function lockWindowScroll(lock) {
+        if (!isMobileViewport) return;
+        document.documentElement.style.overflow = lock ? 'hidden' : '';
+        document.body.style.overflow = lock ? 'hidden' : '';
     }
 
     function updateLayoutHeights() {
@@ -104,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateViewportHeight();
     updateLayoutHeights();
     scrollToBottom();
-    if (input) input.focus();
+    hideSendError();
 
     window.addEventListener('resize', function () {
         updateViewportHeight();
@@ -112,6 +119,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (window.visualViewport) {
         window.visualViewport.addEventListener('resize', function () {
+            updateViewportHeight();
+            updateLayoutHeights();
+        });
+        window.visualViewport.addEventListener('scroll', function () {
             updateViewportHeight();
             updateLayoutHeights();
         });
@@ -145,11 +156,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         input.addEventListener('focus', function () {
+            lockWindowScroll(true);
             setTimeout(function () {
                 updateViewportHeight();
                 updateLayoutHeights();
+                window.scrollTo(0, 0);
                 scrollToBottom();
             }, 100);
+        });
+
+        input.addEventListener('blur', function () {
+            setTimeout(function () {
+                lockWindowScroll(false);
+                updateViewportHeight();
+                updateLayoutHeights();
+            }, 120);
         });
     }
 
