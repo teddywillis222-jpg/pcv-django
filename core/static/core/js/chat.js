@@ -3,61 +3,132 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Initialisation UI
-    scrollToBottom();
     const input = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+    const fileInput = document.getElementById('fileInput');
+    const header = document.querySelector('.chat-header');
+    const inputArea = document.querySelector('.chat-input-area');
+    const sendErrorBox = document.getElementById('chatSendError');
+    const sendErrorText = document.getElementById('chatSendErrorText');
+    const retryBtn = document.getElementById('chatRetryBtn');
+    const config = window.chatConfig || {};
+    let lastFailedPayload = null;
+
+    function updateViewportHeight() {
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        document.documentElement.style.setProperty('--chat-viewport-height', `${Math.round(viewportHeight)}px`);
+    }
+
+    function updateLayoutHeights() {
+        if (header) {
+            document.documentElement.style.setProperty('--chat-header-height', `${header.offsetHeight}px`);
+        }
+        if (inputArea) {
+            document.documentElement.style.setProperty('--chat-input-height', `${inputArea.offsetHeight}px`);
+        }
+    }
+
+    function showSendError(message) {
+        if (!sendErrorBox || !sendErrorText) return;
+        sendErrorText.textContent = message;
+        sendErrorBox.hidden = false;
+        updateLayoutHeights();
+    }
+
+    function hideSendError() {
+        if (!sendErrorBox) return;
+        sendErrorBox.hidden = true;
+        updateLayoutHeights();
+    }
+
+    async function submitMessage(payload = null) {
+        if (!chatForm || !input) return;
+        const text = payload ? payload.text : input.value.trim();
+        const file = payload ? payload.file : (fileInput ? fileInput.files[0] : null);
+        if (text === '' && !file) return;
+
+        const sendBtn = chatForm.querySelector('.btn-send');
+        if (sendBtn) sendBtn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            if (text) formData.append('texte', text);
+            if (file) formData.append('fichier', file);
+
+            const response = await fetch(config.urls.sendMessage, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': config.csrfToken
+                }
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch (parseError) {
+                data = {};
+            }
+
+            if (response.ok) {
+                if (data.message_id > config.lastMsgId) config.lastMsgId = data.message_id;
+                appendMessageBubble(data.message_id, text, file, data.date);
+                hideSendError();
+                lastFailedPayload = null;
+
+                input.value = '';
+                input.style.height = 'auto';
+                if (fileInput) fileInput.value = '';
+                scrollToBottom();
+                updateLayoutHeights();
+                return;
+            }
+
+            if (response.status === 402) {
+                showPaymentModal();
+                return;
+            }
+
+            lastFailedPayload = { text, file };
+            showSendError(data.error || "Envoi impossible pour le moment.");
+        } catch (error) {
+            console.error("Error:", error);
+            lastFailedPayload = { text, file };
+            showSendError("Erreur de connexion. Vérifiez le réseau puis renvoyez.");
+        } finally {
+            if (sendBtn) sendBtn.disabled = false;
+        }
+    }
+
+    // 1. Initialisation UI
+    updateViewportHeight();
+    updateLayoutHeights();
+    scrollToBottom();
     if (input) input.focus();
 
-    // Configuration passée depuis le template HTML
-    const config = window.chatConfig || {};
+    window.addEventListener('resize', function () {
+        updateViewportHeight();
+        updateLayoutHeights();
+    });
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function () {
+            updateViewportHeight();
+            updateLayoutHeights();
+        });
+    }
 
     // 2. Gestion du Formulaire d'envoi de message
-    const chatForm = document.getElementById('chatForm');
     if (chatForm) {
         chatForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            const text = input.value.trim();
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput ? fileInput.files[0] : null;
+            await submitMessage();
+        });
+    }
 
-            if (text === '' && !file) return;
-
-            const sendBtn = this.querySelector('.btn-send');
-            if (sendBtn) sendBtn.disabled = true;
-
-            try {
-                const formData = new FormData();
-                if (text) formData.append('texte', text);
-                if (file) formData.append('fichier', file);
-
-                const response = await fetch(config.urls.sendMessage, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': config.csrfToken
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    if (data.message_id > config.lastMsgId) config.lastMsgId = data.message_id;
-                    appendMessageBubble(data.message_id, text, file, data.date);
-                    
-                    input.value = '';
-                    input.style.height = 'auto';
-                    if (fileInput) fileInput.value = '';
-                    scrollToBottom();
-                } else {
-                    if (response.status === 402) showPaymentModal();
-                    else alert(data.error || "Erreur lors de l'envoi");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Erreur de connexion. Veuillez réessayer.");
-            } finally {
-                if (sendBtn) sendBtn.disabled = false;
-            }
+    if (retryBtn) {
+        retryBtn.addEventListener('click', async function () {
+            if (!lastFailedPayload) return;
+            await submitMessage(lastFailedPayload);
         });
     }
 
@@ -70,11 +141,19 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 this.style.height = '120px';
             }
+            updateLayoutHeights();
+        });
+
+        input.addEventListener('focus', function () {
+            setTimeout(function () {
+                updateViewportHeight();
+                updateLayoutHeights();
+                scrollToBottom();
+            }, 100);
         });
     }
 
     // Afficher nom de fichier sélectionné
-    const fileInput = document.getElementById('fileInput');
     if (fileInput) {
         fileInput.addEventListener('change', function () {
             if (this.files.length > 0) {
@@ -83,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 if (input) input.placeholder = "Écrivez votre message...";
             }
+            updateLayoutHeights();
         });
     }
 
