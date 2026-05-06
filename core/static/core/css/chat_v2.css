@@ -25,19 +25,27 @@
     padding: 0;
     font-family: var(--font);
     background: var(--c-bg);
-    /* Empêche le rebond élastique sur iOS si possible */
+    overflow: hidden;
+    /* Lock body to prevent system scrolling */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     overscroll-behavior-y: none;
 }
 
-/* Wrapper principal : prend tout l'écran */
+/* Wrapper principal */
 .chat-v2-wrapper {
     display: flex;
     flex-direction: column;
-    /* Utilisation de svh pour gérer les barres d'adresse mobiles */
-    height: 100svh;
+    /* The JS will handle precise height and top offset */
+    height: calc(var(--vh, 1vh) * 100);
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     overflow: hidden;
-    position: relative;
 }
 
 /* ========================================
@@ -299,4 +307,206 @@
 .c-send-btn:active {
     transform: scale(0.94);
     background: var(--c-accent-hover);
+}
+
+/* Blocage de l'input */
+.chat-v2-blocked-area {
+    width: 100%;
+    padding: 1rem;
+    background: #fef2f2;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ========================================
+   MESSAGES SYSTEMES (NOTIFICATIONS)
+======================================== */
+.sys-msg-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.sys-msg-card {
+    background: #ffffff;
+    border: 1px solid var(--c-border);
+    border-radius: 16px;
+    padding: 1rem;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--c-text);
+}
+
+.sys-msg-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--c-bubble-sent);
+    color: var(--c-accent);
+    margin: 0 auto 0.5rem;
+}
+
+.sys-msg-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.sys-msg-btn {
+    background: var(--c-accent);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.sys-msg-btn.outline {
+    background: transparent;
+    color: var(--c-accent);
+    border: 1px solid var(--c-accent);
+}
+
+/* ========================================
+   BOTTOM SHEET & MENUS
+======================================== */
+.c-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.c-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.c-bottom-sheet {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    padding: 1.5rem 1rem 2rem;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1);
+    z-index: 101;
+    max-height: 80svh;
+    display: flex;
+    flex-direction: column;
+}
+
+.c-bottom-sheet.visible {
+    transform: translateY(0);
+}
+
+.c-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 4px;
+    margin: -0.5rem auto 1rem;
+}
+
+.c-sheet-header {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--c-text);
+}
+
+.c-sheet-content {
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Engagements list styling inside sheet */
+.c-eng-card {
+    border: 1px solid var(--c-border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+}
+.c-eng-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+.c-eng-meta {
+    font-size: 0.8rem;
+    color: var(--c-text-muted);
+}
+.c-eng-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+/* 3 dots menu */
+.c-options-menu {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: white;
+    border: 1px solid var(--c-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 102;
+    min-width: 180px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+}
+
+.c-options-menu.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.c-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: var(--c-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.c-menu-item:hover {
+    background: #f8fafc;
+}
+
+.c-menu-item.danger {
+    color: #ef4444;
 }

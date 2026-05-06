@@ -46,17 +46,47 @@
 
         <div class="c-header-actions">
             <!-- Bouton Sheet Engagements -->
-            <button type="button" class="c-icon-btn" aria-label="Voir les engagements">
+            <button type="button" class="c-icon-btn" aria-label="Voir les engagements" onclick="toggleSheet()">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
                 </svg>
             </button>
             
             <!-- Menu 3 points -->
-            <button type="button" class="c-icon-btn" aria-label="Options">
+            <button type="button" class="c-icon-btn" aria-label="Options" onclick="toggleMenu(event)">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                 </svg>
+            </button>
+        </div>
+        
+        <!-- Menu 3 points Dropdown -->
+        <div class="c-options-menu" id="optionsMenu">
+            {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                {% if conversation.professeur %}
+                <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="c-menu-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Voir le profil
+                </a>
+                {% endif %}
+            {% else %}
+                {% with eng=conversation.engagement_actif %}
+                    {% if eng and eng.enfants_concernes.all %}
+                    <a href="{% url 'profil_eleve' 'enfant' eng.enfants_concernes.first.id %}" class="c-menu-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Profil de l'élève
+                    </a>
+                    {% elif eng %}
+                    <a href="{% url 'profil_eleve' 'apprenant' eng.parent_apprenant.apprenant.id %}" class="c-menu-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Voir le profil
+                    </a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            <button type="button" class="c-menu-item danger" onclick="toggleBlock()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <span id="blockBtnText">Bloquer</span>
             </button>
         </div>
 
@@ -65,50 +95,207 @@
     <!-- CORPS DES MESSAGES (Scrollable) -->
     <main class="chat-v2-body-scroll" id="messagesList">
         
-        <!-- Squelette visuel de test pour validation du design -->
-        <div class="msg-bubble received">
-            Bonjour ! Je suis très intéressé par votre profil pour des cours de maths.
-            <div class="msg-meta"><span class="msg-time">09:42</span></div>
-        </div>
-
-        <div class="msg-bubble sent">
-            Bonjour, c'est noté. Pourrions-nous en discuter ?
-            <div class="msg-meta">
-                <span class="msg-time">09:45</span>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="#34b7f1"><path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/></svg>
+        {% for msg in messages %}
+            {% if msg.changed_date %}
+            <div style="text-align:center; margin: 1rem 0;">
+                <span style="background: #e2e8f0; color: #475569; font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 99px; font-weight: 600;">
+                    {{ msg.date_envoi|date:"d M Y" }}
+                </span>
             </div>
-        </div>
+            {% endif %}
+
+            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}">
+                {% if msg.contenu_media %}
+                    <div style="margin-bottom:0.5rem;">
+                        {% if "image" in msg.contenu_media.url %}
+                        <img src="{{ msg.contenu_media.url }}" style="max-width:100%; border-radius:8px;" alt="Image">
+                        {% else %}
+                        <a href="{{ msg.contenu_media.url }}" target="_blank" style="color:var(--c-accent); text-decoration:underline; font-weight:600;">📁 Fichier joint</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                {{ msg.contenu_texte|linebreaksbr }}
+                
+                <div class="msg-meta">
+                    <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
+                    {% if msg.auteur == request.user %}
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="{% if msg.lu %}#34b7f1{% else %}#94a3b8{% endif %}">
+                            <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Notification Dynamique de Blocage (si paiement requis par exemple) -->
+        {% if is_blocked and role != ROLE_PROF %}
+            <div class="sys-msg-wrapper">
+                <div class="sys-msg-card">
+                    <div class="sys-msg-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    {% if messages %}
+                        <strong>Le professeur vous a envoyé un message.</strong><br>
+                        Pour lire la suite et répondre, vous devez finaliser l'engagement.
+                    {% else %}
+                        <strong>Le professeur a accepté votre proposition !</strong><br>
+                        Pour démarrer la discussion, veuillez procéder au paiement.
+                    {% endif %}
+                    
+                    <div class="sys-msg-actions">
+                        <a href="javascript:void(0)" onclick="alert('Redirection FedaPay')" class="sys-msg-btn">Procéder au paiement (2000 FCFA)</a>
+                        <a href="#" class="sys-msg-btn outline">Gérer mon plan Access+</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
     </main>
 
     <!-- ZONE DE SAISIE (Fixe en bas) -->
-    <footer class="chat-v2-input-area">
-        <div class="c-input-wrapper">
-            <textarea class="c-input-field" rows="1" placeholder="Écrivez un message…"></textarea>
-        </div>
-        <button type="button" class="c-send-btn" aria-label="Envoyer">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
-                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-            </svg>
-        </button>
+    <footer class="chat-v2-input-area" id="inputFooter">
+        {% if hide_input %}
+            <div class="chat-v2-blocked-area">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                {{ blocking_message }}
+            </div>
+        {% else %}
+            <div class="c-input-wrapper" id="inputWrapper">
+                <textarea class="c-input-field" rows="1" placeholder="Écrivez un message…"></textarea>
+            </div>
+            <button type="button" class="c-send-btn" aria-label="Envoyer" id="sendBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        {% endif %}
     </footer>
+
+    <!-- OVERLAY & BOTTOM SHEET -->
+    <div class="c-overlay" id="overlay" onclick="closeSheet()"></div>
+    <div class="c-bottom-sheet" id="engSheet">
+        <div class="c-sheet-handle"></div>
+        <div class="c-sheet-header">Engagements liés</div>
+        
+        {% if role == ROLE_PARENT and parent_children|length > 0 %}
+        <select style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--c-border); font-family: var(--font);">
+            <option value="">Tous les enfants</option>
+            {% for child in parent_children %}
+            <option value="{{ child.id }}">{{ child.prenom }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        
+        <div class="c-sheet-content">
+            {% for eng in engagements %}
+            <div class="c-eng-card">
+                <div class="c-eng-title">{{ eng.matiere }} ({{ eng.classe }})</div>
+                <div class="c-eng-meta">
+                    {% if eng.enfants_concernes.all %}
+                        {% for enfant in eng.enfants_concernes.all %}{{ enfant.prenom }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% else %}
+                        Apprenant
+                    {% endif %}
+                    • {{ eng.mode_de_cours }}
+                </div>
+                <span class="c-eng-badge" style="background: #f1f5f9; color: #475569;">{{ eng.get_statut_general_display }}</span>
+            </div>
+            {% empty %}
+            <p style="color: var(--c-text-muted); font-size: 0.9rem; text-align: center;">Aucun engagement trouvé.</p>
+            {% endfor %}
+        </div>
+    </div>
 
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Ajustement de la hauteur pour mobile (clavier virtuel / safe area)
-    function setVh() {
-        const vh = window.visualViewport
-            ? window.visualViewport.height * 0.01
-            : window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    function updateLayout() {
+        const vv = window.visualViewport;
+        if (vv) {
+            // Update CSS variable for full height minus keyboard
+            document.documentElement.style.setProperty('--vh', `${vv.height * 0.01}px`);
+            
+            // Push wrapper down by the exact offset of the visual viewport
+            const wrapper = document.querySelector('.chat-v2-wrapper');
+            if (wrapper) {
+                wrapper.style.top = `${vv.offsetTop}px`;
+            }
+        } else {
+            // Fallback
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+        }
+        
+        // Optionnel : scroll to bottom des messages
+        const msgList = document.getElementById('messagesList');
+        if (msgList) {
+            // Laisse le temps au layout de s'appliquer
+            requestAnimationFrame(() => {
+                msgList.scrollTop = msgList.scrollHeight;
+            });
+        }
     }
-    setVh();
-    window.addEventListener('resize', setVh);
+
+    // Initial call
+    updateLayout();
+
+    // Listeners
     if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', setVh);
+        window.visualViewport.addEventListener('resize', updateLayout);
+        window.visualViewport.addEventListener('scroll', updateLayout);
+    }
+    window.addEventListener('resize', updateLayout);
+
+    // --- UI Logic (Menu & Sheet) ---
+    const overlay = document.getElementById('overlay');
+    const engSheet = document.getElementById('engSheet');
+    const optionsMenu = document.getElementById('optionsMenu');
+    
+    function toggleSheet() {
+        overlay.classList.add('visible');
+        engSheet.classList.add('visible');
+        optionsMenu.classList.remove('visible');
+    }
+    
+    function closeSheet() {
+        overlay.classList.remove('visible');
+        engSheet.classList.remove('visible');
+    }
+
+    function toggleMenu(e) {
+        e.stopPropagation();
+        optionsMenu.classList.toggle('visible');
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.c-options-menu') && !e.target.closest('.c-icon-btn')) {
+            optionsMenu.classList.remove('visible');
+        }
+    });
+
+    let isUserBlocked = false;
+    function toggleBlock() {
+        isUserBlocked = !isUserBlocked;
+        const btnText = document.getElementById('blockBtnText');
+        const footer = document.getElementById('inputFooter');
+        
+        if (isUserBlocked) {
+            btnText.textContent = "Débloquer";
+            // Replace input with blocked message UI
+            footer.innerHTML = `
+                <div class="chat-v2-blocked-area">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                    Vous avez bloqué ce contact.
+                </div>
+            `;
+        } else {
+            btnText.textContent = "Bloquer";
+            // Restore input (requires reload or complex JS, simplest is to reload for now)
+            location.reload(); 
+        }
+        optionsMenu.classList.remove('visible');
     }
 </script>
 {% endblock %}

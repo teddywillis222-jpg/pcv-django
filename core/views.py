@@ -1480,14 +1480,22 @@ def conversation_detail(request, conversation_id):
     hide_input = False
     blocking_message = ""
     eng = conversation.engagement_actif
-    if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
-        if user_role in ['PARENT', 'APPRENANT']:
+    
+    if eng and user_role in ['PARENT', 'APPRENANT']:
+        # 1. Bloqué si en attente ou refusé
+        if eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
+            is_blocked = True
+            hide_input = True
+            blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a été refusé."
+        # 2. Bloqué si confirmé/en cours mais non payé (sauf Access+ Premium)
+        elif eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
             from .choices import TypeAbonnement
             is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
             if not is_premium:
                 is_blocked = True
                 hide_input = True
                 blocking_message = "Paiement requis pour continuer les échanges."
+                
     is_eligible_to_finalize = True  # On autorise par défaut
 
     # Autres infos pour le header
@@ -1581,10 +1589,13 @@ def api_send_message(request, conversation_id):
 
     if user_role in ['PARENT', 'APPRENANT']:
         active_eng = conversation.engagement_actif
-        is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
-        
-        if active_eng and not active_eng.paiement_effectue and not is_premium:
-            return JsonResponse({'error': 'Paiement requis pour continuer les échanges'}, status=402)
+        if active_eng:
+            if active_eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
+                return JsonResponse({'error': 'En attente de la confirmation du professeur.' if active_eng.statut_general == 'EN_ATTENTE' else 'Cet engagement a été refusé.'}, status=403)
+                
+            is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+            if active_eng.statut_general in ['CONFIRME', 'EN_COURS'] and not active_eng.paiement_effectue and not is_premium:
+                return JsonResponse({'error': 'Paiement requis pour continuer les échanges'}, status=402)
 
     try:
         texte = request.POST.get('texte', '').strip()
