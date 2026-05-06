@@ -1,0 +1,302 @@
+/*
+ * chat_v2.css — ProfChezVous
+ * Messagerie V2 - Mobile First Skeleton
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --c-bg: #f8fafc;
+    --c-header-bg: #ffffff;
+    --c-text: #0f172a;
+    --c-text-muted: #64748b;
+    --c-border: #e2e8f0;
+    --c-accent: #16a34a;
+    --c-accent-hover: #15803d;
+    --c-bubble-sent: #dcfce7;
+    --c-bubble-received: #ffffff;
+    --c-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    --font: 'Inter', system-ui, sans-serif;
+}
+
+/* Base Body */
+.chat-v2-body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    background: var(--c-bg);
+    /* Empêche le rebond élastique sur iOS si possible */
+    overscroll-behavior-y: none;
+}
+
+/* Wrapper principal : prend tout l'écran */
+.chat-v2-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* Utilisation de svh pour gérer les barres d'adresse mobiles */
+    height: 100svh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ========================================
+   HEADER
+======================================== */
+.chat-v2-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--c-header-bg);
+    border-bottom: 1px solid var(--c-border);
+    flex-shrink: 0; /* Reste fixe */
+    box-shadow: var(--c-shadow);
+    z-index: 10;
+}
+
+.c-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0; /* Permet le text-overflow */
+    flex: 1;
+}
+
+.c-back-btn {
+    color: var(--c-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin-left: -0.5rem;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.c-back-btn:active {
+    background: #f1f5f9;
+}
+
+/* Avatar */
+.c-avatar-box {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.c-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e2e8f0;
+}
+
+.c-avatar-initial {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), #14532d);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+.c-online-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: #22c55e;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Infos contact */
+.c-contact-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Important pour text-overflow */
+}
+
+.c-contact-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.c-contact-status {
+    font-size: 0.75rem;
+    color: var(--c-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.c-contact-status.online {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+/* Actions Droite */
+.c-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+.c-icon-btn {
+    background: none;
+    border: none;
+    color: var(--c-text-muted);
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.c-icon-btn:active {
+    background: #f1f5f9;
+    color: var(--c-text);
+}
+
+/* ========================================
+   CORPS : MESSAGES
+======================================== */
+.chat-v2-body-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* Pattern de fond doux */
+    background-image: radial-gradient(circle, rgba(22,163,74,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bulle squelette pour la maquette */
+.msg-bubble {
+    max-width: 85%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    word-wrap: break-word;
+}
+
+.msg-bubble.sent {
+    align-self: flex-end;
+    background: var(--c-bubble-sent);
+    color: var(--c-text);
+    border-bottom-right-radius: 4px;
+}
+
+.msg-bubble.received {
+    align-self: flex-start;
+    background: var(--c-bubble-received);
+    color: var(--c-text);
+    border-bottom-left-radius: 4px;
+}
+
+.msg-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.msg-time {
+    font-size: 0.65rem;
+    color: #64748b;
+}
+
+/* ========================================
+   INPUT AREA
+======================================== */
+.chat-v2-input-area {
+    flex-shrink: 0;
+    background: var(--c-header-bg);
+    border-top: 1px solid var(--c-border);
+    /* env() assure de ne pas être caché par l'encoche iOS en bas */
+    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.c-input-wrapper {
+    flex: 1;
+    background: #f1f5f9;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.c-input-wrapper:focus-within {
+    border-color: rgba(22,163,74,0.3);
+    background: #ffffff;
+}
+
+.c-input-field {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    color: var(--c-text);
+    resize: none;
+    max-height: 100px;
+    padding: 0;
+    line-height: 1.4;
+}
+
+.c-input-field::placeholder {
+    color: #94a3b8;
+}
+
+.c-send-btn {
+    background: var(--c-accent);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 2px 6px rgba(22,163,74,0.3);
+}
+
+.c-send-btn:active {
+    transform: scale(0.94);
+    background: var(--c-accent-hover);
+}

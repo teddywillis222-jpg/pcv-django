@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ display_name }} — Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block body_class %}chat-page-body{% endblock %}
+
+{% block main_wrapper %}
+<div class="chat-wrapper">
+
+    <!-- ───────────────── CHAT PRINCIPAL ─────────────────── -->
+    <main class="chat-main">
+
+        <!-- HEADER (dans le flux flex, pas fixed) -->
+        <header class="chat-header">
+            <div class="chat-partner-info">
+
+                <!-- Retour -->
+                <a href="{% url 'messagerie' %}" class="chat-back-btn" aria-label="Retour">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                </a>
+
+                <!-- Avatar + online dot -->
+                <div class="chat-avatar-wrapper">
+                    {% if other_profile.photo_de_profil %}
+                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    {% elif other_profile.photo_profil %}
+                        <img src="{{ other_profile.photo_profil.url }}" class="chat-avatar-img" alt="Avatar">
+                    {% else %}
+                        <div class="chat-avatar-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#16a34a,#14532d);color:white;font-weight:800;font-size:1rem;">
+                            {{ other_participant.first_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="chat-online-dot"></div>
+                </div>
+
+                <!-- Nom + statut -->
+                <div style="flex:1;min-width:0;">
+                    <div class="chat-user-name">{{ display_name }}</div>
+                    <div class="chat-status-text">● En ligne</div>
+                </div>
+            </div>
+
+            <!-- Actions Header -->
+            <div class="chat-header-actions">
+                <!-- Bouton Engagements (mobile seulement) -->
+                <button class="btn-icon btn-eng-toggle" onclick="toggleSheet()" title="Engagements" id="engBtn" aria-label="Voir les engagements">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                    </svg>
+                </button>
+                <!-- Menu Options -->
+                <button class="btn-icon" onclick="toggleOptions(event)" title="Options" aria-label="Options" id="optionsBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Dropdown Options -->
+            <div id="optionsDropdown" class="focus-group">
+                {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
+                <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="focus-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Voir le profil
+                </a>
+                {% else %}
+                    {% with eng=engagements.first %}
+                        {% if eng and eng.enfants_concernes.all %}
+                        <a href="{% url 'profil_eleve' 'enfant' eng.enfants_concernes.first.id %}" class="focus-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Profil de l'élève
+                        </a>
+                        {% elif eng %}
+                        <a href="{% url 'profil_eleve' 'apprenant' eng.parent_apprenant.apprenant.id %}" class="focus-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Voir le profil
+                        </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+                <div class="focus-item danger" style="cursor:pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                    Bloquer
+                </div>
+            </div>
+        </header>
+
+        <!-- MESSAGES -->
+        {% include "core/components/_chat_messages.html" %}
+
+        <!-- INPUT AREA -->
+        <footer class="chat-input-area">
+            {% if hide_input %}
+            <!-- Bandeau de blocage -->
+            <div class="chat-blocked-banner">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {{ blocking_message }}
+                <button onclick="showPaymentModal()">Débloquer</button>
+            </div>
+            {% else %}
+            <form id="chatForm" class="chat-input-container">
+                <input type="file" id="fileInput" name="fichier" style="display:none;" accept="image/*,.pdf,.doc,.docx">
+                <button type="button" class="btn-attach" onclick="document.getElementById('fileInput').click()" title="Joindre un fichier">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                </button>
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez un message…" rows="1"></textarea>
+                </div>
+                <button type="submit" class="btn-send" id="sendBtn" aria-label="Envoyer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
+                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </form>
+            <div id="chatSendError" class="chat-send-error" hidden>
+                <span id="chatSendErrorText"></span>
+                <button type="button" id="chatRetryBtn" class="chat-retry-btn">Renvoyer</button>
+            </div>
+            {% endif %}
+        </footer>
+
+    </main>
+
+    <!-- ───────────────── SIDEBAR DESKTOP ─────────────────── -->
+    {% include "core/components/_engagements_sidebar.html" %}
+
+</div><!-- /chat-wrapper -->
+
+<!-- Modales -->
+{% include "core/components/_chat_modals.html" %}
+
+<!-- Config JS -->
+<script>
+window.chatConfig = {
+    conversationId: "{{ conversation.id }}",
+    csrfToken: "{{ csrf_token }}",
+    urls: {
+        sendMessage:     "{% url 'api_send_message' conversation.id %}",
+        fetchMessages:   "{% url 'api_fetch_new_messages' conversation.id %}",
+        fictionalPayment:"{% url 'api_fictional_payment' %}"
+    },
+    lastMsgId: {% if messages %}{{ messages.last.id }}{% else %}0{% endif %},
+    isBlocked: {% if is_blocked %}true{% else %}false{% endif %},
+    isEligibleToFinalize: {% if is_eligible_to_finalize %}true{% else %}false{% endif %}
+};
+</script>
+<script src="{% static 'core/js/chat.js' %}"></script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

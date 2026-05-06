@@ -4,155 +4,111 @@
 {% block title %}{{ display_name }} — Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'core/css/chat.css' %}">
+<link rel="stylesheet" href="{% static 'core/css/chat_v2.css' %}">
 {% endblock %}
 
 {% block navbar %}{% endblock %}
-{% block body_class %}chat-page-body{% endblock %}
+{% block footer %}{% endblock %}
+{% block body_class %}chat-v2-body{% endblock %}
 
 {% block main_wrapper %}
-<div class="chat-wrapper">
+<div class="chat-v2-wrapper">
 
-    <!-- ───────────────── CHAT PRINCIPAL ─────────────────── -->
-    <main class="chat-main">
+    <!-- HEADER (Fixe) -->
+    <header class="chat-v2-header">
+        
+        <div class="c-header-left">
+            <!-- Bouton Retour -->
+            <a href="{% url 'messagerie' %}" class="c-back-btn" aria-label="Retour">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </a>
 
-        <!-- HEADER (dans le flux flex, pas fixed) -->
-        <header class="chat-header">
-            <div class="chat-partner-info">
-
-                <!-- Retour -->
-                <a href="{% url 'messagerie' %}" class="chat-back-btn" aria-label="Retour">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-                    </svg>
-                </a>
-
-                <!-- Avatar + online dot -->
-                <div class="chat-avatar-wrapper">
-                    {% if other_profile.photo_de_profil %}
-                        <img src="{{ other_profile.photo_de_profil.url }}" class="chat-avatar-img" alt="Avatar">
-                    {% elif other_profile.photo_profil %}
-                        <img src="{{ other_profile.photo_profil.url }}" class="chat-avatar-img" alt="Avatar">
-                    {% else %}
-                        <div class="chat-avatar-img" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#16a34a,#14532d);color:white;font-weight:800;font-size:1rem;">
-                            {{ other_participant.first_name|slice:":1"|upper }}
-                        </div>
-                    {% endif %}
-                    <div class="chat-online-dot"></div>
-                </div>
-
-                <!-- Nom + statut -->
-                <div style="flex:1;min-width:0;">
-                    <div class="chat-user-name">{{ display_name }}</div>
-                    <div class="chat-status-text">● En ligne</div>
-                </div>
-            </div>
-
-            <!-- Actions Header -->
-            <div class="chat-header-actions">
-                <!-- Bouton Engagements (mobile seulement) -->
-                <button class="btn-icon btn-eng-toggle" onclick="toggleSheet()" title="Engagements" id="engBtn" aria-label="Voir les engagements">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
-                    </svg>
-                </button>
-                <!-- Menu Options -->
-                <button class="btn-icon" onclick="toggleOptions(event)" title="Options" aria-label="Options" id="optionsBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Dropdown Options -->
-            <div id="optionsDropdown" class="focus-group">
-                {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
-                <a href="{% url 'professeur_detail' conversation.professeur.slug %}" class="focus-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Voir le profil
-                </a>
+            <!-- Avatar -->
+            <div class="c-avatar-box">
+                {% if other_profile.photo_de_profil %}
+                    <img src="{{ other_profile.photo_de_profil.url }}" class="c-avatar-img" alt="Avatar">
+                {% elif other_profile.photo_profil %}
+                    <img src="{{ other_profile.photo_profil.url }}" class="c-avatar-img" alt="Avatar">
                 {% else %}
-                    {% with eng=engagements.first %}
-                        {% if eng and eng.enfants_concernes.all %}
-                        <a href="{% url 'profil_eleve' 'enfant' eng.enfants_concernes.first.id %}" class="focus-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            Profil de l'élève
-                        </a>
-                        {% elif eng %}
-                        <a href="{% url 'profil_eleve' 'apprenant' eng.parent_apprenant.apprenant.id %}" class="focus-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            Voir le profil
-                        </a>
-                        {% endif %}
-                    {% endwith %}
+                    <div class="c-avatar-initial">{{ other_participant.first_name|slice:":1"|upper }}</div>
                 {% endif %}
-                <div class="focus-item danger" style="cursor:pointer;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                    Bloquer
-                </div>
+                <div class="c-online-dot"></div>
             </div>
-        </header>
 
-        <!-- MESSAGES -->
-        {% include "core/components/_chat_messages.html" %}
+            <!-- Infos (Nom + Statut) -->
+            <div class="c-contact-info">
+                <div class="c-contact-name">{{ display_name }}</div>
+                <div class="c-contact-status online">En ligne</div>
+            </div>
+        </div>
 
-        <!-- INPUT AREA -->
-        <footer class="chat-input-area">
-            {% if hide_input %}
-            <!-- Bandeau de blocage -->
-            <div class="chat-blocked-banner">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                {{ blocking_message }}
-                <button onclick="showPaymentModal()">Débloquer</button>
+        <div class="c-header-actions">
+            <!-- Bouton Sheet Engagements -->
+            <button type="button" class="c-icon-btn" aria-label="Voir les engagements">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+            </button>
+            
+            <!-- Menu 3 points -->
+            <button type="button" class="c-icon-btn" aria-label="Options">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
+                </svg>
+            </button>
+        </div>
+
+    </header>
+
+    <!-- CORPS DES MESSAGES (Scrollable) -->
+    <main class="chat-v2-body-scroll" id="messagesList">
+        
+        <!-- Squelette visuel de test pour validation du design -->
+        <div class="msg-bubble received">
+            Bonjour ! Je suis très intéressé par votre profil pour des cours de maths.
+            <div class="msg-meta"><span class="msg-time">09:42</span></div>
+        </div>
+
+        <div class="msg-bubble sent">
+            Bonjour, c'est noté. Pourrions-nous en discuter ?
+            <div class="msg-meta">
+                <span class="msg-time">09:45</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="#34b7f1"><path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/></svg>
             </div>
-            {% else %}
-            <form id="chatForm" class="chat-input-container">
-                <input type="file" id="fileInput" name="fichier" style="display:none;" accept="image/*,.pdf,.doc,.docx">
-                <button type="button" class="btn-attach" onclick="document.getElementById('fileInput').click()" title="Joindre un fichier">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                </button>
-                <div class="chat-input-wrapper">
-                    <textarea class="chat-input" id="messageInput" placeholder="Écrivez un message…" rows="1"></textarea>
-                </div>
-                <button type="submit" class="btn-send" id="sendBtn" aria-label="Envoyer">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
-                        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                </button>
-            </form>
-            <div id="chatSendError" class="chat-send-error" hidden>
-                <span id="chatSendErrorText"></span>
-                <button type="button" id="chatRetryBtn" class="chat-retry-btn">Renvoyer</button>
-            </div>
-            {% endif %}
-        </footer>
+        </div>
 
     </main>
 
-    <!-- ───────────────── SIDEBAR DESKTOP ─────────────────── -->
-    {% include "core/components/_engagements_sidebar.html" %}
+    <!-- ZONE DE SAISIE (Fixe en bas) -->
+    <footer class="chat-v2-input-area">
+        <div class="c-input-wrapper">
+            <textarea class="c-input-field" rows="1" placeholder="Écrivez un message…"></textarea>
+        </div>
+        <button type="button" class="c-send-btn" aria-label="Envoyer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+        </button>
+    </footer>
 
-</div><!-- /chat-wrapper -->
-
-<!-- Modales -->
-{% include "core/components/_chat_modals.html" %}
-
-<!-- Config JS -->
-<script>
-window.chatConfig = {
-    conversationId: "{{ conversation.id }}",
-    csrfToken: "{{ csrf_token }}",
-    urls: {
-        sendMessage:     "{% url 'api_send_message' conversation.id %}",
-        fetchMessages:   "{% url 'api_fetch_new_messages' conversation.id %}",
-        fictionalPayment:"{% url 'api_fictional_payment' %}"
-    },
-    lastMsgId: {% if messages %}{{ messages.last.id }}{% else %}0{% endif %},
-    isBlocked: {% if is_blocked %}true{% else %}false{% endif %},
-    isEligibleToFinalize: {% if is_eligible_to_finalize %}true{% else %}false{% endif %}
-};
-</script>
-<script src="{% static 'core/js/chat.js' %}"></script>
+</div>
 {% endblock %}
 
-{% block footer %}{% endblock %}
+{% block extra_js %}
+<script>
+    // Ajustement de la hauteur pour mobile (clavier virtuel / safe area)
+    function setVh() {
+        const vh = window.visualViewport
+            ? window.visualViewport.height * 0.01
+            : window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setVh);
+    }
+</script>
+{% endblock %}
