@@ -594,6 +594,7 @@
         }
     </style>
 
+    {% block main_wrapper %}
     <main class="container main-content" style="padding-bottom: 3rem;">
         {% if messages %}
         <div class="messages-container">
@@ -608,7 +609,9 @@
 
         {% block content %}{% endblock %}
     </main>
+    {% endblock %}
 
+    {% block footer %}
     <!-- Footer -->
     <footer style="background: #1e293b; color: white; padding: 2rem 1rem 1rem;">
         <div class="container" style="max-width: 1200px; margin: 0 auto;">
@@ -694,6 +697,7 @@
             </div>
         </div>
     </footer>
+    {% endblock %}
 
     <script>
         function toggleMobileMenu() {

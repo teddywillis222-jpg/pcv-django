@@ -10,7 +10,7 @@
 {% block navbar %}{% endblock %}
 {% block body_class %}chat-page-body{% endblock %}
 
-{% block content %}
+{% block main_wrapper %}
 <div class="chat-wrapper">
 
     <!-- ───────────────── CHAT PRINCIPAL ─────────────────── -->
@@ -154,3 +154,5 @@ window.chatConfig = {
 </script>
 <script src="{% static 'core/js/chat.js' %}"></script>
 {% endblock %}
+
+{% block footer %}{% endblock %}
