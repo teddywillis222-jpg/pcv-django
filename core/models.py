@@ -632,7 +632,9 @@ class Conversation(models.Model):
     # 4. Métadonnées & UX
     conversation_lue_par_parent = models.BooleanField(default=False)
     conversation_lue_par_prof = models.BooleanField(default=False)
-    conversation_archivee = models.BooleanField(default=False)
+    conversation_archivee = models.BooleanField(default=False) # Legacy field
+    archivee_par = models.ManyToManyField(User, related_name='conversations_archivees', blank=True)
+    masquee_par = models.ManyToManyField(User, related_name='conversations_masquees', blank=True)
 
     def __str__(self):
         return f"Conversation #{self.id}"

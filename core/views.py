@@ -101,7 +101,7 @@ def messagerie(request):
             'messages', 
             filter=Q(messages__lu=False) & Q(messages__destinataire=request.user)
         )
-    )
+    ).exclude(masquee_par=request.user)
 
     # 1. Filtre par onglet (Status)
     tab = request.GET.get('tab', 'toutes')
@@ -119,11 +119,12 @@ def messagerie(request):
         )
     elif tab == 'terminees':
         conversations = conversations.filter(engagement_actif__statut_general=StatutGeneral.TERMINE)
-    elif tab == 'archivees':
-        conversations = conversations.filter(conversation_archivee=True)
+        
+    # Appliquer le filtre d'archivage sur TOUS les onglets sauf "archivees"
+    if tab == 'archivees':
+        conversations = conversations.filter(archivee_par=request.user)
     else:
-        # Par défaut, on cache les archivées dans "Toutes"
-        conversations = conversations.filter(conversation_archivee=False)
+        conversations = conversations.exclude(archivee_par=request.user)
 
     # 2. Recherche intelligente
     search_query = request.GET.get('q', '').strip()
@@ -131,6 +132,10 @@ def messagerie(request):
         conversations = conversations.filter(
             Q(professeur__nom__icontains=search_query) |
             Q(professeur__prenom__icontains=search_query) |
+            Q(parent__first_name__icontains=search_query) |
+            Q(parent__last_name__icontains=search_query) |
+            Q(parent__parent__nom__icontains=search_query) |
+            Q(parent__apprenant__nom__icontains=search_query) |
             Q(engagement_actif__enfants_concernes__prenom__icontains=search_query) |
             Q(engagement_actif__matiere__icontains=search_query) |
             Q(engagement_actif__localisation_option__icontains=search_query)
@@ -160,7 +165,15 @@ def messagerie(request):
                 enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
                 display_name = f"Parent de {enfants_names}"
             else:
-                display_name = conv.parent.first_name if conv.parent else "Parent PCV"
+                if conv.parent and hasattr(conv.parent, 'profile'):
+                    if conv.parent.profile.role == Role.ROLE_APPRENANT and hasattr(conv.parent, 'apprenant'):
+                        display_name = f"{conv.parent.apprenant.prenom} {conv.parent.apprenant.nom}"
+                    elif hasattr(conv.parent, 'parent'):
+                        display_name = f"Parent {conv.parent.parent.nom}"
+                    else:
+                        display_name = conv.parent.first_name or "Parent PCV"
+                else:
+                    display_name = "Utilisateur PCV"
             
             # Initiale basée sur le prénom de l'utilisateur parent
             if conv.parent:
@@ -991,9 +1004,59 @@ def gestion_plan(request):
 
 
 # Vues pour le système de recherche et profils hybride
+def track_teacher_view(request, teacher_profile):
+    from django.utils import timezone
+    from datetime import timedelta
+    from .models import VueProfil, Profile
+    
+    # Nettoyage paresseux des anciennes vues (vieux de plus de 60 jours)
+    limit_date = timezone.now() - timedelta(days=60)
+    VueProfil.objects.filter(professeur_vise=teacher_profile, date_consultation__lt=limit_date).delete()
+
+    if not request.user.is_authenticated:
+        return
+        
+    try:
+        # Ne pas compter si le visiteur est un prof
+        if request.user.profile.role == Profile.ROLE_PROF:
+            return
+    except Profile.DoesNotExist:
+        pass
+        
+    # Ne pas compter si c'est le professeur lui-même
+    if request.user.id == teacher_profile.user.id:
+        return
+        
+    start_of_day = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    vue_exists = VueProfil.objects.filter(
+        professeur_vise=teacher_profile,
+        visiteur_utilisateur=request.user,
+        date_consultation__gte=start_of_day
+    ).exists()
+    
+    if not vue_exists:
+        VueProfil.objects.create(
+            professeur_vise=teacher_profile,
+            visiteur_utilisateur=request.user
+        )
+        # Recalcul de nb_vues_total basé sur les vues conservées (max 60 jours)
+        teacher_profile.nb_vues_total = VueProfil.objects.filter(professeur_vise=teacher_profile).count()
+        
+        # Calcul des vues du mois (pour info, depuis le début du mois)
+        first_day_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        teacher_profile.nb_vues_mois = VueProfil.objects.filter(
+            professeur_vise=teacher_profile, 
+            date_consultation__gte=first_day_of_month
+        ).count()
+        
+        teacher_profile.save(update_fields=['nb_vues_total', 'nb_vues_mois'])
+
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
     teacher = get_object_or_404(TeacherProfile, slug=teacher_slug)
+    
+    track_teacher_view(request, teacher)
     
     # Calcul des stats sécurisé
     from django.db.models import Avg, Count
@@ -1116,6 +1179,8 @@ def api_teacher_profile(request, teacher_slug):
     """API pour récupérer les données du professeur (pour le side panel) avec gestion d'erreur robuste"""
     try:
         teacher = TeacherProfile.objects.get(slug=teacher_slug)
+        
+        track_teacher_view(request, teacher)
         
         # Calcul des stats sécurisé
         from django.db.models import Avg, Count
@@ -2254,24 +2319,29 @@ def api_fictional_payment(request):
 @login_required
 @require_http_methods(["POST"])
 def api_archive_conversation(request, conversation_id):
-    """Archive ou désarchive une conversation (soft toggle)."""
+    """Archive ou désarchive une conversation pour l'utilisateur courant."""
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
         return JsonResponse({'error': 'Non autorisé'}, status=403)
-    conversation.conversation_archivee = not conversation.conversation_archivee
-    conversation.save(update_fields=['conversation_archivee'])
-    return JsonResponse({'success': True, 'archivee': conversation.conversation_archivee})
+        
+    if request.user in conversation.archivee_par.all():
+        conversation.archivee_par.remove(request.user)
+        is_archived = False
+    else:
+        conversation.archivee_par.add(request.user)
+        is_archived = True
+        
+    return JsonResponse({'success': True, 'archivee': is_archived})
 
 
 @login_required
 @require_http_methods(["POST"])
 def api_delete_conversation(request, conversation_id):
-    """Soft-delete : masque la conversation pour l'utilisateur courant en l'archivant."""
+    """Soft-delete : masque la conversation pour l'utilisateur courant."""
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
         return JsonResponse({'error': 'Non autorisé'}, status=403)
-    conversation.conversation_archivee = True
-    conversation.save(update_fields=['conversation_archivee'])
+    conversation.masquee_par.add(request.user)
     return JsonResponse({'success': True})

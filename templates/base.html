@@ -115,7 +115,7 @@
             border: 2px solid #e2e8f0 !important;
             border-radius: 0.75rem !important;
             padding: 0.5rem 1rem !important;
-            min-height: 3.5rem !important;
+            min-height: 3rem !important;
             display: flex !important;
             align-items: center !important;
             box-shadow: none !important;
@@ -178,7 +178,8 @@
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            position: sticky;
+            position: fixed;
+            width: 100%;
             top: 0;
             z-index: 1000;
             padding: 0;
@@ -454,6 +455,10 @@
             }
         }
 
+        body {
+            padding-top: 75px; /* Compense la navbar fixed */
+        }
+
         /* Ajustement du padding top du contenu principal */
         .main-content {
             padding-top: 1.5rem;
@@ -536,6 +541,15 @@
         </div>
         
         <nav class="mobile-menu-nav">
+            <li style="margin-bottom: 0.5rem;">
+                <a href="{% url 'recherche' %}" onclick="closeMobileMenu()" style="display: flex; align-items: center; gap: 0.5rem; color: var(--success-700); font-weight: 700; background: var(--success-50); border-radius: 8px; margin: 0 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Rechercher un prof
+                </a>
+            </li>
             <li><a href="{% url 'home' %}" onclick="closeMobileMenu()">Accueil</a></li>
             <li><a href="{% url 'faq' %}" onclick="closeMobileMenu()">FAQ</a></li>
             <li><a href="{% url 'politique_confidentialite' %}" onclick="closeMobileMenu()">Confidentialité</a></li>
