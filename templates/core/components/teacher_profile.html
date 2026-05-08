@@ -311,30 +311,77 @@
         
     </div>
 
-    <!-- Professeurs Similaires (Side Panel & Page) -->
+    <!-- ===== Professeurs Similaires — Design Premium ===== -->
     {% if related_teachers %}
-    <div style="margin-top: 3rem; border-top: 2px solid #e2e8f0; padding-top: 2rem;">
-        <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 1.25rem;">
-            Professeurs similaires
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9eef5;">
+        <h3 style="font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase;
+                   letter-spacing: 0.06em; margin: 0 0 1rem;">
+            Ils enseignent aussi
         </h3>
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.625rem;">
             {% for related in related_teachers %}
-            <a href="{% url 'professeur_detail' related.slug %}" style="text-decoration: none; display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: white; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--success-600)'; this.style.transform='translateX(5px)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='none'">
+            <div onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}"
+                 style="display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem;
+                        background: white; border-radius: 14px; border: 1px solid #e9eef5;
+                        cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05);"
+                 onmouseover="this.style.borderColor='#16a34a'; this.style.transform='translateX(3px)'; this.style.boxShadow='0 3px 10px rgba(22,163,74,0.12)'"
+                 onmouseout="this.style.borderColor='#e9eef5'; this.style.transform='none'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'">
+
+                <!-- Avatar -->
                 {% if related.photo_de_profil %}
-                    <img src="{{ related.photo_de_profil.url }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <img src="{{ related.photo_de_profil.url }}" alt="{{ related.prenom }}"
+                         style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
                 {% else %}
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #94a3b8;">{{ related.prenom|first }}</div>
+                    <div style="width: 46px; height: 46px; border-radius: 50%; background: #f1f5f9;
+                                display: flex; align-items: center; justify-content: center;
+                                font-weight: 800; color: #64748b; font-size: 1rem; flex-shrink: 0;
+                                border: 2px solid #e9eef5;">
+                        {{ related.prenom|first|upper }}
+                    </div>
                 {% endif %}
-                <div>
-                    <div style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">{{ related.prenom }} {{ related.nom }}</div>
-                    <div style="font-size: 0.8rem; color: #64748b;">{{ related.matiere_enseignee }} • {{ related.ville_quartier }}</div>
+
+                <!-- Info -->
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-weight: 700; color: #1e293b; font-size: 0.9rem;
+                                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ related.prenom }} {{ related.nom }}
+                        {% if related.est_certifie %}
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#16a34a" style="vertical-align: middle; margin-left: 2px;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 1px;
+                                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ related.matiere_enseignee }}
+                        {% if related.ville_quartier %} · {{ related.ville_quartier }}{% endif %}
+                    </div>
                 </div>
-            </a>
+
+                <!-- Note + Tarif -->
+                <div style="text-align: right; flex-shrink: 0;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #f59e0b;">
+                        ★ {{ related.moyenne_avis|floatformat:1 }}
+                    </div>
+                    {% if related.tarif_horaire %}
+                    <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 1px;">
+                        {{ related.tarif_horaire|floatformat:0 }} F/h
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Flèche -->
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2.5"
+                     style="flex-shrink: 0; margin-left: 2px;">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+            </div>
             {% endfor %}
         </div>
     </div>
     {% endif %}
 </div>
+
 
 <style>
 /* Ajustements spécifiques pour le profil professeur */

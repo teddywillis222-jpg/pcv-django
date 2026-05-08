@@ -165,6 +165,33 @@
 <script>
 const CSRF_TOKEN = "{{ csrf_token }}";
 
+/* ── Couleurs dynamiques des avatars ─────────────────────────────
+   Chaque initiale obtient une couleur stable dérivée d'un hash
+   Palette de 8 paires bg/texte accessibles (WCAG AA) */
+const AVATAR_PALETTE = [
+    { bg: '#dbeafe', color: '#1d4ed8' }, // Bleu
+    { bg: '#fce7f3', color: '#9d174d' }, // Rose
+    { bg: '#d1fae5', color: '#065f46' }, // Vert
+    { bg: '#fef3c7', color: '#92400e' }, // Ambre
+    { bg: '#ede9fe', color: '#5b21b6' }, // Violet
+    { bg: '#fee2e2', color: '#991b1b' }, // Rouge
+    { bg: '#e0f2fe', color: '#075985' }, // Cyan
+    { bg: '#f3f4f6', color: '#374151' }, // Gris
+];
+
+function getAvatarColors(initial) {
+    if (!initial) return AVATAR_PALETTE[7];
+    const code = initial.toUpperCase().charCodeAt(0);
+    return AVATAR_PALETTE[code % AVATAR_PALETTE.length];
+}
+
+document.querySelectorAll('.conv-avatar-placeholder').forEach(el => {
+    const initial = el.textContent.trim()[0] || '?';
+    const colors = getAvatarColors(initial);
+    el.style.setProperty('--avatar-bg', colors.bg);
+    el.style.setProperty('--avatar-color', colors.color);
+});
+
 // ── Menu options ──────────────────────────────────────
 function toggleConvMenu(id) {
     const allMenus = document.querySelectorAll('.conv-options-menu');

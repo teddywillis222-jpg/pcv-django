@@ -7,7 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --msg-bg: #f0f4f8;
+    --msg-bg: #f8fafc;            /* Unifié avec le reste du site */
     --msg-card-bg: #ffffff;
     --msg-accent: #16a34a;
     --msg-accent-hover: #15803d;
@@ -269,8 +269,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--msg-accent) 0%, #14532d 100%);
-    color: white;
+    background: var(--avatar-bg, #e2e8f0);   /* Couleur dynamique via JS */
+    color: var(--avatar-color, #475569);
     font-weight: 800;
     font-size: 1.15rem;
     text-transform: uppercase;

@@ -176,11 +176,15 @@
     width: 50%;
     max-width: 600px;
     height: 100vh;
+    height: 100dvh;          /* dvh exclut les barres du navigateur mobile */
     background: white;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     z-index: 3000;
     transition: right 0.3s ease;
     overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; /* Scroll momentum sur iOS */
+    overscroll-behavior: contain;      /* Bloque le scroll parent quand on atteint le bord */
 }
 
 .side-panel.active {
@@ -236,6 +240,7 @@
 
 .side-panel-content {
     padding: 1.5rem;
+    padding-bottom: 5rem;    /* Espace généreux pour que rien ne soit masqué en bas */
 }
 
 .filter-actions-row {
