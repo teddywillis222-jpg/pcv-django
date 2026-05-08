@@ -317,13 +317,7 @@
         padding: 0;
     }
     
-    .teacher-card {
-        margin: 0;
-        width: 100%;
-        min-width: 335px;
-        box-sizing: border-box;
-        padding: 1rem;
-    }
+    /* Teacher cards are now styled globally in teacher_card.css */
     
     /* Side Panel Mobile Adjustments */
     .side-panel {
@@ -646,18 +640,8 @@ async function toggleFavorite(btn, profId) {
             if (data.success) {
                 if (data.is_favorite) {
                     btn.classList.add('active');
-                    btn.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                    `;
                 } else {
                     btn.classList.remove('active');
-                    btn.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                        </svg>
-                    `;
                 }
             } else {
                 console.error("Erreur toggle favori:", data.error);

@@ -556,6 +556,15 @@ class TeacherProfile(models.Model):
             
         return int((filled / (len(fields_to_check) + 1)) * 100)
 
+    @property
+    def classes_labels(self):
+        """Retourne les labels des classes enseignées sous forme de chaîne."""
+        if not self.classes_enseignees:
+            return ""
+        from .choices import ClassLevel
+        choices_dict = dict(ClassLevel.CHOICES)
+        return ", ".join([choices_dict.get(c, c) for c in self.classes_enseignees])
+
     # 7. Paramètres et consentement
     autorisation_publicitaire = models.BooleanField(default=False)
 

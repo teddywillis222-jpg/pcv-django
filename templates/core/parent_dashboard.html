@@ -575,16 +575,7 @@
                 </div>
                 <div class="carousel-container">
                     {% for prof in recommandations %}
-                    <div class="prof-card-mini">
-                        {% if prof.photo_de_profil %}
-                        <img src="{{ prof.photo_de_profil.url }}" alt="">
-                        {% else %}
-                        <div style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.5rem;">👨‍🏫</div>
-                        {% endif %}
-                        <h4 style="margin: 0; font-size: 0.9rem;">{{ prof.prenom }}</h4>
-                        <p style="margin: 4px 0; font-size: 0.75rem; color: var(--text-gray);">{{ prof.matiere_enseignee }}</p>
-                        <a href="{% url 'professeur_detail' prof.slug %}" style="display: block; padding: 0.5rem; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-decoration: none;">Voir le profil</a>
-                    </div>
+                        {% include "core/components/_teacher_card_compact.html" with teacher=prof %}
                     {% empty %}
                     <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
                         <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
@@ -653,7 +644,9 @@
             {% if favoris %}
             <div class="teachers-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; padding: 1.5rem 0; width: 100%; box-sizing: border-box; justify-items: center; align-items: start;">
                 {% for teacher in favoris %}
-                    {% include "core/components/_teacher_card.html" %}
+                    <div style="width: 100%; max-width: 350px;">
+                        {% include "core/components/_teacher_card.html" %}
+                    </div>
                 {% endfor %}
             </div>
             {% else %}
@@ -969,25 +962,22 @@
                 if (data.success) {
                     if (data.is_favorite) {
                         btn.classList.add('active');
-                        btn.style.background = "#fee2e2";
-                        btn.style.color = "#ef4444";
                     } else {
                         btn.classList.remove('active');
-                        btn.style.background = "#f1f5f9";
-                        btn.style.color = "#94a3b8";
                         
                         // Si on est dans la section favoris, on retire la carte
-                        if (document.getElementById('favoris-section').style.display !== 'none') {
-                            const card = btn.closest('.teacher-card');
+                        const favorisSection = document.getElementById('favoris-section');
+                        if (favorisSection && favorisSection.style.display !== 'none') {
+                            const card = btn.closest('.teacher-card') || btn.closest('[style*="max-width: 350px"]');
                             if (card) {
+                                card.style.transition = 'all 0.3s ease';
                                 card.style.opacity = '0';
                                 card.style.transform = 'scale(0.9)';
                                 setTimeout(() => {
                                     card.remove();
-                                    // Si plus de favoris, afficher le message vide
-                                    const grid = document.querySelector('#favoris-section .teachers-grid');
+                                    const grid = favorisSection.querySelector('.teachers-grid');
                                     if (grid && grid.children.length === 0) {
-                                        location.reload(); // Plus simple pour réafficher le message "vide"
+                                        location.reload();
                                     }
                                 }, 300);
                             }
