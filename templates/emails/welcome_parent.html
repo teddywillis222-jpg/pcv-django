@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur Prof Chez Vous</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+        <div style="background-color: #16a34a; padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Bienvenue sur Prof Chez Vous !</h1>
+        </div>
+        <div style="padding: 30px;">
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+                Bonjour <strong>{{ user.first_name|default:user.username }}</strong>,
+            </p>
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+                Nous sommes ravis de vous compter parmi nous ! Prof Chez Vous est la plateforme de référence pour trouver le professeur particulier idéal pour vos enfants.
+            </p>
+            <div style="background-color: #f8fafc; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
+                <h3 style="margin-top: 0; color: #1e293b;">Quelle est la prochaine étape ?</h3>
+                <p style="margin-bottom: 0; color: #475569;">
+                    Pour commencer à rechercher des professeurs, nous vous invitons à <strong>créer les profils de vos enfants</strong>. Cela nous permettra de vous proposer des recommandations sur mesure (selon leur classe et leurs difficultés).
+                </p>
+            </div>
+            <div style="text-align: center; margin: 35px 0;">
+                <a href="https://www.profchezvous.com/dashboard/" style="background-color: #16a34a; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Accéder à mon espace</a>
+            </div>
+            <p style="font-size: 14px; color: #64748b; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                Si vous avez des questions, n'hésitez pas à répondre directement à cet email. Notre équipe est là pour vous accompagner.
+            </p>
+            <p style="font-size: 14px; color: #64748b; font-weight: bold;">
+                L'équipe Prof Chez Vous
+            </p>
+        </div>
+    </div>
+</body>
+</html>

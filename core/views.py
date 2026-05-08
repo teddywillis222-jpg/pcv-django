@@ -778,11 +778,15 @@ def parent_dashboard(request):
         match_score=score_annotation
     ).filter(match_score__gt=0).order_by("-match_score", "?")[:8]
     
+    # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
+    recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
     recommandations_list = list(recommandations_annotees)
     
     # Compléter avec d'autres profs si insuffisant
     if len(recommandations_list) < 8:
         fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
+        # Appliquer les ratings aussi sur le fallback
+        fallback = annotate_teachers_with_ratings(fallback)
         recommandations_list.extend(list(fallback))
         
     recommandations = recommandations_list
@@ -822,7 +826,8 @@ def parent_dashboard(request):
     enfant_form = EnfantForm()
 
     # Annotation des ratings pour le composant teacher_card
-    recommandations = annotate_teachers_with_ratings(recommandations)
+    # (recommandations est déjà annoté plus haut)
+
     favoris = annotate_teachers_with_ratings(favoris)
 
     return render(
@@ -934,15 +939,15 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
     
-    recommandations_annotees = recommandations.annotate(
-        match_score=score_annotation
-    ).filter(match_score__gt=0).order_by("-match_score", "?")[:8]
-    
+    # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
+    recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
     recommandations_list = list(recommandations_annotees)
     
     # Compléter avec d'autres profs si insuffisant
     if len(recommandations_list) < 8:
         fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
+        # Appliquer les ratings aussi sur le fallback
+        fallback = annotate_teachers_with_ratings(fallback)
         recommandations_list.extend(list(fallback))
         
     recommandations = recommandations_list
@@ -974,7 +979,7 @@ def apprenant_dashboard(request):
     favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
 
     # Annotation des ratings pour le composant teacher_card
-    recommandations = annotate_teachers_with_ratings(recommandations)
+    # (recommandations est déjà annoté plus haut)
     favoris = annotate_teachers_with_ratings(favoris)
 
     context = {

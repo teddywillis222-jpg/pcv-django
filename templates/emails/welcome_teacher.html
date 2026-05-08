@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur Prof Chez Vous</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+        <div style="background-color: #f59e0b; padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Prêt(e) à donner des cours ?</h1>
+        </div>
+        <div style="padding: 30px;">
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+                Bonjour <strong>{{ user.first_name|default:user.username }}</strong>,
+            </p>
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+                Nous sommes ravis de vous accueillir dans la communauté des enseignants de Prof Chez Vous. Votre expertise est précieuse, et nous avons hâte de vous connecter avec des élèves motivés.
+            </p>
+            <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
+                <h3 style="margin-top: 0; color: #1e293b;">Processus de validation</h3>
+                <p style="margin-bottom: 0; color: #475569;">
+                    Pour que votre profil soit visible par les parents et les apprenants, <strong>notre équipe doit le valider</strong>. Pour accélérer ce processus, assurez-vous d'avoir rempli :
+                    <ul style="margin-bottom: 0; padding-left: 20px;">
+                        <li>Vos matières et niveaux enseignés</li>
+                        <li>Vos disponibilités réelles (la grille horaire)</li>
+                        <li>Une photo de profil professionnelle</li>
+                    </ul>
+                </p>
+            </div>
+            <div style="text-align: center; margin: 35px 0;">
+                <a href="https://www.profchezvous.com/dashboard/" style="background-color: #f59e0b; color: #ffffff; text-decoration: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Compléter mon profil</a>
+            </div>
+            <p style="font-size: 14px; color: #64748b; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                Dès que votre profil sera complet, notre équipe l'examinera dans les plus brefs délais. Si vous avez des questions, n'hésitez pas à nous contacter.
+            </p>
+            <p style="font-size: 14px; color: #64748b; font-weight: bold;">
+                L'équipe pédagogique Prof Chez Vous
+            </p>
+        </div>
+    </div>
+</body>
+</html>
