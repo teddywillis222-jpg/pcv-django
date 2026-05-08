@@ -23,7 +23,7 @@
     <p class="compact-info">{{ teacher.classes_labels|default:"Toutes classes" }}</p>
 
     <div class="compact-rating">
-        <span>★</span> {{ teacher.moyenne_avis|default:"5.0" }}
+        <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }} <small>({{ teacher.nombre_avis }} avis)</small>
     </div>
 
     <button class="btn-view">Voir le profil</button>

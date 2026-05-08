@@ -33,11 +33,14 @@ def annotate_teachers_with_ratings(queryset):
     )
     for prof in queryset:
         if prof.real_nombre == 0:
-            prof.moyenne_avis = settings.RATING_DEFAULT_CERTIFIED if prof.est_certifie else settings.RATING_DEFAULT_STANDARD
-            prof.nombre_avis = 0
+            # Si pas d'avis réel, on affiche la note de l'équipe et on simule 1 avis
+            prof.moyenne_avis = prof.note_initiale_equipe
+            prof.nombre_avis = 1
+            prof.has_real_reviews = False
         else:
             prof.moyenne_avis = prof.real_moyenne
             prof.nombre_avis = prof.real_nombre
+            prof.has_real_reviews = True
     return queryset
 
 

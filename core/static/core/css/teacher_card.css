@@ -14,8 +14,10 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    min-height: auto; /* Height adjusted to content */
+    max-width: 100%; /* Ensure it doesn't exceed container */
+    min-height: auto;
     box-sizing: border-box;
+    overflow: hidden; /* Prevent inner content overflow */
 }
 
 .teacher-card.premium-card:hover {
@@ -28,6 +30,7 @@
     display: flex;
     gap: 1rem;
     align-items: flex-start;
+    width: 100%;
 }
 
 .teacher-card .profile-image-container {
@@ -55,6 +58,7 @@
     align-items: center;
     gap: 6px;
     margin-bottom: 2px;
+    width: 100%;
 }
 
 .teacher-card .teacher-name {
@@ -65,6 +69,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+    flex: 1;
 }
 
 .teacher-card .teacher-subjects {
@@ -89,9 +94,17 @@
 
 .teacher-card .badges-row {
     display: flex;
-    flex-wrap: wrap;
+    overflow-x: auto;
     gap: 0.4rem;
     margin-top: 0.25rem;
+    padding-bottom: 4px;
+    scrollbar-width: none; /* Hide scrollbar for clean look */
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.teacher-card .badges-row::-webkit-scrollbar {
+    display: none;
 }
 
 .teacher-card .tag-badge {
@@ -102,6 +115,8 @@
     display: flex;
     align-items: center;
     gap: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .tag-rating { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }

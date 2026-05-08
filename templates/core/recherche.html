@@ -246,104 +246,23 @@
     flex-wrap: wrap;
 }
 
+
 /* Layout Recherche Desktop */
+.teachers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    justify-items: center;
+    align-items: start;
+}
+
 .main-filters {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-    margin-bottom: 2rem;
-}
-
-.search-inputs-row {
-    display: flex;
-    gap: 1.5rem;
-    width: 100%;
-    justify-content: flex-start; /* Aligné à gauche */
-}
-
-.search-inputs-row .filter-group {
-    max-width: 450px; /* Taille raisonnable pour ne pas trop étirer */
-    flex: 1;
-}
-
-/* Responsive Mobile */
-@media (max-width: 768px) {
-    .search-title {
-        font-size: 1.75rem;
-    }
-    
-    .search-subtitle {
-        font-size: 1rem;
-    }
-
-    .search-header {
-        padding: 1rem 0;
-        margin-bottom: 1rem;
-    }
-    
-    .main-filters {
-        flex-direction: column;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-    }
-    
-    .filter-group {
-        min-width: 100%;
-    }
-    
-    .teachers-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .side-panel {
-        width: 100%;
-        max-width: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .search-container {
-        padding: 0 10px;
-    }
-    
-    .profile-name {
-        font-size: 1.5rem;
-    }
-    
-    .teachers-grid {
-        grid-template-columns: 1fr;
-        padding: 0;
-    }
-    
-    /* Teacher cards are now styled globally in teacher_card.css */
-    
-    /* Side Panel Mobile Adjustments */
-    .side-panel {
-        width: 100% !important;
-        right: -100% !important;
-    }
-    .side-panel.active {
-        right: 0 !important;
-    }
-    .side-panel-header {
-        padding: 0.75rem 1rem !important;
-    }
-    .side-panel-header h3 {
-        font-size: 1.1rem !important;
-    }
-    
-    .teacher-photo {
-        width: 65px;
-        height: 65px;
-    }
-
-/* Layout Recherche Desktop */
-.main-filters {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     width: 100%;
     margin-bottom: 2rem;
 }
@@ -364,26 +283,53 @@
     .search-title {
         font-size: 1.75rem;
     }
+    
     .search-subtitle {
         font-size: 1rem;
     }
+
     .search-header {
         padding: 1rem 0;
         margin-bottom: 1rem;
     }
+    
     .search-inputs-row {
         flex-direction: column;
         gap: 1rem;
     }
+    
+    .teachers-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 5px;
+    }
+    
+    .side-panel {
+        width: 100% !important;
+        right: -100% !important;
+    }
+    
+    .side-panel.active {
+        right: 0 !important;
+    }
+    
     .side-panel-header {
         padding: 0.75rem 1rem !important;
     }
+    
     .side-panel-header h3 {
         font-size: 1.1rem !important;
     }
-    .teacher-photo {
-        width: 65px;
-        height: 65px;
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        padding: 0 10px;
+    }
+    
+    .teachers-grid {
+        grid-template-columns: 1fr;
+        padding: 0;
     }
 }
 </style>

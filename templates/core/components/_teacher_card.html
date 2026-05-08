@@ -31,8 +31,9 @@
 
     <!-- Dynamic Badges Row -->
     <div class="badges-row">
-        <div class="tag-badge tag-rating">
-            <span>★</span> {{ teacher.moyenne_avis|default:"5.0" }}
+        <div class="tag-badge tag-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}">
+            <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }}
+            <span style="font-size: 0.65rem; opacity: 0.8; margin-left: 2px;">({{ teacher.nombre_avis }} avis)</span>
         </div>
         
         {% if teacher.est_disponible != False %}
