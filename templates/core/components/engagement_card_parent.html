@@ -107,6 +107,16 @@
                 </a>
                 {% endif %}
 
+                <!-- Favoris -->
+                {% if eng.professeur %}
+                <button type="button" class="menu-item fav-eng-btn {% if user.is_authenticated and user in eng.professeur.parents_favoris.all %}active{% endif %}" onclick="toggleFavoriteAjax(this, '{{ eng.professeur.id }}')" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; cursor: pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if user.is_authenticated and user in eng.professeur.parents_favoris.all %}#ef4444{% else %}none{% endif %}" stroke="{% if user.is_authenticated and user in eng.professeur.parents_favoris.all %}#ef4444{% else %}currentColor{% endif %}" stroke-width="2" style="transition: all 0.3s ease; flex-shrink: 0;">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    <span class="fav-text">{% if user.is_authenticated and user in eng.professeur.parents_favoris.all %}Retirer des favoris{% else %}Ajouter aux favoris{% endif %}</span>
+                </button>
+                {% endif %}
+
                 <!-- Masquer (Toujours visible) -->
                 <button type="button" class="menu-item" onclick="masquerEngagement('{{ eng.id }}', this)" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--text-gray); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
                     🗑️ Masquer l'engagement

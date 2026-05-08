@@ -771,6 +771,58 @@
                 showAuthModal();
             }
         }
+
+        // Système AJAX pour les Favoris
+        function toggleFavoriteAjax(buttonElement, profId) {
+            fetch(`/professeur/${profId}/toggle-favori/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    const textSpan = buttonElement.querySelector('.fav-text');
+                    if(data.is_favorite) {
+                        buttonElement.classList.add('active');
+                        buttonElement.title = "Retirer des favoris";
+                        buttonElement.querySelector('svg').setAttribute('fill', '#ef4444');
+                        buttonElement.querySelector('svg').setAttribute('stroke', '#ef4444');
+                        if(textSpan) textSpan.textContent = "Retirer des favoris";
+                    } else {
+                        buttonElement.classList.remove('active');
+                        buttonElement.title = "Ajouter aux favoris";
+                        buttonElement.querySelector('svg').setAttribute('fill', 'none');
+                        buttonElement.querySelector('svg').setAttribute('stroke', 'currentColor');
+                        if(textSpan) textSpan.textContent = "Ajouter aux favoris";
+                    }
+                } else {
+                    console.error("Erreur toggle favori", data);
+                }
+            })
+            .catch(error => {
+                console.error("Erreur AJAX favoris", error);
+            });
+        }
+
+        // Helper pour récupérer le CSRF Token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     </script>
 
     <!-- Modal d'exhortation global -->

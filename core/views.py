@@ -740,23 +740,52 @@ def parent_dashboard(request):
     enfant_id = request.GET.get("enfant_id")
     active_enfant = enfants.filter(id=enfant_id).first() if enfant_id else enfants.first()
 
-    # 2. Recommandations dynamiques basées sur l'enfant actif
-    from django.db.models import Q
+    # 2. Recommandations dynamiques basées sur l'enfant actif et le parent
+    from django.db.models import Q, Case, When, Value, IntegerField
     recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
     
-    # Au moins la classe en commun
-    if active_enfant.classe:
-        recommandations = recommandations.filter(classes_enseignees__icontains=active_enfant.classe)
-        
-    # Au moins une matière en commun
-    if active_enfant.matieres:
+    score_annotation = Value(0, output_field=IntegerField())
+    
+    # Critère 1: Matières faibles (3 points)
+    if active_enfant and active_enfant.matieres:
         q_matieres = Q()
         for mat in active_enfant.matieres:
             q_matieres |= Q(matiere_enseignee__icontains=mat)
-        recommandations = recommandations.filter(q_matieres)
+        score_annotation = score_annotation + Case(
+            When(q_matieres, then=Value(3)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+        
+    # Critère 2: Classe en commun (2 points)
+    if active_enfant and active_enfant.classe:
+        score_annotation = score_annotation + Case(
+            When(classes_enseignees__icontains=active_enfant.classe, then=Value(2)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+        
+    # Critère 3: Ville / Quartier du parent (1 point)
+    if parent.quartier_ville:
+        score_annotation = score_annotation + Case(
+            When(ville_quartier=parent.quartier_ville, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+
+    # Appliquer l'annotation et trier par score décroissant
+    recommandations_annotees = recommandations.annotate(
+        match_score=score_annotation
+    ).filter(match_score__gt=0).order_by("-match_score", "?")[:8]
     
-    # On mélange et on limite
-    recommandations = recommandations.order_by("?")[:8]
+    recommandations_list = list(recommandations_annotees)
+    
+    # Compléter avec d'autres profs si insuffisant
+    if len(recommandations_list) < 8:
+        fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
+        recommandations_list.extend(list(fallback))
+        
+    recommandations = recommandations_list
 
     # 3. Engagements : On prend TOUS les engagements du parent pour être sûr de ne rien rater
     # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
@@ -872,13 +901,51 @@ def apprenant_dashboard(request):
 
     from .choices import ValidationStatus, StatutGeneral, EngagementType, ObjectifMotivation, CreneauDisponibilite
 
-    # 1. Recommandations dynamiques basées sur la classe de l'apprenant
+    # 1. Recommandations dynamiques basées sur la classe, matières et localisation de l'apprenant
+    from django.db.models import Q, Case, When, Value, IntegerField
     recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
     
-    if apprenant.classe:
-        recommandations = recommandations.filter(classes_enseignees__icontains=apprenant.classe)
+    score_annotation = Value(0, output_field=IntegerField())
     
-    recommandations = recommandations.order_by("?")[:8]
+    # Critère 1: Matières recherchées (3 points)
+    if apprenant.matieres_recherchees:
+        q_matieres = Q()
+        for mat in apprenant.matieres_recherchees:
+            q_matieres |= Q(matiere_enseignee__icontains=mat)
+        score_annotation = score_annotation + Case(
+            When(q_matieres, then=Value(3)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+        
+    # Critère 2: Classe en commun (2 points)
+    if apprenant.classe:
+        score_annotation = score_annotation + Case(
+            When(classes_enseignees__icontains=apprenant.classe, then=Value(2)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+        
+    # Critère 3: Ville / Quartier (1 point)
+    if apprenant.quartier_ville:
+        score_annotation = score_annotation + Case(
+            When(ville_quartier=apprenant.quartier_ville, then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField()
+        )
+    
+    recommandations_annotees = recommandations.annotate(
+        match_score=score_annotation
+    ).filter(match_score__gt=0).order_by("-match_score", "?")[:8]
+    
+    recommandations_list = list(recommandations_annotees)
+    
+    # Compléter avec d'autres profs si insuffisant
+    if len(recommandations_list) < 8:
+        fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
+        recommandations_list.extend(list(fallback))
+        
+    recommandations = recommandations_list
 
     # 2. Engagements filtrés pour l'apprenant (parent_apprenant=request.user)
     engagements = request.user.engagements_client.all().order_by("-date_creation")
