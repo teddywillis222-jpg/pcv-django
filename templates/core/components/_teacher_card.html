@@ -1,19 +1,26 @@
 <div class="teacher-card premium-card" onclick="openTeacherProfile('{{ teacher.slug }}')">
     <!-- Header with Photo and Name Info -->
     <div class="card-main-info">
+        <!-- Photo avec badge "Suivi Rigoureux" en overlay -->
         <div class="profile-image-container">
             {% if teacher.photo_de_profil %}
                 <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}">
             {% else %}
                 <div class="no-image">👨‍🏫</div>
             {% endif %}
+            {% if teacher.suivi_rigoureux %}
+                <div class="photo-badge-rigoureux" title="Suivi rigoureux : ce professeur remplit régulièrement ses bilans de séances">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+            {% endif %}
         </div>
         
         <div class="teacher-details">
+            <!-- Nom tronqué + coche certifié toujours visible et collée au nom -->
             <div class="name-badge-row">
-                <h3 class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</h3>
-                {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#16a34a">
+                <span class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</span>
+                {% if teacher.est_certifie %}
+                    <svg class="cert-icon" width="14" height="14" viewBox="0 0 24 24" fill="#16a34a" title="Professeur certifié ProfChezVous">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                 {% endif %}

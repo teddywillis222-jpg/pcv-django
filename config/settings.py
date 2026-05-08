@@ -206,6 +206,12 @@ RATING_DEFAULT_STANDARD = float(os.getenv('RATING_DEFAULT_STANDARD', '4.5'))
 # Seuils de prix pour la recherche
 PRICE_THRESHOLDS = os.getenv('PRICE_THRESHOLDS', '2000,5000,10000').split(',')
 
+# --- Badge "Suivi Rigoureux" ---
+# Nombre minimum de bilans de séances pour obtenir le badge
+SUIVI_RIGOUREUX_SEUIL_BILANS = int(os.getenv('SUIVI_RIGOUREUX_SEUIL_BILANS', '3'))
+# Nombre de jours depuis le dernier bilan (si engagement actif)
+SUIVI_RIGOUREUX_JOURS_RECENCE = int(os.getenv('SUIVI_RIGOUREUX_JOURS_RECENCE', '14'))
+
 # Chemins des données
 LOCALISATIONS_FILE = os.path.join(BASE_DIR, 'core', 'localisations.json')
 MATIERES_FILE = os.path.join(BASE_DIR, 'core', 'matieres.json')

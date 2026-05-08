@@ -37,15 +37,39 @@
     width: 70px;
     height: 70px;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible; /* Permet à l'overlay de déborder */
     background: #f1f5f9;
     flex-shrink: 0;
+    position: relative; /* Ancrage pour le badge overlay */
 }
 
-.teacher-card .profile-image-container img {
-    width: 100%;
-    height: 100%;
+/* Photo clipée séparément pour ne pas couper l'overlay */
+.teacher-card .profile-image-container img,
+.teacher-card .profile-image-container .no-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
     object-fit: cover;
+    display: block;
+}
+
+/* Badge "Suivi Rigoureux" — pastille en overlay sur la photo */
+.teacher-card .photo-badge-rigoureux {
+    position: absolute;
+    bottom: -5px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4f46e5;          /* Indigo vif */
+    color: white;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(79,70,229,0.35);
+    cursor: default;
+    z-index: 2;
 }
 
 .teacher-card .teacher-details {
@@ -56,11 +80,13 @@
 .teacher-card .name-badge-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     margin-bottom: 2px;
     width: 100%;
+    overflow: hidden;
 }
 
+/* Le nom tronque quand trop long */
 .teacher-card .teacher-name {
     font-size: 1rem;
     font-weight: 800;
@@ -70,6 +96,13 @@
     text-overflow: ellipsis;
     margin: 0;
     flex: 1;
+    min-width: 0; /* Indispensable pour que flex+ellipsis fonctionne */
+}
+
+/* La coche certifié reste toujours visible, collée au nom */
+.teacher-card .cert-icon {
+    flex-shrink: 0;
+    display: block;
 }
 
 .teacher-card .teacher-subjects {
@@ -119,10 +152,11 @@
     flex-shrink: 0;
 }
 
-.tag-rating { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+.tag-rating    { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
 .tag-available { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
-.tag-trial { background: #fdf2f8; color: #9d174d; border: 1px solid #fce7f3; }
-.tag-exp { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+.tag-trial     { background: #fdf2f8; color: #9d174d; border: 1px solid #fce7f3; }
+.tag-exp       { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+/* Note: le badge Suivi Rigoureux est affiché en overlay sur la photo (.photo-badge-rigoureux) */
 
 .teacher-card .price-row {
     font-size: 0.95rem;

@@ -26,16 +26,54 @@ from django.template.loader import render_to_string
 
 
 def annotate_teachers_with_ratings(queryset):
-    """Annote un queryset de TeacherProfile avec les moyennes d'avis réels ou d'équipe via SQL."""
-    from django.db.models.functions import Coalesce, Cast
-    from django.db.models import F, Case, When, Value, BooleanField, IntegerField, Avg, Count, DecimalField
+    """
+    Annote un queryset de TeacherProfile avec :
+    - Les moyennes d'avis réels ou d'équipe (moyenne_avis, nombre_avis, has_real_reviews)
+    - Le badge "Suivi Rigoureux" (suivi_rigoureux) selon la règle d'assiduité par récence :
+        * Condition 1 (Seuil) : >= 3 bilans de séances enregistrés au total
+        * Condition 2 (Récence) : SI engagement actif (FINALISE), le dernier bilan < 14 jours
+                                   SI aucun engagement actif, la règle de récence est ignorée
+    """
+    from django.db.models.functions import Coalesce, Cast, Now
+    from django.db.models import (
+        F, Case, When, Value, BooleanField, IntegerField,
+        Avg, Count, DecimalField, FloatField, Max, Q, ExpressionWrapper, DurationField
+    )
+    from django.utils import timezone
+
+    # Seuil : nombre total de bilans de séances (Seance) enregistrés par ce prof
+    # Un "bilan" = une Seance dont le champ objectifs est non vide
+    nb_bilans_total = Count(
+        'engagements__seances',
+        filter=Q(engagements__seances__objectifs__gt=''),
+        distinct=True
+    )
+
+    # Date du dernier bilan rempli (tout engagement confondu)
+    date_dernier_bilan = Max(
+        'engagements__seances__creee_le',
+        filter=Q(engagements__seances__objectifs__gt='')
+    )
+
+    # Nombre d'engagements actifs (FINALISE)
+    nb_engagements_actifs = Count(
+        'engagements',
+        filter=Q(engagements__statut_general='FINALISE'),
+        distinct=True
+    )
+
+    # Date limite : il y a N jours (configurable via settings)
+    date_limite_rigueur = timezone.now() - timezone.timedelta(days=settings.SUIVI_RIGOUREUX_JOURS_RECENCE)
 
     return queryset.annotate(
         real_moyenne=Avg('evaluations_recues__note'),
-        real_nombre=Count('evaluations_recues')
+        real_nombre=Count('evaluations_recues', distinct=True),
+        _nb_bilans_total=nb_bilans_total,
+        _date_dernier_bilan=date_dernier_bilan,
+        _nb_engagements_actifs=nb_engagements_actifs,
     ).annotate(
         moyenne_avis=Coalesce(
-            Cast(F('real_moyenne'), DecimalField(max_digits=3, decimal_places=1)), 
+            Cast(F('real_moyenne'), DecimalField(max_digits=3, decimal_places=1)),
             F('note_initiale_equipe')
         ),
         nombre_avis=Case(
@@ -46,6 +84,27 @@ def annotate_teachers_with_ratings(queryset):
         has_real_reviews=Case(
             When(real_nombre=0, then=Value(False)),
             default=Value(True),
+            output_field=BooleanField()
+        ),
+        # Badge "Suivi Rigoureux" :
+        # True si :
+        #   - Seuil atteint : >= SUIVI_RIGOUREUX_SEUIL_BILANS bilans au total
+        #   ET
+        #   - Soit aucun engagement actif (on ignore la récence)
+        #   - Soit le dernier bilan date de moins de SUIVI_RIGOUREUX_JOURS_RECENCE jours
+        suivi_rigoureux=Case(
+            # Seuil non atteint → False (nouveaux profs ou profs qui n'ont jamais rempli)
+            When(_nb_bilans_total__lt=settings.SUIVI_RIGOUREUX_SEUIL_BILANS, then=Value(False)),
+            # Seuil atteint + aucun engagement actif → True (bon passif, pas pénalisé)
+            When(_nb_engagements_actifs=0, then=Value(True)),
+            # Seuil atteint + engagement actif + dernier bilan récent → True
+            When(
+                _nb_engagements_actifs__gt=0,
+                _date_dernier_bilan__gte=date_limite_rigueur,
+                then=Value(True)
+            ),
+            # Seuil atteint + engagement actif + dernier bilan trop ancien → False
+            default=Value(False),
             output_field=BooleanField()
         )
     )
@@ -297,8 +356,14 @@ def recherche(request):
         elif prix == f"{thresholds[2]}+":
             professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
 
-    # 3. Annotation des ratings via le helper centralisé
-    professeurs = annotate_teachers_with_ratings(professeurs).order_by('-est_certifie', '-id')
+    # 3. Annotation des ratings + badge Suivi Rigoureux via le helper centralisé
+    # Ordre : 1) Certifiés en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus récent
+    professeurs = annotate_teachers_with_ratings(professeurs).order_by(
+        '-est_certifie',
+        '-suivi_rigoureux',
+        '-moyenne_avis',
+        '-id'
+    )
 
     # Contexte Parent/Enfants
     parent_children = []
@@ -784,9 +849,10 @@ def parent_dashboard(request):
         )
 
     # Appliquer l'annotation et trier par score décroissant
+    # puis badge suivi rigoureux comme critère secondaire
     recommandations_annotees = recommandations.annotate(
         match_score=score_annotation
-    ).filter(match_score__gt=0).order_by("-match_score", "?")[:8]
+    ).filter(match_score__gt=0).order_by("-match_score", "-est_certifie", "?")[:8]
     
     # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
     recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
@@ -835,10 +901,10 @@ def parent_dashboard(request):
     abonnement = getattr(parent, "abonnement", None)
     enfant_form = EnfantForm()
 
-    # Annotation des ratings pour le composant teacher_card
-    # (recommandations est déjà annoté plus haut)
-
-    favoris = annotate_teachers_with_ratings(favoris)
+    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
+    favoris = annotate_teachers_with_ratings(favoris).order_by(
+        '-est_certifie', '-suivi_rigoureux', '-moyenne_avis'
+    )
 
     return render(
         request,
@@ -988,9 +1054,10 @@ def apprenant_dashboard(request):
     abonnement = request.user.abonnements.first()
     favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
 
-    # Annotation des ratings pour le composant teacher_card
-    # (recommandations est déjà annoté plus haut)
-    favoris = annotate_teachers_with_ratings(favoris)
+    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
+    favoris = annotate_teachers_with_ratings(favoris).order_by(
+        '-est_certifie', '-suivi_rigoureux', '-moyenne_avis'
+    )
 
     context = {
         "apprenant": apprenant,
@@ -1160,6 +1227,28 @@ def professeur_detail(request, teacher_slug):
     else:
         teacher.moyenne_avis = teacher.note_initiale_equipe
         teacher.nombre_avis = 1
+
+    # Badge "Suivi Rigoureux" — calculé sur l'instance unique (même règle que l'annotation SQL)
+    from django.utils import timezone as tz
+    _date_limite = tz.now() - tz.timedelta(days=settings.SUIVI_RIGOUREUX_JOURS_RECENCE)
+    _nb_bilans = teacher.engagements.filter(
+        seances__objectifs__gt=''
+    ).aggregate(total=Count('seances', distinct=True))['total'] or 0
+    _nb_actifs = teacher.engagements.filter(statut_general=StatutGeneral.FINALISE).count()
+
+    if _nb_bilans < settings.SUIVI_RIGOUREUX_SEUIL_BILANS:
+        # Seuil non atteint → pas de badge
+        teacher.suivi_rigoureux = False
+    elif _nb_actifs == 0:
+        # Bon passif, pas d'engagement actif → badge conservé
+        teacher.suivi_rigoureux = True
+    else:
+        # Engagement actif : vérifier la récence du dernier bilan
+        from django.db.models import Max as _Max
+        _last_bilan = teacher.engagements.filter(
+            seances__objectifs__gt=''
+        ).aggregate(last=_Max('seances__creee_le'))['last']
+        teacher.suivi_rigoureux = (_last_bilan is not None and _last_bilan >= _date_limite)
     
     # Auth context
     is_parent = False
