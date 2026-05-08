@@ -26,22 +26,26 @@ from django.template.loader import render_to_string
 
 
 def annotate_teachers_with_ratings(queryset):
-    """Annote un queryset de TeacherProfile avec les moyennes d'avis réels ou d'équipe."""
-    queryset = queryset.annotate(
+    """Annote un queryset de TeacherProfile avec les moyennes d'avis réels ou d'équipe via SQL."""
+    from django.db.models.functions import Coalesce
+    from django.db.models import F, Case, When, Value, BooleanField, IntegerField, Avg, Count
+
+    return queryset.annotate(
         real_moyenne=Avg('evaluations_recues__note'),
         real_nombre=Count('evaluations_recues')
+    ).annotate(
+        moyenne_avis=Coalesce(F('real_moyenne'), F('note_initiale_equipe')),
+        nombre_avis=Case(
+            When(real_nombre=0, then=Value(1)),
+            default=F('real_nombre'),
+            output_field=IntegerField()
+        ),
+        has_real_reviews=Case(
+            When(real_nombre=0, then=Value(False)),
+            default=Value(True),
+            output_field=BooleanField()
+        )
     )
-    for prof in queryset:
-        if prof.real_nombre == 0:
-            # Si pas d'avis réel, on affiche la note de l'équipe et on simule 1 avis
-            prof.moyenne_avis = prof.note_initiale_equipe
-            prof.nombre_avis = 1
-            prof.has_real_reviews = False
-        else:
-            prof.moyenne_avis = prof.real_moyenne
-            prof.nombre_avis = prof.real_nombre
-            prof.has_real_reviews = True
-    return queryset
 
 
 def home(request):
