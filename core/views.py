@@ -27,14 +27,17 @@ from django.template.loader import render_to_string
 
 def annotate_teachers_with_ratings(queryset):
     """Annote un queryset de TeacherProfile avec les moyennes d'avis réels ou d'équipe via SQL."""
-    from django.db.models.functions import Coalesce
-    from django.db.models import F, Case, When, Value, BooleanField, IntegerField, Avg, Count
+    from django.db.models.functions import Coalesce, Cast
+    from django.db.models import F, Case, When, Value, BooleanField, IntegerField, Avg, Count, DecimalField
 
     return queryset.annotate(
         real_moyenne=Avg('evaluations_recues__note'),
         real_nombre=Count('evaluations_recues')
     ).annotate(
-        moyenne_avis=Coalesce(F('real_moyenne'), F('note_initiale_equipe')),
+        moyenne_avis=Coalesce(
+            Cast(F('real_moyenne'), DecimalField(max_digits=3, decimal_places=1)), 
+            F('note_initiale_equipe')
+        ),
         nombre_avis=Case(
             When(real_nombre=0, then=Value(1)),
             default=F('real_nombre'),
