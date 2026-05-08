@@ -1,42 +1,42 @@
-/* Teacher Card Component Styles - Premium Version */
+/* Teacher Card Component Styles - Refined Version */
+
+/* --- GLOBAL CARD (Search, Favorites) --- */
 .teacher-card.premium-card {
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 1.25rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border: 1px solid #eef2f6;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 1rem;
     width: 100%;
-    height: 420px; /* FIXED HEIGHT FOR UNIFORMITY */
+    min-height: auto; /* Height adjusted to content */
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 .teacher-card.premium-card:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
     border-color: var(--success-200);
 }
 
-.teacher-card .card-header {
+.teacher-card .card-main-info {
     display: flex;
-    justify-content: space-between;
+    gap: 1rem;
     align-items: flex-start;
 }
 
 .teacher-card .profile-image-container {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 12px;
     overflow: hidden;
     background: #f1f5f9;
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .teacher-card .profile-image-container img {
@@ -45,39 +45,12 @@
     object-fit: cover;
 }
 
-.teacher-card .profile-image-container .no-image {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
+.teacher-card .teacher-details {
+    flex: 1;
+    min-width: 0; /* Critical for truncation */
 }
 
-.teacher-card .favorite-btn {
-    background: rgba(241, 245, 249, 0.8);
-    border: none;
-    border-radius: 50%;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.teacher-card .favorite-btn:hover {
-    background: rgba(254, 226, 226, 0.8);
-}
-
-.teacher-card .favorite-btn.active svg {
-    fill: #ef4444;
-    stroke: #ef4444;
-}
-
-.teacher-card .teacher-name-row {
+.teacher-card .name-badge-row {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -85,7 +58,7 @@
 }
 
 .teacher-card .teacher-name {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #1e293b;
     white-space: nowrap;
@@ -94,77 +67,190 @@
     margin: 0;
 }
 
-.teacher-card .matiere-tag {
-    font-size: 0.8rem;
+.teacher-card .teacher-subjects {
+    font-size: 0.85rem;
     color: var(--success-600);
     font-weight: 700;
-    background: var(--success-50);
-    padding: 2px 8px;
-    border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 4px;
-}
-
-.teacher-card .location-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #94a3b8;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.teacher-card .stats-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-top: 1px solid #f1f5f9;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.teacher-card .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #475569;
-}
-
-.teacher-card .card-footer {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.teacher-card .btn-main {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--success-600);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.teacher-card .btn-main:hover {
-    background: var(--success-700);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
-}
-
-.teacher-card .classes-text {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #64748b;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin: 0 0 4px 0;
+    margin-bottom: 2px;
+}
+
+.teacher-card .teacher-classes, 
+.teacher-card .teacher-location {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.teacher-card .badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+.teacher-card .tag-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.tag-rating { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+.tag-available { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
+.tag-trial { background: #fdf2f8; color: #9d174d; border: 1px solid #fce7f3; }
+.tag-exp { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+
+.teacher-card .price-row {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-top: 0.25rem;
+}
+
+.teacher-card .card-footer {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.teacher-card .btn-consult {
+    flex: 1;
+    padding: 0.7rem;
+    background: var(--success-600);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.teacher-card .btn-consult:hover {
+    background: var(--success-700);
+}
+
+.teacher-card .favorite-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: all 0.2s;
+}
+
+.teacher-card .favorite-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+.teacher-card .favorite-btn.active {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+
+/* --- COMPACT CARD (Recommendations) --- */
+.teacher-card-compact {
+    background: white;
+    border-radius: 16px;
+    padding: 1rem;
+    width: 200px; /* Fixed width for carousel */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+}
+
+.teacher-card-compact:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.teacher-card-compact .compact-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.25rem;
+}
+
+.teacher-card-compact .compact-name-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.teacher-card-compact .compact-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.teacher-card-compact .compact-info {
+    font-size: 0.75rem;
+    color: #64748b;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.teacher-card-compact .compact-matiere {
+    color: var(--success-600);
+    font-weight: 700;
+}
+
+.teacher-card-compact .compact-rating {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #b45309;
+}
+
+.teacher-card-compact .btn-view {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--success-50);
+    color: var(--success-600);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 0.25rem;
+}
+
+.teacher-card-compact .btn-view:hover {
+    background: var(--success-600);
+    color: white;
 }
