@@ -236,7 +236,9 @@ def messagerie(request):
             else:
                 if conv.parent and hasattr(conv.parent, 'profile'):
                     if conv.parent.profile.role == Role.ROLE_APPRENANT and hasattr(conv.parent, 'apprenant'):
-                        display_name = f"{conv.parent.apprenant.prenom} {conv.parent.apprenant.nom}"
+                        # Le modèle Apprenant n'a pas de prenom, on utilise nom + first_name du User
+                        apprenant_nom = conv.parent.apprenant.nom or conv.parent.first_name or conv.parent.username
+                        display_name = f"{apprenant_nom}"
                     elif hasattr(conv.parent, 'parent'):
                         display_name = f"Parent {conv.parent.parent.nom}"
                     else:
