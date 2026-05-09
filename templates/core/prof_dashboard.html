@@ -88,7 +88,7 @@
                     <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">En cours ({{ engs_en_cours.count }})</button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs ({{ engs_actifs.count }})</button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Terminé</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
                 </div>
 
                 <!-- Tab: Demandes -->
@@ -132,8 +132,8 @@
 
                 <!-- Tab: Historique -->
                 <div id="tab-history" class="tab-content">
-                    {% if engs_termines %}
-                        {% for eng in engs_termines %}
+                    {% if engs_tous %}
+                        {% for eng in engs_tous %}
                             {% if not eng.masque_pour_professeur %}
                                 {% include "core/components/engagement_card_teacher.html" with eng=eng %}
                             {% endif %}

@@ -208,6 +208,22 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
+            {% if form.errors %}
+            <div class="alert-error" style="background: #fef2f2; color: #b91c1c; padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #dc2626;">
+                <strong>Veuillez corriger les erreurs suivantes :</strong>
+                <ul style="margin-top: 0.5rem; padding-left: 1.2rem;">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }} : {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <!-- SECTION 1 : IDENTITÉ & PHOTO -->
             <div class="form-section">
                 <h3 class="section-title"><span>👤</span> Identité & Visibilité</h3>
@@ -277,8 +293,8 @@
                         {{ form.matiere_enseignee }}
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Catégorie principale *</label>
-                        {{ form.categorie_de_soutien }}
+                        <label class="form-label">Catégories principales (Max 4) *</label>
+                        {{ form.categories_de_soutien }}
                     </div>
                 </div>
 
@@ -392,18 +408,6 @@
             classNames: { containerOuter: 'choices pcv-choices' }
         };
 
-        const elClasses = document.getElementById('id_classes_enseignees');
-        if (elClasses) { new Choices(elClasses, { ...selectConfigs, placeholderValue: "Classes" }); }
-
-        const elModes = document.getElementById('id_modes_de_cours');
-        if (elModes) { new Choices(elModes, { ...selectConfigs, placeholderValue: "Modes de cours" }); }
-
-        const elCat = document.getElementById('id_categorie_de_soutien');
-        if (elCat) { new Choices(elCat, { ...selectConfigs, removeItemButton: false }); }
-
-        const elVille = document.getElementById('id_ville_quartier');
-        if (elVille) { new Choices(elVille, { ...selectConfigs, removeItemButton: false, searchEnabled: true }); }
-
         // Preview Image
         window.previewImage = function(input) {
             if (input.files && input.files[0]) {
@@ -416,7 +420,7 @@
                         const img = document.createElement('img');
                         img.id = 'photo-preview';
                         img.src = e.target.result;
-                        img.style = preview.style.cssText;
+                        img.style.cssText = preview.style.cssText;
                         img.style.objectFit = 'cover';
                         preview.replaceWith(img);
                     }

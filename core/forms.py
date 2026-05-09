@@ -330,17 +330,26 @@ class ApprenantCreateProfileForm(forms.ModelForm):
 
 from .models import TeacherProfile
 
-from .choices import CourseMode, ClassLevel
+from .choices import CourseMode, ClassLevel, SupportCategory
 
 class TeacherProfileForm(forms.ModelForm):
     
     modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
     classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
     ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
+    categories_de_soutien = DynamicMultipleChoiceField(
+        choices=SupportCategory.CHOICES,
+        required=True,
+        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select', 'placeholder': 'Catégories (Max 4)'})
+    )
     matiere_enseignee = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
         required=True,
         widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select', 'placeholder': 'Matières enseignées (Max 3)'})
+    )
+    essai_gratuit_actif = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'pcv-checkbox'})
     )
     
     class Meta:
@@ -352,7 +361,7 @@ class TeacherProfileForm(forms.ModelForm):
             "ville_quartier",
             "matiere_enseignee",
             "classes_enseignees",
-            "categorie_de_soutien",
+            "categories_de_soutien",
             "modes_de_cours",
             "presentation",
             "methodologie",
@@ -360,6 +369,7 @@ class TeacherProfileForm(forms.ModelForm):
             "photo_de_profil",
             "fichier_cni",
             "autorisation_publicitaire",
+            "essai_gratuit_actif",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -374,16 +384,18 @@ class TeacherProfileForm(forms.ModelForm):
         self.fields["nom"].label = "Nom Complet"
         
         # self.fields["matiere_enseignee"].widget = forms.HiddenInput()
-        self.fields["categorie_de_soutien"].empty_label = "Votre catégorie d'enseignement principale"
         self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})
 
         if self.instance and self.instance.pk and self.instance.matiere_enseignee:
             if isinstance(self.instance.matiere_enseignee, str):
                 self.initial['matiere_enseignee'] = [m.strip() for m in self.instance.matiere_enseignee.split(',')]
         
-        for field_name in ["email", "nom", "telephone_whatsapp", "categorie_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
+        for field_name in ["email", "nom", "telephone_whatsapp", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
-                self.fields[field_name].required = True
+                if field_name == "photo_de_profil" and self.instance and self.instance.photo_de_profil:
+                    self.fields[field_name].required = False
+                else:
+                    self.fields[field_name].required = True
                 if field_name == "telephone_whatsapp":
                     self.fields[field_name].widget.attrs.update({"class": "phone-input"})
 
@@ -392,3 +404,9 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(matieres, list):
             return ", ".join(matieres)
         return matieres
+
+    def clean_categories_de_soutien(self):
+        categories = self.cleaned_data.get('categories_de_soutien')
+        if isinstance(categories, list) and len(categories) > 4:
+            raise forms.ValidationError("Vous ne pouvez sélectionner que 4 catégories maximum.")
+        return categories

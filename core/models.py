@@ -449,9 +449,10 @@ class TeacherProfile(models.Model):
     presentation = models.TextField(blank=True)
     methodologie = models.TextField(blank=True)
     annees_d_experience = models.PositiveIntegerField(default=0)
-    categorie_de_soutien = models.CharField(
-        max_length=20,
-        choices=SupportCategory.CHOICES,
+    categories_de_soutien = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Liste de codes SupportCategory",
     )
 
     # 3. Compétences et modalités

@@ -395,24 +395,6 @@
             shouldSort: false,
         };
 
-        const elClasses = document.getElementById('id_classes_enseignees');
-        if (elClasses) { 
-            new Choices(elClasses, { 
-                ...selectConfigs, 
-                placeholderValue: "Classes que vous maîtrisez (Max 3)", 
-                maxItemCount: 3 
-            }); 
-        }
-
-        const elModes = document.getElementById('id_modes_de_cours');
-        if (elModes) { new Choices(elModes, { ...selectConfigs, placeholderValue: "Vos modes de cours préférés" }); }
-
-        const elCat = document.getElementById('id_categorie_de_soutien');
-        if (elCat) { new Choices(elCat, { ...selectConfigs, removeItemButton: false }); }
-
-        const elVille = document.getElementById('id_ville_quartier');
-        if (elVille) { new Choices(elVille, { ...selectConfigs, removeItemButton: false, searchEnabled: true }); }
-        
         const elMatiereCustom = document.getElementById('matiere_custom_select');
         if (elMatiereCustom) { new Choices(elMatiereCustom, { ...selectConfigs, removeItemButton: false }); }
 
@@ -587,8 +569,8 @@
             <h3 class="section-title">🎯 Mon Expertise & Logistique</h3>
  
             <div class="form-group">
-                <label>Ma catégorie d'enseignement principale *</label>
-                {{ form.categorie_de_soutien }}
+                <label>Vos catégories d'enseignement principales (Max 4) *</label>
+                {{ form.categories_de_soutien }}
             </div>
  
             <div class="form-group" style="margin-top: 1rem;">
@@ -630,8 +612,15 @@
                 </label>
             </div>
 
+            <div class="consent-box" style="margin-top: 1rem;">
+                {{ form.essai_gratuit_actif }}
+                <label for="{{ form.essai_gratuit_actif.id_for_label }}">
+                    Je souhaite activer l'essai gratuit. (Vous pouvez l'activer ou le désactiver n'importe quand dans les paramètres de votre espace).
+                </label>
+            </div>
+
             <button type="submit" class="submit-btn" id="mainSubmitBtn" style="margin-top: 2rem;">
-                Transmettre au jury d'admission ➔
+                Soumettre pour validation ➔
             </button>
         </div>
 

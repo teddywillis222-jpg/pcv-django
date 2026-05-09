@@ -708,8 +708,8 @@ def prof_dashboard(request):
     # "Essai"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI).exclude(statut_general=StatutGeneral.TERMINE)
     
-    # "Terminé"
-    engs_termines = engagements.filter(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE])
+    # "Historique" (Tous les statuts confondus)
+    engs_tous = engagements.all()
 
     # 2. Statistiques dynamiques (Plus fiables que les compteurs stockés)
     # Contrats actifs = Uniquement FINALISE
@@ -730,7 +730,7 @@ def prof_dashboard(request):
         "teacher": teacher,
         "engs_en_cours": engs_en_cours,
         "engs_actifs": engs_actifs,
-        "engs_termines": engs_termines,
+        "engs_tous": engs_tous,
         "engs_essais": engs_essais,
         "unread_count": unread_messages_count,
         "parents_favoris": parents_favoris,
