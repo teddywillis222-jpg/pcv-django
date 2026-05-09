@@ -3,8 +3,8 @@
         {% if teacher.photo_de_profil %}
             <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }}" class="compact-photo" style="width: 100%; height: 100%; object-fit: cover;">
         {% else %}
-            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #94a3b8; font-weight: 800; font-size: 1.1rem;">
+                {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
             </div>
         {% endif %}
     </div>

@@ -68,10 +68,10 @@
 
 .filter-input {
     width: 100%;
-    height: 3rem; /* 48px : Plus compact et moderne */
-    padding: 0 1rem;
+    height: 3.4rem; /* Augmenté de 3rem à 3.4rem (~54px) */
+    padding: 0 1.25rem;
     border: 2px solid #e2e8f0;
-    border-radius: 0.75rem;
+    border-radius: 0.85rem;
     font-size: 1rem;
     transition: all 0.3s ease;
     background: white;
@@ -329,12 +329,13 @@
 
 @media (max-width: 480px) {
     .search-container {
-        padding: 0 8px;
+        padding: 0 8px; /* Marges réduites à 8px comme demandé */
     }
     
     .teachers-grid {
         grid-template-columns: 1fr;
         padding: 0;
+        gap: 0.75rem;
     }
 }
 </style>

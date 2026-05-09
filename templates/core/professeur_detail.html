@@ -25,11 +25,11 @@
     padding: 1.5rem 0 4rem;
 }
 
-/* Conteneur principal — max-width desktop, plein mobile */
+/* Conteneur principal — Élargi pour desktop, plein mobile */
 .profile-container {
-    max-width: 860px;        /* Plus étroit = moins écrasé sur desktop */
+    max-width: 1100px;       /* Élargi de 860px à 1100px */
     margin: 0 auto;
-    padding: 0 1rem;         /* Marge latérale uniforme partout */
+    padding: 0 8px;          /* Marge latérale réduite à 8px max */
     width: 100%;
     box-sizing: border-box;
 }
@@ -122,14 +122,14 @@
 /* ---- Responsive Mobile ---- */
 @media (max-width: 480px) {
     .teacher-profile-page {
-        padding: 0.75rem 0 2.5rem;
+        padding: 0.5rem 0 2rem;
     }
     .profile-container {
-        padding: 0 0.875rem; /* ~14px — confort sans mordre l'écran */
+        padding: 0 8px; /* Marge latérale fixe à 8px */
     }
     .info-card {
         border-radius: 12px;
-        padding: 1.1rem;
+        padding: 1rem;
     }
 }
 </style>
@@ -143,22 +143,7 @@
         </div>
     </div>
 
-    <!-- Professeurs Similaires -->
-    {% if related_teachers %}
-    <div class="profile-container" style="margin-top: 3rem; margin-bottom: 4rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 1.5rem; padding-left: 0.5rem;">D'autres professeurs pourraient vous intéresser</h2>
-        <div class="teachers-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-            {% for related in related_teachers %}
-                {% include "core/components/_teacher_card.html" with teacher=related %}
-            {% endfor %}
-        </div>
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="{% url 'recherche' %}?matiere={{ teacher.matiere_enseignee }}" style="display: inline-block; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 700; transition: all 0.3s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
-                Voir tous les professeurs de {{ teacher.matiere_enseignee }}
-            </a>
-        </div>
-    </div>
-    {% endif %}
+    <!-- La section Professeurs Similaires est désormais intégrée directement dans teacher_profile.html -->
 </div>
 
 {% include 'core/components/engagement_modal.html' %}

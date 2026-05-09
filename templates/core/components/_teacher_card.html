@@ -6,7 +6,9 @@
             {% if teacher.photo_de_profil %}
                 <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}">
             {% else %}
-                <div class="no-image">👨‍🏫</div>
+                <div class="avatar-initials" style="width: 70px; height: 70px; border-radius: 12px; background: #e2e8f0; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.4rem; border: 2px solid #f1f5f9;">
+                    {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
+                </div>
             {% endif %}
             {% if teacher.suivi_rigoureux %}
                 <div class="photo-badge-rigoureux" title="Suivi rigoureux : ce professeur remplit régulièrement ses bilans de séances">

@@ -17,7 +17,7 @@
     max-width: 100%;
     min-height: auto;
     box-sizing: border-box;
-    /* overflow:hidden retiré — il masquait la coche de certification */
+    overflow: hidden; /* Réactivé pour permettre la troncature ellipsis */
 }
 
 .teacher-card.premium-card:hover {
@@ -80,10 +80,10 @@
 .teacher-card .name-badge-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     margin-bottom: 2px;
     width: 100%;
-    /* overflow:hidden retiré — il clippait le SVG cert-icon */
+    overflow: hidden; /* Réactivé pour permettre la troncature du nom */
     min-width: 0;
 }
 
@@ -105,8 +105,10 @@
     flex-shrink: 0;          /* Ne jamais comprimer */
     display: inline-flex;    /* Aligne l'icône verticalement */
     align-items: center;
-    color: #16a34a;          /* Fallback couleur */
+    color: #16a34a;          /* Couleur verte */
     vertical-align: middle;
+    width: 16px;
+    height: 16px;
 }
 
 .teacher-card .teacher-subjects {
