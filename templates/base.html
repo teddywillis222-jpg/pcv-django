@@ -878,5 +878,33 @@
             });
         });
     </script>
+
+    <!-- Script Global Polling (Temps Réel) -->
+    {% if user.is_authenticated %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let lastCheckTime = Date.now();
+            
+            function checkGlobalUpdates() {
+                // Ne pas recharger si l'utilisateur est en train de taper
+                const activeEl = document.activeElement;
+                if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                    return;
+                }
+                
+                fetch(`/api/ping/?last_check=${lastCheckTime}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.has_updates) {
+                            location.reload();
+                        }
+                    })
+                    .catch(e => console.warn('Polling error:', e));
+            }
+            
+            setInterval(checkGlobalUpdates, 10000); // Polling toutes les 10 secondes
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

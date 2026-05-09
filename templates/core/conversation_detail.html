@@ -261,11 +261,11 @@
                         <div class="c-eng-edit-grid">
                             <div>
                                 <label>Matière</label>
-                                <input type="text" name="matiere" class="c-eng-input" value="{{ eng.matiere }}" required>
+                                <input type="text" name="matiere" class="c-eng-input" value="{{ eng.matiere }}" {% if eng.statut_general != 'EN_ATTENTE' %}readonly style="background: #f1f5f9; cursor: not-allowed; opacity: 0.8;"{% else %}required{% endif %}>
                             </div>
                             <div>
                                 <label>Classe</label>
-                                <select name="classe" class="c-eng-select">
+                                <select name="classe" class="c-eng-select" {% if eng.statut_general != 'EN_ATTENTE' %}style="pointer-events: none; background: #f1f5f9; opacity: 0.8;" tabindex="-1"{% endif %}>
                                     <option value="">Sélectionner</option>
                                     {% for value, label in CHOICES_CLASSE %}
                                         <option value="{{ value }}" {% if eng.classe == value %}selected{% endif %}>{{ label }}</option>

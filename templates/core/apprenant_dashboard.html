@@ -748,16 +748,23 @@
     // Welcome Pricing Modal Logic
     function closeWelcomePricingModal() {
         document.getElementById('welcomePricingModal').style.display = 'none';
-        localStorage.setItem('pcv_welcome_pricing_shown', 'true');
+        // Enregistrer en DB que le parent a vu le popup
+        fetch('/api/mark-welcome-seen/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        }).catch(e => console.warn(e));
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        if (!localStorage.getItem('pcv_welcome_pricing_shown')) {
-            setTimeout(() => {
-                const modal = document.getElementById('welcomePricingModal');
-                if (modal) modal.style.display = 'flex';
-            }, 1200);
-        }
+        {% if show_welcome_popup %}
+        setTimeout(() => {
+            const modal = document.getElementById('welcomePricingModal');
+            if (modal) modal.style.display = 'flex';
+        }, 1200);
+        {% endif %}
     });
     
     function openTeacherProfile(slug) {

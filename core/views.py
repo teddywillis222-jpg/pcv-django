@@ -925,6 +925,7 @@ def parent_dashboard(request):
             "abonnement": abonnement,
             "favoris": favoris,
             "enfant_form": enfant_form,
+            "show_welcome_popup": not profile.a_vu_popup_bienvenue,
         },
     )
 
@@ -1072,6 +1073,7 @@ def apprenant_dashboard(request):
         "engagements_tous": engagements_tous,
         "abonnement": abonnement,
         "favoris": favoris,
+        "show_welcome_popup": not profile.a_vu_popup_bienvenue,
     }
 
     return render(request, "core/apprenant_dashboard.html", context)
@@ -2521,3 +2523,47 @@ def api_delete_conversation(request, conversation_id):
         return JsonResponse({'error': 'Non autorisé'}, status=403)
     conversation.masquee_par.add(request.user)
     return JsonResponse({'success': True})
+
+
+@login_required
+@require_http_methods(["GET"])
+def api_ping(request):
+    """
+    Endpoint léger appelé toutes les X secondes par le front-end
+    pour vérifier s'il y a des mises à jour d'engagements ou de messages.
+    """
+    import datetime
+    
+    last_check_str = request.GET.get('last_check')
+    has_updates = False
+    
+    if last_check_str:
+        try:
+            last_check = datetime.datetime.fromtimestamp(int(last_check_str) / 1000.0, tz=datetime.timezone.utc)
+            
+            # Vérifier les nouveaux messages non lus
+            if Message.objects.filter(destinataire=request.user, lu=False, date_envoi__gt=last_check).exists():
+                has_updates = True
+            
+            # Vérifier les mises à jour d'engagement
+            if not has_updates:
+                user_engs = Engagement.objects.filter(
+                    Q(professeur__user=request.user) | Q(parent_apprenant=request.user)
+                )
+                if user_engs.filter(date_mise_a_jour__gt=last_check).exists():
+                    has_updates = True
+        except Exception:
+            pass
+            
+    return JsonResponse({'has_updates': has_updates})
+
+@login_required
+@require_http_methods(["POST"])
+def api_mark_welcome_seen(request):
+    try:
+        profile = request.user.profile
+        profile.a_vu_popup_bienvenue = True
+        profile.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

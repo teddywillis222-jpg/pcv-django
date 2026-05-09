@@ -91,6 +91,10 @@ urlpatterns = [
     path("debug-admin-pcv/api/accueil/", core_views.admin_api_accueil, name="admin_api_accueil"),
     path("debug-admin-pcv/api/professeurs/", core_views.admin_api_professeurs, name="admin_api_professeurs"),
     path("debug-admin-pcv/api/professeurs/<int:prof_id>/action/", core_views.admin_api_prof_action, name="admin_api_prof_action"),
+    
+    # Temps Réel et Popup
+    path("api/ping/", core_views.api_ping, name="api_ping"),
+    path("api/mark-welcome-seen/", core_views.api_mark_welcome_seen, name="api_mark_welcome_seen"),
 ]
 
 from django.conf import settings

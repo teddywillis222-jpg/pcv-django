@@ -91,6 +91,10 @@ class Profile(models.Model):
         max_length=20,
         choices=ROLE_CHOICES,
     )
+    a_vu_popup_bienvenue = models.BooleanField(
+        default=False,
+        help_text="Détermine si le popup de bienvenue (Apprenant/Parent) a déjà été fermé."
+    )
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
@@ -787,6 +791,7 @@ class Engagement(models.Model):
         blank=True,
         help_text="Temps (en minutes) mis par le prof pour confirmer",
     )
+    date_mise_a_jour = models.DateTimeField(auto_now=True)
 
     # 6. Sécurité et actions bilatérales
     annulation_initiee_par = models.ForeignKey(
