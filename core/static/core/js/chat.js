@@ -343,8 +343,8 @@ function toggleEngRow(header) {
 
 function filterEngagements() {
     const childId = document.getElementById('childFilter')?.value;
-    document.querySelectorAll('.eng-row').forEach(row => {
-        row.style.display = (!childId || childId === 'all' || row.getAttribute('data-child-id') === childId)
+    document.querySelectorAll('.eng-row, .c-eng-card').forEach(row => {
+        row.style.display = (!childId || childId === 'all' || row.getAttribute('data-child-id') === String(childId))
             ? 'block' : 'none';
     });
 }

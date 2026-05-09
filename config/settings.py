@@ -103,7 +103,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Sinon fallback sur SQLite pour développement local
 if os.getenv('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+        # Neon.tech : il est recommandé de garder conn_max_age à 0 pour éviter de maintenir 
+        # des connexions inactives sur une base serverless / poolée.
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=0,
+            conn_health_checks=True,
+        )
     }
 else:
     # SQLite pour développement local

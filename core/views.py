@@ -116,7 +116,7 @@ def home(request):
     # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
     top_professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
-    ).order_by('?')[:24]
+    ).order_by('-profil_complet', '?')[:24]
 
     top_professeurs = annotate_teachers_with_ratings(top_professeurs)
 
@@ -363,6 +363,7 @@ def recherche(request):
     professeurs = annotate_teachers_with_ratings(professeurs).order_by(
         '-est_certifie',
         '-suivi_rigoureux',
+        '-profil_complet',
         '-moyenne_avis',
         '-id'
     )
@@ -854,7 +855,7 @@ def parent_dashboard(request):
     # puis badge suivi rigoureux comme critère secondaire
     recommandations_annotees = recommandations.annotate(
         match_score=score_annotation
-    ).filter(match_score__gt=0).order_by("-match_score", "-est_certifie", "?")[:8]
+    ).filter(match_score__gt=0).order_by("-match_score", "-profil_complet", "-est_certifie", "?")[:8]
     
     # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
     recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
@@ -905,7 +906,7 @@ def parent_dashboard(request):
 
     # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
     favoris = annotate_teachers_with_ratings(favoris).order_by(
-        '-est_certifie', '-suivi_rigoureux', '-moyenne_avis'
+        '-est_certifie', '-suivi_rigoureux', '-profil_complet', '-moyenne_avis'
     )
 
     return render(
@@ -1058,7 +1059,7 @@ def apprenant_dashboard(request):
 
     # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
     favoris = annotate_teachers_with_ratings(favoris).order_by(
-        '-est_certifie', '-suivi_rigoureux', '-moyenne_avis'
+        '-est_certifie', '-suivi_rigoureux', '-profil_complet', '-moyenne_avis'
     )
 
     context = {
@@ -1753,10 +1754,12 @@ def conversation_detail(request, conversation_id):
         elif hasattr(other_user, 'apprenant'):
             other_profile_obj = other_user.apprenant
     
-    # Enfants du parent pour le filtre (si parent)
+    # Enfants du parent pour le filtre
     parent_children = []
     if user_role == Role.ROLE_PARENT and hasattr(request.user, 'parent'):
         parent_children = request.user.parent.enfants.all()
+    elif user_role == Role.ROLE_PROF and conversation.parent and hasattr(conversation.parent, 'parent'):
+        parent_children = conversation.parent.parent.enfants.all()
         
     # Nom à afficher (comme dans la messagerie)
     eng = conversation.engagement_actif

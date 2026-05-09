@@ -186,9 +186,9 @@
             </button>
         </div>
         
-        {% if role == ROLE_PARENT and parent_children|length > 0 %}
-        <select style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--c-border); font-family: var(--font);">
-            <option value="">Tous les enfants</option>
+        {% if parent_children|length > 0 %}
+        <select id="childFilter" onchange="filterEngagements()" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--c-border); font-family: var(--font);">
+            <option value="all">Tous les enfants</option>
             {% for child in parent_children %}
             <option value="{{ child.id }}">{{ child.prenom }}</option>
             {% endfor %}
@@ -197,7 +197,7 @@
         
         <div class="c-sheet-content">
             {% for eng in engagements %}
-            <div class="c-eng-card" id="eng-card-{{ eng.id }}">
+            <div class="c-eng-card" id="eng-card-{{ eng.id }}" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}">
                 <div class="c-eng-card-header" onclick="toggleEngCard('{{ eng.id }}')">
                     <div class="c-eng-card-info">
                         <div class="c-eng-title">{{ eng.matiere }} {% if eng.classe and eng.classe|default:""|length > 0 and eng.classe != "None" %}({{ eng.classe }}){% endif %}</div>

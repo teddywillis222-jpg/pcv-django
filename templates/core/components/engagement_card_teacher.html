@@ -62,7 +62,7 @@
                 </button>
             {% else %}
                 <button class="btn-dash btn-dash-outline" style="flex: 1; font-size: 0.85rem;" onclick="openEngModal({{ eng.id }})">
-                    Voir les détails
+                    Voir la proposition
                 </button>
             {% endif %}
         {% elif eng.statut_general != 'REFUSE' and eng.type_engagement != 'ESSAI' %}
@@ -82,10 +82,12 @@
             
             <div class="options-menu" style="position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
                 
+                {% if eng.statut_general != 'EN_ATTENTE' %}
                 <!-- Voir détails (toujours utile pour le prof) -->
                 <button type="button" class="menu-item" onclick="openEngModal({{ eng.id }})" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">
-                    📄 Voir la proposition
+                    📄 Voir les détails
                 </button>
+                {% endif %}
 
                 <!-- Messagerie -->
                 {% if eng.conversation and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'REFUSE' %}

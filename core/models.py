@@ -494,6 +494,7 @@ class TeacherProfile(models.Model):
         default=ValidationStatus.EN_ATTENTE,
     )
     est_certifie = models.BooleanField(default=False)
+    profil_complet = models.BooleanField(default=False, help_text="Vrai si le profil est complété à 100%")
 
     # 5. Tarification et offres
     tarif_horaire = models.DecimalField(
@@ -582,6 +583,14 @@ class TeacherProfile(models.Model):
             self.slug = slug
         self.matiere_enseignee = clean_subjects(self.matiere_enseignee)
         super().save(*args, **kwargs)
+        
+        # Mise à jour du booléen profil_complet (post-save pour autoriser l'accès aux relations ManyToMany si existantes)
+        try:
+            is_complete = (self.completion_percentage == 100)
+            if self.profil_complet != is_complete:
+                TeacherProfile.objects.filter(pk=self.pk).update(profil_complet=is_complete)
+        except ValueError:
+            pass
 
     def get_absolute_url(self):
         from django.urls import reverse
