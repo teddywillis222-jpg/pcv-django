@@ -30,15 +30,14 @@
 
 /* Stabilisation du Viewport */
 html, body {
-    overflow-x: hidden; /* Empêche le défilement horizontal indésirable */
     width: 100%;
-    position: relative;
     margin: 0;
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5;
     color: var(--text);
     background: var(--bg);
+    -webkit-text-size-adjust: 100%; /* Empêche l'ajustement auto du texte sur iOS */
 }
 
 a {
