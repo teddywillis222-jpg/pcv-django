@@ -5,359 +5,437 @@
 
 {% block extra_css %}
 <style>
-    /* Variables existantes potentiellement héritées, mais sécurisées */
     :root {
         --primary: #16a34a;
         --primary-dark: #15803d;
-        --primary-light: #dcfce7;
-        --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
-        --text-dark: #0f172a;
-        --text-gray: #64748b;
-        --card-bg: #ffffff;
+        --primary-soft: #f0fdf4;
+        --secondary: #0f172a;
+        --accent: #22c55e;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        --glass: rgba(255, 255, 255, 0.8);
     }
 
     body {
         background-color: #f8fafc;
-        /* dash-bg par défaut */
+        overflow-x: hidden;
     }
 
-    /* Override du conteneur de base pour une Landing Page percutante */
-    main.container {
-        max-width: 1200px !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-    }
-
-    @media (max-width: 768px) {
-        main.container {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-    }
-
-    .intro-wrapper {
-        background: var(--card-bg);
-        border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        margin-bottom: 3rem;
+    /* Layout Constraints */
+    .intro-main {
+        max-width: 100%;
+        overflow-x: hidden;
     }
 
     /* Hero Section */
-    .hero-section {
-        background: var(--bg-gradient);
-        padding: 5rem 2rem;
+    .hero-banner {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        padding: 6rem 1.5rem 8rem;
         text-align: center;
         position: relative;
         overflow: hidden;
     }
 
-    .hero-section::after {
+    .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .hero-banner::after {
         content: '';
         position: absolute;
         bottom: -50px;
         left: 0;
         right: 0;
         height: 100px;
-        background: var(--card-bg);
+        background: #f8fafc;
         transform: skewY(-2deg);
+        z-index: 1;
     }
 
-    .hero-title {
-        font-size: 3rem;
-        font-weight: 900;
-        color: var(--text-dark);
-        margin: 0 0 1rem 0;
-        line-height: 1.2;
+    .hero-content {
+        max-width: 900px;
+        margin: 0 auto;
         position: relative;
         z-index: 2;
     }
 
-    .hero-title span {
-        color: var(--primary);
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: var(--text-gray);
-        max-width: 700px;
-        margin: 0 auto 2.5rem auto;
-        line-height: 1.6;
-        position: relative;
-        z-index: 2;
-    }
-
-    .hero-cta {
-        display: inline-block;
-        background: var(--primary);
-        color: #fff;
-        font-size: 1.15rem;
-        font-weight: 700;
-        padding: 1.2rem 2.5rem;
-        border-radius: 9999px;
-        text-decoration: none;
-        box-shadow: 0 10px 25px rgba(22, 163, 74, 0.4);
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 2;
-    }
-
-    .hero-cta:hover {
-        transform: translateY(-3px);
-        background: var(--primary-dark);
-        box-shadow: 0 15px 30px rgba(22, 163, 74, 0.5);
-        color: #fff;
-    }
-
-    /* Features Section */
-    .features-section {
-        padding: 4rem 2rem;
-        background: var(--card-bg);
-        text-align: center;
-    }
-
-    .section-heading {
-        font-size: 2rem;
+    .badge-premium {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
         font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 3rem;
+        color: var(--primary);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        animation: fadeInDown 0.6s ease-out;
     }
 
-    .features-grid {
+    .hero-h1 {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 900;
+        color: var(--secondary);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-h1 span {
+        background: linear-gradient(to right, var(--primary), #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-p {
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 3rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Bento Grid Features */
+    .bento-section {
+        padding: 4rem 1.5rem;
+        max-width: 1200px;
+        margin: -4rem auto 0;
+        position: relative;
+        z-index: 10;
+    }
+
+    .bento-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
+        gap: 1.5rem;
+    }
+
+    .bento-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 32px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .bento-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: var(--primary);
+    }
+
+    .bento-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .bento-card h3 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--secondary);
+        margin-bottom: 1rem;
+    }
+
+    .bento-card p {
+        color: var(--text-muted);
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    /* Process Timeline */
+    .process-section {
+        padding: 6rem 1.5rem;
         max-width: 1000px;
         margin: 0 auto;
     }
 
-    .feature-card {
-        padding: 2rem;
-        background: #f8fafc;
-        border-radius: 20px;
-        border: 1px solid #f1f5f9;
-        transition: all 0.3s;
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
     }
 
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        border-color: var(--primary-light);
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--secondary);
     }
 
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        display: inline-block;
-        background: var(--primary-light);
-        width: 80px;
-        height: 80px;
-        line-height: 80px;
-        border-radius: 50%;
-    }
-
-    .feature-card h3 {
-        font-size: 1.25rem;
-        color: var(--text-dark);
-        margin-bottom: 0.8rem;
-        font-weight: 700;
-    }
-
-    .feature-card p {
-        color: var(--text-gray);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0;
-    }
-
-    /* Process Section */
-    .process-section {
-        padding: 2rem 2rem 5rem 2rem;
-        background: var(--card-bg);
-    }
-
-    .process-steps {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        max-width: 900px;
-        margin: 0 auto;
+    .timeline {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
         position: relative;
     }
 
-    .process-steps::before {
+    .timeline::before {
         content: '';
         position: absolute;
         top: 30px;
-        left: 10%;
-        right: 10%;
-        height: 3px;
+        left: 50px;
+        right: 50px;
+        height: 4px;
         background: #e2e8f0;
+        border-radius: 99px;
         z-index: 1;
     }
 
-    .step-item {
-        text-align: center;
-        width: 30%;
+    .timeline-item {
         position: relative;
         z-index: 2;
+        text-align: center;
     }
 
-    .step-number {
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        background: #fff;
+    .step-num {
+        width: 64px;
+        height: 64px;
+        background: white;
         border: 4px solid var(--primary);
         color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 1.5rem;
         font-weight: 900;
-        border-radius: 50%;
-        margin: 0 auto 1rem auto;
-        box-shadow: 0 0 0 5px var(--card-bg);
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 0 0 8px #f8fafc;
     }
 
-    .step-item h4 {
-        color: var(--text-dark);
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    .step-item p {
-        color: var(--text-gray);
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-
-    /* Final Banner */
-    .final-banner {
-        background: #0f172a;
-        padding: 4rem 2rem;
-        text-align: center;
-        border-radius: 0 0 24px 24px;
-    }
-
-    .final-banner h2 {
-        color: #fff;
-        font-size: 2.2rem;
+    .timeline-item h4 {
+        font-size: 1.25rem;
         font-weight: 800;
-        margin-bottom: 1rem;
+        color: var(--secondary);
+        margin-bottom: 0.75rem;
     }
 
-    .final-banner p {
+    .timeline-item p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* CTA Banner */
+    .cta-banner {
+        background: var(--secondary);
+        margin: 4rem 1.5rem;
+        padding: 5rem 2rem;
+        border-radius: 40px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .cta-banner h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .cta-banner p {
         color: #94a3b8;
-        margin-bottom: 2rem;
         font-size: 1.1rem;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
     }
 
-    @media (max-width: 768px) {
-        .features-grid {
+    .btn-premium {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--primary);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        border-radius: 999px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 10px 30px rgba(22, 163, 74, 0.3);
+        position: relative;
+    }
+
+    .btn-premium:hover {
+        background: #10b981;
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(22, 163, 74, 0.4);
+        color: white;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .bento-grid {
             grid-template-columns: 1fr;
         }
-
-        .process-steps {
-            flex-direction: column;
+        .timeline {
+            grid-template-columns: 1fr;
             gap: 3rem;
         }
-
-        .process-steps::before {
+        .timeline::before {
             display: none;
         }
-
-        .step-item {
-            width: 100%;
+        .timeline-item {
             display: flex;
             align-items: flex-start;
             text-align: left;
             gap: 1.5rem;
         }
-
-        .step-number {
+        .step-num {
             margin: 0;
             flex-shrink: 0;
         }
+    }
 
-        .hero-title {
+    @media (max-width: 768px) {
+        .hero-banner {
+            padding-top: 4rem;
+            padding-bottom: 6rem;
+        }
+        .hero-h1 {
             font-size: 2.2rem;
+        }
+        .cta-banner {
+            margin: 2rem 1rem;
+            padding: 4rem 1.5rem;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="intro-wrapper">
+<div class="intro-main">
     <!-- HERO SECTION -->
-    <section class="hero-section">
-        <h1 class="hero-title">Partagez votre savoir.<br><span>Générez des revenus.</span></h1>
-        <p class="hero-subtitle">
-            Rejoignez la communauté d'excellence Prof Chez Vous. Fixez vos propres règles, inspirez la prochaine
-            génération et transformez votre passion pour l'enseignement en une activité valorisante.
-        </p>
-        <a href="{% url 'prof_create_profile' %}" class="hero-cta">Créer mon profil professionnel ➔</a>
+    <section class="hero-banner">
+        <div class="hero-content">
+            <div class="badge-premium">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Rejoignez l'élite des professeurs
+            </div>
+            <h1 class="hero-h1">Partagez votre savoir.<br><span>Générez des revenus.</span></h1>
+            <p class="hero-p">
+                Rejoignez la communauté d'excellence Prof Chez Vous. Fixez vos propres règles, inspirez la prochaine génération et transformez votre passion en une activité valorisante.
+            </p>
+            <a href="{% url 'prof_create_profile' %}" class="btn-premium">
+                Commencer l'aventure
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
     </section>
 
-    <!-- FEATURES SECTION -->
-    <section class="features-section">
-        <h2 class="section-heading">Pourquoi enseigner avec nous ?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">💸</div>
-                <h3>Rémunération maîtrisée</h3>
-                <p>Définissez vos propres tarifs horaires selon votre niveau d'expertise. Les paiements sont sécurisés
-                    et transparents.</p>
+    <!-- BENTO FEATURES -->
+    <section class="bento-section">
+        <div class="bento-grid">
+            <div class="bento-card">
+                <div>
+                    <div class="bento-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <h3>Tarification libre</h3>
+                    <p>Définissez vos propres tarifs horaires selon votre expertise. Les paiements sont sécurisés et transparents.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🗓️</div>
-                <h3>Autonomie totale</h3>
-                <p>Acceptez ou refusez les demandes de cours selon votre emploi du temps réel. Restez maître absolu de
-                    votre calendrier.</p>
+            <div class="bento-card">
+                <div>
+                    <div class="bento-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <h3>Gestion autonome</h3>
+                    <p>Acceptez ou refusez les demandes de cours selon votre emploi du temps. Restez maître de votre calendrier.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Impact concret</h3>
-                <p>Mettez en relation votre pédagogie avec des parents rigoureux et des profils d'apprenants divers,
-                    afin d'assurer l'excellence.</p>
+            <div class="bento-card" style="background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; border: none;">
+                <div>
+                    <div class="bento-icon" style="background: rgba(255,255,255,0.2); color: white;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <h3 style="color: white;">Visibilité premium</h3>
+                    <p style="color: rgba(255,255,255,0.9);">Bénéficiez de la puissance de notre plateforme pour être mis en relation avec des parents rigoureux au Bénin.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- PROCESS SECTION -->
+    <!-- PROCESS -->
     <section class="process-section">
-        <h2 class="section-heading" style="text-align:center;">Prêt à donner votre premier cours ?</h2>
-        <div class="process-steps">
-            <div class="step-item">
-                <div class="step-number">1</div>
+        <div class="section-title">
+            <h2>Prêt en 3 étapes</h2>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="step-num">1</div>
                 <div>
-                    <h4>Remplissez le tunnel</h4>
-                    <p>Enregistrez vos diplômes, votre matière de prédilection et vos méthodes d'enseignement pour
-                        séduire les parents.</p>
+                    <h4>Créez votre profil</h4>
+                    <p>Enregistrez vos diplômes et vos matières de prédilection en quelques minutes.</p>
                 </div>
             </div>
-            <div class="step-item">
-                <div class="step-number">2</div>
+            <div class="timeline-item">
+                <div class="step-num">2</div>
                 <div>
                     <h4>Vérification d'équipe</h4>
-                    <p>Notre équipe valide l'authenticité de votre profil dans un délai très court pour vous propulser
-                        sur le marché.</p>
+                    <p>Notre équipe valide votre dossier sous 48h pour garantir l'excellence du service.</p>
                 </div>
             </div>
-            <div class="step-item">
-                <div class="step-number">3</div>
+            <div class="timeline-item">
+                <div class="step-num">3</div>
                 <div>
-                    <h4>Votre premier élève</h4>
-                    <p>Apparaissez sur les tableaux de recommandation des parents et acceptez votre tout premier
-                        engagement officiel.</p>
+                    <h4>Enseignez</h4>
+                    <p>Recevez vos premières demandes et commencez à transformer la vie de vos élèves.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FINAL BANNER -->
-    <section class="final-banner">
+    <!-- CTA BANNER -->
+    <section class="cta-banner">
         <h2>Passez à la prochaine étape !</h2>
-        <p>Prenez 3 minutes pour configurer votre vitrine en ligne, c'est gratuit.</p>
-        <a href="{% url 'prof_create_profile' %}" class="hero-cta" style="box-shadow: none;">Je crée mon profil
-            maintenant</a>
+        <p>Prenez 3 minutes pour configurer votre vitrine en ligne, c'est gratuit et sans engagement.</p>
+        <a href="{% url 'prof_create_profile' %}" class="btn-premium">
+            Je crée mon profil maintenant
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
     </section>
 </div>
 {% endblock %}
