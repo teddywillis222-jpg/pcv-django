@@ -28,13 +28,17 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--text);
-  background: var(--bg);
+/* Stabilisation du Viewport */
+html, body {
+    overflow-x: hidden; /* Empêche le défilement horizontal indésirable */
+    width: 100%;
+    position: relative;
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
 }
 
 a {
@@ -71,12 +75,24 @@ a:hover {
   display: inline-block;
   padding: 0.625rem 1.25rem;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600; /* Plus marqué pour le premium */
   text-align: center;
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none !important;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover {
+    text-decoration: none !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+.btn:active {
+    transform: translateY(0);
+    filter: brightness(0.9);
 }
 
 .btn-primary {
@@ -85,6 +101,7 @@ a:hover {
 }
 .btn-primary:hover {
   background: var(--primary-hover);
+  filter: brightness(1.05); /* Effet de lumière subtil */
 }
 .btn-primary:disabled {
   background: var(--text-muted);
@@ -98,6 +115,7 @@ a:hover {
 }
 .btn-secondary:hover {
   background: var(--secondary-hover);
+  filter: brightness(1.05);
 }
 
 .btn-outline {

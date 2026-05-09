@@ -66,7 +66,10 @@
         gap: 0.75rem;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0.5rem;
+        padding: 8px; /* Marge fixe de 8px pour maximiser la largeur sur mobile */
+        width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden; /* Empêche tout zoom parasite dû à un débordement */
     }
 
     @media (min-width: 1024px) {
@@ -167,13 +170,14 @@
     }
 
     .carousel-container {
-        margin: 0 -0.75rem;
-        padding: 0 0.75rem;
+        margin: 0 -8px;      /* Étend le carousel jusqu'aux bords malgré le padding parent */
+        padding: 0 8px;
         overflow-x: auto;
         display: flex;
         gap: 0.75rem;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
+        width: auto;
     }
 
     .carousel-container::-webkit-scrollbar {
@@ -1064,7 +1068,7 @@
         }
     });
     function initTomSelects() {
-        const multiSelects = document.querySelectorAll('.multi-select');
+        const multiSelects = document.querySelectorAll('.pcv-multi-select, .multi-select');
         multiSelects.forEach(select => {
             if (select.tomselect) return;
             new TomSelect(select, {

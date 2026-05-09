@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Prof Chez Vous{% endblock %}</title>
     
     <!-- Google Fonts - Raleway -->
@@ -33,9 +33,14 @@
             font-family: 'Raleway', sans-serif !important;
         }
 
-        /* Prevent iOS zoom on input focus */
-        input, select, textarea {
-            font-size: 16px !important;
+        /* Empêche le zoom auto sur iOS Safari pour tous les formulaires */
+        @media screen and (max-width: 768px) {
+            input, 
+            select, 
+            textarea, 
+            .ts-control input {
+                font-size: 16px !important; /* Taille minimale pour éviter le zoom iOS */
+            }
         }
         
         .ts-dropdown .create {
@@ -128,54 +133,9 @@
             box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
         }
 
-        /* Fix placeholder display in Tom Select */
-        .ts-wrapper .ts-control input {
-            font-size: 1rem !important;
-            color: #1e293b !important;
-        }
-
-        .ts-wrapper .ts-control input::placeholder {
-            color: #94a3b8 !important;
-            opacity: 1 !important;
-        }
-        
-        /* Assure que le wrapper prend toute la place */
-        .ts-wrapper.pcv-multi-select,
-        .ts-wrapper.multi-select {
-            width: 100% !important;
-        }
-
-        /* RESET filter-input styles on the wrapper to avoid double borders/backgrounds */
-        .ts-wrapper.filter-input {
-            border: none !important;
-            background: transparent !important;
-            height: auto !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-        }
-
-        .ts-dropdown {
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 0.75rem !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-            margin-top: 5px !important;
-            z-index: 2000 !important;
-        }
-
-        .ts-dropdown .option {
-            padding: 0.75rem 1rem !important;
-            font-size: 0.95rem !important;
-        }
-
-        .ts-dropdown .active {
-            background-color: var(--success-50) !important;
-            color: var(--success-700) !important;
-        }
-    </style>
-    <style>
-        /* Header Navigation - Prof Chez Vous */
+        /* Navbar Premium */
         .navbar {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             position: fixed;
@@ -184,15 +144,6 @@
             z-index: 1000;
             padding: 0;
             box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 1.5rem;
         }
 
         .navbar-brand {
@@ -205,6 +156,15 @@
             align-items: center;
             gap: 0.5rem;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
         }
 
         .navbar-brand:hover {
@@ -263,6 +223,7 @@
             color: white;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+            text-decoration: none !important;
         }
 
         .btn-nav-outline {
@@ -281,6 +242,8 @@
             background: var(--success-50);
             border-color: var(--success-700);
             color: var(--success-700);
+            transform: translateY(-1px);
+            text-decoration: none !important;
         }
 
         .logout-form {
@@ -303,7 +266,8 @@
 
         .logout-btn:hover {
             background: #fef2f2;
-            text-decoration: underline;
+            text-decoration: none !important;
+            transform: translateY(-1px);
         }
 
         /* Menu Burger pour Mobile */
@@ -498,6 +462,14 @@
                 <a href="https://wa.me/message/QROCDDNKZIXAE1" class="nav-link" target="_blank">Support</a>
                 {% if user.is_authenticated %}
                 <a href="{% url 'messagerie' %}" class="nav-link" title="Messagerie">
+                    <div class="name-badge-row" style="display: flex; align-items: center; gap: 4px; min-width: 0;">
+                <span class="teacher-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">{{ teacher.prenom }} {{ teacher.nom }}</span>
+                {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
+                    <svg class="cert-icon" width="16" height="16" viewBox="0 0 24 24" fill="#16a34a" title="Professeur certifié ProfChezVous" style="flex-shrink: 0;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                {% endif %}
+            </div>
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px; margin-top: 5px;">
                         <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                     </svg>
@@ -541,12 +513,8 @@
         </div>
         
         <nav class="mobile-menu-nav">
-            <li style="margin-bottom: 0.5rem;">
-                <a href="{% url 'recherche' %}" onclick="closeMobileMenu()" style="display: flex; align-items: center; gap: 0.5rem; color: var(--success-700); font-weight: 700; background: var(--success-50); border-radius: 8px; margin: 0 1rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+            <li>
+                <a href="{% url 'recherche' %}" onclick="closeMobileMenu()">
                     Rechercher un prof
                 </a>
             </li>
@@ -857,39 +825,30 @@
     <!-- Script Global pour Tom Select -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initGlobalTomSelects() {
             const multiSelects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
             multiSelects.forEach(select => {
                 if (select.tomselect) return;
                 
-                const isMatieres = ['id_matieres_predefinies', 'id_matieres_recherchees', 'id_matiere_enseignee', 'matiere'].includes(select.id);
-                const isTeacherMatieres = select.id === 'id_matiere_enseignee';
                 const isMultiple = select.hasAttribute('multiple');
                 
                 new TomSelect(select, {
-                    plugins: ['remove_button'],
-                    create: isMatieres || isTeacherMatieres,
+                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : ['dropdown_input'],
+                    create: true,
                     persist: false,
-                    maxItems: isTeacherMatieres ? 3 : (isMatieres ? 5 : 1),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
-                    hideSelected: true,
-                    hidePlaceholder: false,
-                    render: {
-                        option_create: function(data, escape) {
-                            return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>&hellip;</div>';
-                        },
-                        no_results: function(data, escape) {
-                            return '<div class="no-results" style="padding: 0.5rem;">Aucun résultat trouvé pour "' + escape(data.input) + '"</div>';
-                        }
-                    },
-                    onChange: function(value) {
-                        select.dispatchEvent(new Event('change'));
+                    onItemAdd: function() {
+                        this.setTextboxValue('');
+                        this.refreshOptions();
                     }
                 });
             });
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', initGlobalTomSelects);
     </script>
+
 
     <!-- Script Global pour Initialiser les Téléphones Premium -->
     <script>

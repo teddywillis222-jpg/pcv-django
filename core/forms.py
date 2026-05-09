@@ -186,18 +186,18 @@ class EnfantForm(forms.ModelForm):
         required=False,
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
-            'class': 'form-input multi-select', 
+            'class': 'form-input pcv-multi-select', 
             'placeholder': 'Ex : Mathématiques'
         })
     )
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
         required=False
     )
     difficultes_predefinies = forms.MultipleChoiceField(
         choices=DIFFICULTES_CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quelles difficultés ?'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quelles difficultés ?'}),
         required=False
     )
 
@@ -265,13 +265,13 @@ class ApprenantCreateProfileForm(forms.ModelForm):
 
     matieres_recherchees = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'style': 'height: 52px;'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'style': 'height: 52px;'}),
         required=False
     )
     
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifApprenant.CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input multi-select', 'placeholder': 'Quels sont vos objectifs ?'}),
+        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quels sont vos objectifs ?'}),
         required=False
     )
     
@@ -334,8 +334,8 @@ from .choices import CourseMode, ClassLevel
 
 class TeacherProfileForm(forms.ModelForm):
     
-    modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False)
-    classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False)
+    modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
+    classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
     ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
     matiere_enseignee = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),

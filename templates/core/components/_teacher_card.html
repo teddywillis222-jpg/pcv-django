@@ -18,11 +18,10 @@
         </div>
         
         <div class="teacher-details">
-            <!-- Nom tronqué + coche certifié toujours visible et collée au nom -->
-            <div class="name-badge-row">
-                <span class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</span>
-                {% if teacher.est_certifie %}
-                    <svg class="cert-icon" width="14" height="14" viewBox="0 0 24 24" fill="#16a34a" title="Professeur certifié ProfChezVous">
+            <div class="name-badge-row" style="display: flex; align-items: center; gap: 4px; min-width: 0; overflow: visible;">
+                <span class="teacher-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1;">{{ teacher.prenom }} {{ teacher.nom }}</span>
+                {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
+                    <svg class="cert-icon" width="16" height="16" viewBox="0 0 24 24" fill="#16a34a" title="Professeur certifié ProfChezVous" style="flex-shrink: 0; display: block;">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                 {% endif %}
