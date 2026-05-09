@@ -833,9 +833,11 @@
                 const isMultiple = select.hasAttribute('multiple');
                 
                 new TomSelect(select, {
-                    plugins: isMultiple ? ['remove_button', 'dropdown_input'] : ['dropdown_input'],
+                    plugins: ['remove_button', 'dropdown_input'],
                     create: true,
                     persist: false,
+                    // On limite à 1 item pour les recherches, même si l'attribut 'multiple' est présent (pour la croix)
+                    maxItems: (select.classList.contains('pcv-multi-select') && !select.classList.contains('allow-multiple')) ? 1 : (select.hasAttribute('multiple') ? null : 1),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     onItemAdd: function() {

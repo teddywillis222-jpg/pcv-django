@@ -110,14 +110,15 @@
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--c-accent), #14532d);
-    color: white;
+    background: #f1f5f9;
+    color: var(--c-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: 800;
+    font-size: 1.2rem;
     text-transform: uppercase;
+    border: 1px solid var(--c-border);
 }
 
 .c-online-dot {
@@ -198,7 +199,7 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.25rem;
     /* Pattern de fond doux et dégradé subtil */
     background: var(--c-bg);
     background-image: 

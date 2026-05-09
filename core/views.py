@@ -113,10 +113,10 @@ def annotate_teachers_with_ratings(queryset):
 def home(request):
     from .choices import ValidationStatus
     
-    # On récupère 6 professeurs validés aléatoirement (ou les plus récents)
+    # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
     top_professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
-    ).order_by('?')[:6]
+    ).order_by('?')[:24]
 
     top_professeurs = annotate_teachers_with_ratings(top_professeurs)
 
