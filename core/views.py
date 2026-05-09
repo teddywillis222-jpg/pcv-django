@@ -739,6 +739,11 @@ def prof_dashboard(request):
         "nb_termines": nb_termines,
     }
 
+    # Annonce
+    announcement = ProfessorAnnouncement.objects.filter(is_active=True).order_by('-created_at').first()
+    if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+        context['announcement'] = announcement
+
     return render(request, "core/prof_dashboard.html", context)
 
 
@@ -2560,6 +2565,201 @@ def api_ping(request):
 @login_required
 @require_http_methods(["POST"])
 def api_mark_welcome_seen(request):
+    engagement.masque_par_parent = True
+    engagement.save()
+    return JsonResponse({"success": True})
+
+@login_required
+def masquer_engagement_prof(request, eng_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    engagement = get_object_or_404(Engagement, id=eng_id)
+    if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
+        return JsonResponse({"error": "Accès refusé."}, status=403)
+        
+    engagement.masque_pour_professeur = True
+    engagement.save()
+    return JsonResponse({"success": True})
+
+
+@login_required
+def api_toggle_essai(request):
+    """Bascule l'activation de l'essai gratuit pour le professeur connecté."""
+    try:
+        teacher = request.user.teacher_profile
+    except TeacherProfile.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Accès réservé aux professeurs.'}, status=403)
+
+    if request.method == 'POST':
+        teacher.essai_gratuit_actif = not teacher.essai_gratuit_actif
+        teacher.save()
+        return JsonResponse({
+            'success': True,
+            'actif': teacher.essai_gratuit_actif,
+            'message': 'Statut de l\'essai gratuit mis à jour.'
+        })
+    
+    return JsonResponse({'success': False, 'error': 'Méthode non autorisée.'}, status=405)
+
+
+@login_required
+def api_engagement_details(request, engagement_id):
+    """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # Sécurité: Seuls les acteurs de l'engagement peuvent voir les détails
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    is_client = engagement.parent_apprenant == request.user
+    
+    if not (is_prof or is_client):
+        return JsonResponse({'error': 'Accès refusé'}, status=403)
+        
+    data = {
+        'id': engagement.id,
+        'matiere': engagement.matiere,
+        'classe': engagement.get_classe_display(),
+        'mode': engagement.get_mode_de_cours_display(),
+        'mode_raw': engagement.mode_de_cours,
+        'lieu': engagement.localisation_option,
+        'budget': str(engagement.budget_convenu) if engagement.budget_convenu else None,
+        'frequence': engagement.get_frequence_hebdomadaire_display(),
+        'duree': engagement.get_duree_seance_display(),
+        'duree_mois': engagement.duree_mois,
+        'date_debut': engagement.date_debut.strftime("%d/%m/%Y") if engagement.date_debut else None,
+        'status': engagement.statut_general,
+        'type': engagement.type_engagement,
+        'type_label': engagement.get_type_engagement_display(),
+        'plateforme': engagement.plateforme_visio_preferee,
+        # IDs for conversion logic
+        'teacher_id': engagement.professeur.id,
+        'teacher_name': f"{engagement.professeur.prenom} {engagement.professeur.nom}",
+        'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
+        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-même"),
+        # Essai specific fields
+        'date_essai': engagement.date_heure_essai.strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
+        'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
+        'heure_fin': engagement.date_heure_fin_essai.strftime("%H:%M") if engagement.date_heure_fin_essai else None,
+        'description_essai': engagement.description_essai,
+    }
+    
+    return JsonResponse({'success': True, 'engagement': data})
+
+@login_required
+@require_http_methods(["POST"])
+def api_fictional_payment(request):
+    """API de paiement fictif interne pour les tests."""
+    import json
+    from .choices import TypeAbonnement
+    from .models import Conversation, Abonnement
+    
+    try:
+        data = json.loads(request.body)
+        conversation_id = data.get('conversation_id')
+        payment_type = data.get('payment_type') # 'standard' ou 'premium'
+        
+        if payment_type == 'standard':
+            if not conversation_id:
+                return JsonResponse({'error': 'ID de conversation requis'}, status=400)
+            
+            conversation = get_object_or_404(Conversation, id=conversation_id)
+            if request.user not in conversation.participants.all():
+                return JsonResponse({'error': 'Accès non autorisé'}, status=403)
+                
+            eng = conversation.engagement_actif
+            if not eng:
+                return JsonResponse({'error': 'Aucun engagement actif pour cette conversation'}, status=400)
+                
+            eng.paiement_effectue = True
+            eng.save()
+            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectué (fictif)'})
+            
+        elif payment_type == 'premium':
+            # Upgrade vers premium pour le mois en cours
+            from datetime import timedelta
+            abonnement = request.user.abonnements.first()
+            if not abonnement:
+                abonnement = Abonnement.objects.create(user=request.user)
+            
+            abonnement.type_abonnement = TypeAbonnement.ACCESS_PREMIUM
+            abonnement.date_debut = timezone.now().date()
+            abonnement.date_fin = timezone.now().date() + timedelta(days=30)
+            abonnement.save()
+            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectué (fictif)'})
+            
+        else:
+            return JsonResponse({'error': 'Type de paiement invalide'}, status=400)
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def api_archive_conversation(request, conversation_id):
+    """Archive ou désarchive une conversation pour l'utilisateur courant."""
+    from .models import Conversation
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    if request.user in conversation.archivee_par.all():
+        conversation.archivee_par.remove(request.user)
+        is_archived = False
+    else:
+        conversation.archivee_par.add(request.user)
+        is_archived = True
+        
+    return JsonResponse({'success': True, 'archivee': is_archived})
+
+
+@login_required
+@require_http_methods(["POST"])
+def api_delete_conversation(request, conversation_id):
+    """Soft-delete : masque la conversation pour l'utilisateur courant."""
+    from .models import Conversation
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+    conversation.masquee_par.add(request.user)
+    return JsonResponse({'success': True})
+
+
+@login_required
+@require_http_methods(["GET"])
+def api_ping(request):
+    """
+    Endpoint léger appelé toutes les X secondes par le front-end
+    pour vérifier s'il y a des mises à jour d'engagements ou de messages.
+    """
+    import datetime
+    
+    last_check_str = request.GET.get('last_check')
+    has_updates = False
+    
+    if last_check_str:
+        try:
+            last_check = datetime.datetime.fromtimestamp(int(last_check_str) / 1000.0, tz=datetime.timezone.utc)
+            
+            # Vérifier les nouveaux messages non lus
+            if Message.objects.filter(destinataire=request.user, lu=False, date_envoi__gt=last_check).exists():
+                has_updates = True
+            
+            # Vérifier les mises à jour d'engagement
+            if not has_updates:
+                user_engs = Engagement.objects.filter(
+                    Q(professeur__user=request.user) | Q(parent_apprenant=request.user)
+                )
+                if user_engs.filter(date_mise_a_jour__gt=last_check).exists():
+                    has_updates = True
+        except Exception:
+            pass
+            
+    return JsonResponse({'has_updates': has_updates})
+
+@login_required
+@require_http_methods(["POST"])
+def api_mark_welcome_seen(request):
     try:
         profile = request.user.profile
         profile.a_vu_popup_bienvenue = True
@@ -2567,3 +2767,15 @@ def api_mark_welcome_seen(request):
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+@require_http_methods(["POST"])
+def dismiss_announcement(request, pk):
+    try:
+        from .models import ProfessorAnnouncement
+        announcement = ProfessorAnnouncement.objects.get(pk=pk, is_active=True)
+        announcement.dismissed_by.add(request.user)
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=400)

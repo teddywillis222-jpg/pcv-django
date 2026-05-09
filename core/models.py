@@ -952,3 +952,14 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message #{self.id} (conv {self.conversation_id})"
+
+
+class ProfessorAnnouncement(models.Model):
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    dismissed_by = models.ManyToManyField(User, related_name='dismissed_announcements', blank=True)
+
+    def __str__(self):
+        return f"{self.title} ({'Active' if self.is_active else 'Inactive'})"

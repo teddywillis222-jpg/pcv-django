@@ -95,6 +95,7 @@ urlpatterns = [
     # Temps Réel et Popup
     path("api/ping/", core_views.api_ping, name="api_ping"),
     path("api/mark-welcome-seen/", core_views.api_mark_welcome_seen, name="api_mark_welcome_seen"),
+    path("api/announcement/<int:pk>/dismiss/", core_views.dismiss_announcement, name="dismiss_announcement"),
 ]
 
 from django.conf import settings

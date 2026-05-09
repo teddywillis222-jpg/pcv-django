@@ -48,6 +48,30 @@
 
     <!-- Main Content -->
     <main class="dash-main">
+        {% if announcement %}
+        <div id="announcement-card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: opacity 0.3s ease, height 0.3s ease;">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="color: #16a34a; margin-top: 0.15rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h4 style="margin: 0 0 0.25rem 0; color: #166534; font-size: 1rem; font-weight: 700;">{{ announcement.title }}</h4>
+                    <p style="margin: 0; color: #15803d; font-size: 0.9rem; line-height: 1.5;">{{ announcement.message }}</p>
+                </div>
+            </div>
+            <button onclick="dismissAnnouncement({{ announcement.id }})" style="background: none; border: none; color: #166534; cursor: pointer; padding: 0.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        {% endif %}
+
         <div class="dash-header">
             <div class="dash-title">
                 <h1>Bonjour, {{ teacher.prenom|default:request.user.first_name }} !</h1>
@@ -502,6 +526,42 @@
 
     function copyProfileLink(link) {
         navigator.clipboard.writeText(link).then(() => alert("Lien de profil copié !"));
+    }
+
+    function dismissAnnouncement(id) {
+        const card = document.getElementById('announcement-card');
+        if (card) {
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        }
+        
+        fetch(`/api/announcement/${id}/dismiss/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        }).catch(e => console.warn(e));
+    }
+    
+    // Fonction helper si getCookie n'est pas définie
+    if (typeof getCookie !== 'function') {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     }
 </script>
 {% endblock %}
