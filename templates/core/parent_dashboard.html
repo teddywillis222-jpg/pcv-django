@@ -580,10 +580,20 @@
             <section style="margin-top: 1rem;">
                 <div class="section-header">
                     <h2 class="section-title">Recommandations pour {{ active_enfant.prenom }}</h2>
-                    <a href="{% url 'recherche' %}"
-                        style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <a href="{% url 'recherche' %}" style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
+                        <!-- Scroll Buttons (Desktop Only) -->
+                        <div class="scroll-controls" style="display: flex; gap: 0.5rem;">
+                            <button onclick="scrollSection('reco-scroll', 'left')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <button onclick="scrollSection('reco-scroll', 'right')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="carousel-container">
+                <div class="carousel-container" id="reco-scroll">
                     {% for prof in recommandations %}
                         {% include "core/components/_teacher_card_compact.html" with teacher=prof %}
                     {% empty %}
@@ -1075,6 +1085,16 @@
             }, 1200);
         }
     });
+    function scrollSection(id, direction) {
+        const container = document.getElementById(id);
+        const scrollAmount = 300;
+        if (direction === 'left') {
+            container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+
     function initTomSelects() {
         const multiSelects = document.querySelectorAll('.pcv-multi-select, .multi-select');
         multiSelects.forEach(select => {

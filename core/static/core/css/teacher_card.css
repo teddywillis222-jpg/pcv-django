@@ -96,8 +96,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-    flex: 1;
-    min-width: 0; /* Indispensable pour que flex+ellipsis fonctionne */
+    flex: 0 1 auto; /* Changé de 1 à 0 1 auto pour rester collé au badge si le nom est court */
+    min-width: 0;
 }
 
 /* La coche certifié reste toujours visible, collée au nom */
