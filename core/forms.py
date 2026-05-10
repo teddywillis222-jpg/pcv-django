@@ -171,8 +171,6 @@ class ParentForm(forms.ModelForm):
 class EnfantForm(forms.ModelForm):
     from .choices import ObjectifMotivation
     
-    
-    
     DIFFICULTES_CHOICES = [
         ("Bases fragiles non acquises", "Bases fragiles non acquises"),
         ("Manque de concentration", "Manque de concentration"),
@@ -186,18 +184,25 @@ class EnfantForm(forms.ModelForm):
         required=False,
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
-            'class': 'form-input pcv-multi-select', 
-            'placeholder': 'Ex : Mathématiques'
+            'class': 'form-input pcv-multi-select allow-multiple', 
+            'placeholder': 'Ex : Mathématiques',
+            'data-max-items': '5'
         })
     )
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quels sont les objectifs ?'}),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input pcv-multi-select allow-multiple', 
+            'placeholder': 'Quels sont les objectifs ?'
+        }),
         required=False
     )
     difficultes_predefinies = forms.MultipleChoiceField(
         choices=DIFFICULTES_CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quelles difficultés ?'}),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input pcv-multi-select allow-multiple', 
+            'placeholder': 'Quelles difficultés ?'
+        }),
         required=False
     )
 
@@ -260,18 +265,22 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     """Formulaire en 2 étapes pour le profil apprenant."""
     from .choices import ObjectifApprenant
 
-    
-
-
     matieres_recherchees = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'style': 'height: 52px;'}),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input pcv-multi-select allow-multiple', 
+            'style': 'height: 52px;',
+            'data-max-items': '5'
+        }),
         required=False
     )
     
     objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifApprenant.CHOICES,
-        widget=forms.SelectMultiple(attrs={'class': 'form-input pcv-multi-select', 'placeholder': 'Quels sont vos objectifs ?'}),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-input pcv-multi-select allow-multiple', 
+            'placeholder': 'Quels sont vos objectifs ?'
+        }),
         required=False
     )
     
@@ -304,20 +313,17 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Ajout d'options par défaut pour les select (placeholders)
         classe_choices = [("", "Ex : 4ème")] + list(self.fields["classe"].choices)[1:]
         self.fields["classe"].choices = classe_choices
         
         mode_choices = [("", "Ex : A domicile")] + list(self.fields["preference_de_cours"].choices)[1:]
         self.fields["preference_de_cours"].choices = mode_choices
 
-        # Champs obligatoires pour les 2 étapes
         required_fields = ["nom", "telephone", "classe", "quartier_ville", "preference_de_cours"]
         for field_name in required_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = True
         
-        # Champs optionnels
         optional_fields = ["photo_de_profil", "matieres_recherchees", "objectifs_motivations", "description_difficultes"]
         for field_name in optional_fields:
             if field_name in self.fields:
@@ -327,25 +333,42 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89", "style": "height: 52px;"})
 
 
-
 from .models import TeacherProfile
-
-from .choices import CourseMode, ClassLevel, SupportCategory
+from .choices import SupportCategory
 
 class TeacherProfileForm(forms.ModelForm):
     
-    modes_de_cours = forms.MultipleChoiceField(choices=CourseMode.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
-    classes_enseignees = forms.MultipleChoiceField(choices=ClassLevel.CHOICES, required=False, widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select'}))
+    modes_de_cours = forms.MultipleChoiceField(
+        choices=CourseMode.CHOICES, 
+        required=False, 
+        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple'})
+    )
+    classes_enseignees = forms.MultipleChoiceField(
+        choices=ClassLevel.CHOICES, 
+        required=False, 
+        widget=forms.SelectMultiple(attrs={
+            'class': 'pcv-multi-select allow-multiple',
+            'data-max-items': '3'
+        })
+    )
     ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
     categories_de_soutien = DynamicMultipleChoiceField(
         choices=SupportCategory.CHOICES,
         required=True,
-        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select', 'placeholder': 'Catégories (Max 4)'})
+        widget=forms.SelectMultiple(attrs={
+            'class': 'pcv-multi-select allow-multiple', 
+            'placeholder': 'Catégories (Max 4)',
+            'data-max-items': '4'
+        })
     )
     matiere_enseignee = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
         required=True,
-        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select', 'placeholder': 'Matières enseignées (Max 3)'})
+        widget=forms.SelectMultiple(attrs={
+            'class': 'pcv-multi-select allow-multiple', 
+            'placeholder': 'Matières enseignées (Max 3)',
+            'data-max-items': '3'
+        })
     )
     essai_gratuit_actif = forms.BooleanField(
         required=False,
@@ -374,7 +397,6 @@ class TeacherProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Champs en lecture seule
         self.fields["email"].widget.attrs["readonly"] = True
         self.fields["nom"].widget.attrs["readonly"] = True
 
@@ -383,7 +405,6 @@ class TeacherProfileForm(forms.ModelForm):
                 del self.fields["fichier_cni"]
         self.fields["nom"].label = "Nom Complet"
         
-        # self.fields["matiere_enseignee"].widget = forms.HiddenInput()
         self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})
 
         if self.instance and self.instance.pk and self.instance.matiere_enseignee:
@@ -402,8 +423,16 @@ class TeacherProfileForm(forms.ModelForm):
     def clean_matiere_enseignee(self):
         matieres = self.cleaned_data.get('matiere_enseignee')
         if isinstance(matieres, list):
+            if len(matieres) > 3:
+                raise forms.ValidationError("Vous ne pouvez sélectionner que 3 matières maximum.")
             return ", ".join(matieres)
         return matieres
+
+    def clean_classes_enseignees(self):
+        classes = self.cleaned_data.get('classes_enseignees')
+        if isinstance(classes, list) and len(classes) > 3:
+            raise forms.ValidationError("Vous ne pouvez sélectionner que 3 classes maximum.")
+        return classes
 
     def clean_categories_de_soutien(self):
         categories = self.cleaned_data.get('categories_de_soutien')

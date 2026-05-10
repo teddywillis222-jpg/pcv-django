@@ -831,13 +831,14 @@
                 if (select.tomselect) return;
                 
                 const isMultiple = select.hasAttribute('multiple');
+                const maxItemsAttr = select.getAttribute('data-max-items');
                 
                 new TomSelect(select, {
                     plugins: ['remove_button', 'dropdown_input'],
                     create: true,
                     persist: false,
-                    // On limite à 1 item pour les recherches, même si l'attribut 'multiple' est présent (pour la croix)
-                    maxItems: (select.classList.contains('pcv-multi-select') && !select.classList.contains('allow-multiple')) ? 1 : (select.hasAttribute('multiple') ? null : 1),
+                    // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
+                    maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (select.classList.contains('allow-multiple') ? null : (select.hasAttribute('multiple') ? null : 1)),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     onItemAdd: function() {
