@@ -2779,3 +2779,26 @@ def dismiss_announcement(request, pk):
         return JsonResponse({'status': 'success'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from .forms import AnnouncementForm
+
+@staff_member_required
+def create_announcement(request):
+    from .models import ProfessorAnnouncement
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            if announcement.is_active:
+                # Désactiver les annonces précédentes
+                ProfessorAnnouncement.objects.filter(is_active=True).update(is_active=False)
+            announcement.save()
+            messages.success(request, "L'annonce a été publiée avec succès !")
+            return redirect('create_announcement')
+    else:
+        form = AnnouncementForm()
+
+    return render(request, 'core/admin_create_announcement.html', {'form': form})

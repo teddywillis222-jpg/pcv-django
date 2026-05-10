@@ -410,3 +410,32 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(categories, list) and len(categories) > 4:
             raise forms.ValidationError("Vous ne pouvez sélectionner que 4 catégories maximum.")
         return categories
+
+
+from .models import ProfessorAnnouncement
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = ProfessorAnnouncement
+        fields = ['title', 'message', 'is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500',
+                'placeholder': 'Titre de l\'annonce',
+                'id': 'id_title'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500',
+                'placeholder': 'Message détaillé de l\'annonce...',
+                'rows': 4,
+                'id': 'id_message'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded'
+            }),
+        }
+        help_texts = {
+            'title': 'Apparaîtra en gras en haut de la carte.',
+            'message': 'Le contenu détaillé de votre annonce.',
+            'is_active': 'Cochez pour rendre cette annonce visible aux professeurs immédiatement.'
+        }
