@@ -418,10 +418,34 @@
         .mobile-menu-actions {
             margin-top: 3rem;
             width: 100%;
-            max-width: 300px;
+            max-width: 350px;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+
+        .auth-action-row {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-logout-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fef2f2;
+            color: #ef4444;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout-icon:hover {
+            background: #fee2e2;
         }
 
         .mobile-menu-overlay {
@@ -594,11 +618,19 @@
         
         <div class="mobile-menu-actions">
             {% if user.is_authenticated %}
-            <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="width: 100%; text-align: center;">Mon espace</a>
-            <form action="{% url 'logout' %}" method="post" class="logout-form" style="width: 100%;">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn" style="width: 100%; text-align: center;">Déconnexion</button>
-            </form>
+            <div class="auth-action-row">
+                <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="flex: 1; text-align: center; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">Mon espace</a>
+                <form action="{% url 'logout' %}" method="post" class="logout-form" style="width: auto;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout-icon" title="Déconnexion">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </form>
+            </div>
             {% else %}
             <a href="{% url 'login' %}" class="btn-nav-outline" style="width: 100%; text-align: center;">Se connecter</a>
             <a href="{% url 'signup' %}" class="btn-nav" style="width: 100%; text-align: center;">S'inscrire</a>
@@ -667,7 +699,7 @@
                 <div class="footer-column">
                     <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Prof Chez Vous</h4>
                     <p style="color: #94a3b8; line-height: 1.4; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                        Une plateforme de référence 100% Béninoise qui vous connecte avec le professeur idéal, près de chez vous pour l'accompagnement scolaire personnalisé.
+                        La première plateforme au Bénin qui donne aux répétiteurs une vraie identité professionnelle et aux parents un vrai pouvoir de choix.
                     </p>
                 </div>
 
@@ -724,13 +756,13 @@
                     <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Suivez-nous</h4>
                     <ul style="list-style: none; padding: 0; margin: 0;">
                         <li style="margin-bottom: 0.25rem;">
-                            <a href="https://www.facebook.com/share/18SURGgof5/?mibextid=wwXIfr" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Facebook</a>
+                            <a href="https://www.facebook.com/share/18frg1uay4/?mibextid=wwXIfr" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Facebook</a>
                         </li>
                         <li style="margin-bottom: 0.25rem;">
                             <a href="https://wa.me/message/QROCDDNKZIXAE1" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">WhatsApp</a>
                         </li>
                         <li style="margin-bottom: 0.25rem;">
-                            <a href="https://www.instagram.com/prof_chezvous_benin?igsh=MTU5dGprYThtN3ZwNw%3D%3D&utm_source=qr" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Instagram</a>
+                            <a href="https://www.instagram.com/pofchezvous?igsh=ZnR4MzdjdWpueHRx&utm_source=qr" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: opacity 0.3s ease;">Instagram</a>
                         </li>
                     </ul>
                 </div>

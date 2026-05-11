@@ -243,6 +243,12 @@
     padding-bottom: 5rem;    /* Espace généreux pour que rien ne soit masqué en bas */
 }
 
+@media (max-width: 768px) {
+    .side-panel-content {
+        padding: 1rem 8px; /* Marges réduites à 8px pour mobile */
+    }
+}
+
 .filter-actions-row {
     display: flex; 
     gap: 1.5rem; 
@@ -329,7 +335,7 @@
 
 @media (max-width: 480px) {
     .search-container {
-        padding: 0 8px; /* Marges réduites à 8px comme demandé */
+        padding: 0 8px; /* Marges normalisées à 8px pour libérer plus de largeur */
     }
     
     .teachers-grid {
