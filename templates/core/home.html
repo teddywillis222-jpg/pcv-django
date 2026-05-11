@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 <meta name="description" content="Prof Chez Vous connecte les parents et élèves avec les meilleurs professeurs particuliers au Bénin. Cours de maths, anglais, français à domicile à Cotonou, Calavi et partout ailleurs.">
+<link rel="preload" as="image" href="{% static 'core/images/hero_home.png' %}" fetchpriority="high">
 {% endblock %}
 
 {% block extra_css %}
@@ -26,8 +27,9 @@ main.container {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: #0f172a; /* Fallback color for slow loading */
     background: url("{% static 'core/images/hero_home.png' %}") center/cover no-repeat;
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem 3rem 1rem;
 }
 
 .hero-wrapper::before {
@@ -316,7 +318,7 @@ main.container {
     /* --- HERO --- */
     .hero-wrapper {
         min-height: auto;
-        padding: 1rem 1rem 2rem 1rem; /* Réduction drastique du padding */
+        padding: 0.5rem 1rem 1.5rem 1rem; /* Remontée maximale de la section */
     }
     .hero-content {
         margin-top: 0;
@@ -460,7 +462,7 @@ main.container {
 <!-- HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
-        <h1 class="hero-title">Trouvez un professeur certifié à domicile au Bénin en toute confiance.</h1>
+        <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
         <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
         
         <div class="search-box">

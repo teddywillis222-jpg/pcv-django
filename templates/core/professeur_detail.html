@@ -44,14 +44,29 @@
     margin-bottom: 0 !important;
 }
 
-/* Cartes internes (info-card, etc.) — couleur unifiée */
+/* Cartes internes (info-card, etc.) — style organique sans bordures sur mobile */
 .info-card {
     background: white;
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    border: 1px solid #e9eef5;
-    margin-bottom: 1.25rem;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .info-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 1rem 0;
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 0;
+    }
+    .info-card:last-child {
+        border-bottom: none;
+    }
 }
 
 .info-card h3 {
