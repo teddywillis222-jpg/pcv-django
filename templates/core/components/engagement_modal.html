@@ -347,7 +347,7 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             } else {
                 bannerText.textContent = "Ce professeur propose un essai gratuit aux membres Access+ Premium.";
                 bannerBtn.style.display = 'inline-block';
-                bannerBtn.href = '/gestion-plan/'; // Lien vers abonnement
+                bannerBtn.href = "{% url 'gestion_plan' %}"; // Lien vers abonnement
                 typeNotice.style.display = 'block';
                 // Désactiver l'option essai
                 typeSelect.value = 'standard';
