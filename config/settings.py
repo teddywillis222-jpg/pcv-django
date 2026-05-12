@@ -169,7 +169,6 @@ LOGIN_REDIRECT_URL = 'post_signup_redirect'
 LOGOUT_REDIRECT_URL = 'home'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (Fichiers uploadés par les utilisateurs)
 MEDIA_URL = '/media/'
@@ -189,7 +188,6 @@ if not DEBUG:
     
     # Pour que Allauth génère des URLs d'emails en HTTPS
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
-    import os
 
 # Configuration Cloudinary
 CLOUDINARY_STORAGE = {
@@ -198,8 +196,15 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Indique à Django d'utiliser Cloudinary pour les fichiers MEDIA
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Configuration des Stockages (Django 5.1+)
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
