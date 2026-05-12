@@ -169,6 +169,7 @@ LOGIN_REDIRECT_URL = 'post_signup_redirect'
 LOGOUT_REDIRECT_URL = 'home'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (Fichiers uploadés par les utilisateurs)
 MEDIA_URL = '/media/'
@@ -205,6 +206,10 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# Paramètres de compatibilité (requis par certaines librairies tierces)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
