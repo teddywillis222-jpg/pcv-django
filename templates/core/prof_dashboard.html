@@ -73,20 +73,29 @@
         {% endif %}
 
         <div class="dash-header">
-            <div class="dash-title">
-                <h1>Bonjour, {{ teacher.prenom|default:request.user.first_name }} !</h1>
-                <p>Voici l'état de votre activité aujourd'hui.</p>
-                
-                <!-- Profile Completion Bar (Inserted between subtitle and buttons) -->
-                <div class="header-completion">
-                    <span>Profil: {{ completion }}%</span>
-                    <div class="mini-progress-bar">
-                        <div class="mini-progress-fill" style="width: {{ completion }}%;"></div>
-                    </div>
+            <div class="dash-header-top">
+                <div class="teacher-avatar">
+                    {% if teacher.photo_de_profil %}
+                        <img src="{{ teacher.photo_de_profil.url }}" alt="Photo de profil">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            {{ teacher.prenom|slice:":1" }}{{ teacher.nom|slice:":1" }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="dash-title">
+                    <h1>Bonjour, {{ teacher.prenom|default:request.user.first_name }} !</h1>
+                    <p>Voici l'état de votre activité aujourd'hui.</p>
                 </div>
             </div>
-
-
+            
+            <!-- Profile Completion Bar -->
+            <div class="header-completion" style="margin-top: 0;">
+                <span>Profil: {{ completion }}%</span>
+                <div class="mini-progress-bar">
+                    <div class="mini-progress-fill" style="width: {{ completion }}%;"></div>
+                </div>
+            </div>
         </div>
 
         <div id="section-main" class="dash-section">

@@ -269,13 +269,23 @@
     }
 
 
-    /* Section Headers */
     .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 0.75rem;
         margin-top: 0;
+    }
+
+    .scroll-controls {
+        display: none !important;
+    }
+
+    @media (min-width: 1024px) {
+        .scroll-controls {
+            display: flex !important;
+            gap: 0.5rem;
+        }
     }
 
     .section-title {

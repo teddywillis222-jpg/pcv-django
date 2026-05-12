@@ -532,7 +532,12 @@
         <!-- Standard -->
         <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
             <div class="compare-header">
-                <span class="compare-name">Standard</span>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span class="compare-name">Standard</span>
+                    {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
+                    {% endif %}
+                </div>
                 <span class="compare-price">Gratuit</span>
             </div>
             <ul class="compare-features">
@@ -568,7 +573,12 @@
         <!-- Premium -->
         <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
             <div class="compare-header">
-                <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
+                    {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--premium); background: white; padding: 2px 8px; border-radius: 50px; width: fit-content; border: 1px solid var(--premium);">Plan actuel</span>
+                    {% endif %}
+                </div>
                 <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }}{{ DEFAULT_CURRENCY|lower }}<small>/mois</small></span>
             </div>
             <ul class="compare-features">
@@ -578,11 +588,11 @@
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Jusqu’à <strong>{{ PREMIUM_ENGAGEMENT_QUOTA }} engagements confirmés</strong> par mois activés sans frais supplémentaires
+                    <span>Jusqu’à <strong>{{ PREMIUM_ENGAGEMENT_QUOTA }} engagements confirmés</strong> par mois activés sans frais supplémentaires</span>
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <strong>Aucun frais de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> après confirmation du professeur (dans la limite du plan)
+                    <span><strong>Aucun frais de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> après confirmation du professeur (dans la limite du plan)</span>
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
