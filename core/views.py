@@ -20,7 +20,7 @@ from .forms import (
     SignUpForm,
 )
 from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation
-from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message
+from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message, ProfessorAnnouncement
 from django.db.models import Q
 from django.template.loader import render_to_string
 
@@ -1027,8 +1027,11 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
     
+    # Appliquer le score et limiter aux 8 meilleurs résultats
+    recommandations = recommandations.annotate(reco_score=score_annotation).order_by("-reco_score", "-date_validation")[:8]
+    
     # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
-    recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
+    recommandations_annotees = annotate_teachers_with_ratings(recommandations)
     recommandations_list = list(recommandations_annotees)
     
     # Compléter avec d'autres profs si insuffisant
