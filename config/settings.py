@@ -211,6 +211,9 @@ STORAGES = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Permet d'éviter l'erreur whitenoise.storage.MissingFileError lors du collectstatic
+WHITENOISE_MANIFEST_STRICT = False
+
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
 DEFAULT_CURRENCY = os.getenv('CURRENCY', 'FCFA')
