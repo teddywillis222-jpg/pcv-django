@@ -1828,14 +1828,8 @@ def api_send_message(request, conversation_id):
     if request.user not in conversation.participants.all():
         return JsonResponse({'error': 'Non autorisé'}, status=403)
     
-    # Validation anti-spam (max 5 messages par minute)
-    recent_messages = Message.objects.filter(
-        auteur=request.user,
-        date_envoi__gte=timezone.now() - timedelta(minutes=1)
-    ).count()
-    
-    if recent_messages >= 5:
-        return JsonResponse({'error': 'Trop de messages envoyés. Veuillez patienter.'}, status=429)
+    # Suppression de la validation anti-spam stricte (5 msg/min) pour permettre 
+    # des envois successifs fluides aux utilisateurs autorisés (Premium/Payé).
         
     # Vérifier le blocage (même logique que conversation_detail)
     from .choices import TypeAbonnement

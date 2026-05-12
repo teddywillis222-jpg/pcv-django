@@ -760,3 +760,54 @@
 .c-menu-item.danger {
     color: #ef4444;
 }
+
+/* ========================================
+   SCROLL BOTTOM BUTTON (Flèche flottante)
+======================================== */
+.c-scroll-bottom-btn {
+    position: absolute;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px)); /* Au-dessus de la zone de saisie */
+    right: 1.5rem;
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border: 1px solid var(--c-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-accent);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 50;
+    transition: transform 0.2s, opacity 0.2s;
+    opacity: 0.9;
+}
+
+.c-scroll-bottom-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.c-scroll-bottom-btn:active {
+    transform: scale(0.95);
+    background: #f8fafc;
+}
+
+.c-unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid white;
+}

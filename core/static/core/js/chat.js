@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const sendErrorBox = document.getElementById('chatSendError');
     const sendErrorTxt = document.getElementById('chatSendErrorText');
     const retryBtn     = document.getElementById('chatRetryBtn');
+    const scrollBtn    = document.getElementById('scrollBottomBtn');
+    const badge        = document.getElementById('unreadBadge');
+    const messagesList = document.getElementById('messagesList');
     const config       = window.chatConfig || {};
     let lastFailedPayload = null;
 
@@ -32,6 +35,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Scroll au bas ────────────────────────────────────────
     scrollToBottom();
+
+    // ── Logique de la flèche flottante ───────────────────────
+    if (messagesList && scrollBtn) {
+        messagesList.addEventListener('scroll', () => {
+            // Tolérance de 150px pour déterminer si on est "en bas"
+            const isNearBottom = messagesList.scrollHeight - messagesList.scrollTop - messagesList.clientHeight < 150;
+            if (isNearBottom) {
+                scrollBtn.style.display = 'none';
+                if (badge) {
+                    badge.style.display = 'none';
+                    badge.textContent = '0';
+                }
+            } else {
+                scrollBtn.style.display = 'flex';
+            }
+        });
+
+        scrollBtn.addEventListener('click', () => {
+            scrollToBottom();
+            // L'événement de scroll masquer automatiquement le bouton
+        });
+    }
 
     // ── Feedback erreur envoi ────────────────────────────────
     function showSendError(msg) {
@@ -157,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!config.urls?.fetchMessages) return;
 
         try {
-            const unreadEls = document.querySelectorAll('.msg-sent .msg-status:not(.status-read)');
+            const unreadEls = document.querySelectorAll('.sent .msg-tick:not(.read)');
             const unreadIds = Array.from(unreadEls)
                 .map(el => el.closest('.msg-bubble')?.getAttribute('data-id'))
                 .filter(Boolean)
@@ -177,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (document.querySelector(`.msg-bubble[data-id="${msg.id}"]`)) return;
 
                     const bubble = document.createElement('div');
-                    bubble.className = 'msg-bubble msg-received';
+                    bubble.className = 'msg-bubble received';
                     bubble.setAttribute('data-id', msg.id);
 
                     let html = '';
@@ -196,18 +221,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (container) container.appendChild(bubble);
                     hasNew = true;
                 });
-                if (hasNew) scrollToBottom();
+                
+                if (hasNew) {
+                    const c = document.getElementById('messagesList');
+                    if (c) {
+                        const isNearBottom = c.scrollHeight - c.scrollTop - c.clientHeight < 200;
+                        if (isNearBottom) {
+                            scrollToBottom();
+                        } else if (scrollBtn && badge) {
+                            scrollBtn.style.display = 'flex';
+                            badge.style.display = 'flex';
+                            let currentVal = parseInt(badge.textContent) || 0;
+                            badge.textContent = currentVal + data.messages.length;
+                        }
+                    }
+                }
             }
 
             // Mise à jour statut lu
             if (data.newly_read?.length > 0) {
                 data.newly_read.forEach(id => {
-                    const bubble = document.querySelector(`.msg-sent[data-id="${id}"]`);
+                    const bubble = document.querySelector(`.sent[data-id="${id}"]`);
                     if (!bubble) return;
-                    const icon = bubble.querySelector('.msg-status');
-                    if (icon && !icon.classList.contains('status-read')) {
-                        icon.classList.add('status-read');
-                        icon.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/></svg>`;
+                    const icon = bubble.querySelector('.msg-tick');
+                    if (icon && !icon.classList.contains('read')) {
+                        icon.classList.add('read');
+                        // Pas besoin de remplacer l'innerHTML, c'est déjà le bon SVG, la couleur est gérée par le CSS
                     }
                 });
             }
@@ -287,7 +326,7 @@ function appendSentBubble(id, text, file, time) {
     if (!container) return;
 
     const bubble = document.createElement('div');
-    bubble.className = 'msg-bubble msg-sent';
+    bubble.className = 'msg-bubble sent';
     bubble.setAttribute('data-id', id);
     bubble.style.opacity = '0.75';
     bubble.style.transition = 'opacity 0.2s';
@@ -304,9 +343,9 @@ function appendSentBubble(id, text, file, time) {
     }
     html += `<div class="msg-meta">
         <span class="msg-time">${time}</span>
-        <span class="msg-status">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>
-        </span>
+        <svg class="msg-tick" viewBox="0 0 24 24" width="14" height="14">
+            <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
+        </svg>
     </div>`;
     bubble.innerHTML = html;
     container.appendChild(bubble);
