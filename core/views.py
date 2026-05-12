@@ -971,7 +971,10 @@ def apprenant_create_profile(request):
         initial = {"nom": request.user.first_name}
         form = ApprenantCreateProfileForm(instance=apprenant_instance, initial=initial)
 
-    return render(request, "core/apprenant_create_profile.html", {"form": form})
+    return render(request, "core/apprenant_create_profile.html", {
+        "form": form,
+        "is_edit": apprenant_instance is not None
+    })
 
 
 @login_required
@@ -2197,8 +2200,43 @@ def profil_eleve(request, type_eleve, id_eleve):
     return render(request, "core/profil_eleve.html", {
         "eleve": eleve_data,
         "is_owner": is_owner,
-        "is_teacher": is_teacher
+        "is_teacher": is_teacher,
+        "missing_info": not eleve_data['difficultes'] or not eleve_data['objectifs']
     })
+
+@login_required
+def edit_enfant(request, id_enfant):
+    enfant = get_object_or_404(Enfant, id=id_enfant)
+    
+    if not hasattr(request.user, 'parent') or enfant.parent != request.user.parent:
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("Vous n'avez pas l'autorisation de modifier ce profil.")
+        
+    if request.method == "POST":
+        form = EnfantForm(request.POST, instance=enfant)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, f"Le profil de {enfant.prenom} a été mis à jour.")
+            return redirect("profil_eleve", type_eleve='enfant', id_eleve=enfant.id)
+    else:
+        # Pré-remplir les champs multiples si nécessaire
+        initial = {}
+        obj_text = enfant.objectif_principal
+        if obj_text and "DIFFICULTÉS:" in obj_text:
+            parts = obj_text.split("DIFFICULTÉS:")
+            obj_str = parts[0].replace("OBJECTIFS:", "").strip()
+            diff_str = parts[1].strip()
+            initial['objectifs_motivations'] = [o.strip() for o in obj_str.split(',') if o.strip()]
+            initial['difficultes_predefinies'] = [d.strip() for d in diff_str.split(',') if d.strip()]
+        
+        form = EnfantForm(instance=enfant, initial=initial)
+        
+    return render(request, "core/edit_enfant.html", {
+        "form": form,
+        "enfant": enfant
+    })
+
 
 
 # ==========================================

@@ -157,15 +157,15 @@ class ParentForm(forms.ModelForm):
 
     class Meta:
         model = Parent
-        fields = ["nom", "numero_whatsapp", "quartier_ville", "photo_profil"]
+        fields = ["nom", "numero_whatsapp", "quartier_ville"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
         self.fields['numero_whatsapp'].required = True
+        self.fields['numero_whatsapp'].required = True
         self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "Ex: 01 23 45 67 89", "class": "phone-input"})
-        self.fields['photo_profil'].widget.attrs.update({"accept": "image/*"})
 
 
 class EnfantForm(forms.ModelForm):
@@ -213,6 +213,9 @@ class EnfantForm(forms.ModelForm):
             "classe",
             "quartier_ville",
             "mode_de_cours",
+            "matieres_predefinies",
+            "objectifs_motivations",
+            "difficultes_predefinies",
         ]
 
     def __init__(self, *args, **kwargs):

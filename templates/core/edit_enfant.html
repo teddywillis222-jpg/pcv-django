@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Modifier le profil de {{ enfant.prenom }} - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
+<style>
+    .edit-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    .edit-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #f1f5f9;
+    }
+    .edit-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    .edit-header h1 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+    .edit-header p {
+        color: var(--text-gray);
+        font-size: 0.95rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border: 2px solid #f1f5f9;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: #f8fafc;
+    }
+    .form-group input:focus, .form-group select:focus {
+        border-color: var(--primary);
+        background: white;
+        outline: none;
+        box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .btn-submit:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+    }
+    .btn-cancel {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--text-gray);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    /* Tom Select Overrides */
+    .ts-control {
+        border-radius: 12px !important;
+        padding: 0.6rem 1rem !important;
+        border: 2px solid #f1f5f9 !important;
+        background: #f8fafc !important;
+    }
+    .ts-wrapper.multi .ts-control > div {
+        background: var(--primary) !important;
+        color: white !important;
+        border-radius: 6px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h1>Modifier le profil</h1>
+            <p>Mettez à jour les informations de {{ enfant.prenom }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Prénom</label>
+                {{ form.prenom }}
+            </div>
+
+            <div class="form-group">
+                <label>Classe</label>
+                {{ form.classe }}
+            </div>
+
+            <div class="form-group">
+                <label>Matières à renforcer</label>
+                {{ form.matieres_predefinies }}
+            </div>
+
+            <div class="form-group">
+                <label>Difficultés principales</label>
+                {{ form.difficultes_predefinies }}
+            </div>
+
+            <div class="form-group">
+                <label>Objectifs & Motivations</label>
+                {{ form.objectifs_motivations }}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Enregistrer les modifications
+            </button>
+            
+            <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" class="btn-cancel">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.pcv-multi-select').forEach(el => {
+            new TomSelect(el, {
+                plugins: ['remove_button'],
+                persist: false,
+                create: false,
+            });
+        });
+    });
+</script>
+{% endblock %}
