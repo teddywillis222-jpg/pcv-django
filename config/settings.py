@@ -169,7 +169,6 @@ LOGIN_REDIRECT_URL = 'post_signup_redirect'
 LOGOUT_REDIRECT_URL = 'home'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (Fichiers uploadés par les utilisateurs)
 MEDIA_URL = '/media/'
@@ -198,18 +197,16 @@ CLOUDINARY_STORAGE = {
 }
 
 # Configuration des Stockages (Django 5.1+)
+# default: Cloudinary pour les fichiers uploadés (Persistance sur Render)
+# staticfiles: WhiteNoise pour les fichiers CSS/JS (Performance via Middleware)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-
-# Paramètres de compatibilité (requis par certaines librairies tierces)
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
