@@ -151,11 +151,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Textarea auto-resize ─────────────────────────────────
+    // ── Textarea auto-resize et soumission ───────────────────
     if (input) {
         input.addEventListener('input', function () {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        
+        input.addEventListener('keydown', function (e) {
+            // Soumission sur Entrée (sans Shift)
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (chatForm) {
+                    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+            }
         });
 
         // Sur iOS : scroll to bottom quand le clavier apparaît
