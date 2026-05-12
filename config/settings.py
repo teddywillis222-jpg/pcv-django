@@ -208,6 +208,10 @@ STORAGES = {
     },
 }
 
+# Paramètres de compatibilité pour les librairies tierces (Cloudinary, WhiteNoise)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
 DEFAULT_CURRENCY = os.getenv('CURRENCY', 'FCFA')
