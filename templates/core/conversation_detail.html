@@ -76,7 +76,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         Profil de l'élève
                     </a>
-                    {% elif eng %}
+                    {% elif eng and eng.parent_apprenant and eng.parent_apprenant.profile.role == ROLE_APPRENANT and eng.parent_apprenant.apprenant %}
                     <a href="{% url 'profil_eleve' 'apprenant' eng.parent_apprenant.apprenant.id %}" class="c-menu-item">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         Voir le profil
@@ -186,7 +186,7 @@
     </footer>
 
     <!-- Zone d'erreur d'envoi (cachée par défaut) -->
-    <div id="chatSendError" hidden style="position: fixed; bottom: 85px; left: 1rem; right: 1rem; background: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 12px; font-size: 0.85rem; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+    <div id="chatSendError" style="position: fixed; bottom: 85px; left: 1rem; right: 1rem; background: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 12px; font-size: 0.85rem; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; justify-content: space-between; align-items: center;">
         <span id="chatSendErrorText"></span>
         <button id="chatRetryBtn" style="background: #b91c1c; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Réessayer</button>
     </div>

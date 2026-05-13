@@ -63,10 +63,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function showSendError(msg) {
         if (!sendErrorBox || !sendErrorTxt) return;
         sendErrorTxt.textContent = msg;
-        sendErrorBox.hidden = false;
+        sendErrorBox.style.display = 'flex';
     }
     function hideSendError() {
-        if (sendErrorBox) sendErrorBox.hidden = true;
+        if (sendErrorBox) sendErrorBox.style.display = 'none';
     }
     hideSendError();
 
