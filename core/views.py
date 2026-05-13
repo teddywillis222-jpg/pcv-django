@@ -1789,16 +1789,29 @@ def conversation_detail(request, conversation_id):
     elif user_role == Role.ROLE_PROF and conversation.parent and hasattr(conversation.parent, 'parent'):
         parent_children = conversation.parent.parent.enfants.all()
         
-    # Nom à afficher (comme dans la messagerie)
+    # Nom à afficher (règles dynamiques)
     eng = conversation.engagement_actif
-    if user_role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
-        display_name = f"Prof. {conversation.professeur.prenom} {conversation.professeur.nom}" if conversation.professeur else "Professeur PCV"
-    else:
+    other_role = other_user.profile.role if other_user and hasattr(other_user, 'profile') else None
+    
+    if other_role == Role.ROLE_PROF:
+        p = conversation.professeur
+        raw_name = f"{p.prenom} {p.nom}" if p else "Inconnu"
+        if len(raw_name) > 20: raw_name = raw_name[:18] + "..."
+        display_name = f"Prof. {raw_name}"
+    elif other_role == Role.ROLE_APPRENANT:
+        display_name = other_user.get_full_name() or other_user.username
+    elif other_role == Role.ROLE_PARENT:
         if eng and eng.enfants_concernes.exists():
             enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
+            if len(enfants_names) > 18: enfants_names = enfants_names[:16] + "..."
             display_name = f"Parent de {enfants_names}"
         else:
-            display_name = conversation.parent.first_name if conversation.parent else "Parent/Apprenant PCV"
+            # Fallback si pas d'engagement actif avec enfant
+            p_name = other_user.get_full_name() or other_user.username
+            if len(p_name) > 15: p_name = p_name[:13] + "..."
+            display_name = f"Parent ({p_name})"
+    else:
+        display_name = "Interlocuteur PCV"
 
     from .choices import ClassLevel, CourseMode, DureeSeance, FrequenceHebdomadaire, PeriodeEngagement
 

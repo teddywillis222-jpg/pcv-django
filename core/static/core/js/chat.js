@@ -378,27 +378,8 @@ function removeBubble(id) {
 }
 
 
-// ════════════════════════════════════════════════════════════
-//  GESTION DES MODALES / SHEETS
-// ════════════════════════════════════════════════════════════
-
-function toggleOptions(e) {
-    if (e) e.stopPropagation();
-    const dd = document.getElementById('optionsDropdown');
-    if (dd) dd.classList.toggle('active');
-}
-
-function toggleSheet() {
-    const overlay = document.getElementById('engSheetOverlay');
-    const sheet   = document.getElementById('engSheet');
-    if (overlay) overlay.classList.toggle('active');
-    if (sheet)   sheet.classList.toggle('active');
-}
-
-function toggleEngRow(header) {
-    const row = header.closest('.eng-row');
-    if (row) row.classList.toggle('active');
-}
+// Note: Les fonctions toggleSheet, toggleOptions, etc. sont gérées 
+// directement dans le template pour une meilleure réactivité avec les IDs locaux.
 
 function filterEngagements() {
     const childId = document.getElementById('childFilter')?.value;
