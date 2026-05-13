@@ -4,6 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('[Chat] Initialisation...');
 
     // ── Éléments DOM ────────────────────────────────────────
     const input        = document.getElementById('messageInput');
@@ -189,12 +190,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let pollingInterval = null;
 
     async function fetchNewMessages() {
-        if (!config.urls?.fetchMessages) return;
+        if (!config.urls || !config.urls.fetchMessages) return;
 
         try {
             const unreadEls = document.querySelectorAll('.sent .msg-tick:not(.read)');
             const unreadIds = Array.from(unreadEls)
-                .map(el => el.closest('.msg-bubble')?.getAttribute('data-id'))
+                .map(el => {
+                    const bubble = el.closest('.msg-bubble');
+                    return bubble ? bubble.getAttribute('data-id') : null;
+                })
                 .filter(Boolean)
                 .join(',');
 
@@ -204,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await res.json();
 
             // Nouveaux messages reçus
-            if (data.messages?.length > 0) {
+            if (data.messages && data.messages.length > 0) {
                 let hasNew = false;
                 const container = document.getElementById('messagesList');
                 data.messages.forEach(msg => {
@@ -249,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Mise à jour statut lu
-            if (data.newly_read?.length > 0) {
+            if (data.newly_read && data.newly_read.length > 0) {
                 data.newly_read.forEach(id => {
                     const bubble = document.querySelector(`.sent[data-id="${id}"]`);
                     if (!bubble) return;

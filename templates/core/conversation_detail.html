@@ -104,7 +104,7 @@
             </div>
             {% endif %}
 
-            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}">
+            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}" data-id="{{ msg.id }}">
                 {% if msg.contenu_media %}
                     <div style="margin-bottom:0.5rem;">
                         {% if "image" in msg.contenu_media.url %}
@@ -170,6 +170,9 @@
             </div>
         {% else %}
             <form id="chatForm" style="display: contents;">
+                <!-- Champ masqué pour l'envoi de fichiers -->
+                <input type="file" id="fileInput" hidden accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                
                 <div class="c-input-wrapper" id="inputWrapper">
                     <textarea class="c-input-field" id="messageInput" rows="1" placeholder="Écrivez un message…"></textarea>
                 </div>
@@ -181,6 +184,12 @@
             </form>
         {% endif %}
     </footer>
+
+    <!-- Zone d'erreur d'envoi (cachée par défaut) -->
+    <div id="chatSendError" hidden style="position: fixed; bottom: 85px; left: 1rem; right: 1rem; background: #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 12px; font-size: 0.85rem; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <span id="chatSendErrorText"></span>
+        <button id="chatRetryBtn" style="background: #b91c1c; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600; cursor: pointer;">Réessayer</button>
+    </div>
 
     <!-- OVERLAY & BOTTOM SHEET -->
     <div class="c-overlay" id="overlay" onclick="closeSheet()"></div>
@@ -346,6 +355,18 @@
 
 {% block extra_js %}
 <script>
+    // Configuration globale pour chat.js
+    window.chatConfig = {
+        urls: {
+            sendMessage: "{% url 'api_send_message' conversation.id %}",
+            fetchMessages: "{% url 'api_fetch_new_messages' conversation.id %}"
+        },
+        csrfToken: "{{ csrf_token }}",
+        lastMsgId: parseInt("{{ messages|last|attr:'id'|default:messages.last.id|default:0 }}") || 0,
+        isBlocked: {{ is_blocked|yesno:"true,false" }},
+        isEligibleToFinalize: {{ is_eligible_to_finalize|yesno:"true,false" }}
+    };
+
     function updateLayout() {
         const vv = window.visualViewport;
         if (vv) {
@@ -535,4 +556,5 @@
         optionsMenu.classList.remove('visible');
     }
 </script>
+<script src="{% static 'core/js/chat.js' %}?v={% now 'U' %}"></script>
 {% endblock %}
