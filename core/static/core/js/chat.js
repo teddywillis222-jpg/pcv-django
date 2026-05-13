@@ -228,9 +228,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
                     }
                     if (msg.is_locked) {
-                        html += `<div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 0.75rem; border-radius: 4px; color: #b91c1c; margin-bottom: 0.5rem;">
-                            <strong>🔒 Ce message est verrouillé.</strong><br>
-                            Pour discuter avec ce professeur, veuillez <button type="button" onclick="showPaymentModal()" style="color:#ef4444; font-weight:600; text-decoration:underline; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">procéder au paiement des frais</button> ou <a href="/mon-plan/" style="color:#f97316; font-weight:600; text-decoration:underline;">gérer votre plan</a>.
+                        html += `<div style="opacity: 0.9; font-style: italic; margin-bottom: 0.5rem;">
+                            Ce message est verrouillé. Veuillez <button type="button" onclick="showPaymentModal()" style="color:var(--c-accent); font-weight:600; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">Procéder au paiement</button> ou <a href="/mon-plan/" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
                         </div>`;
                     } else if (msg.text) {
                         html += `<div class="msg-content">${escapeHtml(msg.text)}</div>`;
