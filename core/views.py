@@ -1713,12 +1713,14 @@ def conversation_detail(request, conversation_id):
     
     for msg in raw_messages:
         # Masquage Paywall (Backend Security)
+        msg.is_locked = False
         if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
                 # Vérifier si le message vient après la confirmation/création de l'engagement
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
                 if msg.date_envoi >= ref_date:
-                    msg.contenu_texte = "🔒 Message verrouillé. Veuillez régler les frais d'engagement de 2000f pour débloquer cette discussion."
+                    msg.is_locked = True
+                    msg.contenu_texte = ""
                     msg.contenu_media = None
 
         msg_date = msg.date_envoi.date()
@@ -1761,33 +1763,7 @@ def conversation_detail(request, conversation_id):
             if not is_premium:
                 is_blocked = True
                 hide_input = True
-                
-                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
-                prof_sent_msg = conversation.messages.filter(
-                    auteur=conversation.professeur.user if conversation.professeur else None,
-                    date_envoi__gte=ref_date
-                ).exists()
-                
-                if prof_sent_msg:
-                    blocking_message = """
-                        <div style="text-align:center;">
-                            <p style="margin-bottom:1rem;font-weight:600;font-size:0.9rem;">Le professeur a confirmé et vous a envoyé un message.</p>
-                            <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
-                                <button type="button" onclick="showPaymentModal()" class="c-eng-btn-primary" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;">Procéder au paiement</button>
-                                <a href="/mon-plan/" class="c-eng-btn-outline" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;text-decoration:none;">Gérer mon plan</a>
-                            </div>
-                        </div>
-                    """
-                else:
-                    blocking_message = """
-                        <div style="text-align:center;">
-                            <p style="margin-bottom:1rem;font-weight:600;font-size:0.9rem;">Le professeur a confirmé votre demande.</p>
-                            <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
-                                <button type="button" onclick="showPaymentModal()" class="c-eng-btn-primary" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;">Procéder au paiement</button>
-                                <a href="/mon-plan/" class="c-eng-btn-outline" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;text-decoration:none;">Gérer mon plan</a>
-                            </div>
-                        </div>
-                    """
+                blocking_message = "Paiement requis pour continuer les échanges."
                 
     is_eligible_to_finalize = True  # On autorise par défaut
 
@@ -1996,13 +1972,15 @@ def api_fetch_new_messages(request, conversation_id):
         texte = msg.contenu_texte
         file_url = msg.contenu_media.url if msg.contenu_media else None
         file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
+        is_locked = False
         
         # Masquage Paywall (Backend Security)
         if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
                 if msg.date_envoi >= ref_date:
-                    texte = "🔒 Message verrouillé. Veuillez régler les frais d'engagement de 2000f pour débloquer cette discussion."
+                    is_locked = True
+                    texte = ""
                     file_url = None
                     file_name = None
         
@@ -2013,7 +1991,8 @@ def api_fetch_new_messages(request, conversation_id):
             'fichier_nom': file_name,
             'date': msg.date_envoi.strftime("%H:%M"),
             'is_mine': msg.auteur == request.user,
-            'lu': msg.lu
+            'lu': msg.lu,
+            'is_locked': is_locked
         })
         
     return JsonResponse({

@@ -227,7 +227,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${msg.file_name}
                         </div>`;
                     }
-                    if (msg.text) {
+                    if (msg.is_locked) {
+                        html += `<div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 0.75rem; border-radius: 4px; color: #b91c1c; margin-bottom: 0.5rem;">
+                            <strong>🔒 Ce message est verrouillé.</strong><br>
+                            Pour discuter avec ce professeur, veuillez <button type="button" onclick="showPaymentModal()" style="color:#ef4444; font-weight:600; text-decoration:underline; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">procéder au paiement des frais</button> ou <a href="/mon-plan/" style="color:#f97316; font-weight:600; text-decoration:underline;">gérer votre plan</a>.
+                        </div>`;
+                    } else if (msg.text) {
                         html += `<div class="msg-content">${escapeHtml(msg.text)}</div>`;
                     }
                     html += `<div class="msg-meta"><span class="msg-time">${msg.date}</span></div>`;

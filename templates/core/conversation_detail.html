@@ -115,7 +115,14 @@
                     </div>
                 {% endif %}
                 
-                {{ msg.contenu_texte|linebreaksbr }}
+                {% if msg.is_locked %}
+                    <div style="background: rgba(239,68,68,0.1); border-left: 4px solid #ef4444; padding: 0.75rem; border-radius: 4px; color: #b91c1c;">
+                        <strong>🔒 Ce message est verrouillé.</strong><br>
+                        Pour discuter avec ce professeur, veuillez <button type="button" onclick="showPaymentModal()" style="color:#ef4444; font-weight:600; text-decoration:underline; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">procéder au paiement des frais</button> ou <a href="{% url 'gestion_plan' %}" style="color:#f97316; font-weight:600; text-decoration:underline;">gérer votre plan</a>.
+                    </div>
+                {% else %}
+                    {{ msg.contenu_texte|linebreaksbr }}
+                {% endif %}
                 
                 <div class="msg-meta">
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
