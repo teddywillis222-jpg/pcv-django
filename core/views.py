@@ -694,7 +694,11 @@ def prof_dashboard(request):
         return redirect("prof_create_profile")
 
     # 1. Gestion des Engagements par onglets
-    engagements = teacher.engagements.all().order_by("-date_creation")
+    engagements = teacher.engagements.select_related(
+        'parent_apprenant', 'parent_apprenant__user'
+    ).prefetch_related(
+        'enfants_concernes', 'conversation'
+    ).order_by("-date_creation")
     
     # "En cours" (Demandes en attente ou confirmées mais pas encore finalisées)
     # On regroupe EN_ATTENTE, CONFIRME (qui est "En cours") et EN_COURS
@@ -825,7 +829,7 @@ def parent_dashboard(request):
 
     # 2. Recommandations dynamiques basées sur l'enfant actif et le parent
     from django.db.models import Q, Case, When, Value, IntegerField
-    recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
+    recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
     
     score_annotation = Value(0, output_field=IntegerField())
     
@@ -877,7 +881,11 @@ def parent_dashboard(request):
 
     # 3. Engagements : On prend TOUS les engagements du parent pour être sûr de ne rien rater
     # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
-    engagements_base = request.user.engagements_client.filter(masque_par_parent=False)
+    engagements_base = request.user.engagements_client.filter(masque_par_parent=False).select_related(
+        'professeur', 'professeur__user'
+    ).prefetch_related(
+        'enfants_concernes', 'conversation', 'professeur__parents_favoris'
+    )
     
     # On filtre ceux de l'enfant actif OU ceux qui n'ont AUCUN enfant lié (orphelins)
     from django.db.models import Q
