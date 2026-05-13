@@ -139,10 +139,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Formulaire submit ────────────────────────────────────
     if (chatForm) {
-        chatForm.addEventListener('submit', async (e) => {
+        // Blindage contre le rechargement intempestif
+        chatForm.onsubmit = async (e) => {
             e.preventDefault();
             await submitMessage();
-        });
+        };
     }
 
     if (retryBtn) {
@@ -259,8 +260,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (!bubble) return;
                     const icon = bubble.querySelector('.msg-tick');
                     if (icon && !icon.classList.contains('read')) {
-                        icon.classList.add('read');
-                        // Pas besoin de remplacer l'innerHTML, c'est déjà le bon SVG, la couleur est gérée par le CSS
+                        icon.outerHTML = `<svg class="msg-tick read" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>
+                        </svg>`;
                     }
                 });
             }
@@ -357,8 +359,8 @@ function appendSentBubble(id, text, file, time) {
     }
     html += `<div class="msg-meta">
         <span class="msg-time">${time}</span>
-        <svg class="msg-tick" viewBox="0 0 24 24" width="14" height="14">
-            <path d="M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7M16.59,15.41L12.41,11.24L11,12.66L16.59,18.25L22.25,12.59L20.84,11.17L16.59,15.41M1,12.59L6.59,18.18L8,16.77L2.41,11.17L1,12.59Z"/>
+        <svg class="msg-tick" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 9 17l-5-5"/>
         </svg>
     </div>`;
     bubble.innerHTML = html;

@@ -1702,7 +1702,25 @@ def conversation_detail(request, conversation_id):
     raw_messages = conversation.messages.all().order_by("date_envoi")
     chat_messages = []
     last_date = None
+    
+    eng = conversation.engagement_actif
+    # Déterminer le rôle
+    user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
+    
+    # Vérifier l'abonnement
+    from .choices import TypeAbonnement, Localisation
+    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+    
     for msg in raw_messages:
+        # Masquage Paywall (Backend Security)
+        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
+            if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
+                # Vérifier si le message vient après la confirmation/création de l'engagement
+                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
+                if msg.date_envoi >= ref_date:
+                    msg.contenu_texte = "🔒 Message verrouillé. Veuillez régler les frais d'engagement de 2000f pour débloquer cette discussion."
+                    msg.contenu_media = None
+
         msg_date = msg.date_envoi.date()
         msg.changed_date = (msg_date != last_date)
         chat_messages.append(msg)
@@ -1723,19 +1741,11 @@ def conversation_detail(request, conversation_id):
     # Engagements liés
     linked_engagements = conversation.engagements.all().order_by("-date_creation")
     
-    # Déterminer le rôle
-    user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
-    is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
-    
     # Logique de blocage (cohérente avec api_send_message)
     is_blocked = False
     hide_input = False
     blocking_message = ""
-    eng = conversation.engagement_actif
-    
-    # Vérifier l'abonnement
-    from .choices import TypeAbonnement, Localisation
-    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+    # eng, is_premium, user_role sont déjà définis plus haut
 
     if eng and user_role in ['PARENT', 'APPRENANT']:
         # 1. Bloqué si en attente ou refusé
@@ -1748,7 +1758,33 @@ def conversation_detail(request, conversation_id):
             if not is_premium:
                 is_blocked = True
                 hide_input = True
-                blocking_message = "Paiement requis pour continuer les échanges."
+                
+                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
+                prof_sent_msg = conversation.messages.filter(
+                    auteur=conversation.professeur.user if conversation.professeur else None,
+                    date_envoi__gte=ref_date
+                ).exists()
+                
+                if prof_sent_msg:
+                    blocking_message = """
+                        <div style="text-align:center;">
+                            <p style="margin-bottom:1rem;font-weight:600;font-size:0.9rem;">Le professeur a confirmé et vous a envoyé un message.</p>
+                            <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+                                <button type="button" onclick="showPaymentModal()" class="c-eng-btn-primary" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;">Procéder au paiement</button>
+                                <a href="/mon-plan/" class="c-eng-btn-outline" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;text-decoration:none;">Gérer mon plan</a>
+                            </div>
+                        </div>
+                    """
+                else:
+                    blocking_message = """
+                        <div style="text-align:center;">
+                            <p style="margin-bottom:1rem;font-weight:600;font-size:0.9rem;">Le professeur a confirmé votre demande.</p>
+                            <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+                                <button type="button" onclick="showPaymentModal()" class="c-eng-btn-primary" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;">Procéder au paiement</button>
+                                <a href="/mon-plan/" class="c-eng-btn-outline" style="padding:0.4rem 0.8rem;border-radius:8px;font-size:0.85rem;text-decoration:none;">Gérer mon plan</a>
+                            </div>
+                        </div>
+                    """
                 
     is_eligible_to_finalize = True  # On autorise par défaut
 
@@ -1947,14 +1983,29 @@ def api_fetch_new_messages(request, conversation_id):
         if unread_ids:
             newly_read = list(conversation.messages.filter(id__in=unread_ids, lu=True).values_list('id', flat=True))
 
+    from .choices import TypeAbonnement
+    eng = conversation.engagement_actif
+    user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
+    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+    
     messages_data = []
     for msg in new_messages:
+        texte = msg.contenu_texte
         file_url = msg.contenu_media.url if msg.contenu_media else None
         file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
         
+        # Masquage Paywall (Backend Security)
+        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
+            if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
+                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
+                if msg.date_envoi >= ref_date:
+                    texte = "🔒 Message verrouillé. Veuillez régler les frais d'engagement de 2000f pour débloquer cette discussion."
+                    file_url = None
+                    file_name = None
+        
         messages_data.append({
             'id': msg.id,
-            'texte': msg.contenu_texte,
+            'texte': texte,
             'fichier_url': file_url,
             'fichier_nom': file_name,
             'date': msg.date_envoi.strftime("%H:%M"),

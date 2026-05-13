@@ -199,7 +199,7 @@
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.25rem;
     /* Pattern de fond doux et dégradé subtil */
     background: var(--c-bg);
     background-image: 
@@ -241,10 +241,15 @@
     color: rgba(255, 255, 255, 0.8);
 }
 
-.msg-bubble .msg-tick { fill: #94a3b8; }
-.msg-bubble .msg-tick.read { fill: #34b7f1; }
-.msg-bubble.sent .msg-tick { fill: rgba(255, 255, 255, 0.6); }
-.msg-bubble.sent .msg-tick.read { fill: #ffffff; }
+.msg-bubble .msg-tick { stroke: #9ca3af; }
+.msg-bubble .msg-tick.read { stroke: #3b82f6; }
+.msg-bubble.sent .msg-tick { stroke: rgba(255, 255, 255, 0.6); }
+.msg-bubble.sent .msg-tick.read { stroke: #ffffff; }
+
+/* Groupement des messages (Espacement) */
+.msg-bubble.sent + .msg-bubble.received { margin-top: 1rem; }
+.msg-bubble.received + .msg-bubble.sent { margin-top: 1rem; }
+.msg-date-divider { margin: 1.5rem 0 1rem 0; }
 
 .msg-bubble.received {
     align-self: flex-start;
