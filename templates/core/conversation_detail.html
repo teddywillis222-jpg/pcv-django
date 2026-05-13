@@ -362,7 +362,7 @@
             fetchMessages: "{% url 'api_fetch_new_messages' conversation.id %}"
         },
         csrfToken: "{{ csrf_token }}",
-        lastMsgId: parseInt("{{ messages|last|attr:'id'|default:messages.last.id|default:0 }}") || 0,
+        lastMsgId: parseInt("{% if messages %}{% with m=messages|last %}{{ m.id }}{% endwith %}{% else %}0{% endif %}") || 0,
         isBlocked: {{ is_blocked|yesno:"true,false" }},
         isEligibleToFinalize: {{ is_eligible_to_finalize|yesno:"true,false" }}
     };
