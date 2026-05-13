@@ -1746,6 +1746,9 @@ def conversation_detail(request, conversation_id):
     hide_input = False
     blocking_message = ""
     # eng, is_premium, user_role sont déjà définis plus haut
+    
+    from .choices import Role
+    is_user_prof = (user_role == Role.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
 
     if eng and user_role in ['PARENT', 'APPRENANT']:
         # 1. Bloqué si en attente ou refusé
