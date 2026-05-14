@@ -2919,10 +2919,9 @@ def payer_engagement(request, engagement_id):
         payment_url = initier_paiement_engagement(engagement, request.user, callback_url)
         return redirect(payment_url)
     except Exception as e:
-        messages.error(request, f"Erreur de paiement : {str(e)}")
-        if engagement.conversation:
-            return redirect('conversation_detail', conversation_id=engagement.conversation.id)
-        return redirect('parent_dashboard')
+        print(f"🔴 ERREUR FEDAPAY : {str(e)}")
+        # On relève l'erreur pour qu'elle s'affiche en gros sur votre écran (DEBUG=True)
+        raise e
 
 
 import json
