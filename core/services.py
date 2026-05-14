@@ -1,49 +1,75 @@
 import os
-import fedapay
+import requests
 from django.conf import settings
 from .models import TransactionFedaPay
 
-# Configuration de l'environnement (sandbox par défaut)
-fedapay.environment = os.environ.get('FEDAPAY_ENVIRONMENT', 'sandbox')
-fedapay.api_key = os.environ.get('FEDAPAY_SECRET_KEY', '') # Par sécurité, mettez une valeur par défaut vide
-
 def initier_paiement_engagement(engagement, user, callback_url):
     """
-    Initialise une transaction FedaPay pour payer les frais d'engagement de 2000 FCFA.
-    Retourne l'URL de paiement générée par FedaPay.
+    Initialise une transaction FedaPay pour payer les frais d'engagement de 2000 FCFA
+    en utilisant l'API REST directe (car la librairie python 'fedapay' de PyPI est incomplète).
     """
-    if not fedapay.api_key:
+    api_key = os.environ.get('FEDAPAY_SECRET_KEY', '')
+    env = os.environ.get('FEDAPAY_ENVIRONMENT', 'sandbox')
+
+    if not api_key:
         raise ValueError("La clé API FedaPay (FEDAPAY_SECRET_KEY) n'est pas configurée dans l'environnement.")
 
+    base_url = "https://sandbox-api.fedapay.com/v1" if env == 'sandbox' else "https://api.fedapay.com/v1"
     montant = 2000
 
-    try:
-        # Création de la transaction chez FedaPay
-        transaction = fedapay.Transaction.create(
-            amount=montant,
-            currency={'iso': 'XOF'},
-            callback_url=callback_url,
-            description=f"Frais d'engagement Prof Chez Vous (#{engagement.id})",
-            customer={
-                'firstname': user.first_name or "Parent",
-                'lastname': user.last_name or "PCV",
-                'email': user.email or f"user_{user.id}@profchezvous.com",
-            }
-        )
-        
-        # Génération du token pour obtenir l'URL de paiement
-        token = transaction.generate_token()
-        payment_url = token.url
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
 
-        # Enregistrement de la trace comptable dans la base de données
+    payload = {
+        "description": f"Frais d'engagement Prof Chez Vous (#{engagement.id})",
+        "amount": montant,
+        "currency": {"iso": "XOF"},
+        "callback_url": callback_url,
+        "customer": {
+            "firstname": user.first_name or "Parent",
+            "lastname": user.last_name or "PCV",
+            "email": user.email or f"user_{user.id}@profchezvous.com"
+        }
+    }
+
+    try:
+        # 1. Créer la transaction
+        response = requests.post(f"{base_url}/transactions", json=payload, headers=headers)
+        response_data = response.json()
+
+        if response.status_code not in [200, 201]:
+            error_msg = response_data.get('message', 'Erreur inconnue')
+            raise Exception(f"Erreur API FedaPay: {error_msg}")
+
+        transaction_data = response_data.get('v1/transaction', response_data.get('transaction', {}))
+        transaction_id = transaction_data.get('id')
+
+        # 2. Générer le token de paiement
+        token_response = requests.post(f"{base_url}/transactions/{transaction_id}/token", headers=headers)
+        token_data = token_response.json()
+
+        if token_response.status_code not in [200, 201]:
+            raise Exception("Impossible de générer le token de paiement FedaPay.")
+
+        payment_url = token_data.get('url', token_data.get('v1/token', {}).get('url'))
+        if not payment_url:
+            payment_url = token_data.get('token', {}).get('url')
+
+        if not payment_url:
+            raise Exception("L'URL de paiement n'a pas été retournée par FedaPay.")
+
+        # 3. Enregistrement en base de données locale
         TransactionFedaPay.objects.create(
             engagement=engagement,
-            transaction_id=str(transaction.id),
+            transaction_id=str(transaction_id),
             montant=montant,
             statut='pending'
         )
 
         return payment_url
 
-    except Exception as e:
-        raise Exception(f"Erreur lors de l'initialisation de la transaction FedaPay : {str(e)}")
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Erreur de connexion à FedaPay : {str(e)}")
