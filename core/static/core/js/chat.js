@@ -228,8 +228,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
                     }
                     if (msg.is_locked) {
+                        const paymentLink = config.urls && config.urls.paymentUrl ? `<a href="${config.urls.paymentUrl}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Procéder au paiement</a>` : `<button type="button" onclick="showPaymentModal()" style="color:var(--c-accent); font-weight:600; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">Procéder au paiement</button>`;
                         html += `<div style="opacity: 0.9; font-style: italic; margin-bottom: 0.5rem;">
-                            Ce message est verrouillé. Veuillez <button type="button" onclick="showPaymentModal()" style="color:var(--c-accent); font-weight:600; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">Procéder au paiement</button> ou <a href="/mon-plan/" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
+                            Ce message est verrouillé. Veuillez ${paymentLink} ou <a href="/mon-plan/" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
                         </div>`;
                     } else if (msg.text) {
                         html += `<div class="msg-content">${escapeHtml(msg.text)}</div>`;

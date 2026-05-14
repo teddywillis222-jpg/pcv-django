@@ -963,3 +963,36 @@ class ProfessorAnnouncement(models.Model):
 
     def __str__(self):
         return f"{self.title} ({'Active' if self.is_active else 'Inactive'})"
+
+
+class TransactionFedaPay(models.Model):
+    """
+    Trace comptable d'une tentative de paiement des frais d'engagement (2000 FCFA).
+    """
+    engagement = models.ForeignKey(
+        "Engagement",
+        on_delete=models.CASCADE,
+        related_name="transactions",
+        help_text="L'engagement lié à ce paiement"
+    )
+    transaction_id = models.CharField(
+        max_length=100, 
+        unique=True,
+        help_text="L'ID de transaction généré par FedaPay"
+    )
+    montant = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=2000.00,
+        help_text="Montant en FCFA"
+    )
+    statut = models.CharField(
+        max_length=50,
+        default="pending",
+        help_text="Statut renvoyé par FedaPay (ex: pending, approved, declined)"
+    )
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_validation = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Transaction {self.transaction_id} - {self.statut}"

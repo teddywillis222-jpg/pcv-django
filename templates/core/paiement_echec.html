@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Échec du Paiement{% endblock %}
+{% block content %}
+<div style="max-width: 600px; margin: 4rem auto; text-align: center; padding: 2rem; background: white; border-radius: 24px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">❌</div>
+    <h1 style="color: #ef4444; font-weight: 800; margin-bottom: 1rem;">Échec du Paiement</h1>
+    <p style="color: #64748b; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+        Le paiement de vos frais d'engagement n'a pas pu aboutir ou a été annulé.
+        <br>Veuillez réessayer ou choisir un autre moyen de paiement.
+    </p>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="{% url 'payer_engagement' engagement.id %}" style="display: inline-block; padding: 1rem 2rem; background: #ef4444; color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1rem;">
+            Réessayer le paiement
+        </a>
+        {% if engagement.conversation %}
+        <a href="{% url 'conversation_detail' engagement.conversation.id %}" style="display: inline-block; padding: 1rem 2rem; background: #f1f5f9; color: #0f172a; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1rem;">
+            Annuler
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

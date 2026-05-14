@@ -128,7 +128,7 @@
                 
                 {% if msg.is_locked %}
                     <div style="opacity: 0.9; font-style: italic;">
-                        Ce message est verrouillé. Veuillez <button type="button" onclick="showPaymentModal()" style="color:var(--c-accent); font-weight:600; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">Procéder au paiement</button> ou <a href="{% url 'gestion_plan' %}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
+                        Ce message est verrouillé. Veuillez <a href="{% url 'payer_engagement' conversation.engagement_actif.id %}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Procéder au paiement</a> ou <a href="{% url 'gestion_plan' %}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
                     </div>
                 {% else %}
                     {{ msg.contenu_texte|linebreaksbr }}
@@ -359,7 +359,8 @@
     window.chatConfig = {
         urls: {
             sendMessage: "{% url 'api_send_message' conversation.id %}",
-            fetchMessages: "{% url 'api_fetch_new_messages' conversation.id %}"
+            fetchMessages: "{% url 'api_fetch_new_messages' conversation.id %}",
+            paymentUrl: "{% if conversation.engagement_actif %}{% url 'payer_engagement' conversation.engagement_actif.id %}{% endif %}"
         },
         csrfToken: "{{ csrf_token }}",
         lastMsgId: parseInt("{% if messages %}{% with m=messages|last %}{{ m.id }}{% endwith %}{% else %}0{% endif %}") || 0,

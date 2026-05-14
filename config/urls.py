@@ -81,6 +81,12 @@ urlpatterns = [
     path("api/professeur/toggle-essai/", core_views.api_toggle_essai, name="api_toggle_essai"),
     path("api/fictional-payment/", core_views.api_fictional_payment, name="api_fictional_payment"),
 
+    # FedaPay
+    path("paiement/initier/<int:engagement_id>/", core_views.payer_engagement, name="payer_engagement"),
+    path("paiement/callback/", core_views.fedapay_callback, name="fedapay_callback"),
+    path("paiement/succes/<int:engagement_id>/", core_views.paiement_succes, name="paiement_succes"),
+    path("paiement/echec/<int:engagement_id>/", core_views.paiement_echec, name="paiement_echec"),
+
     # Suivi Pédagogique
     path("engagement/<int:engagement_id>/suivi/", core_views.suivi_engagement, name="suivi_engagement"),
     path("engagement/<int:engagement_id>/seances/", core_views.toutes_seances, name="toutes_seances"),

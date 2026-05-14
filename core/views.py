@@ -2891,3 +2891,93 @@ def create_announcement(request):
         form = AnnouncementForm()
 
     return render(request, 'core/admin_create_announcement.html', {'form': form})
+
+# --- Intégration FedaPay ---
+
+@login_required
+def payer_engagement(request, engagement_id):
+    """Vue pour initialiser le paiement et rediriger vers FedaPay."""
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # Vérifications de sécurité
+    if request.user != engagement.parent_apprenant:
+        from django.http import HttpResponseForbidden
+        return HttpResponseForbidden("Vous n'êtes pas autorisé à payer cet engagement.")
+    if engagement.paiement_effectue:
+        messages.info(request, "Ce paiement a déjà été effectué.")
+        if engagement.conversation:
+            return redirect('conversation_detail', conversation_id=engagement.conversation.id)
+        return redirect('parent_dashboard')
+
+    from .services import initier_paiement_engagement
+    from django.urls import reverse
+    
+    # Construction de l'URL de callback (retour utilisateur / webhook interne)
+    callback_url = request.build_absolute_uri(reverse('fedapay_callback'))
+    
+    try:
+        payment_url = initier_paiement_engagement(engagement, request.user, callback_url)
+        return redirect(payment_url)
+    except Exception as e:
+        messages.error(request, f"Erreur de paiement : {str(e)}")
+        if engagement.conversation:
+            return redirect('conversation_detail', conversation_id=engagement.conversation.id)
+        return redirect('parent_dashboard')
+
+
+import json
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def fedapay_callback(request):
+    """
+    Webhook / Callback pour recevoir le statut de la transaction FedaPay.
+    """
+    status = request.GET.get('status')
+    transaction_id = request.GET.get('id')
+    
+    if not transaction_id:
+        try:
+            payload = json.loads(request.body)
+            transaction_id = payload.get('entity', {}).get('id')
+            status = payload.get('entity', {}).get('status')
+        except:
+            pass
+
+    if transaction_id and status:
+        from .models import TransactionFedaPay
+        try:
+            local_txn = TransactionFedaPay.objects.get(transaction_id=str(transaction_id))
+            local_txn.statut = status
+            
+            if status == 'approved':
+                import django.utils.timezone as timezone
+                local_txn.date_validation = timezone.now()
+                # Débloquer la messagerie
+                engagement = local_txn.engagement
+                engagement.paiement_effectue = True
+                engagement.save()
+            
+            local_txn.save()
+            
+            # Si c'est une requête GET, on redirige l'utilisateur
+            if request.method == 'GET':
+                if status == 'approved':
+                    return redirect('paiement_succes', engagement_id=local_txn.engagement.id)
+                else:
+                    return redirect('paiement_echec', engagement_id=local_txn.engagement.id)
+                    
+        except TransactionFedaPay.DoesNotExist:
+            pass
+
+    return JsonResponse({'status': 'ok'})
+
+@login_required
+def paiement_succes(request, engagement_id):
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    return render(request, 'core/paiement_succes.html', {'engagement': engagement})
+
+@login_required
+def paiement_echec(request, engagement_id):
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    return render(request, 'core/paiement_echec.html', {'engagement': engagement})

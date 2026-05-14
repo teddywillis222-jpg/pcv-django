@@ -26,3 +26,4 @@ cryptography==43.0.1
 Pillow==10.4.0
 cloudinary
 django-cloudinary-storage
+fedapay==0.3.0
