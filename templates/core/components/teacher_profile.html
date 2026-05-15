@@ -400,14 +400,23 @@
 
 <script>
 // Initialiser les boutons "Voir plus" si le texte dépasse la hauteur
-document.querySelectorAll('.expandable-text').forEach(function(el) {
-    if (el.scrollHeight > el.clientHeight) {
-        const btn = el.nextElementSibling;
-        if (btn && btn.classList.contains('expand-btn')) {
-            btn.style.display = 'inline-block';
+function initExpandableText() {
+    document.querySelectorAll('.expandable-text').forEach(function(el) {
+        if (el.scrollHeight > el.clientHeight) {
+            const btn = el.nextElementSibling;
+            if (btn && btn.classList.contains('expand-btn')) {
+                btn.style.display = 'inline-block';
+            }
         }
-    }
-});
+    });
+}
+
+// Exécuter après un léger délai pour garantir que le CSS et les polices sont chargés
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(initExpandableText, 150));
+} else {
+    setTimeout(initExpandableText, 150);
+}
 
 function toggleText(btn) {
     const textEl = btn.previousElementSibling;

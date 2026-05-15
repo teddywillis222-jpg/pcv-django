@@ -67,7 +67,10 @@
         <button class="btn-consult">Consulter le profil</button>
         <button class="favorite-btn {% if teacher in favoris %}active{% endif %}" 
                 title="Ajouter aux favoris"
-                {% if not user.is_authenticated %}
+                {% if user.is_authenticated and user.profile.role == 'PROF' %}
+                    style="opacity: 0.4; cursor: not-allowed; pointer-events: none;"
+                    onclick="event.stopPropagation();"
+                {% elif not user.is_authenticated %}
                     onclick="event.stopPropagation(); showAuthModal()"
                 {% else %}
                     onclick="event.stopPropagation(); toggleFavoriteAjax(this, '{{ teacher.id }}')"

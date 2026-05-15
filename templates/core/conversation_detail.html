@@ -115,6 +115,15 @@
             </div>
             {% endif %}
 
+            {% if msg.is_first_after_finalization %}
+            <div style="text-align:center; margin: 1.5rem 0;">
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: #dcfce7; color: #16a34a; font-size: 0.75rem; padding: 0.35rem 1rem; border-radius: 99px; font-weight: 700; border: 1px solid #bbf7d0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    Engagement finalisé le {{ msg.date_finalisation_display|date:"d M Y à H:i" }}
+                </div>
+            </div>
+            {% endif %}
+
             <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}" data-id="{{ msg.id }}">
                 {% if msg.contenu_media %}
                     <div style="margin-bottom:0.5rem;">
@@ -138,8 +147,8 @@
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
                     {% if msg.auteur == request.user %}
                         {% if msg.lu %}
-                        <svg class="msg-tick read" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>
+                        <svg class="msg-tick read" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 6 11 13 8 10"/><polyline points="22 6 15 13 12 10"/>
                         </svg>
                         {% else %}
                         <svg class="msg-tick" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -149,6 +158,31 @@
                     {% endif %}
                 </div>
             </div>
+        {% empty %}
+            {% if payment_required %}
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center;">
+                <div style="width: 64px; height: 64px; background: #fee2e2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Paiement requis</h3>
+                <p style="font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; max-width: 400px;">
+                    Le professeur a accepté votre proposition ! Pour débloquer la conversation et commencer à échanger, veuillez régler les frais de mise en relation ou souscrire à un plan.
+                </p>
+                <div style="display: flex; gap: 1rem; width: 100%; max-width: 400px; flex-direction: column;">
+                    <a href="{% url 'payer_engagement' conversation.engagement_actif.id %}" style="display: block; width: 100%; padding: 0.875rem; background: var(--c-accent); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
+                        Procéder au paiement (2000 FCFA)
+                    </a>
+                    <a href="{% url 'gestion_plan' %}" style="display: block; width: 100%; padding: 0.875rem; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center;">
+                        Gérer mon plan
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center; color: #94a3b8;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 1rem; opacity: 0.5;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <p style="font-size: 0.95rem;">Aucun message pour le moment.<br>Commencez la discussion !</p>
+            </div>
+            {% endif %}
         {% endfor %}
 
     </main>

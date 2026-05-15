@@ -19,7 +19,7 @@ from .forms import (
     ParentForm,
     SignUpForm,
 )
-from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation
+from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation, CourseMode
 from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message, ProfessorAnnouncement
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -1326,7 +1326,7 @@ def professeur_detail(request, teacher_slug):
             })
 
     # Conversion des codes en noms lisibles
-    mode_map = {'PARENT_HOME': 'Présentiel', 'APPRENANT_HOME': 'Présentiel', 'ONLINE': 'En ligne', 'HYBRID': 'Hybride'}
+    mode_map = dict(CourseMode.CHOICES)
     class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
     
     readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
@@ -1464,7 +1464,7 @@ def api_teacher_profile(request, teacher_slug):
                 pass
         
         # Conversion des codes en noms lisibles
-        mode_map = {'PARENT_HOME': 'Présentiel', 'APPRENANT_HOME': 'Présentiel', 'ONLINE': 'En ligne', 'HYBRID': 'Hybride'}
+        mode_map = dict(CourseMode.CHOICES)
         class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
         readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
         readable_classes = [class_map.get(c, c) for c in teacher.classes_enseignees]
@@ -1710,6 +1710,7 @@ def conversation_detail(request, conversation_id):
     raw_messages = conversation.messages.all().order_by("date_envoi")
     chat_messages = []
     last_date = None
+    has_shown_finalization_badge = False
     
     eng = conversation.engagement_actif
     # Déterminer le rôle
@@ -1733,6 +1734,14 @@ def conversation_detail(request, conversation_id):
 
         msg_date = msg.date_envoi.date()
         msg.changed_date = (msg_date != last_date)
+        
+        if eng and eng.date_finalisation and msg.date_envoi >= eng.date_finalisation and not has_shown_finalization_badge:
+            msg.is_first_after_finalization = True
+            msg.date_finalisation_display = eng.date_finalisation
+            has_shown_finalization_badge = True
+        else:
+            msg.is_first_after_finalization = False
+            
         chat_messages.append(msg)
         last_date = msg_date
     
