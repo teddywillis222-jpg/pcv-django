@@ -30,12 +30,14 @@
 
     /* Hero Section */
     .hero-banner {
-        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
         padding: 6rem 1.5rem 8rem;
         text-align: center;
         position: relative;
         overflow: hidden;
-        margin-top: -2rem; /* Pull up to cover gap if necessary */
+        margin-top: -75px; /* Compense le padding-top du body de base.html */
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
     }
 
     .hero-banner::before {
@@ -50,15 +52,7 @@
     }
 
     .hero-banner::after {
-        content: '';
-        position: absolute;
-        bottom: -50px;
-        left: 0;
-        right: 0;
-        height: 100px;
-        background: #f8fafc;
-        transform: skewY(-2deg);
-        z-index: 1;
+        display: none; /* Supprime le bord incliné pour un fondu plus doux */
     }
 
     .hero-content {
@@ -298,6 +292,7 @@
         transform: translateY(-3px);
         box-shadow: 0 20px 40px rgba(22, 163, 74, 0.4);
         color: white;
+        text-decoration: none !important;
     }
 
     /* Animations */

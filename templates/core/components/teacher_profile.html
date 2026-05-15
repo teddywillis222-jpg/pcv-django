@@ -6,8 +6,9 @@
         <!-- Photo de profil -->
         {% if teacher.photo_de_profil %}
             <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}"
+                 onclick="openZoom('{{ teacher.photo_de_profil.url }}')"
                  style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
-                        border: 3px solid #e9eef5; margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto;">
+                        border: 3px solid #e9eef5; margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto; cursor: zoom-in;">
         {% else %}
             <div class="avatar-initials" style="width: 110px; height: 110px; border-radius: 50%; background: #e2e8f0;
                         border: 3px solid #e9eef5; margin: 0 auto 1rem; display: flex;

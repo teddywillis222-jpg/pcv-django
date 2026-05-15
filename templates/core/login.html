@@ -46,7 +46,12 @@
 
                 <div class="form-group">
                     <label for="{{ form.password.id_for_label }}">Mot de passe</label>
-                    {{ form.password }}
+                    <div style="position: relative;">
+                        {{ form.password }}
+                        <button type="button" onclick="togglePasswordVisibility('{{ form.password.id_for_label }}', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
                     <div style="text-align: right; margin-top: 0.25rem;">
                         <a href="#" style="font-size: 0.75rem; color: var(--brand-600); text-decoration: none; font-weight: 600;">Mot de passe oublié ?</a>
                     </div>

@@ -52,8 +52,8 @@ class SignUpForm(UserCreationForm):
         if "password1" in self.fields:
             self.fields["password1"].label = "Mot de passe"
             self.fields["password1"].widget.attrs.update({
-                "placeholder": "Min 8 caractères, 1 majuscule, 1 chiffre",
-                "minlength": "8"
+                "placeholder": "Min 6 caractères (lettre, chiffre et spécial)",
+                "minlength": "6"
             })
         if "password2" in self.fields:
             self.fields["password2"].label = "Confirmer le mot de passe"
@@ -67,11 +67,11 @@ class SignUpForm(UserCreationForm):
 
     def clean_password1(self):
         password = self.cleaned_data.get('password1')
-        if len(password) < 8:
-            raise ValidationError("Le mot de passe doit contenir au moins 8 caractères.")
+        if len(password) < 6:
+            raise ValidationError("Le mot de passe doit contenir au moins 6 caractères.")
         
-        if not re.search(r'[A-Z]', password):
-            raise ValidationError("Le mot de passe doit contenir au moins une majuscule.")
+        if not re.search(r'[a-zA-Z]', password):
+            raise ValidationError("Le mot de passe doit contenir au moins une lettre.")
         
         if not re.search(r'[0-9]', password):
             raise ValidationError("Le mot de passe doit contenir au moins un chiffre.")

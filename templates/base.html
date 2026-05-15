@@ -766,6 +766,25 @@
                         </li>
                     </ul>
                 </div>
+
+                <!-- Colonne E: Communauté -->
+                <div class="footer-column">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Communauté</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem;">
+                            <a href="https://whatsapp.com/channel/0029VbCr6VNIN9irUaGAd820" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.614-1.532-.865-.768-1.442-1.716-1.612-2.003-.17-.288-.014-.444.128-.585.129-.127.288-.337.432-.507.144-.171.192-.288.288-.481.097-.193.048-.363-.024-.507-.072-.144-.648-1.564-.888-2.142-.233-.563-.47-.486-.648-.496l-.552-.01c-.192 0-.505.072-.769.362-.264.29-.624.604-.624 1.472 0 .868.625 1.712.72 1.833.097.12 1.229 1.878 2.977 2.632.416.18.74.288 1.002.37.417.133.796.115 1.096.07.334-.051 1.031-.421 1.175-.827.145-.406.145-.752.1-.826-.044-.074-.165-.118-.349-.209z"/></svg>
+                                Parents & Apprenants
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 0.5rem;">
+                            <a href="https://whatsapp.com/channel/0029VbD5Qni2Jl8KaiqS3k36" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.614-1.532-.865-.768-1.442-1.716-1.612-2.003-.17-.288-.014-.444.128-.585.129-.127.288-.337.432-.507.144-.171.192-.288.288-.481.097-.193.048-.363-.024-.507-.072-.144-.648-1.564-.888-2.142-.233-.563-.47-.486-.648-.496l-.552-.01c-.192 0-.505.072-.769.362-.264.29-.624.604-.624 1.472 0 .868.625 1.712.72 1.833.097.12 1.229 1.878 2.977 2.632.416.18.74.288 1.002.37.417.133.796.115 1.096.07.334-.051 1.031-.421 1.175-.827.145-.406.145-.752.1-.826-.044-.074-.165-.118-.349-.209z"/></svg>
+                                Répétiteurs
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             
             <div style="border-top: 1px solid #334155; padding-top: 1rem; text-align: center;">
@@ -900,6 +919,20 @@
             }
             return cookieValue;
         }
+
+        // Helper global pour afficher/masquer le mot de passe
+        function togglePasswordVisibility(inputId, buttonEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                buttonEl.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            } else {
+                input.type = 'password';
+                buttonEl.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            }
+        }
     </script>
 
     <!-- Modal d'exhortation global -->
@@ -946,6 +979,7 @@
                     plugins: ['remove_button', 'dropdown_input'],
                     create: true,
                     persist: false,
+                    closeAfterSelect: true,
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
                     maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (select.classList.contains('allow-multiple') ? null : (select.hasAttribute('multiple') ? null : 1)),
                     maxOptions: 15,
