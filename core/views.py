@@ -112,6 +112,7 @@ def annotate_teachers_with_ratings(queryset):
 
 def home(request):
     from .choices import ValidationStatus
+    from django.db.models import F
     
     # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
     top_professeurs = TeacherProfile.objects.filter(
@@ -119,6 +120,13 @@ def home(request):
     ).order_by('-profil_complet', '?')[:24]
 
     top_professeurs = annotate_teachers_with_ratings(top_professeurs)
+    
+    # Incrémenter les vues (apparitions)
+    prof_ids = list(top_professeurs.values_list('id', flat=True))
+    if prof_ids:
+        TeacherProfile.objects.filter(id__in=prof_ids).update(
+            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1
+        )
 
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
 
@@ -359,14 +367,29 @@ def recherche(request):
             professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
 
     # 3. Annotation des ratings + badge Suivi Rigoureux via le helper centralisé
-    # Ordre : 1) Certifiés en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus récent
-    professeurs = annotate_teachers_with_ratings(professeurs).order_by(
-        '-est_certifie',
-        '-suivi_rigoureux',
-        '-profil_complet',
-        '-moyenne_avis',
-        '-id'
-    )
+    professeurs = annotate_teachers_with_ratings(professeurs)
+
+    # 4. Tri des résultats
+    sort_by = request.GET.get('sort', '').strip()
+    if sort_by == 'recent_active':
+        professeurs = professeurs.order_by('-user__last_login', '-id')
+    else:
+        # Ordre par défaut : 1) Certifiés en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus récent
+        professeurs = professeurs.order_by(
+            '-est_certifie',
+            '-suivi_rigoureux',
+            '-profil_complet',
+            '-moyenne_avis',
+            '-id'
+        )
+        
+    # 5. Incrémenter les vues (apparitions en recherche)
+    from django.db.models import F
+    prof_ids = list(professeurs.values_list('id', flat=True))
+    if prof_ids:
+        TeacherProfile.objects.filter(id__in=prof_ids).update(
+            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1
+        )
 
     # Contexte Parent/Enfants
     parent_children = []
@@ -397,6 +420,7 @@ def recherche(request):
         'prix': prix,
         'mode': mode,
         'soutien': soutien,
+        'sort_by': sort_by,
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
         'seo_title': seo_title,

@@ -416,6 +416,12 @@
                         <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
                             🧹 Réinitialiser
                         </a>
+                        <div style="margin-left: auto;">
+                            <select id="sort" name="sort" class="reset-filters-btn" style="background: white; border: 1px solid #e2e8f0; font-weight: 500;" onchange="this.form.submit()">
+                                <option value="" {% if sort_by != 'recent_active' %}selected{% endif %}>Trier par : Pertinence</option>
+                                <option value="recent_active" {% if sort_by == 'recent_active' %}selected{% endif %}>Trier par : Actifs récemment</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 

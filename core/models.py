@@ -533,6 +533,7 @@ class TeacherProfile(models.Model):
     nb_vues_semaine = models.PositiveIntegerField(default=0)
     nb_vues_mois = models.PositiveIntegerField(default=0)
     nb_vues_total = models.PositiveIntegerField(default=0)
+    nombre_apparitions_recherche = models.PositiveIntegerField(default=0)
     # evaluations_recues : relation inverse depuis Evaluation.professeur_evalue
     nb_engagements_confirmes = models.PositiveIntegerField(default=0)
     nb_engagements_finalises = models.PositiveIntegerField(default=0)
