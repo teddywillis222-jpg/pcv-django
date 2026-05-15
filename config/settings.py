@@ -151,7 +151,7 @@ AUTHENTICATION_BACKENDS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Porto-Novo'
 
 USE_I18N = True
 
