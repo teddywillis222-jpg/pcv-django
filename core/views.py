@@ -2663,25 +2663,6 @@ def api_ping(request):
             
     return JsonResponse({'has_updates': has_updates})
 
-@login_required
-@require_http_methods(["POST"])
-def api_mark_welcome_seen(request):
-    engagement.masque_par_parent = True
-    engagement.save()
-    return JsonResponse({"success": True})
-
-@login_required
-def masquer_engagement_prof(request, eng_id):
-    if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
-        
-    engagement = get_object_or_404(Engagement, id=eng_id)
-    if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
-        return JsonResponse({"error": "Accès refusé."}, status=403)
-        
-    engagement.masque_pour_professeur = True
-    engagement.save()
-    return JsonResponse({"success": True})
 
 
 @login_required

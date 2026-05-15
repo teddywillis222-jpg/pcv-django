@@ -1002,6 +1002,14 @@
                     return;
                 }
                 
+                // Ne pas recharger si la modale d'engagement ou de succès est ouverte
+                const engModal = document.getElementById('engagementModal');
+                const successModal = document.getElementById('engagementSuccessModal');
+                if ((engModal && engModal.style.display !== 'none') || 
+                    (successModal && successModal.style.display !== 'none')) {
+                    return;
+                }
+                
                 fetch(`/api/ping/?last_check=${lastCheckTime}`)
                     .then(res => res.json())
                     .then(data => {

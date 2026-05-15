@@ -23,7 +23,7 @@
 
     <!-- Modal Detail Prof -->
     <div id="modal-prof-{{ prof.id }}" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding: 1rem;">
-        <div class="card" style="max-width:800px; width:100%; position:relative; max-height:90vh; overflow-y:auto; padding: 2rem;">
+        <div class="card" style="max-width:1000px; width:100%; position:relative; max-height:90vh; overflow-y:auto; padding: 2rem;">
             <button onclick="closeModal('modal-prof-{{ prof.id }}')" style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button>
             
             <div style="display:flex; align-items:center; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
@@ -38,44 +38,60 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-2 gap-6" style="margin-bottom: 2rem;">
-                <div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Informations Académiques</h4>
-                    <p style="margin:0.25rem 0;"><strong>Matière enseignée :</strong> {{ prof.matiere_enseignee }}</p>
-                    <p style="margin:0.25rem 0;"><strong>Catégorie de soutien :</strong> {{ prof.categorie_de_soutien }}</p>
-                    <p style="margin:0.25rem 0;"><strong>Expérience :</strong> {{ prof.annees_d_experience }} ans</p>
-                    <p style="margin:0.25rem 0;"><strong>Ville / Quartier :</strong> {{ prof.ville_quartier }}</p>
-                    <p style="margin:0.25rem 0;"><strong>Téléphone :</strong> {{ prof.telephone_whatsapp }}</p>
-                </div>
-                <div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Pièces Jointes</h4>
-                    
-                    {% if prof.fichier_cni %}
-                        <div style="margin-bottom: 1rem;">
-                            <strong>Carte d'Identité :</strong><br>
-                            <a href="{{ prof.fichier_cni.url }}" target="_blank" class="btn btn-outline" style="display:inline-block; margin-top: 0.5rem; text-decoration:none;">Ouvrir la CNI</a>
-                        </div>
-                    {% else %}
-                        <p style="color: var(--danger-color); font-size:0.875rem; font-weight:500;">Carte d'Identité Manquante</p>
-                    {% endif %}
+            <div class="grid gap-6" style="grid-template-columns: 1fr 1.5fr; margin-bottom: 2rem;">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Informations Académiques</h4>
+                        <p style="margin:0.25rem 0;"><strong>Matière enseignée :</strong> {{ prof.matiere_enseignee }}</p>
+                        <p style="margin:0.25rem 0;"><strong>Catégorie de soutien :</strong> {{ prof.categorie_de_soutien }}</p>
+                        <p style="margin:0.25rem 0;"><strong>Expérience :</strong> {{ prof.annees_d_experience }} ans</p>
+                        <p style="margin:0.25rem 0;"><strong>Ville / Quartier :</strong> {{ prof.ville_quartier }}</p>
+                        <p style="margin:0.25rem 0;"><strong>Téléphone :</strong> {{ prof.telephone_whatsapp }}</p>
+                        {% if prof.photo_de_profil %}
+                            <p style="margin:0.5rem 0 0 0;">
+                                <a href="{{ prof.photo_de_profil.url }}" target="viewer_{{ prof.id }}" style="color:var(--primary-green); font-weight: 500; font-size: 0.9rem;">👁️ Voir Photo de Profil en grand</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--text-muted); text-transform: uppercase; font-size:0.875rem;">Pièces Jointes</h4>
+                        
+                        {% if prof.fichier_cni %}
+                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                                <strong style="display: block; margin-bottom: 0.25rem;">Carte d'Identité :</strong>
+                                <a href="{{ prof.fichier_cni.url }}" target="viewer_{{ prof.id }}" class="btn btn-outline" style="display:inline-block; padding: 0.25rem 0.5rem; font-size: 0.85rem; text-decoration:none; margin-top: 0.25rem;">👁️ Afficher la CNI</a>
+                            </div>
+                        {% else %}
+                            <p style="color: var(--danger-color); font-size:0.875rem; font-weight:500; margin-bottom: 1rem;">Carte d'Identité Manquante</p>
+                        {% endif %}
 
-                    {% if prof.diplomes.all %}
-                        <div style="margin-top: 1rem;">
-                            <strong>Diplômes :</strong><br>
-                            <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
-                                {% for diplome in prof.diplomes.all %}
-                                <li>
-                                    {{ diplome.nom_diplome }}
-                                    {% if diplome.fichier_preuve %}
-                                        (<a href="{{ diplome.fichier_preuve.url }}" target="_blank" style="color:var(--primary-green);">Voir preuve</a>)
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% else %}
-                        <p style="color: var(--text-muted); font-size:0.875rem;">Aucun diplôme renseigné.</p>
-                    {% endif %}
+                        {% if prof.diplomes.all %}
+                            <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                                <strong style="display: block; margin-bottom: 0.5rem;">Diplômes :</strong>
+                                <ul style="padding-left: 1.25rem; margin: 0; font-size: 0.9rem;">
+                                    {% for diplome in prof.diplomes.all %}
+                                    <li style="margin-bottom: 0.5rem;">
+                                        {{ diplome.nom_diplome }}<br>
+                                        {% if diplome.fichier_preuve %}
+                                            <a href="{{ diplome.fichier_preuve.url }}" target="viewer_{{ prof.id }}" style="color:var(--primary-green); display: inline-block; margin-top: 0.15rem; font-weight: 500; text-decoration: none;">👁️ Afficher la preuve</a>
+                                        {% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% else %}
+                            <p style="color: var(--text-muted); font-size:0.875rem;">Aucun diplôme renseigné.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Panneau de visualisation intégré (iframe) -->
+                <div style="display: flex; flex-direction: column; background: #e5e7eb; border-radius: 0.5rem; overflow: hidden; border: 1px solid var(--border-color); height: 500px; position: relative;">
+                    <div style="background: #374151; color: white; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Visualiseur de documents</span>
+                        <span style="font-size: 0.75rem; color: #9ca3af;">Cliquez sur 👁️ pour afficher</span>
+                    </div>
+                    <iframe name="viewer_{{ prof.id }}" style="flex: 1; width: 100%; border: none; background: white;" src="about:blank"></iframe>
                 </div>
             </div>
 

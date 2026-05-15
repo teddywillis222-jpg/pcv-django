@@ -529,6 +529,7 @@
         engIdToFinalize = engId;
         const modal = document.getElementById('finalizeModalOverlay');
         modal.style.display = 'flex';
+        modal.style.pointerEvents = 'auto';
         requestAnimationFrame(() => {
             modal.style.opacity = '1';
             modal.querySelector('.c-modal-box').style.transform = 'translateY(0)';
@@ -538,12 +539,20 @@
     function closeFinalizeModal() {
         const modal = document.getElementById('finalizeModalOverlay');
         modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
         modal.querySelector('.c-modal-box').style.transform = 'translateY(20px)';
         setTimeout(() => {
             modal.style.display = 'none';
             engIdToFinalize = null;
         }, 300);
     }
+
+    // Fermeture du modal au clic sur l'arrière-plan
+    document.getElementById('finalizeModalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFinalizeModal();
+        }
+    });
 
     document.getElementById('confirmFinalizeBtn').addEventListener('click', async function() {
         if (!engIdToFinalize) return;
