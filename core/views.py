@@ -125,7 +125,8 @@ def home(request):
     prof_ids = list(top_professeurs.values_list('id', flat=True))
     if prof_ids:
         TeacherProfile.objects.filter(id__in=prof_ids).update(
-            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1
+            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1,
+            nombre_apparitions_mois=F('nombre_apparitions_mois') + 1
         )
 
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
@@ -388,7 +389,8 @@ def recherche(request):
     prof_ids = list(professeurs.values_list('id', flat=True))
     if prof_ids:
         TeacherProfile.objects.filter(id__in=prof_ids).update(
-            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1
+            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1,
+            nombre_apparitions_mois=F('nombre_apparitions_mois') + 1
         )
 
     # Contexte Parent/Enfants
