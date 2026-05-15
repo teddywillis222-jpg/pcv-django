@@ -96,6 +96,24 @@ class Profile(models.Model):
         help_text="Détermine si le popup de bienvenue (Apprenant/Parent) a déjà été fermé."
     )
 
+    @property
+    def current_plan(self):
+        """Retourne le code du plan d'abonnement actuel."""
+        latest = self.user.abonnements.order_by('-id').first()
+        if latest:
+            return latest.type_abonnement
+        return "STANDARD"
+
+    @property
+    def current_plan_label(self):
+        """Retourne le label lisible du plan d'abonnement actuel."""
+        from .choices import TypeAbonnement
+        plan = self.current_plan
+        for code, label in TypeAbonnement.CHOICES:
+            if code == plan:
+                return label
+        return "Standard"
+
     def __str__(self):
         return f"{self.user.username} ({self.role})"
 
