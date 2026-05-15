@@ -1809,12 +1809,24 @@ def conversation_detail(request, conversation_id):
     elif other_role == Role.ROLE_APPRENANT:
         display_name = other_user.get_full_name() or other_user.username
     elif other_role == Role.ROLE_PARENT:
+        enfants_liste = []
         if eng and eng.enfants_concernes.exists():
-            enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
+            enfants_liste = eng.enfants_concernes.all()
+        if not enfants_liste:
+            # Chercher un autre engagement dans cette conversation
+            for e in conversation.engagements.all():
+                if e.enfants_concernes.exists():
+                    enfants_liste = e.enfants_concernes.all()
+                    break
+        if not enfants_liste and hasattr(other_user, 'parent'):
+            # Prendre le premier enfant du parent par défaut
+            enfants_liste = other_user.parent.enfants.all()
+            
+        if enfants_liste:
+            enfants_names = ", ".join([e.prenom for e in enfants_liste])
             if len(enfants_names) > 18: enfants_names = enfants_names[:16] + "..."
             display_name = f"Parent de {enfants_names}"
         else:
-            # Fallback si pas d'engagement actif avec enfant
             p_name = other_user.get_full_name() or other_user.username
             if len(p_name) > 15: p_name = p_name[:13] + "..."
             display_name = f"Parent ({p_name})"
@@ -1932,7 +1944,7 @@ def api_send_message(request, conversation_id):
         return JsonResponse({
             'success': True,
             'message_id': message.id,
-            'date': message.date_envoi.strftime("%H:%M")
+            'date': timezone.localtime(message.date_envoi).strftime("%H:%M")
         })
         
     except Exception as e:
@@ -2007,10 +2019,10 @@ def api_fetch_new_messages(request, conversation_id):
         
         messages_data.append({
             'id': msg.id,
-            'texte': texte,
+            'text': texte,
             'fichier_url': file_url,
             'fichier_nom': file_name,
-            'date': msg.date_envoi.strftime("%H:%M"),
+            'date': timezone.localtime(msg.date_envoi).strftime("%H:%M"),
             'is_mine': msg.auteur == request.user,
             'lu': msg.lu,
             'is_locked': is_locked

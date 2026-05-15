@@ -84,6 +84,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const tempId = 'temp-' + Date.now();
         appendSentBubble(tempId, text, file, '…');
 
+        // Vider l'input immédiatement (UX optimiste)
+        if (!payload) {
+            input.value = '';
+            input.style.height = 'auto';
+            if (fileInput) { fileInput.value = ''; input.placeholder = 'Écrivez un message…'; }
+        }
+
         try {
             const fd = new FormData();
             if (text) fd.append('texte', text);
@@ -110,9 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.message_id > config.lastMsgId) config.lastMsgId = data.message_id;
                 hideSendError();
                 lastFailedPayload = null;
-                input.value = '';
-                input.style.height = 'auto';
-                if (fileInput) { fileInput.value = ''; input.placeholder = 'Écrivez un message…'; }
                 scrollToBottom();
                 return;
             }
