@@ -1,6 +1,6 @@
 <!-- Modal Engagement Dynamique -->
 <div id="engagementModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 4000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+    <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
         <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 20;">
             <div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Proposer un engagement</h3>
@@ -45,7 +45,7 @@
                 </select>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
                     <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
@@ -64,13 +64,13 @@
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
                 <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
                     <option value="">Sélectionnez le mode de cours</option>
-                    <option value="PARENT_HOME">À domicile (chez le parent)</option>
-                    <option value="APPRENANT_HOME">À domicile (chez l'apprenant)</option>
+                    <option value="PARENT_HOME">Présentiel chez le parent</option>
+                    <option value="APPRENANT_HOME">Présentiel chez l'apprenant</option>
                     <option value="ONLINE">En ligne (visioconférence)</option>
-                    <option value="THIRD_PLACE">Lieu tiers (bibliothèque, café, etc.)</option>
-                    <option value="TEACHER_HOME">Au domicile du professeur</option>
-                    <option value="SMALL_GROUP">Petit groupe (max 5)</option>
-                    <option value="REMOTE">À distance (sans visio directe)</option>
+                    <option value="HYBRID">Hybride (Présentiel + En ligne)</option>
+                    <option value="THIRD_PLACE">Lieu tiers (bibliothèque, centre éducatif)</option>
+                    <option value="SMALL_GROUP">Cours en groupe restreint</option>
+                    <option value="DISTANCE">À distance (téléphone, audio)</option>
                 </select>
             </div>
 
@@ -97,17 +97,15 @@
 
             <!-- Champs Spécifiques STANDARD -->
             <div id="eng_group_standard">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Fréquence <span style="color:#ef4444">*</span></label>
                         <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
-                            <option value="1">1 fois / semaine</option>
-                            <option value="2">2 fois / semaine</option>
-                            <option value="3">3 fois / semaine</option>
-                            <option value="4">4 fois / semaine</option>
-                            <option value="5">5 fois / semaine</option>
-                            <option value="6">6 fois / semaine</option>
-                            <option value="7">7 fois / semaine</option>
+                            <option value="1">1 séance / semaine</option>
+                            <option value="2">2 séances / semaine</option>
+                            <option value="3">3 séances / semaine</option>
+                            <option value="4">4 séances / semaine</option>
+                            <option value="5">5 séances / semaine</option>
                         </select>
                     </div>
                     <div>
@@ -118,13 +116,11 @@
                             <option value="2H">2h</option>
                             <option value="2H30">2h30</option>
                             <option value="3H">3h</option>
-                            <option value="3H30">3h30</option>
-                            <option value="4H">4h</option>
                         </select>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date de début souhaitée <span style="color:#ef4444">*</span></label>
                         <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">

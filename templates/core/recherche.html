@@ -390,7 +390,7 @@
                 <div class="main-filters">
                     <div class="search-inputs-row">
                         <div class="filter-group">
-                            <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)" multiple>
+                            <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">
                                 <option value="">Matière (Ex: Mathématiques, Français...)</option>
                                 {% for mat_val, mat_label in MATIERE_CHOICES %}
                                 <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
@@ -399,7 +399,7 @@
                         </div>
                         
                         <div class="filter-group">
-                            <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)" multiple>
+                            <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)">
                                 <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
                                 {% for loc_val, loc_label in LOCALISATION_CHOICES %}
                                 <option value="{{ loc_val }}" {% if localisation == loc_val %}selected{% endif %}>{{ loc_label }}</option>

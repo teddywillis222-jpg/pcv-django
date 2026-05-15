@@ -404,8 +404,10 @@ class TeacherProfileForm(forms.ModelForm):
         self.fields["nom"].widget.attrs["readonly"] = True
 
         if self.instance and self.instance.pk:
+            self.initial['nom'] = f"{self.instance.prenom} {self.instance.nom}".strip()
             if "fichier_cni" in self.fields:
                 del self.fields["fichier_cni"]
+            
         self.fields["nom"].label = "Nom Complet"
         
         self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})

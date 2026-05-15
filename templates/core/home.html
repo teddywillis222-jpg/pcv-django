@@ -469,7 +469,7 @@ main.container {
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
                 <div class="search-input-group">
                     <label for="matiere-hero">Matière</label>
-                    <select id="matiere-hero" name="matiere" class="pcv-multi-select" multiple>
+                    <select id="matiere-hero" name="matiere" class="pcv-multi-select">
                         <option value="">Ex: Mathématiques, Piano, Anglais...</option>
                         {% for val, label in MATIERE_CHOICES %}
                         <option value="{{ val }}">{{ label }}</option>
@@ -479,7 +479,7 @@ main.container {
                 
                 <div class="search-input-group">
                     <label for="localisation-hero">Localisation</label>
-                    <select id="localisation-hero" name="localisation" class="pcv-multi-select" multiple>
+                    <select id="localisation-hero" name="localisation" class="pcv-multi-select">
                         <option value="">Ex: Agla, Calavi, Cotonou...</option>
                         {% for code, label in LOCALISATION_CHOICES %}
                         <option value="{{ code }}">{{ label }}</option>

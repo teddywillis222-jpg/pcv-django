@@ -93,7 +93,7 @@
             <div class="header-completion" style="margin-top: 0;">
                 <span>Profil: {{ completion }}%</span>
                 <div class="mini-progress-bar">
-                    <div class="mini-progress-fill" style="width: {{ completion }}%;"></div>
+                    <div class="mini-progress-fill" style="width: {{ completion }}%; background-color: {% if completion < 50 %}#ef4444{% elif completion < 80 %}#f59e0b{% else %}#16a34a{% endif %};"></div>
                 </div>
             </div>
         </div>
@@ -186,7 +186,7 @@
                      style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
                         <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
-                        <span style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Copier le lien de mon profil</span>
+                        <span id="copy-link-text" style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Copier le lien de mon profil</span>
                     </div>
                     <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Partagez votre lien de profil pour attirer de nouveaux clients.</p>
                 </div>
@@ -240,7 +240,7 @@
 
 <!-- Modal Container -->
 <div id="engModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:5000; align-items:center; justify-content:center; padding: 1.5rem;">
-    <div class="modal-content" style="background: white; padding: 1.5rem; border-radius: 24px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;">
+    <div class="modal-content" style="background: white; padding: 1.5rem; border-radius: 24px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; overflow-x: hidden;">
         <button onclick="closeEngModal()" style="position:absolute; top:1.25rem; right:1.25rem; border:none; background:#f1f5f9; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor:pointer; color: var(--dash-text-muted); display: flex; align-items: center; justify-content: center;">✕</button>
         <div id="modalContent">
             <h3>Détails de l'engagement</h3>
@@ -534,7 +534,16 @@
     }
 
     function copyProfileLink(link) {
-        navigator.clipboard.writeText(link).then(() => alert("Lien de profil copié !"));
+        navigator.clipboard.writeText(link).then(() => {
+            const textEl = document.getElementById('copy-link-text');
+            const originalText = textEl.textContent;
+            textEl.textContent = "Lien copié ! ✓";
+            textEl.style.color = "#16a34a";
+            setTimeout(() => {
+                textEl.textContent = originalText;
+                textEl.style.color = "";
+            }, 2000);
+        });
     }
 
     function dismissAnnouncement(id) {
