@@ -571,6 +571,15 @@ class TeacherProfile(models.Model):
         choices_dict = dict(ClassLevel.CHOICES)
         return ", ".join([choices_dict.get(c, c) for c in self.classes_enseignees])
 
+    @property
+    def categories_labels(self):
+        """Retourne les labels des catégories de soutien sous forme de chaîne."""
+        if not self.categories_de_soutien:
+            return ""
+        from .choices import SupportCategory
+        choices_dict = dict(SupportCategory.CHOICES)
+        return ", ".join([choices_dict.get(c, c) for c in self.categories_de_soutien])
+
     # 7. Paramètres et consentement
     autorisation_publicitaire = models.BooleanField(default=False)
 

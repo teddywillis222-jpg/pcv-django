@@ -201,8 +201,40 @@
         .btn-danger { background: var(--danger-color); color: white; }
 
         @media (max-width: 768px) {
-            .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
             .gap-6 { gap: 1rem; }
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid #e5e7eb;
+        }
+        .toast-success { border-left-color: var(--primary-green); }
+        .toast-error { border-left-color: var(--danger-color); }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
     </style>
 </head>
@@ -239,6 +271,8 @@
     <main class="admin-main" id="admin-content">
         <!-- Content loaded via AJAX -->
     </main>
+
+    <div id="toast-container"></div>
 
     <script>
         const API_BASE = '/debug-admin-pcv/api/';
@@ -300,6 +334,28 @@
         }
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        // Global Toast System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icon = type === 'success' ? '✅' : '❌';
+            toast.innerHTML = `
+                <span style="font-size: 1.25rem;">${icon}</span>
+                <div style="flex: 1;">
+                    <p style="margin: 0; font-weight: 600; font-size: 0.9rem;">${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.5s ease-in forwards';
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
         }
     </script>
 </body>
