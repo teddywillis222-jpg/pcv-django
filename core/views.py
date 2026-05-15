@@ -695,7 +695,7 @@ def prof_dashboard(request):
 
     # 1. Gestion des Engagements par onglets
     engagements = teacher.engagements.select_related(
-        'parent_apprenant', 'parent_apprenant__user'
+        'parent_apprenant'
     ).prefetch_related(
         'enfants_concernes', 'conversation'
     ).order_by("-date_creation")
