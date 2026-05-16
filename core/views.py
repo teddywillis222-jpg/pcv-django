@@ -2366,8 +2366,10 @@ def toutes_seances(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
     is_parent_apprenant = engagement.parent_apprenant == request.user
-    is_prof = hasattr(request.user, 'profile') and engagement.professeur == request.user.profile
-    if not (is_parent_apprenant or is_prof):
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    is_apprenant = hasattr(request.user, 'apprenant') and engagement.parent_apprenant == request.user # L'apprenant est l'utilisateur lié à l'engagement
+    
+    if not (is_parent_apprenant or is_prof or is_apprenant):
         raise Http404("Accès refusé.")
         
     seances = engagement.seances.all().order_by('-date_seance')
@@ -2402,7 +2404,9 @@ def api_ajouter_seance(request, engagement_id):
         return JsonResponse({"error": "Méthode non autorisée."}, status=405)
         
     engagement = get_object_or_404(Engagement, id=engagement_id)
-    if not (hasattr(request.user, 'profile') and engagement.professeur == request.user.profile):
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    
+    if not is_prof:
         return JsonResponse({"error": "Accès refusé. Seul le professeur peut ajouter une séance."}, status=403)
         
     try:
