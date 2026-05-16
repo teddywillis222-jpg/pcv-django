@@ -7,7 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --msg-bg: #f8fafc;            /* Unifié avec le reste du site */
+    --msg-bg: #ffffff;            /* Unifié en blanc pur */
     --msg-card-bg: #ffffff;
     --msg-accent: #16a34a;
     --msg-accent-hover: #15803d;
@@ -27,31 +27,32 @@
 
 /* ========================================
    LAYOUT PRINCIPAL
-======================================== */
+======================================= */
 .msg-page-bg {
     min-height: 100vh;
     background: white;
-    padding-bottom: 5rem;
+    padding-bottom: 2rem; /* Réduit de 5rem */
 }
 
 .msg-container {
     max-width: 680px;
     margin: 0 auto;
-    padding: 0 0 6rem;
+    padding: 0; /* Supprimé le padding-bottom excessif */
     font-family: var(--font);
 }
 
 /* ========================================
    HEADER COLLANT
-======================================== */
+======================================= */
 .msg-sticky-header {
     position: sticky;
     top: 0;
     z-index: 100;
     background: white;
-    padding: 1rem 1rem 0;
+    padding: 0.75rem 1rem 0.5rem; /* Réduit */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .msg-header-top {

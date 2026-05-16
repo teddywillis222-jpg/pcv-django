@@ -141,6 +141,34 @@
     color: #334155;
 }
 
+/* Fix Tom Select Overflows and Duplications */
+.advanced-filters .ts-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.advanced-filters .ts-control {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Force hide original selects to prevent "double input" look */
+select.filter-input, 
+select.pcv-multi-select,
+.ts-wrapper + select {
+    display: none !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+
+@media (max-width: 768px) {
+    .advanced-filters-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
 /* Filtres Avancés */
 .advanced-filters {
     background: white;
@@ -361,6 +389,10 @@
         grid-template-columns: 1fr;
         padding: 0;
         gap: 0.75rem;
+    }
+
+    .advanced-filters {
+        padding: 1rem !important;
     }
 }
 </style>
