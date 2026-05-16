@@ -3019,6 +3019,7 @@ def paiement_echec(request, engagement_id):
     return render(request, 'core/paiement_echec.html', {'engagement': engagement})
 
 # --- NOUVEAUX ENDPOINTS : EVALUATION ET CONSENTEMENT MUTUEL ---
+from django.views.decorators.http import require_POST
 
 @login_required
 @require_POST
