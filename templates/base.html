@@ -1048,11 +1048,19 @@
                     return;
                 }
                 
-                // Ne pas recharger si la modale d'engagement ou de succès est ouverte
+                // Ne pas recharger si on consulte l'historique ou si un sheet/modal est ouvert
+                const sheetDetails = document.getElementById('sheetDetails');
+                const sheetAdd = document.getElementById('sheetAdd');
                 const engModal = document.getElementById('engagementModal');
                 const successModal = document.getElementById('engagementSuccessModal');
-                if ((engModal && engModal.style.display !== 'none') || 
-                    (successModal && successModal.style.display !== 'none')) {
+                
+                if (
+                    (sheetDetails && sheetDetails.classList.contains('active')) ||
+                    (sheetAdd && sheetAdd.classList.contains('active')) ||
+                    (engModal && engModal.style.display !== 'none') || 
+                    (successModal && successModal.style.display !== 'none') ||
+                    window.location.pathname.includes('/toutes-seances/')
+                ) {
                     return;
                 }
                 

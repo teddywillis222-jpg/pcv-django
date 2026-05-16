@@ -30,7 +30,7 @@
 ======================================== */
 .msg-page-bg {
     min-height: 100vh;
-    background: var(--msg-bg);
+    background: white;
     padding-bottom: 5rem;
 }
 
@@ -48,7 +48,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--msg-bg);
+    background: white;
     padding: 1rem 1rem 0;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -182,69 +182,43 @@
 }
 
 /* ========================================
-   LISTE DES CONVERSATIONS
+   LISTE DES CONVERSATIONS (WhatsApp Style)
 ======================================== */
 .msg-list {
     display: flex;
     flex-direction: column;
-    padding: 0 1rem;
-    gap: 0.75rem;
-}
-
-/* Section divider */
-.msg-section-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--msg-text-muted);
-    padding: 1rem 0 0.4rem;
+    padding: 0; /* Edge to edge */
+    background: white;
 }
 
 /* Carte de conversation */
 .conv-card {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
-    padding: 0.875rem 1rem;
-    background: var(--msg-card-bg);
-    border-radius: var(--msg-radius);
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: white;
     text-decoration: none !important;
     color: inherit;
     position: relative;
     cursor: pointer;
-    margin-bottom: 0;
-    box-shadow: var(--msg-shadow-sm);
-    border: 1.5px solid transparent;
-    transition: box-shadow 0.18s, border-color 0.18s, transform 0.1s;
+    border-bottom: 1px solid #f1f5f9; /* Séparateur subtile */
+    transition: background 0.2s;
     -webkit-tap-highlight-color: transparent;
     outline: none;
 }
 
-.conv-card:hover {
-    box-shadow: var(--msg-shadow);
-    border-color: var(--msg-border);
-    text-decoration: none !important;
+.conv-card:last-child {
+    border-bottom: none;
 }
 
-.conv-card:active {
-    transform: scale(0.99);
-    box-shadow: var(--msg-shadow-sm);
+.conv-card:hover {
+    background: #f8fafc;
+    text-decoration: none !important;
 }
 
 .conv-card.unread {
     background: #f0fdf9;
-    border-color: rgba(22, 163, 74, 0.15);
-}
-
-.conv-card.unread .conv-name {
-    font-weight: 800;
-    color: var(--msg-text);
-}
-
-.conv-card.unread .preview-text {
-    color: var(--msg-text-sub);
-    font-weight: 600;
 }
 
 /* ========================================
@@ -253,14 +227,14 @@
 .conv-avatar-wrapper {
     position: relative;
     flex-shrink: 0;
-    width: 50px;
-    height: 50px;
+    width: 52px;
+    height: 52px;
 }
 
 .conv-avatar,
 .conv-avatar-placeholder {
-    width: 50px;
-    height: 50px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -269,24 +243,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--avatar-bg, #e2e8f0);   /* Couleur dynamique via JS */
+    background: var(--avatar-bg, #e2e8f0);
     color: var(--avatar-color, #475569);
     font-weight: 800;
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     text-transform: uppercase;
-    font-family: var(--font);
-}
-
-/* Indicateur en ligne */
-.conv-online-dot {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 11px;
-    height: 11px;
-    background: #22c55e;
-    border: 2px solid white;
-    border-radius: 50%;
 }
 
 /* ========================================
@@ -295,48 +256,37 @@
 .conv-content-wrapper {
     flex: 1;
     min-width: 0;
+    padding-right: 0.5rem;
 }
 
 .card-row-top {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
 }
 
 .conv-name {
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--msg-text);
-    flex: 1;
+    flex: 0 1 auto; /* Prend la place nécessaire mais peut rétrécir */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.conv-time {
-    font-size: 0.7rem;
-    color: var(--msg-text-muted);
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-.conv-card.unread .conv-time {
-    color: var(--msg-accent);
-    font-weight: 700;
-}
-
 .card-row-bottom {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
 .preview-text {
     flex: 1;
-    font-size: 0.8125rem;
-    color: var(--msg-text-muted);
+    font-size: 0.875rem;
+    color: var(--msg-text-sub);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -348,15 +298,28 @@
     font-weight: 600;
 }
 
+.conv-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.conv-time {
+    font-size: 0.75rem;
+    color: var(--msg-text-muted);
+    font-weight: 500;
+}
+
 /* Badge statut */
 .conv-badge {
     flex-shrink: 0;
-    font-size: 0.6rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
 }
 
 .statut-active    { background: #dcfce7; color: #166534; }
@@ -367,12 +330,11 @@
 
 /* Point non-lu */
 .unread-dot {
-    flex-shrink: 0;
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     background: var(--msg-accent);
     border-radius: 50%;
-    box-shadow: 0 0 0 2px var(--msg-accent-soft);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
 /* ========================================

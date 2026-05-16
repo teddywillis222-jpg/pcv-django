@@ -412,7 +412,15 @@
     
     <!-- Journal -->
     <div class="journal-section">
-        <h2 class="progress-title" style="margin-bottom: 1rem;">Journal des séances</h2>
+        <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances</h2>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+                <span style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);"></span> En attente
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+                <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);"></span> Validée
+            </div>
+        </div>
         
         {% if not seances %}
             <p style="color: var(--text-gray); font-size: 0.9rem; text-align: center; padding: 1rem;">Aucune séance enregistrée pour le moment.</p>
