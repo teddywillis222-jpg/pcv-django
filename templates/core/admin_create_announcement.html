@@ -2,186 +2,409 @@
 
 {% block title %}Création d'Annonce | Admin PCV{% endblock %}
 
+{% block extra_css %}
+<style>
+    .admin-page-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem;
+        font-family: var(--font, 'Inter', sans-serif);
+    }
+    
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--text-dark, #1e293b);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    
+    .admin-subtitle {
+        color: var(--text-gray, #64748b);
+        margin: 0.5rem 0 0 2.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .back-link {
+        color: var(--primary, #16a34a);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.2s;
+    }
+    
+    .back-link:hover {
+        color: var(--primary-dark, #15803d);
+    }
+
+    /* Alerts */
+    .admin-alert {
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        font-weight: 500;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .alert-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e3a8a;
+    }
+    
+    .alert-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    /* Grid Layout */
+    .admin-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    
+    @media(max-width: 900px) {
+        .admin-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Cards */
+    .admin-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .admin-card-header {
+        padding: 1.25rem 1.5rem;
+        background: #f8fafc;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .admin-card-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .admin-card-body {
+        padding: 1.5rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        background: #f8fafc;
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary, #16a34a);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+    }
+    
+    .form-help {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Buttons */
+    .btn-submit {
+        background: var(--primary, #16a34a);
+        color: white;
+        border: none;
+        padding: 0.85rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2);
+    }
+    
+    .btn-submit:hover {
+        background: var(--primary-dark, #15803d);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 0.85rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancel:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+    
+    /* Guide */
+    .guide-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .guide-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .guide-title {
+        font-weight: 800;
+        color: #1e293b;
+        font-size: 0.95rem;
+        margin: 0 0 0.25rem 0;
+    }
+    .guide-desc {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.4;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="admin-page-container">
+    
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">
+                <span style="font-size: 1.5em;">📢</span> Rédiger une Annonce
+            </h1>
+            <p class="admin-subtitle">Interface d'administration personnalisée pour la communication professeurs.</p>
+        </div>
+        <a href="/admin/core/professorannouncement/" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Retour
+        </a>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="admin-alert {% if message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Bannière d'aide -->
+    <div class="admin-alert alert-info">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink: 0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div>
+            <strong style="display: block; margin-bottom: 0.25rem;">Note Importante</strong>
+            Une seule annonce active est affichée à la fois. Créer une nouvelle annonce en cochant "Active" désactivera automatiquement l'affichage de la précédente pour tous les professeurs.
+        </div>
+    </div>
+
+    <div class="admin-grid">
         
-        <!-- En-tête -->
-        <div class="mb-8 flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                    <span class="text-2xl">📢</span> Rédiger une Annonce
-                </h1>
-                <p class="mt-2 text-sm text-gray-600">Interface d'administration personnalisée pour la communication professeurs.</p>
+        <!-- Colonne Gauche : Formulaire -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2 class="admin-card-title">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Formulaire d'Annonce
+                </h2>
             </div>
-            <a href="/admin/core/professorannouncement/" class="text-green-600 hover:text-green-800 font-semibold text-sm flex items-center gap-1">
-                ← Retour à l'admin classique
-            </a>
-        </div>
-
-        <!-- Messages -->
-        {% if messages %}
-            <div class="mb-6">
-                {% for message in messages %}
-                <div class="p-4 rounded-lg flex items-center gap-3 {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- Bannière d'aide (Spécification de l'invite) -->
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r-lg shadow-sm">
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-blue-800">Note Importante</h3>
-                    <div class="mt-1 text-sm text-blue-700">
-                        <p>Une seule annonce active est affichée à la fois. Créer une nouvelle annonce en cochant "Active" désactivera automatiquement l'affichage de la précédente pour tous les professeurs.</p>
+            <div class="admin-card-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Titre de l'annonce <span style="color: #ef4444;">*</span></label>
+                        {{ form.title }}
+                        <span class="form-help">{{ form.title.help_text }}</span>
+                        {% if form.title.errors %}
+                            <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">{{ form.title.errors.0 }}</div>
+                        {% endif %}
                     </div>
-                </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">Corps du message <span style="color: #ef4444;">*</span></label>
+                        {{ form.message }}
+                        <span class="form-help">{{ form.message.help_text }}</span>
+                        {% if form.message.errors %}
+                            <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">{{ form.message.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            {{ form.is_active }}
+                            <div>
+                                <label for="{{ form.is_active.id_for_label }}" style="font-weight: 800; color: #1e293b; cursor: pointer;">Activer immédiatement</label>
+                                <span class="form-help" style="margin-top: 0;">{{ form.is_active.help_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9;">
+                        <a href="/admin/core/professorannouncement/" class="btn-cancel">Annuler</a>
+                        <button type="submit" class="btn-submit">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            Publier l'Annonce
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Grille Principale (2 colonnes) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Colonne Droite : Preview & Guide -->
+        <div>
             
-            <!-- Colonne de Gauche : Formulaire -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Formulaire d'Annonce
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2 class="admin-card-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        Prévisualisation Temps Réel
                     </h2>
                 </div>
-                <div class="p-6">
-                    <form method="post" action="" class="space-y-6">
-                        {% csrf_token %}
-                        
-                        <!-- Champ: Titre -->
-                        <div>
-                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Titre de l'annonce <span class="text-red-500">*</span></label>
-                            {{ form.title }}
-                            <p class="mt-1 text-xs text-gray-500">{{ form.title.help_text }}</p>
-                            {% if form.title.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Champ: Message -->
-                        <div>
-                            <label for="{{ form.message.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Corps du message <span class="text-red-500">*</span></label>
-                            {{ form.message }}
-                            <p class="mt-1 text-xs text-gray-500">{{ form.message.help_text }}</p>
-                            {% if form.message.errors %}
-                                <p class="text-red-500 text-xs mt-1">{{ form.message.errors.0 }}</p>
-                            {% endif %}
-                        </div>
-
-                        <!-- Champ: Active -->
-                        <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            {{ form.is_active }}
-                            <div class="ml-3">
-                                <label for="{{ form.is_active.id_for_label }}" class="text-sm font-bold text-gray-800 cursor-pointer">Activer immédiatement</label>
-                                <p class="text-xs text-gray-500">{{ form.is_active.help_text }}</p>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                            <a href="/admin/core/professorannouncement/" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">Annuler</a>
-                            <button type="submit" class="px-5 py-2.5 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors shadow-sm flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                                Publier l'Annonce
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Colonne de Droite : Guide & Preview -->
-            <div class="space-y-8">
-                
-                <!-- Bloc de Prévisualisation Temps Réel -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            Prévisualisation (Dashboard Prof)
-                        </h2>
-                        <span class="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">Temps Réel</span>
-                    </div>
-                    <!-- Note pour la maintenance : Les couleurs de ce composant reproduisent le style du dashbaord prof (#f0fdf4, etc.) -->
-                    <div class="p-6 bg-gray-100 flex items-center justify-center min-h-[200px]">
-                        
-                        <!-- Composant Preview -->
-                        <div id="preview-card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1rem 1.5rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                            <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                                <div style="color: #16a34a; margin-top: 0.15rem;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 id="preview-title" style="margin: 0 0 0.25rem 0; color: #166534; font-size: 1rem; font-weight: 700;">Titre de votre annonce</h4>
-                                    <p id="preview-message" style="margin: 0; color: #15803d; font-size: 0.9rem; line-height: 1.5; white-space: pre-line;">Votre message s'affichera ici. Commencez à taper pour voir le résultat.</p>
-                                </div>
-                            </div>
-                            <button disabled style="background: none; border: none; color: #166534; cursor: not-allowed; padding: 0.25rem; opacity: 0.7;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                <div class="admin-card-body" style="background: #f8fafc;">
+                    <!-- Composant Preview -->
+                    <div id="preview-card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 1.25rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);">
+                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                            <div style="color: #16a34a; margin-top: 0.15rem; flex-shrink: 0;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
                                 </svg>
-                            </button>
+                            </div>
+                            <div>
+                                <h4 id="preview-title" style="margin: 0 0 0.4rem 0; color: #166534; font-size: 1.05rem; font-weight: 800;">Titre de votre annonce</h4>
+                                <p id="preview-message" style="margin: 0; color: #15803d; font-size: 0.95rem; line-height: 1.5; white-space: pre-line;">Votre message s'affichera ici. Commencez à taper pour voir le résultat en temps réel.</p>
+                            </div>
                         </div>
-
+                        <button disabled style="background: none; border: none; color: #166534; cursor: not-allowed; padding: 0.25rem; opacity: 0.5; flex-shrink: 0;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
                     </div>
                 </div>
-
-                <!-- Documentation & Guide -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                        <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                            Guide des Bonnes Pratiques
-                        </h2>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div class="flex items-start gap-3">
-                            <div class="mt-1 bg-blue-100 p-1.5 rounded-md text-blue-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-sm">Soyez Bref et Concis</h4>
-                                <p class="text-xs text-gray-600 mt-0.5">Les professeurs lisent ces annonces entre deux cours. Allez droit au but (2-3 phrases maximum).</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="mt-1 bg-yellow-100 p-1.5 rounded-md text-yellow-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-sm">Utilisez des Emojis</h4>
-                                <p class="text-xs text-gray-600 mt-0.5">Ajoutez un emoji (ex: 🏆, 🚀, 💡) au début de votre titre pour le rendre plus chaleureux et attrayant.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="mt-1 bg-purple-100 p-1.5 rounded-md text-purple-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-sm">Expliquez le Bénéfice</h4>
-                                <p class="text-xs text-gray-600 mt-0.5">Si vous parlez du "Badge Rigoureux", expliquez aux profs ce qu'ils y gagnent (plus de visibilité, plus d'engagements).</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <h2 class="admin-card-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        Guide des Bonnes Pratiques
+                    </h2>
+                </div>
+                <div class="admin-card-body">
+                    
+                    <div class="guide-item">
+                        <div class="guide-icon" style="background: #eff6ff; color: #2563eb;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="guide-title">Soyez Bref et Concis</h4>
+                            <p class="guide-desc">Les professeurs lisent ces annonces entre deux cours. Allez droit au but (2-3 phrases maximum).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-item">
+                        <div class="guide-icon" style="background: #fef3c7; color: #d97706;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="guide-title">Utilisez des Emojis</h4>
+                            <p class="guide-desc">Ajoutez un emoji (ex: 🏆, 🚀, 💡) au début de votre titre pour le rendre plus chaleureux et attrayant.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guide-item" style="margin-bottom: 0;">
+                        <div class="guide-icon" style="background: #f3e8ff; color: #9333ea;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="guide-title">Expliquez le Bénéfice</h4>
+                            <p class="guide-desc">Si vous annoncez une nouveauté, expliquez aux profs ce qu'ils y gagnent (plus de visibilité, plus de revenus).</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -190,21 +413,33 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Appliquer les classes aux inputs générés par Django
         const titleInput = document.getElementById('id_title');
         const messageInput = document.getElementById('id_message');
+        const activeInput = document.getElementById('id_is_active');
         
+        if(titleInput) titleInput.classList.add('form-control');
+        if(messageInput) {
+            messageInput.classList.add('form-control');
+            messageInput.rows = 5;
+        }
+        if(activeInput) {
+            activeInput.style.width = '20px';
+            activeInput.style.height = '20px';
+            activeInput.style.accentColor = 'var(--primary)';
+        }
+
         const previewTitle = document.getElementById('preview-title');
         const previewMessage = document.getElementById('preview-message');
 
         function updatePreview() {
             previewTitle.textContent = titleInput.value || "Titre de votre annonce";
-            previewMessage.textContent = messageInput.value || "Votre message s'affichera ici. Commencez à taper pour voir le résultat.";
+            previewMessage.textContent = messageInput.value || "Votre message s'affichera ici. Commencez à taper pour voir le résultat en temps réel.";
         }
 
         if(titleInput && messageInput) {
             titleInput.addEventListener('input', updatePreview);
             messageInput.addEventListener('input', updatePreview);
-            // Initial update in case of reload with preserved form values
             updatePreview();
         }
     });

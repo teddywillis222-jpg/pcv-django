@@ -152,7 +152,17 @@
     box-sizing: border-box !important;
 }
 
-/* Force hide original selects to prevent "double input" look */
+/* Annuler les styles de .filter-input sur le wrapper TomSelect 
+   pour éviter l'effet "double input" (wrapper et control avec bordures) */
+.ts-wrapper.filter-input {
+    border: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Force hide original selects */
 select.filter-input, 
 select.pcv-multi-select,
 .ts-wrapper + select {
