@@ -2413,6 +2413,11 @@ def api_ajouter_seance(request, engagement_id):
         from datetime import datetime
         date_seance_str = request.POST.get('date_seance')
         date_seance = datetime.strptime(date_seance_str, "%Y-%m-%d").date()
+        
+        # Vérification : 1 seule séance par jour
+        if Seance.objects.filter(engagement=engagement, date_seance=date_seance).exists():
+            return JsonResponse({"error": f"Vous avez déjà enregistré une séance pour la date du {date_seance.strftime('%d/%m/%Y')}."}, status=400)
+            
         objectifs = request.POST.get('objectifs')
         difficultes_presentes = request.POST.get('difficultes_presentes') == 'oui'
         difficultes_rencontrees = request.POST.get('difficultes_rencontrees', '')
@@ -3012,3 +3017,98 @@ def paiement_succes(request, engagement_id):
 def paiement_echec(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     return render(request, 'core/paiement_echec.html', {'engagement': engagement})
+
+# --- NOUVEAUX ENDPOINTS : EVALUATION ET CONSENTEMENT MUTUEL ---
+
+@login_required
+@require_POST
+def api_rate_professeur(request, engagement_id):
+    import json
+    from .models import Evaluation
+    try:
+        engagement = Engagement.objects.get(id=engagement_id)
+        if engagement.parent_apprenant != request.user:
+            return JsonResponse({'error': 'Accès refusé. Vous n\'êtes pas autorisé à évaluer ce professeur.'}, status=403)
+            
+        data = json.loads(request.body)
+        note = int(data.get('note', 0))
+        commentaire = data.get('commentaire', '').strip()
+        
+        if note < 1 or note > 5:
+            return JsonResponse({'error': 'La note doit être comprise entre 1 et 5.'}, status=400)
+            
+        # Vérifier si une évaluation existe déjà pour ce couple parent/professeur
+        evaluation, created = Evaluation.objects.update_or_create(
+            parent_evaluateur=request.user,
+            professeur_evalue=engagement.professeur,
+            defaults={
+                'engagement_lie': engagement,
+                'note': note,
+                'commentaire': commentaire
+            }
+        )
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Évaluation enregistrée avec succès.' if created else 'Évaluation mise à jour avec succès.',
+            'note': note
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@require_POST
+def api_demander_annulation(request, engagement_id):
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # Vérification des droits
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    is_parent = engagement.parent_apprenant == request.user
+    
+    if not (is_prof or is_parent):
+        return JsonResponse({'error': 'Accès refusé.'}, status=403)
+        
+    if engagement.statut_general == StatutGeneral.ANNULE:
+        return JsonResponse({'error': 'Cet engagement est déjà annulé.'}, status=400)
+        
+    if engagement.annulation_initiee_par is None:
+        # 1. Initiation
+        engagement.annulation_initiee_par = request.user
+        engagement.save()
+        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande d\'annulation envoyée. En attente de confirmation de l\'autre partie.'})
+    elif engagement.annulation_initiee_par != request.user:
+        # 2. Confirmation par l'autre partie
+        engagement.annulation_confirmee = True
+        engagement.statut_general = StatutGeneral.ANNULE
+        engagement.save()
+        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Annulation confirmée. L\'engagement est maintenant annulé.'})
+    else:
+        return JsonResponse({'error': 'Vous avez déjà initié cette demande.'}, status=400)
+
+@login_required
+@require_POST
+def api_demander_cloture(request, engagement_id):
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
+    is_parent = engagement.parent_apprenant == request.user
+    
+    if not (is_prof or is_parent):
+        return JsonResponse({'error': 'Accès refusé.'}, status=403)
+        
+    if engagement.statut_general == StatutGeneral.TERMINE:
+        return JsonResponse({'error': 'Cet engagement est déjà terminé.'}, status=400)
+        
+    if engagement.cloture_initiee_par is None:
+        # 1. Initiation
+        engagement.cloture_initiee_par = request.user
+        engagement.save()
+        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande de clôture envoyée. En attente de confirmation de l\'autre partie.'})
+    elif engagement.cloture_initiee_par != request.user:
+        # 2. Confirmation par l'autre partie
+        engagement.cloture_confirmee = True
+        engagement.statut_general = StatutGeneral.TERMINE
+        engagement.save()
+        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Clôture confirmée. L\'engagement est maintenant terminé.'})
+    else:
+        return JsonResponse({'error': 'Vous avez déjà initié cette demande.'}, status=400)

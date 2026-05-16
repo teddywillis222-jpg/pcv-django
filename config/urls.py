@@ -74,6 +74,9 @@ urlpatterns = [
     path("api/engagement/<int:engagement_id>/update/", core_views.api_update_engagement, name="api_update_engagement"),
     path("api/engagement/<int:engagement_id>/finalize/", core_views.api_finalize_engagement, name="api_finalize_engagement"),
     path("api/engagement/<int:engagement_id>/details/", core_views.api_engagement_details, name="api_engagement_details"),
+    path("api/engagement/<int:engagement_id>/rate/", core_views.api_rate_professeur, name="api_rate_professeur"),
+    path("api/engagement/<int:engagement_id>/demander-annulation/", core_views.api_demander_annulation, name="api_demander_annulation"),
+    path("api/engagement/<int:engagement_id>/demander-cloture/", core_views.api_demander_cloture, name="api_demander_cloture"),
     path("api/engagement/<int:eng_id>/masquer/", core_views.masquer_engagement, name="masquer_engagement"),
     path("api/engagement/<int:eng_id>/masquer-prof/", core_views.masquer_engagement_prof, name="masquer_engagement_prof"),
     

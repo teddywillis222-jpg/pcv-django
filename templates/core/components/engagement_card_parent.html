@@ -88,23 +88,35 @@
 
                 <!-- Actions de gestion (Seulement si Finalisé) -->
                 {% if eng.statut_general == 'FINALISE' %}
-                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                    ✅ Terminer l'engagement
-                </a>
-                <a href="#" class="menu-item danger" style="display: block; padding: 0.85rem 1rem; color: #ef4444; text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                    🚫 Annuler l'engagement
-                </a>
+                <button type="button" class="menu-item" onclick="openClotureModal('{{ eng.id }}', '{% if eng.cloture_initiee_par %}{{ eng.cloture_initiee_par.id }}{% endif %}')" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.85rem 1rem; color: var(--text-dark); font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; cursor: pointer;">
+                    {% if not eng.cloture_initiee_par %}
+                        ✅ Demander la clôture
+                    {% elif eng.cloture_initiee_par == user %}
+                        ⏳ Clôture en attente
+                    {% else %}
+                        ✅ Confirmer la clôture
+                    {% endif %}
+                </button>
+                <button type="button" class="menu-item danger" onclick="openAnnulationModal('{{ eng.id }}', '{% if eng.annulation_initiee_par %}{{ eng.annulation_initiee_par.id }}{% endif %}')" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.85rem 1rem; color: #ef4444; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; cursor: pointer;">
+                    {% if not eng.annulation_initiee_par %}
+                        🚫 Demander l'annulation
+                    {% elif eng.annulation_initiee_par == user %}
+                        ⏳ Annulation en attente
+                    {% else %}
+                        🚫 Confirmer l'annulation
+                    {% endif %}
+                </button>
                 {% endif %}
 
                 <!-- Avis / Note -->
                 {% if eng.statut_general == 'FINALISE' or eng.statut_general == 'TERMINE' or eng.statut_general == 'ANNULE' %}
-                <a href="#" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                <button type="button" class="menu-item" onclick="openRatingModal('{{ eng.id }}', '{{ eng.evaluation_liee.note|default:0 }}', '{{ eng.evaluation_liee.commentaire|default:""|escapejs }}')" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.85rem 1rem; color: var(--text-dark); font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; cursor: pointer;">
                     {% if eng.evaluation_liee %}
                     ⭐ Modifier votre avis
                     {% else %}
                     ⭐ Noter ce prof
                     {% endif %}
-                </a>
+                </button>
                 {% endif %}
 
                 <!-- Favoris -->

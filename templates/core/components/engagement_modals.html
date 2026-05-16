@@ -1,0 +1,211 @@
+<!-- templates/core/components/engagement_modals.html -->
+
+<!-- Modale de Clôture -->
+<div class="modal" id="clotureModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; padding: 2rem; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+        <h3 id="clotureModalTitle" style="margin: 0 0 1rem; font-size: 1.25rem; font-weight: 800; color: var(--text-dark);">Terminer l'engagement</h3>
+        <p id="clotureModalText" style="margin: 0 0 1.5rem; font-size: 0.95rem; color: var(--text-gray); line-height: 1.5;">
+            Êtes-vous sûr de vouloir demander la clôture de cet engagement ? L'autre partie devra confirmer.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button onclick="closeModal('clotureModal')" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: #f1f5f9; border: none; color: var(--text-dark); font-weight: 600; cursor: pointer;">Annuler</button>
+            <button id="clotureModalBtn" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: var(--success-600); border: none; color: white; font-weight: 600; cursor: pointer;">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modale d'Annulation -->
+<div class="modal" id="annulationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; padding: 2rem; width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+        <h3 id="annulationModalTitle" style="margin: 0 0 1rem; font-size: 1.25rem; font-weight: 800; color: #ef4444;">Annuler l'engagement</h3>
+        <p id="annulationModalText" style="margin: 0 0 1.5rem; font-size: 0.95rem; color: var(--text-gray); line-height: 1.5;">
+            Êtes-vous sûr de vouloir demander l'annulation de cet engagement ? L'autre partie devra confirmer.
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button onclick="closeModal('annulationModal')" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: #f1f5f9; border: none; color: var(--text-dark); font-weight: 600; cursor: pointer;">Annuler</button>
+            <button id="annulationModalBtn" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: #ef4444; border: none; color: white; font-weight: 600; cursor: pointer;">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modale d'Évaluation -->
+<div class="modal" id="ratingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 20px; padding: 2rem; width: 90%; max-width: 450px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 1rem; font-size: 1.25rem; font-weight: 800; color: var(--text-dark);">Évaluer ce professeur</h3>
+        <p style="margin: 0 0 1.5rem; font-size: 0.9rem; color: var(--text-gray);">
+            Votre avis nous aide à garantir la qualité de nos professeurs.
+        </p>
+        
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;" id="starRatingContainer">
+            <svg class="star-icon" data-value="1" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" style="cursor: pointer; transition: 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg class="star-icon" data-value="2" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" style="cursor: pointer; transition: 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg class="star-icon" data-value="3" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" style="cursor: pointer; transition: 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg class="star-icon" data-value="4" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" style="cursor: pointer; transition: 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg class="star-icon" data-value="5" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" style="cursor: pointer; transition: 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 0.5rem;">Commentaire (optionnel)</label>
+            <textarea id="ratingComment" rows="4" style="width: 100%; padding: 1rem; border: 2px solid #f1f5f9; border-radius: 12px; background: #f8fafc; font-family: inherit; font-size: 0.95rem; resize: none;"></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button onclick="closeModal('ratingModal')" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: #f1f5f9; border: none; color: var(--text-dark); font-weight: 600; cursor: pointer;">Annuler</button>
+            <button id="ratingModalBtn" style="padding: 0.6rem 1.2rem; border-radius: 12px; background: var(--success-600); border: none; color: white; font-weight: 600; cursor: pointer;">Publier l'avis</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentEngagementId = null;
+    let currentRating = 0;
+    const currentUserId = "{{ user.id }}";
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    // --- CLÔTURE ---
+    function openClotureModal(engId, initieParId) {
+        currentEngagementId = engId;
+        const modal = document.getElementById('clotureModal');
+        const title = document.getElementById('clotureModalTitle');
+        const text = document.getElementById('clotureModalText');
+        const btn = document.getElementById('clotureModalBtn');
+
+        if (!initieParId) {
+            title.textContent = "Demander la clôture";
+            text.textContent = "Êtes-vous sûr de vouloir demander la clôture de cet engagement ? L'autre partie devra confirmer pour que l'engagement soit terminé.";
+            btn.textContent = "Demander";
+        } else if (initieParId === currentUserId) {
+            alert("Vous avez déjà demandé la clôture. En attente de l'autre partie.");
+            return;
+        } else {
+            title.textContent = "Confirmer la clôture";
+            text.textContent = "L'autre partie a demandé la clôture de cet engagement. Confirmez-vous la fin de cet engagement ?";
+            btn.textContent = "Confirmer la clôture";
+        }
+
+        btn.onclick = () => submitAction(`/api/engagement/${engId}/demander-cloture/`);
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    // --- ANNULATION ---
+    function openAnnulationModal(engId, initieParId) {
+        currentEngagementId = engId;
+        const modal = document.getElementById('annulationModal');
+        const title = document.getElementById('annulationModalTitle');
+        const text = document.getElementById('annulationModalText');
+        const btn = document.getElementById('annulationModalBtn');
+
+        if (!initieParId) {
+            title.textContent = "Demander l'annulation";
+            text.textContent = "Êtes-vous sûr de vouloir demander l'annulation de cet engagement ? L'autre partie devra confirmer pour que l'engagement soit annulé.";
+            btn.textContent = "Demander";
+        } else if (initieParId === currentUserId) {
+            alert("Vous avez déjà demandé l'annulation. En attente de l'autre partie.");
+            return;
+        } else {
+            title.textContent = "Confirmer l'annulation";
+            text.textContent = "L'autre partie a demandé l'annulation de cet engagement. Confirmez-vous l'annulation ?";
+            btn.textContent = "Confirmer l'annulation";
+        }
+
+        btn.onclick = () => submitAction(`/api/engagement/${engId}/demander-annulation/`);
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    async function submitAction(url) {
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        } catch(e) {
+            alert('Erreur de connexion.');
+        }
+    }
+
+    // --- EVALUATION ---
+    function openRatingModal(engId, existingNote, existingComment) {
+        currentEngagementId = engId;
+        currentRating = parseInt(existingNote) || 0;
+        
+        document.getElementById('ratingComment').value = existingComment || '';
+        updateStarsUI(currentRating);
+        
+        document.getElementById('ratingModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    const stars = document.querySelectorAll('.star-icon');
+    stars.forEach(star => {
+        star.addEventListener('click', (e) => {
+            currentRating = parseInt(e.currentTarget.getAttribute('data-value'));
+            updateStarsUI(currentRating);
+        });
+        star.addEventListener('mouseenter', (e) => {
+            updateStarsUI(parseInt(e.currentTarget.getAttribute('data-value')));
+        });
+        star.addEventListener('mouseleave', () => {
+            updateStarsUI(currentRating);
+        });
+    });
+
+    function updateStarsUI(rating) {
+        stars.forEach(s => {
+            const val = parseInt(s.getAttribute('data-value'));
+            if (val <= rating) {
+                s.setAttribute('fill', '#ca8a04');
+            } else {
+                s.setAttribute('fill', 'none');
+            }
+        });
+    }
+
+    document.getElementById('ratingModalBtn').addEventListener('click', async () => {
+        if (currentRating === 0) {
+            alert('Veuillez sélectionner une note entre 1 et 5 étoiles.');
+            return;
+        }
+        const comment = document.getElementById('ratingComment').value;
+        const btn = document.getElementById('ratingModalBtn');
+        btn.disabled = true;
+        btn.textContent = "Envoi...";
+        
+        try {
+            const res = await fetch(`/api/engagement/${currentEngagementId}/rate/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ note: currentRating, commentaire: comment })
+            });
+            const data = await res.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error);
+                btn.disabled = false;
+                btn.textContent = "Publier l'avis";
+            }
+        } catch(e) {
+            alert('Erreur de connexion.');
+            btn.disabled = false;
+            btn.textContent = "Publier l'avis";
+        }
+    });
+</script>
