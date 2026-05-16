@@ -244,7 +244,7 @@
         backdrop-filter: blur(4px);
         opacity: 0; visibility: hidden;
         transition: 0.4s;
-        z-index: 2000;
+        z-index: 9999;
     }
     .sheet-overlay.active { opacity: 1; visibility: visible; }
     
@@ -253,11 +253,11 @@
         bottom: 0; left: 0; right: 0;
         background: white;
         border-radius: 32px 32px 0 0;
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom, 24px));
         transform: translateY(105%); /* Complètement caché avec marge de sécurité */
         visibility: hidden;
         transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.5s;
-        z-index: 2001;
+        z-index: 10000;
         max-height: 92vh;
         overflow-y: auto;
         box-shadow: 0 -20px 25px -5px rgba(0, 0, 0, 0.1);
@@ -265,6 +265,17 @@
     .bottom-sheet.active { 
         transform: translateY(0); 
         visibility: visible;
+    }
+    
+    .detail-box {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        line-height: 1.5;
+        word-break: break-word;
+        overflow-wrap: anywhere;
     }
     
     .sheet-header {
@@ -476,7 +487,7 @@
     
     <div class="form-group">
         <label class="form-label">🎯 Objectifs de la séance</label>
-        <div id="dt-objectifs" style="font-size: 0.95rem; color: var(--text-dark); background: #f8fafc; padding: 1rem; border-radius: 12px;"></div>
+        <div id="dt-objectifs" class="detail-box"></div>
     </div>
     
     <div class="form-group">
@@ -486,12 +497,12 @@
     
     <div class="form-group" id="dt-diff-container">
         <label class="form-label">⚠️ Difficultés rencontrées</label>
-        <div id="dt-difficultes" style="font-size: 0.95rem; color: #991b1b; background: #fef2f2; padding: 1rem; border-radius: 12px;"></div>
+        <div id="dt-difficultes" class="detail-box" style="background: #fef2f2; color: #991b1b;"></div>
     </div>
     
     <div class="form-group" id="dt-taches-container">
         <label class="form-label">🏠 Tâches à domicile</label>
-        <div id="dt-taches" style="font-size: 0.95rem; color: var(--text-dark); background: #f8fafc; padding: 1rem; border-radius: 12px;"></div>
+        <div id="dt-taches" class="detail-box"></div>
     </div>
     
     {% if is_parent_apprenant %}

@@ -76,47 +76,104 @@
     
     .seance-card {
         background: white;
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 1.25rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         margin-bottom: 1rem;
-        border-left: 6px solid transparent;
+        border: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
-    .seance-card.validee { border-left-color: #22c55e; }
-    .seance-card.non-lue { border-left-color: #3b82f6; }
+    .seance-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    }
     
     .sc-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.75rem;
     }
     .sc-date {
-        font-weight: 800;
-        font-size: 1.05rem;
+        font-weight: 700;
+        font-size: 1rem;
         color: var(--text-dark);
+        text-transform: capitalize;
+    }
+    .sc-notions-summary {
+        font-size: 0.85rem;
+        color: var(--text-gray);
+        margin-top: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80%;
     }
     .sc-taux {
         font-weight: 900;
         font-size: 1.1rem;
     }
-    .sc-objectifs {
-        font-size: 0.9rem;
-        color: var(--text-gray);
-        margin-bottom: 1rem;
+
+    /* Sheets Styles (Consistent with suivi_engagement) */
+    .sheet-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        opacity: 0; visibility: hidden;
+        transition: 0.4s;
+        z-index: 9999;
     }
-    .sc-notions {
-        background: #f8fafc;
-        padding: 0.75rem;
-        border-radius: 10px;
-        font-size: 0.85rem;
+    .sheet-overlay.active { opacity: 1; visibility: visible; }
+    
+    .bottom-sheet {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: white;
+        border-radius: 32px 32px 0 0;
+        padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom, 20px));
+        transform: translateY(105%);
+        visibility: hidden;
+        transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.5s;
+        z-index: 10000;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 -20px 25px -5px rgba(0, 0, 0, 0.1);
     }
-    .notion-item {
+    .bottom-sheet.active { 
+        transform: translateY(0); 
+        visibility: visible;
+    }
+    .sheet-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.3rem;
+        align-items: center;
+        margin-bottom: 2rem;
     }
-    .notion-item:last-child { margin-bottom: 0; }
+    .sheet-close {
+        background: #f1f5f9;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #64748b;
+    }
+    .detail-box {
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 16px;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        line-height: 1.5;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
+    .form-group { margin-bottom: 1.5rem; }
     
 </style>
 
@@ -135,43 +192,46 @@
     <!-- Filtres -->
     <div class="filters-section">
         <a href="?taux=" class="filter-btn {% if not request.GET.taux %}active{% endif %}">Tout</a>
-        <a href="?taux=faible" class="filter-btn {% if request.GET.taux == 'faible' %}active-faible{% endif %}">< 40% (Faible)</a>
-        <a href="?taux=moyen" class="filter-btn {% if request.GET.taux == 'moyen' %}active-moyen{% endif %}">40% - 80% (Moyen)</a>
-        <a href="?taux=excellent" class="filter-btn {% if request.GET.taux == 'excellent' %}active-excellent{% endif %}">> 80% (Excellent)</a>
+        <a href="?taux=faible" class="filter-btn {% if request.GET.taux == 'faible' %}active-faible{% endif %}">< 40%</a>
+        <a href="?taux=moyen" class="filter-btn {% if request.GET.taux == 'moyen' %}active-moyen{% endif %}">40% - 80%</a>
+        <a href="?taux=excellent" class="filter-btn {% if request.GET.taux == 'excellent' %}active-excellent{% endif %}">> 80%</a>
     </div>
 
     <!-- Liste -->
     {% for seance in seances %}
-    <div class="seance-card {% if seance.validee %}validee{% else %}non-lue{% endif %}">
+    <div class="seance-card" onclick="openSeanceDetails({{ seance.id }})">
         <div class="sc-header">
-            <div class="sc-date">{{ seance.date_seance|date:"l d F Y" }}</div>
+            <div style="flex: 1; min-width: 0;">
+                <div class="sc-date">{{ seance.date_seance|date:"l d F Y" }}</div>
+                <div class="sc-notions-summary">
+                    {% for notion in seance.notions.all %}
+                        {{ notion.nom_notion }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        Aucune notion renseignée
+                    {% endfor %}
+                </div>
+            </div>
             <div class="sc-taux" style="color: {% if seance.taux_maitrise_seance >= 80 %}#16a34a{% elif seance.taux_maitrise_seance >= 40 %}#ca8a04{% else %}#dc2626{% endif %}">
                 {{ seance.taux_maitrise_seance|floatformat:0 }}%
             </div>
         </div>
-        
-        <div class="sc-objectifs">
-            <strong>Objectifs :</strong> {{ seance.objectifs }}
-        </div>
-        
-        <div class="sc-notions">
-            <div style="font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; font-size: 0.8rem; text-transform: uppercase;">Notions abordées</div>
-            {% for notion in seance.notions.all %}
-            <div class="notion-item">
-                <span style="color: var(--text-dark);">{{ notion.nom_notion }}</span>
-                <span style="font-weight: 800; color: var(--primary);">{{ notion.score }}/3</span>
-            </div>
-            {% empty %}
-            <span style="color: var(--text-gray);">Aucune notion renseignée.</span>
-            {% endfor %}
-        </div>
-        
-        {% if seance.difficultes_presentes %}
-        <div style="margin-top: 1rem; padding: 0.75rem; background: #fef2f2; border-radius: 10px; font-size: 0.85rem; color: #991b1b;">
-            <strong style="display: block; margin-bottom: 0.2rem;">⚠️ Difficultés</strong>
-            {{ seance.difficultes_rencontrees }}
-        </div>
-        {% endif %}
+
+        <script type="application/json" id="seance-data-{{ seance.id }}">
+            {
+                "id": {{ seance.id }},
+                "date": "{{ seance.date_seance|date:'d M Y' }}",
+                "taux": {{ seance.taux_maitrise_seance|stringformat:'f' }},
+                "objectifs": "{{ seance.objectifs|escapejs }}",
+                "difficultes": "{{ seance.difficultes_rencontrees|escapejs }}",
+                "taches": "{{ seance.taches_domicile|escapejs }}",
+                "notions": [
+                    {% for notion in seance.notions.all %}
+                    {"nom": "{{ notion.nom_notion|escapejs }}", "score": {{ notion.score }}}
+                    {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            }
+        </script>
     </div>
     {% empty %}
     <div style="text-align: center; padding: 3rem 1rem; background: white; border-radius: 20px; color: var(--text-gray);">
@@ -181,8 +241,89 @@
             <line x1="8" y1="2" x2="8" y2="6"></line>
             <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
-        <p>Aucune séance trouvée pour ces critères.</p>
+        <p>Aucune séance trouvée.</p>
     </div>
     {% endfor %}
 </div>
+
+<!-- Bottom Sheet Details -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
+<div class="bottom-sheet" id="sheetDetails">
+    <div class="sheet-header">
+        <h2 style="margin: 0; font-size: 1.3rem; font-weight: 900;">Détails du <span id="dt-date"></span></h2>
+        <button class="sheet-close" onclick="closeAllSheets()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.25rem; border-radius: 20px; margin-bottom: 1.5rem;">
+        <div id="dt-taux" style="font-size: 2.2rem; font-weight: 900; color: #16a34a;"></div>
+        <div style="margin-left: 1rem; font-size: 0.85rem; font-weight: 700; color: #166534;">Maîtrise globale</div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">🎯 Objectifs</label>
+        <div id="dt-objectifs" class="detail-box"></div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">📚 Notions abordées</label>
+        <div id="dt-notions" style="display: grid; gap: 0.5rem;"></div>
+    </div>
+
+    <div class="form-group" id="dt-diff-container">
+        <label class="form-label">⚠️ Difficultés</label>
+        <div id="dt-difficultes" class="detail-box" style="background: #fef2f2; color: #991b1b;"></div>
+    </div>
+
+    <div class="form-group" id="dt-taches-container">
+        <label class="form-label">🏠 Tâches à domicile</label>
+        <div id="dt-taches" class="detail-box"></div>
+    </div>
+</div>
+
+<script>
+    function closeAllSheets() {
+        document.getElementById('sheetOverlay').classList.remove('active');
+        document.getElementById('sheetDetails').classList.remove('active');
+    }
+
+    function openSeanceDetails(id) {
+        const data = JSON.parse(document.getElementById('seance-data-' + id).textContent);
+        
+        document.getElementById('dt-date').textContent = data.date;
+        document.getElementById('dt-taux').textContent = parseFloat(data.taux).toFixed(0) + '%';
+        document.getElementById('dt-objectifs').textContent = data.objectifs;
+        
+        const diffCont = document.getElementById('dt-diff-container');
+        if(data.difficultes) {
+            diffCont.style.display = 'block';
+            document.getElementById('dt-difficultes').textContent = data.difficultes;
+        } else {
+            diffCont.style.display = 'none';
+        }
+        
+        const tachesCont = document.getElementById('dt-taches-container');
+        if(data.taches) {
+            tachesCont.style.display = 'block';
+            document.getElementById('dt-taches').textContent = data.taches;
+        } else {
+            tachesCont.style.display = 'none';
+        }
+        
+        const notionsDiv = document.getElementById('dt-notions');
+        notionsDiv.innerHTML = '';
+        data.notions.forEach(n => {
+            notionsDiv.innerHTML += `
+                <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 12px; border: 1px solid #f1f5f9;">
+                    <span style="font-size: 0.9rem; font-weight: 600;">${n.nom}</span>
+                    <span style="font-weight: 800; color: #16a34a;">${n.score}/3</span>
+                </div>
+            `;
+        });
+        
+        document.getElementById('sheetOverlay').classList.add('active');
+        document.getElementById('sheetDetails').classList.add('active');
+    }
+</script>
 {% endblock %}
