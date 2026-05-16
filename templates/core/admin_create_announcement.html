@@ -339,24 +339,21 @@
                 </div>
                 <div class="admin-card-body" style="background: #f8fafc;">
                     <!-- Composant Preview -->
-                    <div id="preview-card" style="position: relative; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 1.25rem 3.5rem; width: 100%; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08); box-sizing: border-box;">
-                        <!-- Icône Info à gauche (position absolue dans le coin) -->
-                        <div style="position: absolute; top: 1.25rem; left: 1.25rem; color: #16a34a;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
+                    <div id="preview-card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 1.25rem; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.08);">
+                        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                            <div style="color: #16a34a; margin-top: 0.15rem; flex-shrink: 0;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 id="preview-title" style="margin: 0 0 0.4rem 0; color: #166534; font-size: 1.05rem; font-weight: 800;">Titre de votre annonce</h4>
+                                <p id="preview-message" style="margin: 0; color: #15803d; font-size: 0.95rem; line-height: 1.5; white-space: pre-line;">Votre message s'affichera ici. Commencez à taper pour voir le résultat en temps réel.</p>
+                            </div>
                         </div>
-                        
-                        <!-- Contenu texte prenant tout l'espace -->
-                        <div style="width: 100%;">
-                            <h4 id="preview-title" style="margin: 0 0 0.4rem 0; color: #166534; font-size: 1.05rem; font-weight: 800; text-align: left;">Titre de votre annonce</h4>
-                            <p id="preview-message" style="margin: 0; color: #15803d; font-size: 0.95rem; line-height: 1.5; white-space: pre-line; text-align: left;">Votre message s'affichera ici. Commencez à taper pour voir le résultat en temps réel.</p>
-                        </div>
-                        
-                        <!-- Bouton de fermeture à droite (position absolue dans le coin) -->
-                        <button disabled style="position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; color: #166534; cursor: not-allowed; padding: 0.25rem; opacity: 0.5;">
+                        <button disabled style="background: none; border: none; color: #166534; cursor: not-allowed; padding: 0.25rem; opacity: 0.5; flex-shrink: 0;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
