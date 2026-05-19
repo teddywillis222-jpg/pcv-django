@@ -25,54 +25,54 @@
 
     .dashboard-container {
         max-width: 850px;
-        margin: 3rem auto;
+        margin: 1.5rem auto 3rem auto;
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1.25rem;
     }
 
     .status-card {
         background: var(--card-bg);
         border-radius: 20px;
-        padding: 2.5rem;
+        padding: 1.75rem;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         text-align: center;
         border-top: 5px solid #f59e0b;
     }
 
     .status-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
     }
 
     .status-title {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
         font-weight: 800;
         color: var(--text-dark);
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
 
     .status-text {
         color: var(--text-gray);
-        font-size: 1rem;
-        line-height: 1.6;
+        font-size: 0.95rem;
+        line-height: 1.5;
         max-width: 600px;
-        margin: 0 auto 1.5rem auto;
+        margin: 0 auto;
     }
 
     .admin-box {
         background: #fef2f2;
         border: 1px solid #fca5a5;
-        padding: 1.5rem;
+        padding: 1.25rem;
         border-radius: 12px;
         color: #991b1b;
         text-align: left;
-        margin-top: 2rem;
+        margin-top: 1rem;
     }
 
     .admin-box strong {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
     }
 
     .grid-2 {
@@ -93,18 +93,29 @@
         gap: 2rem;
     }
 
+    .completion-btn-wrapper {
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 250px;
+    }
+
     @media (max-width: 768px) {
         .dashboard-container {
-            margin: 1.5rem 10px;
+            margin: 1rem 10px;
             gap: 1rem;
         }
         .status-card {
-            padding: 1.5rem 10px;
+            padding: 1.25rem 10px;
         }
         .completion-card {
             flex-direction: column;
             text-align: center;
             padding: 1.5rem 10px;
+            gap: 1rem;
+        }
+        .completion-btn-wrapper {
+            max-width: 100%;
+            margin-top: 0.5rem;
         }
         .modal-overlay {
             padding: 10px;
@@ -342,17 +353,12 @@
     <!-- ÉTAPE : SUCCÈS / VALIDÉ -->
     <div class="status-card" style="border-top-color: #16a34a;">
         <div class="status-icon">🎉</div>
-        <h2 class="status-title">Félicitations, vous êtes prêt !</h2>
-        <p class="status-text">
-            Votre profil a été vérifié et validé par notre équipe. Vous faites désormais partie de la communauté des professeurs certifiés de <strong>Prof Chez Vous</strong>.
+        <h2 class="status-title">Votre profil est validé !</h2>
+        <p class="status-text" style="margin-bottom: 1.25rem;">
+            Votre visibilité est active. Les parents et apprenants peuvent désormais vous trouver et vous contacter directement.
         </p>
-        <div style="background: #f0fdf4; border: 1px dashed #16a34a; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
-            <p style="color: #15803d; font-size: 0.95rem; margin: 0;">
-                Votre visibilité est maintenant active. Les parents et apprenants peuvent désormais vous trouver et vous envoyer des propositions d'engagement.
-            </p>
-        </div>
-        <a href="{% url 'prof_dashboard' %}" class="btn-complete" style="display: inline-block; text-decoration: none; width: 100%; max-width: 400px;">
-            Accéder à mon Dashboard Enseignant
+        <a href="{% url 'prof_dashboard' %}" class="btn-complete" style="display: inline-block; text-decoration: none; width: 100%; max-width: 320px; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+            Accéder à mon tableau de bord
         </a>
     </div>
 
@@ -360,23 +366,19 @@
     <!-- ÉTAPE : INCOMPLET / REFUSÉ -->
     <div class="status-card" style="border-top-color: #ef4444;">
         <div class="status-icon">⚠️</div>
-        <h2 class="status-title">Profil Incomplet ou Non Retenu</h2>
-        <p class="status-text">
-            Après examen de votre dossier, nous avons constaté que certaines informations sont manquantes ou ne répondent pas totalement à nos critères de sélection actuels.
+        <h2 class="status-title">Candidature incomplète</h2>
+        <p class="status-text" style="margin-bottom: 1rem;">
+            Votre profil nécessite des corrections pour pouvoir être validé.
         </p>
         
         {% if teacher.message_admin %}
-        <div class="admin-box" style="background: #fff1f2; border-color: #fecdd3; color: #991b1b; margin-bottom: 2rem;">
-            <strong>🔴 Raison indiquée :</strong>
+        <div class="admin-box" style="background: #fff1f2; border-color: #fecdd3; color: #991b1b; margin-top: 0; margin-bottom: 1rem; padding: 1rem; border-radius: 8px; font-size: 0.9rem;">
+            <strong>🔴 Raison :</strong>
             {{ teacher.message_admin }}
         </div>
         {% endif %}
-
-        <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 2rem;">
-            Ne vous découragez pas ! Vous pouvez mettre à jour vos informations et soumettre à nouveau votre candidature pour une nouvelle vérification.
-        </p>
         
-        <a href="{% url 'prof_edit_profile' %}" class="btn-complete" style="display: inline-block; text-decoration: none; background: #334155; width: 100%; max-width: 400px;">
+        <a href="{% url 'prof_edit_profile' %}" class="btn-complete" style="display: inline-block; text-decoration: none; background: #334155; width: 100%; max-width: 320px; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
             Modifier et Republier mon Profil
         </a>
     </div>
@@ -385,22 +387,17 @@
     <!-- ÉTAPE 2 : STATUS DASHBOARD (EN ATTENTE) -->
     <div class="status-card">
         <div class="status-icon">⏳</div>
-        <h2 class="status-title">Profil en cours de vérification</h2>
-        <p class="status-text">
-            Dossier transmis avec succès. L'examen de vos documents peut prendre jusqu'à 48h.
-            <strong>Pour l'instant, votre profil n'est pas visible par les parents.</strong>
+        <h2 class="status-title">Vérification en cours</h2>
+        <p class="status-text" style="margin-bottom: 0;">
+            Examen sous 48h. Votre profil sera visible dès validation par notre équipe.
         </p>
 
         {% if teacher.message_admin %}
-        <div class="admin-box">
+        <div class="admin-box" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; font-size: 0.9rem;">
             <strong>ℹ️ Note de l'Administration :</strong>
             {{ teacher.message_admin }}
         </div>
         {% endif %}
-        
-        <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 12px; font-size: 0.85rem; color: #64748b;">
-            Vous recevrez une notification dès que votre statut aura changé.
-        </div>
     </div>
 
     <!-- ÉTAPE 3 : COMPLETION BOOST (VISIBLE SEULEMENT SI EN ATTENTE) -->
@@ -413,17 +410,15 @@
             <div class="progress-bar">
                 <div class="progress-fill" style="width: {{ completion }}%;"></div>
             </div>
-            <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-gray);">
-                {% if completion < 100 %} Un profil avec une description engageante, un tarif défini et des horaires
-                    précis à 100% de chances d'être contacté en premier. {% else %} Félicitations ! Votre profil a
-                    atteint 100% de complétion. Il sera spectaculaire lors de sa validation. {% endif %} </p>
+            <p style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-gray); margin-bottom: 0;">
+                {% if completion < 100 %} Un profil complet a 100% de chances d'être contacté en premier. {% else %} Félicitations ! Votre vitrine est complète à 100%. {% endif %} </p>
         </div>
-        <div style="flex-shrink: 0; width: 100%; text-align: center; margin-top: 1rem;">
+        <div class="completion-btn-wrapper">
             {% if completion < 100 %} 
-                <button class="btn-complete" onclick="openModal()" style="width: 100%;">Compléter mon profil</button>
+                <button class="btn-complete" onclick="openModal()" style="width: 100%; padding: 0.75rem 1.5rem; font-size: 0.95rem;">Compléter mon profil</button>
             {% else %}
                 <button class="btn-complete" onclick="openModal()"
-                    style="background:#f1f5f9; color:#475569; box-shadow:none; width: 100%;">Modifier ma vitrine</button>
+                    style="background:#f1f5f9; color:#475569; box-shadow:none; width: 100%; padding: 0.75rem 1.5rem; font-size: 0.95rem;">Modifier ma vitrine</button>
             {% endif %}
         </div>
     </div>
