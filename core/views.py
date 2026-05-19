@@ -120,14 +120,6 @@ def home(request):
     ).order_by('-profil_complet', '?')[:24]
 
     top_professeurs = annotate_teachers_with_ratings(top_professeurs)
-    
-    # Incrémenter les vues (apparitions)
-    prof_ids = list(top_professeurs.values_list('id', flat=True))
-    if prof_ids:
-        TeacherProfile.objects.filter(id__in=prof_ids).update(
-            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1,
-            nombre_apparitions_mois=F('nombre_apparitions_mois') + 1
-        )
 
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
 
@@ -239,8 +231,22 @@ def messagerie(request):
                 display_photo = conv.professeur.photo_de_profil.url
         else:
             # Pour le prof : Parent de [Enfants] ou Nom Apprenant
+            enfants_liste = []
             if eng and eng.enfants_concernes.exists():
-                enfants_names = ", ".join([e.prenom for e in eng.enfants_concernes.all()])
+                enfants_liste = eng.enfants_concernes.all()
+            if not enfants_liste:
+                # Chercher un autre engagement dans cette conversation
+                for e in conv.engagements.all():
+                    if e.enfants_concernes.exists():
+                        enfants_liste = e.enfants_concernes.all()
+                        break
+            if not enfants_liste and hasattr(conv.parent, 'parent'):
+                # Prendre le premier enfant du parent par défaut
+                enfants_liste = conv.parent.parent.enfants.all()
+                
+            if enfants_liste:
+                enfants_names = ", ".join([e.prenom for e in enfants_liste])
+                if len(enfants_names) > 18: enfants_names = enfants_names[:16] + "..."
                 display_name = f"Parent de {enfants_names}"
             else:
                 if conv.parent and hasattr(conv.parent, 'profile'):
@@ -384,14 +390,6 @@ def recherche(request):
             '-id'
         )
         
-    # 5. Incrémenter les vues (apparitions en recherche)
-    from django.db.models import F
-    prof_ids = list(professeurs.values_list('id', flat=True))
-    if prof_ids:
-        TeacherProfile.objects.filter(id__in=prof_ids).update(
-            nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1,
-            nombre_apparitions_mois=F('nombre_apparitions_mois') + 1
-        )
 
     # Contexte Parent/Enfants
     parent_children = []
@@ -2493,6 +2491,37 @@ def api_valider_seance(request, seance_id):
     seance.validee = True
     seance.save()
     return JsonResponse({"success": True})
+
+
+import json
+from django.db.models import F
+
+def api_track_teacher_views(request):
+    """
+    Endpoint pour incrémenter le nombre d'apparitions (vues) des professeurs
+    lorsque leur carte entre réellement dans le champ visuel sur la page de recherche.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    try:
+        data = json.loads(request.body)
+        prof_ids = data.get('prof_ids', [])
+        
+        if prof_ids and isinstance(prof_ids, list):
+            # Ne garder que les entiers valides
+            valid_ids = [int(pid) for pid in prof_ids if str(pid).isdigit()]
+            if valid_ids:
+                from .models import TeacherProfile
+                TeacherProfile.objects.filter(id__in=valid_ids).update(
+                    nombre_apparitions_recherche=F('nombre_apparitions_recherche') + 1,
+                    nombre_apparitions_mois=F('nombre_apparitions_mois') + 1
+                )
+                return JsonResponse({"success": True, "tracked": len(valid_ids)})
+                
+        return JsonResponse({"success": False, "error": "Données invalides."})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
 
 @login_required

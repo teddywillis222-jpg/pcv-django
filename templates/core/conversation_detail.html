@@ -250,7 +250,7 @@
         
         <div class="c-sheet-content">
             {% for eng in engagements %}
-            <div class="c-eng-card" id="eng-card-{{ eng.id }}" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}">
+            <div class="c-eng-card" id="eng-card-{{ eng.id }}" data-child-ids="{% for enfant in eng.enfants_concernes.all %}{{ enfant.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
                 <div class="c-eng-card-header" onclick="toggleEngCard('{{ eng.id }}')">
                     <div class="c-eng-card-info">
                         <div class="c-eng-title">{{ eng.matiere }} {% if eng.classe and eng.classe|default:""|length > 0 and eng.classe != "None" %}({{ eng.classe }}){% endif %}</div>

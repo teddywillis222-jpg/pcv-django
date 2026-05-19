@@ -689,5 +689,41 @@ window.addEventListener('popstate', function(event) {
         closeSidePanel();
     }
 });
+
+// Suivi des vues/apparitions de professeurs (Intersection Observer)
+document.addEventListener("DOMContentLoaded", function() {
+    const trackedProfIds = new Set();
+    const observer = new IntersectionObserver((entries, observer) => {
+        let newlyVisibleIds = [];
+        
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const profId = entry.target.getAttribute('data-prof-id');
+                if (profId && !trackedProfIds.has(profId)) {
+                    trackedProfIds.add(profId);
+                    newlyVisibleIds.push(profId);
+                    observer.unobserve(entry.target); // Ne tracker qu'une seule fois
+                }
+            }
+        });
+        
+        if (newlyVisibleIds.length > 0) {
+            fetch('/api/track-teacher-views/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ prof_ids: newlyVisibleIds })
+            }).catch(e => console.error("Erreur tracking vues:", e));
+        }
+    }, { threshold: 0.2 }); // La carte doit être à 20% visible
+
+    // Observer toutes les cartes
+    document.querySelectorAll('.teacher-card').forEach(card => {
+        observer.observe(card);
+    });
+});
+
 </script>
 {% endblock %}

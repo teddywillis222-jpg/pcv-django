@@ -389,8 +389,12 @@ function removeBubble(id) {
 function filterEngagements() {
     const childId = document.getElementById('childFilter')?.value;
     document.querySelectorAll('.eng-row, .c-eng-card').forEach(row => {
-        row.style.display = (!childId || childId === 'all' || row.getAttribute('data-child-id') === String(childId))
-            ? 'block' : 'none';
+        if (!childId || childId === 'all') {
+            row.style.display = 'block';
+        } else {
+            const childIds = (row.getAttribute('data-child-ids') || row.getAttribute('data-child-id') || '').split(',');
+            row.style.display = childIds.includes(String(childId)) ? 'block' : 'none';
+        }
     });
 }
 

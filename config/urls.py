@@ -83,6 +83,7 @@ urlpatterns = [
     path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
     path("api/professeur/toggle-essai/", core_views.api_toggle_essai, name="api_toggle_essai"),
     path("api/fictional-payment/", core_views.api_fictional_payment, name="api_fictional_payment"),
+    path("api/track-teacher-views/", core_views.api_track_teacher_views, name="api_track_teacher_views"),
 
     # FedaPay
     path("paiement/initier/<int:engagement_id>/", core_views.payer_engagement, name="payer_engagement"),

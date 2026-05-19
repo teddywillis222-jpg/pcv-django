@@ -43,7 +43,7 @@
 
         <div id="engSheetList">
             {% for eng in engagements %}
-            <div class="eng-row" data-child-id="{{ eng.enfants_concernes.first.id|default:'none' }}" 
+            <div class="eng-row" data-child-ids="{% for enfant in eng.enfants_concernes.all %}{{ enfant.id }}{% if not forloop.last %},{% endif %}{% endfor %}" 
                  data-eng-json='{"id": {{ eng.id }}, "matiere": "{{ eng.matiere|escapejs }}", "classe": "{{ eng.classe }}", "mode": "{{ eng.mode_de_cours }}", "budget": {{ eng.budget_convenu|default:0 }}, "frequence": "{{ eng.frequence_hebdomadaire }}", "duree": "{{ eng.duree_seance }}", "duree_mois": "{{ eng.duree_mois|default:"" }}", "localisation": "{{ eng.localisation_option|escapejs }}", "visio": "{{ eng.plateforme_visio_preferee|escapejs }}", "periode": "{{ eng.periode_engagement }}", "enfant_id": "{{ eng.enfants_concernes.first.id|default:"" }}", "student_name": "{% if eng.enfants_concernes.exists %}{{ eng.enfants_concernes.first.prenom }}{% else %}{{ eng.parent_apprenant.apprenant.nom|default:"L'apprenant" }}{% endif %}"}'>
                 
                 <div class="eng-row-main" onclick="toggleEngRow(this)">
