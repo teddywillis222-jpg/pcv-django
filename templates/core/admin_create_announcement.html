@@ -245,9 +245,9 @@
     <div class="admin-header">
         <div>
             <h1 class="admin-title">
-                <span style="font-size: 1.5em;">📢</span> Rédiger une Annonce
+                <span style="font-size: 1.5em;">📢</span> Rédiger une Annonce Globale
             </h1>
-            <p class="admin-subtitle">Interface d'administration personnalisée pour la communication professeurs.</p>
+            <p class="admin-subtitle">Interface d'administration personnalisée pour la communication globale.</p>
         </div>
         <a href="/admin/core/professorannouncement/" class="back-link">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -289,14 +289,31 @@
                     {% csrf_token %}
                     
                     <div class="form-group">
-                        <label for="{{ form.title.id_for_label }}" class="form-label">Titre de l'annonce <span style="color: #ef4444;">*</span></label>
+                        <label for="id_title" class="form-label">Titre de l'annonce</label>
                         {{ form.title }}
-                        <span class="form-help">{{ form.title.help_text }}</span>
+                        {% if form.title.help_text %}
+                            <span class="form-help">{{ form.title.help_text }}</span>
+                        {% endif %}
                         {% if form.title.errors %}
-                            <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;">{{ form.title.errors.0 }}</div>
+                            <div class="error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">
+                                {{ form.title.errors|join:", " }}
+                            </div>
                         {% endif %}
                     </div>
 
+                    <div class="form-group">
+                        <label for="id_target_audience" class="form-label">Audience cible</label>
+                        {{ form.target_audience }}
+                        {% if form.target_audience.help_text %}
+                            <span class="form-help">{{ form.target_audience.help_text }}</span>
+                        {% endif %}
+                        {% if form.target_audience.errors %}
+                            <div class="error-msg" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">
+                                {{ form.target_audience.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
                     <div class="form-group">
                         <label for="{{ form.message.id_for_label }}" class="form-label">Corps du message <span style="color: #ef4444;">*</span></label>
                         {{ form.message }}

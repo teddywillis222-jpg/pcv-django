@@ -984,8 +984,14 @@ class Message(models.Model):
 
 
 class ProfessorAnnouncement(models.Model):
+    TARGET_CHOICES = [
+        ('ALL', 'Tous les utilisateurs'),
+        ('PROF', 'Professeurs uniquement'),
+        ('PARENT_APPRENANT', 'Parents et Apprenants uniquement'),
+    ]
     title = models.CharField(max_length=255)
     message = models.TextField()
+    target_audience = models.CharField(max_length=20, choices=TARGET_CHOICES, default='ALL')
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     dismissed_by = models.ManyToManyField(User, related_name='dismissed_announcements', blank=True)

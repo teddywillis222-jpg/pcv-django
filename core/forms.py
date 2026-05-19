@@ -451,12 +451,16 @@ from .models import ProfessorAnnouncement
 class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = ProfessorAnnouncement
-        fields = ['title', 'message', 'is_active']
+        fields = ['title', 'target_audience', 'message', 'is_active']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500',
                 'placeholder': 'Titre de l\'annonce',
                 'id': 'id_title'
+            }),
+            'target_audience': forms.Select(attrs={
+                'class': 'w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500',
+                'id': 'id_target_audience'
             }),
             'message': forms.Textarea(attrs={
                 'class': 'w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500',
@@ -470,6 +474,7 @@ class AnnouncementForm(forms.ModelForm):
         }
         help_texts = {
             'title': 'Apparaîtra en gras en haut de la carte.',
+            'target_audience': 'Définissez qui pourra voir cette annonce sur son tableau de bord.',
             'message': 'Le contenu détaillé de votre annonce.',
-            'is_active': 'Cochez pour rendre cette annonce visible aux professeurs immédiatement.'
+            'is_active': 'Cochez pour rendre cette annonce visible aux utilisateurs cibles immédiatement.'
         }

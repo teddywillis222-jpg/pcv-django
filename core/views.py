@@ -668,11 +668,17 @@ def prof_attente_dashboard(request):
     completion = teacher_instance.completion_percentage
     jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
     
-    return render(request, "core/prof_attente_dashboard.html", {
+    # Annonce
+    announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PROF', 'ALL']).order_by('-created_at').first()
+    context = {
         "teacher": teacher_instance,
         "completion": completion,
         "jours": jours
-    })
+    }
+    if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+        context['announcement'] = announcement
+        
+    return render(request, "core/prof_attente_dashboard.html", context)
 
 
 @login_required
@@ -768,7 +774,7 @@ def prof_dashboard(request):
     }
 
     # Annonce
-    announcement = ProfessorAnnouncement.objects.filter(is_active=True).order_by('-created_at').first()
+    announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PROF', 'ALL']).order_by('-created_at').first()
     if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
         context['announcement'] = announcement
 
@@ -946,25 +952,28 @@ def parent_dashboard(request):
         '-est_certifie', '-suivi_rigoureux', '-profil_complet', '-moyenne_avis'
     )
 
-    return render(
-        request,
-        "core/parent_dashboard.html",
-        {
-            "parent_details": parent,
-            "enfants": enfants,
-            "active_enfant": active_enfant,
-            "recommandations": recommandations,
-            "engagements_en_cours": engs_en_cours,
-            "engagements_actifs": engs_actifs,
-            "engagements_termines": engs_termines,
-            "engagements_essais": engs_essais,
-            "engagements_tous": engagements_tous,
-            "abonnement": abonnement,
-            "favoris": favoris,
-            "enfant_form": enfant_form,
-            "show_welcome_popup": not profile.a_vu_popup_bienvenue,
-        },
-    )
+    # Annonce (Parents/Apprenants)
+    announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PARENT_APPRENANT', 'ALL']).order_by('-created_at').first()
+    context = {
+        "parent_details": parent,
+        "enfants": enfants,
+        "active_enfant": active_enfant,
+        "recommandations": recommandations,
+        "engagements_en_cours": engs_en_cours,
+        "engagements_actifs": engs_actifs,
+        "engagements_termines": engs_termines,
+        "engagements_essais": engs_essais,
+        "engagements_tous": engagements_tous,
+        "abonnement": abonnement,
+        "favoris": favoris,
+        "enfant_form": enfant_form,
+        "show_welcome_popup": not profile.a_vu_popup_bienvenue,
+    }
+    
+    if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+        context['announcement'] = announcement
+
+    return render(request, "core/parent_dashboard.html", context)
 
 
 
@@ -1122,6 +1131,11 @@ def apprenant_dashboard(request):
         "favoris": favoris,
         "show_welcome_popup": not profile.a_vu_popup_bienvenue,
     }
+
+    # Annonce (Parents/Apprenants)
+    announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PARENT_APPRENANT', 'ALL']).order_by('-created_at').first()
+    if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+        context['announcement'] = announcement
 
     return render(request, "core/apprenant_dashboard.html", context)
 
@@ -2952,8 +2966,8 @@ def create_announcement(request):
         if form.is_valid():
             announcement = form.save(commit=False)
             if announcement.is_active:
-                # Désactiver les annonces précédentes
-                ProfessorAnnouncement.objects.filter(is_active=True).update(is_active=False)
+                # Désactiver les annonces précédentes de la même audience cible
+                ProfessorAnnouncement.objects.filter(is_active=True, target_audience=announcement.target_audience).update(is_active=False)
             announcement.save()
             messages.success(request, "L'annonce a été publiée avec succès !")
             return redirect('create_announcement')
