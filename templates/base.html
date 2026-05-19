@@ -928,7 +928,7 @@
 
         // Système AJAX pour les Favoris
         function toggleFavoriteAjax(buttonElement, profId) {
-            fetch(`/professeur/${profId}/toggle-favori/`, {
+            fetch(`/api/professeur/${profId}/toggle-favori/`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': getCookie('csrftoken'),

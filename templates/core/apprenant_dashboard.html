@@ -582,7 +582,7 @@
         return cookieValue;
     }
 
-    async function toggleFavorite(btn, profId) {
+    async function toggleFavoriteAjax(btn, profId) {
         requireAuth(async () => {
             try {
                 const response = await fetch(`/api/professeur/${profId}/toggle-favori/`, {
@@ -594,10 +594,21 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    const svg = btn.querySelector('svg');
+                    const text = btn.querySelector('.fav-text') || btn.querySelector('span');
+
                     if (data.is_favorite) {
                         btn.classList.add('active');
+                        if (svg) {
+                            svg.setAttribute('fill', '#ef4444');
+                            svg.setAttribute('stroke', '#ef4444');
+                        }
                     } else {
                         btn.classList.remove('active');
+                        if (svg) {
+                            svg.setAttribute('fill', 'none');
+                            svg.setAttribute('stroke', 'currentColor');
+                        }
                         
                         // Si on est dans la section favoris, on retire la carte
                         const favorisSection = document.getElementById('favoris-section');

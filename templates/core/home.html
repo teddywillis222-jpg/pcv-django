@@ -650,32 +650,9 @@ main.container {
             }
         }
 
+
         function openTeacherProfile(slug) {
             window.location.href = `/professeur/${slug}/`;
-        }
-
-        async function toggleFavorite(btn, profId) {
-            requireAuth(async () => {
-                try {
-                    const response = await fetch(`/api/professeur/${profId}/toggle-favori/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        }
-                    });
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        if (data.is_favorite) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            });
         }
     </script>
     
