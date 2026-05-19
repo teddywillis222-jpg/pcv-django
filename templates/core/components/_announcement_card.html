@@ -1,0 +1,43 @@
+{% if announcement %}
+<div id="announcement-card" style="position: relative; background: #f1f5f9; border-radius: 14px; padding: 14px 16px; margin: 0 0 1.25rem 0; max-height: 200px; overflow-y: auto; transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;">
+    <!-- Close button -->
+    <button onclick="dismissAnnouncement({{ announcement.id }})" 
+        style="position: absolute; top: 8px; right: 8px; background: #e2e8f0; border: none; color: #64748b; cursor: pointer; width: 32px; height: 32px; min-width: 32px; min-height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2;" 
+        onmouseover="this.style.background='#cbd5e1'; this.style.color='#0f172a';" 
+        onmouseout="this.style.background='#e2e8f0'; this.style.color='#64748b';">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+    
+    <!-- Content -->
+    <div style="display: flex; flex-direction: column; gap: 4px; padding-right: 40px;">
+        <h4 style="margin: 0; color: #0f172a; font-size: 1.05rem; font-weight: 800; line-height: 1.35;">
+            <span style="margin-right: 5px;">📢</span>{{ announcement.title }}
+        </h4>
+        <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.55; font-weight: 400;">{{ announcement.message|linebreaksbr }}</p>
+    </div>
+</div>
+
+<script>
+    function dismissAnnouncement(id) {
+        const card = document.getElementById('announcement-card');
+        if (card) {
+            card.style.opacity = '0';
+            card.style.maxHeight = '0';
+            card.style.padding = '0';
+            card.style.margin = '0';
+            card.style.overflow = 'hidden';
+            setTimeout(() => card.remove(), 350);
+        }
+        fetch(`/api/announcement/${id}/dismiss/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        }).catch(err => console.error("Dismiss error", err));
+    }
+</script>
+{% endif %}

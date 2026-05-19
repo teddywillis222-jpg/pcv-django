@@ -668,17 +668,11 @@ def prof_attente_dashboard(request):
     completion = teacher_instance.completion_percentage
     jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
     
-    # Annonce
-    announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PROF', 'ALL']).order_by('-created_at').first()
-    context = {
+    return render(request, "core/prof_attente_dashboard.html", {
         "teacher": teacher_instance,
         "completion": completion,
         "jours": jours
-    }
-    if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
-        context['announcement'] = announcement
-        
-    return render(request, "core/prof_attente_dashboard.html", context)
+    })
 
 
 @login_required
@@ -2966,8 +2960,8 @@ def create_announcement(request):
         if form.is_valid():
             announcement = form.save(commit=False)
             if announcement.is_active:
-                # Désactiver les annonces précédentes de la même audience cible
-                ProfessorAnnouncement.objects.filter(is_active=True, target_audience=announcement.target_audience).update(is_active=False)
+                # Désactiver TOUTES les annonces précédentes actives
+                ProfessorAnnouncement.objects.filter(is_active=True).update(is_active=False)
             announcement.save()
             messages.success(request, "L'annonce a été publiée avec succès !")
             return redirect('create_announcement')

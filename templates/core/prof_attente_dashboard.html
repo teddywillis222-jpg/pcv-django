@@ -369,42 +369,7 @@
 {% block content %}
 <div class="dashboard-container">
 
-    {% if announcement %}
-    <div id="announcement-card" style="position: relative; background-color: transparent; border-top: 3px solid #cbd5e1; border-bottom: 3px solid #cbd5e1; border-left: none; border-right: none; padding: 10px; margin: 0 0 1rem 0; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; transition: opacity 0.3s ease, height 0.3s ease;">
-        <button onclick="dismissAnnouncement({{ announcement.id }})" style="position: absolute; top: 10px; right: 10px; background: #e2e8f0; border: none; color: #475569; cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='#cbd5e1'; this.style.color='#0f172a';" onmouseout="this.style.background='#e2e8f0'; this.style.color='#475569';">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-        <div style="width: 100%; display: flex; flex-direction: column; gap: 0.25rem; padding-right: 30px;">
-            <h4 style="margin: 0; color: #1e293b; font-size: 1.05rem; font-weight: 800; line-height: 1.3;">
-                <span style="font-size: 1.1em; margin-right: 4px;">📢</span> {{ announcement.title }}
-            </h4>
-            <p style="margin: 0; color: #475569; font-size: 0.95rem; line-height: 1.5;">{{ announcement.message|linebreaksbr }}</p>
-        </div>
-    </div>
-    <script>
-        function dismissAnnouncement(id) {
-            const card = document.getElementById('announcement-card');
-            if (card) {
-                card.style.opacity = '0';
-                card.style.height = '0';
-                card.style.padding = '0';
-                card.style.margin = '0';
-                card.style.border = 'none';
-                setTimeout(() => card.remove(), 300);
-            }
-            fetch(`/api/announcement/${id}/dismiss/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                }
-            }).catch(err => console.error("Error dismissing announcement", err));
-        }
-    </script>
-    {% endif %}
+
 
     {% if teacher.statut_de_validation == "APPROVED" %}
     <!-- ÉTAPE : SUCCÈS / VALIDÉ -->
