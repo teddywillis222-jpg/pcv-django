@@ -309,14 +309,6 @@
                     {{ apprenant.nom|slice:":1"|upper }}
                 </div>
                 <h4 style="margin: 0;">{{ apprenant.nom }}</h4>
-                <div style="margin-top: 0.75rem; display: inline-block; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
-                    {% if request.user.profile.current_plan == 'ACCESS_PREMIUM' %}
-                        background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
-                    {% else %}
-                        background: #f1f5f9; color: #64748b;
-                    {% endif %}">
-                    {{ request.user.profile.current_plan_label }}
-                </div>
             </div>
             
             <nav class="sidebar-nav">
@@ -386,14 +378,6 @@
                         <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Bonjour, {{ apprenant.nom }} ! 👋</h2>
                         <div style="margin-top: 4px; display: flex; align-items: center; gap: 8px;">
                             <p style="margin: 0; font-size: 0.85rem; color: var(--text-gray);">Apprenant</p>
-                            <span style="padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
-                                {% if request.user.profile.current_plan == 'ACCESS_PREMIUM' %}
-                                    background: #fef3c7; color: #d97706; border: 1px solid #fde68a;
-                                {% else %}
-                                    background: #f1f5f9; color: #64748b;
-                                {% endif %}">
-                                {{ request.user.profile.current_plan_label }}
-                            </span>
                         </div>
                     </div>
                     <a href="{% url 'profil_eleve' 'apprenant' apprenant.id %}" style="padding: 0.5rem 1rem; background: #f1f5f9; color: var(--text-dark); border-radius: 8px; font-weight: 700; font-size: 0.8rem; text-decoration: none;">Voir détails</a>

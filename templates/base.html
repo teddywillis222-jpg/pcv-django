@@ -192,6 +192,43 @@
             color: var(--success-600);
         }
 
+        .plan-header-badge {
+            position: absolute;
+            top: -2px;
+            right: -6px;
+            transform: translate(100%, -40%);
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 6px;
+            border-radius: 6px;
+            line-height: 1;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            z-index: 10;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar-brand:hover .plan-header-badge {
+            transform: translate(100%, -50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .plan-header-badge.badge-premium {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 8px rgba(217, 119, 6, 0.25);
+        }
+
+        .plan-header-badge.badge-standard {
+            background: #e2e8f0;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1;
+        }
+
         .navbar-nav {
             display: flex;
             gap: 2rem;
@@ -556,7 +593,16 @@
     <header class="navbar">
         <div class="navbar-container">
             <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem;">
-                Prof Chez Vous
+                <span class="brand-text" style="position: relative; display: inline-block;">
+                    Prof Chez Vous
+                    {% if request.user.is_authenticated and request.user.profile %}
+                        {% if request.user.profile.role == 'PARENT' or request.user.profile.role == 'APPRENANT' %}
+                            <span class="plan-header-badge {% if request.user.profile.current_plan == 'ACCESS_PREMIUM' %}badge-premium{% else %}badge-standard{% endif %}">
+                                {{ request.user.profile.current_plan_label }}
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </span>
             </a>
             
             <!-- Navigation Desktop -->
