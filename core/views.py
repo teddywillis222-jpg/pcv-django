@@ -1030,7 +1030,7 @@ def apprenant_dashboard(request):
 
     # 1. Recommandations dynamiques basées sur la classe, matières et localisation de l'apprenant
     from django.db.models import Q, Case, When, Value, IntegerField
-    recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE)
+    base_recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
     
     score_annotation = Value(0, output_field=IntegerField())
     
@@ -1062,15 +1062,19 @@ def apprenant_dashboard(request):
         )
     
     # Appliquer le score et limiter aux 8 meilleurs résultats
-    recommandations = recommandations.annotate(reco_score=score_annotation).order_by("-reco_score", "-date_validation")[:8]
+    recommandations_annotees = base_recommandations.annotate(
+        reco_score=score_annotation
+    ).filter(reco_score__gt=0).order_by("-reco_score", "-profil_complet", "-est_certifie", "?")[:8]
     
     # Appliquer les ratings avant la conversion en liste (car .annotate n'existe que sur QuerySet)
-    recommandations_annotees = annotate_teachers_with_ratings(recommandations)
+    recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
     recommandations_list = list(recommandations_annotees)
     
     # Compléter avec d'autres profs si insuffisant
     if len(recommandations_list) < 8:
-        fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
+        fallback = base_recommandations.exclude(
+            id__in=[r.id for r in recommandations_list]
+        ).order_by("?")[:8 - len(recommandations_list)]
         # Appliquer les ratings aussi sur le fallback
         fallback = annotate_teachers_with_ratings(fallback)
         recommandations_list.extend(list(fallback))
