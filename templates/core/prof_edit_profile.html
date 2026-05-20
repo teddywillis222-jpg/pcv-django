@@ -188,6 +188,49 @@
         border-radius: 6px !important;
         font-weight: 600 !important;
     }
+
+    /* Grille Dispo */
+    .grid-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    .grid-table th {
+        background: #f8fafc;
+        padding: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: center;
+    }
+    .grid-table td {
+        padding: 0.8rem;
+        border-bottom: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .grid-table td:first-child {
+        font-weight: 600;
+        text-align: left;
+        background: #fafafa;
+    }
+    .grid-table input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--dash-accent);
+        cursor: pointer;
+    }
+    @media (max-width: 600px) {
+        .grid-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -333,7 +376,35 @@
                 </div>
             </div>
 
-            <!-- SECTION 4 : DIPLÔMES & VÉRIFICATION (LECTURE SEULE) -->
+            <!-- SECTION DISPONIBILITÉS -->
+            <div class="form-section">
+                <h3 class="section-title"><span>🕒</span> Disponibilités habituelles</h3>
+                <p class="help-text" style="margin-bottom:1.5rem;">Cochez les tranches horaires où vous êtes généralement disposé(e) à donner des cours.</p>
+                <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                    <table class="grid-table">
+                        <thead>
+                            <tr>
+                                <th>Jour</th>
+                                <th>Matin (8h-13h)</th>
+                                <th>Après-midi (13h-18h)</th>
+                                <th>Soir (18h-21h)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for jour in jours %}
+                            <tr>
+                                <td>{{ jour }}</td>
+                                <td><input type="checkbox" name="disponibilites" value="{{ jour }}_Matin" {% if jour|add:"_Matin" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                                <td><input type="checkbox" name="disponibilites" value="{{ jour }}_ApresMidi" {% if jour|add:"_ApresMidi" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                                <td><input type="checkbox" name="disponibilites" value="{{ jour }}_Soir" {% if jour|add:"_Soir" in teacher.grille_disponibilites %}checked{% endif %}></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION DOCUMENTS DE VÉRIFICATION (LECTURE SEULE) -->
             <div class="form-section">
                 <h3 class="section-title"><span>🎓</span> Documents de Vérification</h3>
                 

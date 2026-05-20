@@ -604,7 +604,7 @@
                 </li>
             </ul>
             {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}
-                <a href="#" class="btn-action btn-premium-cta">Passer à Premium</a>
+                <a href="{% url 'payer_premium' %}" class="btn-action btn-premium-cta">Passer à Premium</a>
             {% else %}
                 <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium);">Gérer mon abonnement</a>
             {% endif %}

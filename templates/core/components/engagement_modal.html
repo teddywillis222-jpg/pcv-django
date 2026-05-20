@@ -361,16 +361,18 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         }
 
         // Pré-remplissage si un engagement existe déjà
-        if (existingEng) {
+        if (existingEng && existingEng.status === 'EN_ATTENTE') {
+            document.querySelector('#engagementModal h3').textContent = 'Modifier ma proposition';
             typeSelect.value = existingEng.type || 'standard';
             matiereSelect.value = existingEng.matiere;
             if (existingEng.classe) classeSelect.value = existingEng.classe;
-            document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'domicile';
+            document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'PARENT_HOME';
             if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
-            if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1';
+            if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1H';
             
-            document.getElementById('eng_submit_btn').textContent = 'Modifier ma proposition';
+            document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
         } else {
+            document.querySelector('#engagementModal h3').textContent = 'Proposer un engagement';
             document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
         }
 

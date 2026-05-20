@@ -690,14 +690,21 @@ def prof_edit_profile(request):
     if request.method == "POST":
         form = TeacherProfileForm(request.POST, request.FILES, instance=teacher)
         if form.is_valid():
-            teacher = form.save()
+            teacher = form.save(commit=False)
+            teacher.grille_disponibilites = request.POST.getlist("disponibilites")
+            teacher.save()
+            # On sauvegarde aussi les relations many-to-many du formulaire
+            form.save_m2m()
             return redirect("prof_dashboard")
     else:
         form = TeacherProfileForm(instance=teacher)
 
+    jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+
     return render(request, "core/prof_edit_profile.html", {
         "form": form,
         "teacher": teacher,
+        "jours": jours,
         "localisation_choices": Localisation.CHOICES
     })
 
@@ -3058,6 +3065,65 @@ def paiement_succes(request, engagement_id):
 def paiement_echec(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     return render(request, 'core/paiement_echec.html', {'engagement': engagement})
+
+@login_required
+def payer_premium(request):
+    """Vue pour initialiser le paiement Premium et rediriger vers FedaPay."""
+    from .services import initier_paiement_abonnement
+    from django.urls import reverse
+    
+    callback_url = request.build_absolute_uri(reverse('fedapay_premium_callback'))
+    
+    try:
+        payment_url = initier_paiement_abonnement(request.user, callback_url)
+        return redirect(payment_url)
+    except Exception as e:
+        messages.error(request, f"Erreur lors de l'initialisation du paiement : {str(e)}")
+        return redirect('gestion_plan')
+
+@csrf_exempt
+def fedapay_premium_callback(request):
+    """Webhook / Callback pour l'abonnement Premium FedaPay."""
+    status = request.GET.get('status')
+    transaction_id = request.GET.get('id')
+    
+    if not transaction_id:
+        try:
+            payload = json.loads(request.body)
+            transaction_id = payload.get('entity', {}).get('id')
+            status = payload.get('entity', {}).get('status')
+        except:
+            pass
+
+    if transaction_id and status:
+        from .models import TransactionFedaPay
+        try:
+            local_txn = TransactionFedaPay.objects.get(transaction_id=str(transaction_id), type_transaction='ABONNEMENT')
+            local_txn.statut = status
+            
+            if status == 'approved' and not local_txn.date_validation:
+                import django.utils.timezone as timezone
+                local_txn.date_validation = timezone.now()
+                # Mettre à jour l'abonnement de l'utilisateur
+                from .choices import TypeAbonnement
+                abonnement = local_txn.user.abonnements.order_by('-id').first()
+                if abonnement:
+                    abonnement.type_abonnement = TypeAbonnement.ACCESS_PREMIUM
+                    abonnement.save()
+            
+            local_txn.save()
+            
+            if request.method == 'GET':
+                if status == 'approved':
+                    messages.success(request, "Votre abonnement Access+ Premium a été activé avec succès !")
+                else:
+                    messages.error(request, "Le paiement de votre abonnement a échoué ou a été annulé.")
+                return redirect('gestion_plan')
+                
+        except TransactionFedaPay.DoesNotExist:
+            pass
+
+    return JsonResponse({'status': 'ok'})
 
 # --- NOUVEAUX ENDPOINTS : EVALUATION ET CONSENTEMENT MUTUEL ---
 from django.views.decorators.http import require_POST

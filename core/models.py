@@ -1002,13 +1002,34 @@ class ProfessorAnnouncement(models.Model):
 
 class TransactionFedaPay(models.Model):
     """
-    Trace comptable d'une tentative de paiement des frais d'engagement (2000 FCFA).
+    Trace comptable d'une tentative de paiement des frais d'engagement (2000 FCFA)
+    ou de souscription à un abonnement Premium.
     """
+    TYPE_TRANSACTION_CHOICES = [
+        ('ENGAGEMENT', 'Engagement'),
+        ('ABONNEMENT', 'Abonnement'),
+    ]
+    type_transaction = models.CharField(
+        max_length=20,
+        choices=TYPE_TRANSACTION_CHOICES,
+        default='ENGAGEMENT',
+        help_text="Type de la transaction"
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="transactions_fedapay",
+        null=True,
+        blank=True,
+        help_text="L'utilisateur qui effectue le paiement (requis pour les abonnements)"
+    )
     engagement = models.ForeignKey(
         "Engagement",
         on_delete=models.CASCADE,
         related_name="transactions",
-        help_text="L'engagement lié à ce paiement"
+        null=True,
+        blank=True,
+        help_text="L'engagement lié à ce paiement (pour type ENGAGEMENT)"
     )
     transaction_id = models.CharField(
         max_length=100, 
