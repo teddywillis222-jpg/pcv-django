@@ -195,6 +195,12 @@
         padding: 0.3rem;
         border-radius: 14px;
         margin-bottom: 1rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .glass-tabs::-webkit-scrollbar {
+        display: none;
     }
 
     .tab-pill {
@@ -207,6 +213,8 @@
         border-radius: 10px;
         font-size: 0.8rem;
         cursor: pointer;
+        white-space: nowrap; /* Empêche le texte de se casser sur deux lignes */
+        min-width: max-content;
     }
 
     .tab-pill.active {
