@@ -225,7 +225,9 @@
 
 /* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {
-    background: white;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 16px;
     padding: 1rem;
     width: 200px; /* Fixed width for carousel */
@@ -235,14 +237,15 @@
     align-items: center;
     text-align: center;
     gap: 0.5rem;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
 }
 
 .teacher-card-compact:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .teacher-card-compact .compact-photo {

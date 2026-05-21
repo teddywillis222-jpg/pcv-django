@@ -43,12 +43,20 @@
             }
         }
         
-        .ts-dropdown .create {
-            font-size: 0;
+        .ts-dropdown .no-results {
+            padding: 10px 16px !important;
+            font-size: 14px !important;
+            color: #64748b;
         }
-        .ts-dropdown .create::after {
-            content: "Ajouter la saisie...";
-            font-size: 14px;
+        .ts-dropdown .create {
+            padding: 10px 16px !important;
+            font-size: 14px !important;
+            color: var(--success-600) !important;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .ts-dropdown .create:hover {
+            background-color: var(--success-50) !important;
         }
         .ts-control input::placeholder {
             font-size: 14px;
@@ -112,6 +120,7 @@
             margin-top: 5px !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
             border: 1px solid #e2e8f0 !important;
+            z-index: 9999 !important; /* Ensure it floats above sheets and modals */
         }
 
         /* Harmonisation Tom Select avec le design premium */
@@ -1026,25 +1035,41 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script>
         function initGlobalTomSelects() {
-            const multiSelects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
-            multiSelects.forEach(select => {
+            const selects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
+            selects.forEach(select => {
                 if (select.tomselect) return;
                 
-                const isMultiple = select.hasAttribute('multiple');
+                const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple');
                 const maxItemsAttr = select.getAttribute('data-max-items');
                 
+                const plugins = [];
+                if (isMultiple) {
+                    plugins.push('remove_button');
+                } else {
+                    plugins.push('dropdown_input');
+                }
+                
                 new TomSelect(select, {
-                    plugins: ['remove_button', 'dropdown_input'],
+                    plugins: plugins,
                     create: true,
                     persist: false,
                     closeAfterSelect: true,
+                    dropdownParent: 'body', // Fixes clipping/z-index issues inside modals/sheets
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
-                    maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (select.classList.contains('allow-multiple') ? null : (select.hasAttribute('multiple') ? null : 1)),
+                    maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     onItemAdd: function() {
                         this.setTextboxValue('');
                         this.refreshOptions();
+                    },
+                    render: {
+                        no_results: function(data, escape) {
+                            return '<div class="no-results">Aucun résultat trouvé pour "' + escape(data.input) + '"</div>';
+                        },
+                        option_create: function(data, escape) {
+                            return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>...</div>';
+                        }
                     }
                 });
             });

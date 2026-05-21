@@ -502,12 +502,21 @@
             if (select.tomselect) return;
             
             const isMatieres = select.id === 'id_matieres_predefinies';
+            const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple') || isMatieres;
+            
+            const plugins = [];
+            if (isMultiple) {
+                plugins.push('remove_button');
+            } else {
+                plugins.push('dropdown_input');
+            }
             
             new TomSelect(select, {
-                plugins: ['remove_button', 'dropdown_input'],
+                plugins: plugins,
                 create: true,
                 persist: false,
-                maxItems: isMatieres ? 5 : null,
+                dropdownParent: 'body',
+                maxItems: isMatieres ? 5 : (isMultiple ? null : 1),
                 maxOptions: 15,
                 placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                 onChange: function(value) {
@@ -516,6 +525,14 @@
                 onItemAdd: function() {
                     this.setTextboxValue('');
                     this.refreshOptions();
+                },
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results">Aucun résultat trouvé pour "' + escape(data.input) + '"</div>';
+                    },
+                    option_create: function(data, escape) {
+                        return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>...</div>';
+                    }
                 }
             });
         });

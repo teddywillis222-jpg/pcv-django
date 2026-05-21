@@ -42,7 +42,7 @@
     .ts-dropdown {
         border-radius: 12px !important;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-        z-index: 2000 !important; /* Ensure visibility over offcanvas */
+        z-index: 9999 !important; /* Ensure visibility over sheets/modals */
     }
     .ts-dropdown .option {
         padding: 10px 16px !important;
@@ -573,7 +573,7 @@
                     <h1 class="section-title">Mes enfants</h1>
                 </div>
                 <button
-                    onclick="document.getElementById('childSheet').classList.add('active'); document.getElementById('sheetOverlay').classList.add('active');"
+                    onclick="openChildSheet()"
                     style="background: none; border: none; font-weight: 700; color: var(--primary); font-size: 0.8rem; cursor: pointer;">+
                     Ajouter</button>
             </header>
@@ -1132,32 +1132,12 @@
         }
     }
 
-    function initTomSelects() {
-        const multiSelects = document.querySelectorAll('.pcv-multi-select, .multi-select');
-        multiSelects.forEach(select => {
-            if (select.tomselect) return;
-            new TomSelect(select, {
-                plugins: ['remove_button', 'dropdown_input'],
-                create: true,
-                persist: false,
-                maxOptions: 15,
-                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
-                onItemAdd: function() {
-                    this.setTextboxValue('');
-                    this.refreshOptions();
-                }
-            });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', initTomSelects);
-
-    // Re-init when offcanvas opens
-    const offcanvasAddChild = document.getElementById('offcanvasAddChild');
-    if (offcanvasAddChild) {
-        offcanvasAddChild.addEventListener('shown.bs.offcanvas', function () {
-            initTomSelects();
-        });
+    function openChildSheet() {
+        document.getElementById('childSheet').classList.add('active');
+        document.getElementById('sheetOverlay').classList.add('active');
+        if (typeof initGlobalTomSelects === 'function') {
+            initGlobalTomSelects();
+        }
     }
     
     function openTeacherProfile(slug) {

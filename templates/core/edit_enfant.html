@@ -154,10 +154,24 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.pcv-multi-select').forEach(el => {
+            if (el.tomselect) return;
+            
+            const isMultiple = el.hasAttribute('multiple') || el.classList.contains('allow-multiple');
+            const plugins = isMultiple ? ['remove_button'] : ['dropdown_input'];
+            
             new TomSelect(el, {
-                plugins: ['remove_button'],
+                plugins: plugins,
                 persist: false,
-                create: false,
+                create: el.getAttribute('data-create') === 'true' || false,
+                dropdownParent: 'body',
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results">Aucun résultat trouvé pour "' + escape(data.input) + '"</div>';
+                    },
+                    option_create: function(data, escape) {
+                        return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>...</div>';
+                    }
+                }
             });
         });
     });
