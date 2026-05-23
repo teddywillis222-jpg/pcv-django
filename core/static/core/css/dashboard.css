@@ -377,20 +377,21 @@ body {
 /* Bottom Nav (Mobile) */
 .dash-bottom-nav {
     position: fixed;
-    bottom: 1.25rem;
-    left: 1rem;
-    right: 1rem;
-    height: 64px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 24px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.85rem 1rem calc(0.95rem + env(safe-area-inset-bottom, 0.5rem));
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 18px 18px 0 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
+    gap: 0.5rem;
     z-index: 1000;
-    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.15);
+    box-shadow: 0 -10px 35px -18px rgba(15, 23, 42, 0.18);
 }
 
 .dash-bottom-nav .nav-item {
@@ -400,21 +401,42 @@ body {
     justify-content: center;
     color: #94a3b8;
     text-decoration: none;
-    width: 48px;
-    height: 48px;
+    min-width: 62px;
+    padding: 0.45rem 0.45rem 0.2rem;
     border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    gap: 0;
+    transition: transform 0.24s ease, background 0.24s ease, color 0.24s ease;
+    gap: 0.2rem;
+}
+
+.dash-bottom-nav .nav-item:hover {
+    transform: translateY(-1px);
+    background: rgba(22, 163, 74, 0.06);
 }
 
 .dash-bottom-nav .nav-item.active {
     color: var(--dash-accent);
-    background: var(--dash-accent-soft);
+    background: rgba(22, 163, 74, 0.14);
 }
 
 .dash-bottom-nav .nav-item svg {
     width: 26px;
     height: 26px;
+}
+
+.dash-bottom-nav .nav-label {
+    display: block;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    opacity: 0.95;
+    transform: translateY(2px);
+    transition: opacity 0.24s ease, transform 0.24s ease;
+    color: inherit;
+}
+
+.dash-bottom-nav .nav-item:not(.active):hover .nav-label,
+.dash-bottom-nav .nav-item.active .nav-label {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Desktop Adjustments */

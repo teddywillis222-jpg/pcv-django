@@ -50,7 +50,7 @@
 
     body {
         background-color: var(--dash-bg);
-        padding-bottom: 70px;
+        padding-bottom: 100px;
         /* Espace pour la bottom nav sur mobile */
     }
 
@@ -131,18 +131,19 @@
     /* Bottom Nav (Mobile only) */
     .bottom-nav {
         position: fixed;
-        bottom: 1.25rem;
-        left: 1rem;
-        right: 1rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.85rem 1rem calc(0.95rem + env(safe-area-inset-bottom, 0.5rem));
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 18px 18px 0 0;
         display: flex;
         justify-content: space-around;
-        padding: 0.75rem 0.5rem;
-        border-radius: 24px;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        align-items: center;
+        box-shadow: 0 -10px 35px -18px rgba(15, 23, 42, 0.18);
         z-index: 1000;
     }
 
@@ -159,20 +160,46 @@
         justify-content: center;
         color: #94a3b8;
         text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 48px;
-        height: 48px;
+        min-width: 62px;
+        padding: 0.45rem 0.45rem 0.2rem;
         border-radius: 16px;
+        transition: transform 0.24s ease, background 0.24s ease, color 0.24s ease;
+        gap: 0.2rem;
+    }
+
+    .nav-item:hover {
+        transform: translateY(-1px);
+        background: rgba(22, 163, 74, 0.06);
     }
 
     .nav-item.active {
         color: var(--primary);
-        background: var(--primary-soft);
+        background: rgba(22, 163, 74, 0.14);
     }
 
     .nav-item svg {
         width: 26px;
         height: 26px;
+    }
+
+    .nav-label {
+        display: block;
+        font-size: 0.72rem;
+        line-height: 1.2;
+        opacity: 0.95;
+        transform: translateY(2px);
+        transition: opacity 0.24s ease, transform 0.24s ease;
+        color: inherit;
+    }
+
+    .nav-item:not(.active):hover .nav-label {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .nav-item.active .nav-label {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .carousel-container {
@@ -547,18 +574,23 @@
     <nav class="bottom-nav">
         <a href="#" class="nav-item active" onclick="showSection('main-dash')" title="Accueil">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span class="nav-label">Accueil</span>
         </a>
         <a href="#" class="nav-item" onclick="showSection('favoris-section')" title="Favoris">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span class="nav-label">Favoris</span>
         </a>
         <a href="#" class="nav-item" onclick="showSection('history-section')" title="Historique">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="nav-label">Historique</span>
         </a>
         <a href="{% url 'messagerie' %}" class="nav-item" title="Messages">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="nav-label">Messages</span>
         </a>
         <a href="{% url 'gestion_plan' %}" class="nav-item" title="Mon plan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+            <span class="nav-label">Mon plan</span>
         </a>
     </nav>
 
