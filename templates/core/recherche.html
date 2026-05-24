@@ -768,6 +768,23 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.teacher-card').forEach(card => {
         observer.observe(card);
     });
+
+    // Restaurer les valeurs personnalisées de Tom Select (Matière, Localisation)
+    setTimeout(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        ['matiere', 'localisation'].forEach(id => {
+            const val = urlParams.get(id);
+            if (val) {
+                const selectEl = document.getElementById(id);
+                if (selectEl && selectEl.tomselect) {
+                    if (!selectEl.tomselect.options[val]) {
+                        selectEl.tomselect.addOption({value: val, text: val});
+                    }
+                    selectEl.tomselect.setValue(val);
+                }
+            }
+        });
+    }, 100);
 });
 
 </script>

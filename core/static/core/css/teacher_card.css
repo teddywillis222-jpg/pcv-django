@@ -18,6 +18,7 @@
     min-height: auto;
     box-sizing: border-box;
     overflow: hidden; /* Réactivé pour permettre la troncature ellipsis */
+    -webkit-tap-highlight-color: transparent; /* Remove blue flash on Android */
 }
 
 .teacher-card.premium-card:hover {
@@ -240,6 +241,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent; /* Remove blue flash on Android */
 }
 
 .teacher-card-compact:hover {
