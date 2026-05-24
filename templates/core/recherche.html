@@ -52,13 +52,6 @@
 }
 
 /* Filtres Principaux */
-.main-filters {
-    display: flex;
-    gap: 1.5rem;
-    align-items: flex-end;
-    margin-bottom: 1.5rem;
-    flex-wrap: nowrap; /* Row sur desktop */
-}
 
 .filter-group {
     flex: 1;
@@ -91,55 +84,7 @@
     box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
-.more-filters-btn {
-    background: transparent;
-    color: #64748b;
-    border: none;
-    height: auto;
-    padding: 0;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-}
 
-.more-filters-btn:hover {
-    color: var(--success-600);
-}
-
-.more-filters-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-.reset-filters-btn {
-    background: #f1f5f9;
-    color: #64748b;
-    border: none;
-    height: auto;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    text-decoration: none;
-}
-
-.reset-filters-btn:hover {
-    background: #e2e8f0;
-    color: #334155;
-}
 
 /* Fix Tom Select Overflows and Duplications */
 .advanced-filters .ts-wrapper {
@@ -320,13 +265,57 @@ select.pcv-multi-select,
 }
 
 .filter-actions-row {
-    display: flex; 
-    gap: 1.5rem; 
-    align-items: center; 
-    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 0.25rem;
     flex-wrap: wrap;
 }
 
+.reset-filters-btn {
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    height: auto;
+    padding: 0.45rem 0.9rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.more-filters-btn {
+    background: transparent;
+    color: #64748b;
+    border: none;
+    height: auto;
+    padding: 0.25rem 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0;
+    font-size: 0.9rem;
+}
+
+.more-filters-btn:hover {
+    color: var(--success-600);
+}
+
+.more-filters-btn svg {
+    width: 18px;
+    height: 18px;
+}
 
 /* Layout Recherche Desktop */
 .teachers-grid {
@@ -343,14 +332,20 @@ select.pcv-multi-select,
 .main-filters {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    background: #f8fafc;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .search-inputs-row {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     width: 100%;
     align-items: center;
 }
@@ -363,20 +358,22 @@ select.pcv-multi-select,
 @media (max-width: 768px) {
     .search-title {
         font-size: 1.75rem;
+        margin-bottom: 0.5rem;
     }
     
     .search-subtitle {
         font-size: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .search-header {
         padding: 0.5rem 0;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
     }
     
     .search-inputs-row {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.85rem;
     }
     
     .teachers-grid {
