@@ -157,12 +157,18 @@
             if (el.tomselect) return;
             
             const isMultiple = el.hasAttribute('multiple') || el.classList.contains('allow-multiple');
-            const plugins = isMultiple ? ['remove_button'] : ['dropdown_input'];
+            const plugins = ['remove_button'];
+            if (!isMultiple) {
+                plugins.push('dropdown_input');
+            }
+            const maxItemsAttr = el.getAttribute('data-max-items');
+            const finalMaxItems = maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1);
             
             new TomSelect(el, {
                 plugins: plugins,
                 persist: false,
-                create: el.getAttribute('data-create') === 'true' || false,
+                create: true,
+                closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
                 dropdownParent: 'body',
                 render: {
                     no_results: function(data, escape) {

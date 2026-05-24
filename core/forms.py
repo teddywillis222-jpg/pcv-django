@@ -7,9 +7,55 @@ import re
 from .models import Apprenant, Enfant, Parent, Profile
 from .choices import ClassLevel, CourseMode, Localisation, Matiere
 
+class DynamicSelectMultiple(forms.SelectMultiple):
+    def get_context(self, name, value, attrs):
+        if value:
+            choices_list = list(self.choices)
+            existing_vals = [str(c[0]) for c in choices_list]
+            added = False
+            for val in value:
+                if str(val) not in existing_vals:
+                    choices_list.append((val, val))
+                    added = True
+            if added:
+                self.choices = choices_list
+        return super().get_context(name, value, attrs)
+
+class DynamicSelect(forms.Select):
+    def get_context(self, name, value, attrs):
+        if value:
+            choices_list = list(self.choices)
+            existing_vals = [str(c[0]) for c in choices_list]
+            if str(value) not in existing_vals:
+                choices_list.append((value, value))
+                self.choices = choices_list
+        return super().get_context(name, value, attrs)
+
+
 class DynamicMultipleChoiceField(forms.MultipleChoiceField):
+    widget = DynamicSelectMultiple
+
     def valid_value(self, value):
         return True
+
+    def __init__(self, **kwargs):
+        widget = kwargs.get('widget')
+        if widget and isinstance(widget, forms.SelectMultiple) and not isinstance(widget, DynamicSelectMultiple):
+            kwargs['widget'] = DynamicSelectMultiple(attrs=widget.attrs, choices=widget.choices)
+        super().__init__(**kwargs)
+
+
+class DynamicChoiceField(forms.ChoiceField):
+    widget = DynamicSelect
+
+    def valid_value(self, value):
+        return True
+
+    def __init__(self, **kwargs):
+        widget = kwargs.get('widget')
+        if widget and isinstance(widget, forms.Select) and not isinstance(widget, DynamicSelect):
+            kwargs['widget'] = DynamicSelect(attrs=widget.attrs, choices=widget.choices)
+        super().__init__(**kwargs)
 
 
 class SignUpForm(UserCreationForm):
@@ -149,7 +195,7 @@ class FinalisationCompteForm(forms.Form):
 
 
 class ParentForm(forms.ModelForm):
-    quartier_ville = forms.ChoiceField(
+    quartier_ville = DynamicChoiceField(
         choices=Localisation.CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'pcv-multi-select'})
@@ -189,7 +235,7 @@ class EnfantForm(forms.ModelForm):
             'data-max-items': '5'
         })
     )
-    objectifs_motivations = forms.MultipleChoiceField(
+    objectifs_motivations = DynamicMultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
@@ -197,7 +243,7 @@ class EnfantForm(forms.ModelForm):
         }),
         required=False
     )
-    difficultes_predefinies = forms.MultipleChoiceField(
+    difficultes_predefinies = DynamicMultipleChoiceField(
         choices=DIFFICULTES_CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
@@ -272,13 +318,12 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
-            'style': 'height: 52px;',
             'data-max-items': '5'
         }),
         required=False
     )
     
-    objectifs_motivations = forms.MultipleChoiceField(
+    objectifs_motivations = DynamicMultipleChoiceField(
         choices=ObjectifApprenant.CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
@@ -287,9 +332,9 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         required=False
     )
     
-    quartier_ville = forms.ChoiceField(
+    quartier_ville = DynamicChoiceField(
         choices=Localisation.CHOICES,
-        widget=forms.Select(attrs={'style': 'height: 52px;', 'class': 'pcv-multi-select'}),
+        widget=forms.Select(attrs={'class': 'pcv-multi-select'}),
         required=True
     )
 
@@ -307,10 +352,10 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             "preference_de_cours",
         ]
         widgets = {
-            'classe': forms.Select(choices=ClassLevel.CHOICES, attrs={'style': 'height: 52px;'}),
-            'preference_de_cours': forms.Select(choices=CourseMode.CHOICES, attrs={'style': 'height: 52px;'}),
+            'classe': forms.Select(choices=ClassLevel.CHOICES),
+            'preference_de_cours': forms.Select(choices=CourseMode.CHOICES),
             'description_difficultes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.'}),
-            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont', 'style': 'height: 52px;'}),
+            'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -341,12 +386,12 @@ from .choices import SupportCategory
 
 class TeacherProfileForm(forms.ModelForm):
     
-    modes_de_cours = forms.MultipleChoiceField(
+    modes_de_cours = DynamicMultipleChoiceField(
         choices=CourseMode.CHOICES, 
         required=False, 
         widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple'})
     )
-    classes_enseignees = forms.MultipleChoiceField(
+    classes_enseignees = DynamicMultipleChoiceField(
         choices=ClassLevel.CHOICES, 
         required=False, 
         widget=forms.SelectMultiple(attrs={
@@ -354,7 +399,7 @@ class TeacherProfileForm(forms.ModelForm):
             'data-max-items': '3'
         })
     )
-    ville_quartier = forms.ChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
+    ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
     categories_de_soutien = DynamicMultipleChoiceField(
         choices=SupportCategory.CHOICES,
         required=True,

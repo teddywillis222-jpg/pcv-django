@@ -514,17 +514,11 @@ def validate_modes_cours(value):
     """Liste de valeurs CourseMode."""
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste de modes de cours.")
-    valid = set(CourseMode.VALUES)
-    for v in value:
-        if v not in valid:
-            raise ValidationError(f"Mode de cours invalide : {v}. Valeurs autorisées : {list(valid)}")
+    # On autorise désormais les valeurs personnalisées ajoutées par l'utilisateur (Choices.js / TomSelect)
 
 
 def validate_classes_enseignees(value):
     """Liste de valeurs ClassLevel."""
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste de classes.")
-    valid = set(ClassLevel.VALUES)
-    for v in value:
-        if v not in valid:
-            raise ValidationError(f"Classe invalide : {v}. Valeurs autorisées : {list(valid)}")
+    # On autorise désormais les valeurs personnalisées ajoutées par l'utilisateur (Choices.js / TomSelect)
