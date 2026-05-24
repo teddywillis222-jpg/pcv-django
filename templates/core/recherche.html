@@ -329,6 +329,10 @@ select.pcv-multi-select,
     align-items: start;
 }
 
+.search-header {
+    position: relative;
+}
+
 .main-filters {
     display: flex;
     flex-direction: column;
@@ -337,10 +341,11 @@ select.pcv-multi-select,
     margin-bottom: 0.75rem;
     position: sticky;
     top: 0;
-    z-index: 12;
+    z-index: 1000;
     background: #f8fafc;
-    padding: 0.75rem 0;
+    padding: 0.75rem 0.75rem;
     border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 .search-inputs-row {
