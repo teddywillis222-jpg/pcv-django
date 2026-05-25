@@ -200,6 +200,20 @@
         cursor: pointer;
         padding: 0 0.5rem;
     }
+    /* Remove underlines and add subtle hover lift for links/buttons in profile */
+    .profil-container a,
+    .profil-container button {
+        text-decoration: none !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+    .profil-container a:hover,
+    .profil-container button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+        text-decoration: none !important;
+    }
+    .profil-container a:active,
+    .profil-container button:active { transform: translateY(0); }
 </style>
 
 <div class="profil-container">

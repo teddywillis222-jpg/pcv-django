@@ -153,6 +153,17 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(22, 163, 74, 0.2);
     }
+    /* Ensure links/buttons in suivi are non-underlined and get subtle lift */
+    .suivi-container a,
+    .suivi-container button {
+        text-decoration: none !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+    .suivi-container a:hover,
+    .suivi-container button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+    }
     
     /* Journal Section Premium */
     .journal-section {

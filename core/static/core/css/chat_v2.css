@@ -399,6 +399,30 @@
     margin: 0 auto 0.5rem;
 }
 
+/* Polishing: remove underlines on links/buttons and add subtle hover lift in chat views */
+.chat-v2-wrapper a,
+.chat-v2-wrapper button,
+.c-header-actions button,
+.c-back-btn,
+.c-icon-btn,
+.c-send-btn,
+.c-menu-item {
+    text-decoration: none !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.chat-v2-wrapper a:hover,
+.chat-v2-wrapper button:hover,
+.c-icon-btn:hover,
+.c-send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+    text-decoration: none !important;
+}
+
+.chat-v2-wrapper a:active,
+.chat-v2-wrapper button:active { transform: translateY(0); }
+
 .sys-msg-actions {
     display: flex;
     flex-direction: column;

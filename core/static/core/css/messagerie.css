@@ -398,6 +398,30 @@
     width: 100%;
     text-align: left;
     background: none;
+
+    /* Polishing: remove underlines on links/buttons and add subtle hover lift */
+    .msg-container a,
+    .msg-container button,
+    .filters-wrapper a,
+    .filter-btn,
+    .conv-options-btn,
+    .conv-options-item,
+    .conv-card {
+        text-decoration: none !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    .msg-container a:hover,
+    .msg-container button:hover,
+    .filter-btn:hover,
+    .conv-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+        text-decoration: none !important;
+    }
+
+    .msg-container a:active,
+    .msg-container button:active { transform: translateY(0); }
     border: none;
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
