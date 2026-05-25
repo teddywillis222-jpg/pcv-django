@@ -1499,8 +1499,9 @@ def api_teacher_profile(request, teacher_slug):
                         statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
                     ).first()
 
+                existing_engagement_dict = None
                 if existing_engagement_obj:
-                    existing_engagement = {
+                    existing_engagement_dict = {
                         'id': existing_engagement_obj.id,
                         'matiere': existing_engagement_obj.matiere,
                         'mode_de_cours': existing_engagement_obj.mode_de_cours,
@@ -1538,13 +1539,13 @@ def api_teacher_profile(request, teacher_slug):
             'related_teachers': related_teachers,
             'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
             'parent_children': parent_children,
-            'existing_engagement': existing_engagement
+            'existing_engagement': existing_engagement_obj
         }, request=request)
         
         return JsonResponse({
             'html': html,
             'parent_children': parent_children,
-            'existing_engagement': existing_engagement,
+            'existing_engagement': existing_engagement_dict,
             'existing_conversation_id': existing_conversation_id,
         })
         

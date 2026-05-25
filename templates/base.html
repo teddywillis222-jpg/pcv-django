@@ -1075,6 +1075,10 @@
                     onItemAdd: function() {
                         this.setTextboxValue('');
                         this.refreshOptions();
+                        if (this.settings.closeAfterSelect) {
+                            this.close();
+                            this.blur();
+                        }
                     },
                     render: {
                         no_results: function(data, escape) {
