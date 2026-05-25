@@ -35,7 +35,6 @@
     box-sizing: border-box;
 }
 
-/* Titre visible uniquement avant le scroll */
 .search-title {
     font-size: 2.2rem;
     font-weight: 800;
@@ -43,16 +42,16 @@
     margin-bottom: 1rem;
     line-height: 1.2;
     margin-top: 0.5rem;
-    transition: opacity 0.25s ease, max-height 0.3s ease, margin 0.3s ease;
-    max-height: 200px;
-    overflow: hidden;
+    transition: all 0.3s ease;
+    transform-origin: top;
 }
 
 .search-title.hidden {
     opacity: 0;
-    max-height: 0;
+    height: 0;
     margin: 0;
     padding: 0;
+    transform: scaleY(0);
     pointer-events: none;
 }
 
@@ -149,11 +148,14 @@ select.pcv-multi-select,
 }
 
 
-/* Filtres Avancés — intégrés dans le bloc fixe */
+/* Filtres Avancés */
 .advanced-filters {
-    border-top: 1px solid #e2e8f0;
-    padding: 0.75rem 0 0 0;
-    margin-top: 0.25rem;
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
     display: none;
 }
 
@@ -342,29 +344,26 @@ select.pcv-multi-select,
     position: relative;
 }
 
-/* --- Conteneur de filtres FIXE --- */
-/* Ce bloc reste toujours visible, même quand on scrolle les résultats */
 .main-filters {
-    position: fixed;
-    top: 75px; /* Hauteur exacte de la navbar (body padding-top: 75px dans base.html) */
-    left: 0;
-    right: 0;
-    z-index: 1100; /* Au-dessus de la navbar (z-index: 1000) */
-    background: #f8fafc;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    transition: box-shadow 0.3s ease, padding 0.3s ease;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    position: sticky;
+    top: 70px;
+    z-index: 1000;
+    background: #f8fafc;
+    padding: 0.75rem 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    transition: all 0.3s ease;
 }
 
-/* Ombre renforcée quand on a scrollé (pour signifier qu'il y a du contenu derrière) */
 .main-filters.scrolled {
-    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.16);
-    padding: 0.5rem 1rem;
-    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    gap: 0.25rem;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
 }
 
 .search-inputs-row {
@@ -372,32 +371,21 @@ select.pcv-multi-select,
     gap: 1rem;
     width: 100%;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    box-sizing: border-box;
+    transition: gap 0.3s ease;
 }
 
-.filter-actions-row {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+.main-filters.scrolled .search-inputs-row {
+    gap: 0.5rem;
 }
 
 .search-inputs-row .filter-group {
     flex: 1;
 }
 
-/* Zone d'ancrage invisible qui réserve la hauteur du bloc fixe dans le flux */
-.filter-anchor {
-    display: block;
-    width: 100%;
-    /* La hauteur est définie dynamiquement par JS via ResizeObserver */
-}
-
-/* Conteneur scroll des résultats : les cartes passent SOUS le bloc fixe */
-.results-scroll-area {
-    width: 100%;
+.main-filters.scrolled .filter-input,
+.main-filters.scrolled .ts-control {
+    min-height: 40px !important;
+    height: 40px !important;
 }
 
 /* Responsive Mobile */
@@ -417,21 +405,9 @@ select.pcv-multi-select,
         margin-bottom: 0.25rem;
     }
     
-    .main-filters {
-        top: 0; /* Sur mobile, la navbar est transparente et non-bloquante */
-        padding: 0.6rem 8px;
-        gap: 0.6rem;
-        z-index: 1100;
-    }
-
-    .main-filters.scrolled {
-        padding: 0.4rem 8px;
-        gap: 0.4rem;
-    }
-    
     .search-inputs-row {
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 0.85rem;
     }
     
     .teachers-grid {
@@ -460,7 +436,7 @@ select.pcv-multi-select,
 
 @media (max-width: 480px) {
     .search-container {
-        padding: 0 8px;
+        padding: 0 8px; /* Marges normalisées à 8px pour libérer plus de largeur */
     }
     
     .teachers-grid {
@@ -478,154 +454,126 @@ select.pcv-multi-select,
 
 {% block content %}
 <!-- Page Recherche -->
-<!-- Override du padding main-content pour cette page : géré par le bloc fixe -->
-<style>
-    .main-content { padding-top: 0 !important; }
-    .search-page { margin: 0 -1rem; } /* Neutralise les padding du .container */
-    @media (max-width: 768px) { .search-page { margin: 0 -8px; } }
-</style>
 <div class="search-page">
-
-    <!-- Bloc FIXE des filtres principaux (toujours visible au scroll) -->
-    <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
-        <div class="main-filters" id="mainFilters">
-
-            <!-- Ligne 1 : inputs matière + localisation -->
-            <div class="search-inputs-row">
-                <div class="filter-group">
-                    <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">  
-                        <option value="">Matière (Ex: Mathématiques, Français...)</option>
-                        {% for mat_val, mat_label in MATIERE_CHOICES %}
-                        <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
-                        {% endfor %}
-                    </select>
+    <!-- Header SEO -->
+    <div class="search-header">
+        <div class="search-container">
+            <h1 class="search-title">
+                {% if matiere and localisation %}
+                    Cours de {{ matiere }} à {{ localisation }}
+                {% elif matiere %}
+                    Professeurs de {{ matiere }}
+                {% elif localisation %}
+                    Professeurs à {{ localisation }}
+                {% else %}
+                    Trouvez le meilleur répétiteur à domicile au Bénin
+                {% endif %}
+            </h1>
+            
+            <!-- Formulaire de recherche -->
+            <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
+                <!-- Filtres Principaux -->
+                <div class="main-filters">
+                    <div class="search-inputs-row">
+                        <div class="filter-group">
+                            <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">
+                                <option value="">Matière (Ex: Mathématiques, Français...)</option>
+                                {% for mat_val, mat_label in MATIERE_CHOICES %}
+                                <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)">
+                                <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
+                                {% for loc_val, loc_label in LOCALISATION_CHOICES %}
+                                <option value="{{ loc_val }}" {% if localisation == loc_val %}selected{% endif %}>{{ loc_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions-row">
+                        <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                            Plus de filtres
+                        </button>
+                        <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
+                            🧹 Réinitialiser
+                        </a>
+                        <div style="margin-left: auto;">
+                            <select id="sort" name="sort" class="reset-filters-btn" style="background: white; border: 1px solid #e2e8f0; font-weight: 500;" onchange="this.form.submit()">
+                                <option value="" {% if sort_by != 'recent_active' %}selected{% endif %}>Trier par : Pertinence</option>
+                                <option value="recent_active" {% if sort_by == 'recent_active' %}selected{% endif %}>Trier par : Actifs récemment</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="filter-group">
-                    <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)">
-                        <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
-                        {% for loc_val, loc_label in LOCALISATION_CHOICES %}
-                        <option value="{{ loc_val }}" {% if localisation == loc_val %}selected{% endif %}>{{ loc_label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <!-- Ligne 2 : boutons filtres + tri -->
-            <div class="filter-actions-row">
-                <button type="button" class="more-filters-btn" id="moreFiltersBtn" onclick="toggleAdvancedFilters()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                    Plus de filtres
-                </button>
-                <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
-                    🧹 Réinitialiser
-                </a>
-                <div style="margin-left: auto;">
-                    <select id="sort" name="sort" class="reset-filters-btn" style="background: white; border: 1px solid #e2e8f0; font-weight: 500;" onchange="this.form.submit()">
-                        <option value="" {% if sort_by != 'recent_active' %}selected{% endif %}>Trier par : Pertinence</option>
-                        <option value="recent_active" {% if sort_by == 'recent_active' %}selected{% endif %}>Trier par : Actifs récemment</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Filtres Avancés — dans le bloc fixe, s'ouvrent vers le bas -->
-            <!-- Le ResizeObserver ajuste automatiquement le padding-top des résultats -->
-            <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode or soutien %}style="display:block;"{% endif %}>
-                <div class="advanced-filters-grid">
-                    <div class="filter-group">
-                        <label class="filter-label" for="classe">Classe</label>
-                        <select id="classe" name="classe" class="filter-input">
-                            <option value="">Toutes les classes</option>
-                            {% for c_val, c_label in CLASS_LEVEL_CHOICES %}
-                            <option value="{{ c_val }}" {% if classe == c_val %}selected{% endif %}>{{ c_label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label" for="prix">Prix par heure</label>
-                        <select id="prix" name="prix" class="filter-input">
-                            <option value="">Tous les prix</option>
-                            {% for p_val, p_label in PRICE_RANGE_CHOICES %}
-                            <option value="{{ p_val }}" {% if prix == p_val %}selected{% endif %}>{{ p_label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label" for="mode">Mode de cours</label>
-                        <select id="mode" name="mode" class="filter-input">
-                            <option value="">Tous les modes</option>
-                            {% for m_val, m_label in COURSE_MODE_CHOICES %}
-                            <option value="{{ m_val }}" {% if mode == m_val %}selected{% endif %}>{{ m_label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="filter-label" for="soutien">Type de soutien</label>
-                        <select id="soutien" name="soutien" class="filter-input">
-                            <option value="">Tous les types</option>
-                            {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
-                            <option value="{{ s_val }}" {% if soutien == s_val %}selected{% endif %}>{{ s_label }}</option>
-                            {% endfor %}
-                        </select>
+                <!-- Filtres Avancés -->
+                <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode or soutien %}style="display:block;"{% endif %}>
+                    <div class="advanced-filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label" for="classe">Classe</label>
+                            <select id="classe" name="classe" class="filter-input">
+                                <option value="">Toutes les classes</option>
+                                {% for c_val, c_label in CLASS_LEVEL_CHOICES %}
+                                <option value="{{ c_val }}" {% if classe == c_val %}selected{% endif %}>{{ c_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="prix">Prix par heure</label>
+                            <select id="prix" name="prix" class="filter-input">
+                                <option value="">Tous les prix</option>
+                                {% for p_val, p_label in PRICE_RANGE_CHOICES %}
+                                <option value="{{ p_val }}" {% if prix == p_val %}selected{% endif %}>{{ p_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="mode">Mode de cours</label>
+                            <select id="mode" name="mode" class="filter-input">
+                                <option value="">Tous les modes</option>
+                                {% for m_val, m_label in COURSE_MODE_CHOICES %}
+                                <option value="{{ m_val }}" {% if mode == m_val %}selected{% endif %}>{{ m_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label" for="soutien">Type de soutien</label>
+                            <select id="soutien" name="soutien" class="filter-input">
+                                <option value="">Tous les types</option>
+                                {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
+                                <option value="{{ s_val }}" {% if soutien == s_val %}selected{% endif %}>{{ s_label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
                 </div>
+            </form>
+    
+    <!-- Résultats de Recherche -->
+    <div class="teachers-grid" id="teachersGrid" style="margin-top: 1rem;">
+            {% for teacher in professeurs %}
+                {% include "core/components/_teacher_card.html" %}
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 1rem; margin-left: auto; margin-right: auto; display: block;">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <h3 style="font-size: 1.25rem; color: #1e293b; margin-bottom: 0.5rem;">Aucun professeur trouvé</h3>
+                <p style="color: #64748b;">Essayez de modifier vos critères de recherche.</p>
+                <a href="{% url 'recherche' %}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">Réinitialiser les filtres</a>
             </div>
-            <!-- /advanced-filters -->
-
+            {% endfor %}
         </div>
-        <!-- /main-filters -->
-
-    </form>
-    <!-- /search-form -->
-
-    <!-- Zone de scroll : titre SEO + résultats -->
-    <!-- Le padding-top est géré dynamiquement par JS pour compenser la hauteur du bloc fixe -->
-    <div class="results-scroll-area" id="resultsArea">
-
-        <!-- Header SEO (disparaît au scroll) -->
-        <div class="search-header">
-            <div class="search-container">
-                <h1 class="search-title" id="searchTitle">
-                    {% if matiere and localisation %}
-                        Cours de {{ matiere }} à {{ localisation }}
-                    {% elif matiere %}
-                        Professeurs de {{ matiere }}
-                    {% elif localisation %}
-                        Professeurs à {{ localisation }}
-                    {% else %}
-                        Trouvez le meilleur répétiteur à domicile au Bénin
-                    {% endif %}
-                </h1>
-            </div>
-        </div>
-
-        <!-- Grille des résultats -->
-        <div class="search-container">
-            <div class="teachers-grid" id="teachersGrid">
-                {% for teacher in professeurs %}
-                    {% include "core/components/_teacher_card.html" %}
-                {% empty %}
-                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0;">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 1rem; margin-left: auto; margin-right: auto; display: block;">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <h3 style="font-size: 1.25rem; color: #1e293b; margin-bottom: 0.5rem;">Aucun professeur trouvé</h3>
-                    <p style="color: #64748b;">Essayez de modifier vos critères de recherche.</p>
-                    <a href="{% url 'recherche' %}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">Réinitialiser les filtres</a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        <!-- /teachers-grid -->
-
     </div>
-    <!-- /results-scroll-area -->
-
 </div>
-<!-- /search-page -->
 
 <!-- Side Panel Overlay -->
 <div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
@@ -660,83 +608,37 @@ select.pcv-multi-select,
 
 {% block extra_js %}
 <script>
+// Gestion des filtres avancés
+function toggleAdvancedFilters() {
+    const filters = document.getElementById('advancedFilters');
+    const btn = document.querySelector('.more-filters-btn');
+    
+    if (filters.classList.contains('active')) {
+        filters.classList.remove('active');
+        btn.textContent = 'Plus de filtres';
+    } else {
+        filters.classList.add('active');
+        btn.textContent = 'Moins de filtres';
+    }
+}
+
 // Variables globales pour le modal d'engagement
 window.currentChildren = {{ parent_children_json|safe }};
 window.currentExistingEngagement = null;
 
-// -------------------------------------------------------
-// Bloc de filtres FIXE — logique d'adaptation au scroll
-// -------------------------------------------------------
-(function() {
-    const mainFilters = document.getElementById('mainFilters');
-    const searchTitle = document.getElementById('searchTitle');
-    const resultsArea  = document.getElementById('resultsArea');
-    const advancedFilters = document.getElementById('advancedFilters');
-
-    /**
-     * Met à jour le padding-top de resultsArea pour qu'il soit toujours
-     * égal à la hauteur réelle du bloc fixe (qui change selon l'état scrolled
-     * et si les filtres avancés sont visibles).
-     */
-    function syncResultsPadding() {
-        if (!mainFilters || !resultsArea) return;
-        resultsArea.style.paddingTop = mainFilters.offsetHeight + 'px';
-    }
-
-    // ResizeObserver : recalcule à chaque fois que le bloc fixe change de taille
-    // (ex. ouverture des filtres avancés, redimensionnement fenêtre, etc.)
-    if (window.ResizeObserver) {
-        const ro = new ResizeObserver(syncResultsPadding);
-        if (mainFilters) ro.observe(mainFilters);
-    }
-
-    // Scroll : masque le titre et renforce l'ombre du bloc fixe
-    document.addEventListener('scroll', function() {
-        if (!mainFilters) return;
-        const scrolled = window.scrollY > 40;
-        mainFilters.classList.toggle('scrolled', scrolled);
-        if (searchTitle) searchTitle.classList.toggle('hidden', scrolled);
-        syncResultsPadding();
-    }, { passive: true });
-
-    // Calcul initial (avant tout scroll)
-    syncResultsPadding();
-    window.addEventListener('load', syncResultsPadding);
-    window.addEventListener('resize', syncResultsPadding);
-
-    // Si Django a rendu les filtres avancés ouverts (via style="display:block"),
-    // synchronise le texte du bouton et la classe active
-    if (advancedFilters && advancedFilters.style.display === 'block') {
-        advancedFilters.classList.add('active');
-        const btn = document.getElementById('moreFiltersBtn');
-        if (btn) btn.innerHTML = btn.innerHTML.replace('Plus de filtres', 'Moins de filtres');
-    }
-})();
-
-// -------------------------------------------------------
-// Gestion des filtres avancés
-// -------------------------------------------------------
-function toggleAdvancedFilters() {
-    const filters = document.getElementById('advancedFilters');
-    const btn     = document.getElementById('moreFiltersBtn');
-    const isOpen  = filters.classList.contains('active');
-
-    if (isOpen) {
-        filters.classList.remove('active');
-        btn.innerHTML = btn.innerHTML.replace('Moins de filtres', 'Plus de filtres');
+// Gestion du scroll pour les filtres compacts
+document.addEventListener('scroll', function() {
+    const mainFilters = document.querySelector('.main-filters');
+    const searchTitle = document.querySelector('.search-title');
+    
+    if (window.scrollY > 50) {
+        mainFilters.classList.add('scrolled');
+        if (searchTitle) searchTitle.classList.add('hidden');
     } else {
-        filters.classList.add('active');
-        btn.innerHTML = btn.innerHTML.replace('Plus de filtres', 'Moins de filtres');
+        mainFilters.classList.remove('scrolled');
+        if (searchTitle) searchTitle.classList.remove('hidden');
     }
-    // Recalcule le padding après l'animation (slideDown dure 0.3s)
-    setTimeout(function() {
-        const mainFilters = document.getElementById('mainFilters');
-        const resultsArea = document.getElementById('resultsArea');
-        if (mainFilters && resultsArea) {
-            resultsArea.style.paddingTop = mainFilters.offsetHeight + 'px';
-        }
-    }, 350);
-}
+});
 
 // Gestion du Side Panel
 function openTeacherProfile(teacherSlug) {
