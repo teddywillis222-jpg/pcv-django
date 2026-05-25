@@ -370,6 +370,16 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
             if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1H';
             
+            if (existingEng.enfant_id && document.getElementById('eng_enfant_id')) document.getElementById('eng_enfant_id').value = existingEng.enfant_id;
+            if (existingEng.localisation) {
+                const locEl = document.getElementById('eng_localisation');
+                if (locEl.tomselect) locEl.tomselect.setValue(existingEng.localisation);
+                else locEl.value = existingEng.localisation;
+            }
+            if (existingEng.date_debut) document.getElementById('eng_date_debut').value = existingEng.date_debut;
+            if (existingEng.budget) document.querySelector('input[name="budget"]').value = existingEng.budget;
+            if (existingEng.duree_mois) document.getElementById('eng_duree_mois').value = existingEng.duree_mois;
+            
             document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
         } else {
             document.querySelector('#engagementModal h3').textContent = 'Proposer un engagement';

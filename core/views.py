@@ -1365,7 +1365,13 @@ def professeur_detail(request, teacher_slug):
                 'frequence': existing_engagement_obj.frequence_hebdomadaire,
                 'duree': existing_engagement_obj.duree_seance,
                 'status': existing_engagement_obj.statut_general,
-                'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard'
+                'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard',
+                'enfant_id': existing_engagement_obj.enfants_concernes.first().id if hasattr(existing_engagement_obj, 'enfants_concernes') and existing_engagement_obj.enfants_concernes.exists() else (existing_engagement_obj.enfants_concernes.id if hasattr(existing_engagement_obj.enfants_concernes, 'id') else None),
+                'classe': existing_engagement_obj.classe,
+                'localisation': existing_engagement_obj.localisation_option,
+                'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
+                'budget': str(existing_engagement_obj.tarif_horaire_propose) if existing_engagement_obj.tarif_horaire_propose else None,
+                'duree_mois': existing_engagement_obj.duree_mois,
             })
 
     # Conversion des codes en noms lisibles
@@ -1501,7 +1507,13 @@ def api_teacher_profile(request, teacher_slug):
                         'frequence': existing_engagement_obj.frequence_hebdomadaire,
                         'duree': existing_engagement_obj.duree_seance,
                         'status': existing_engagement_obj.statut_general,
-                        'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard'
+                        'type': 'essai' if existing_engagement_obj.type_engagement == EngagementType.ESSAI else 'standard',
+                        'enfant_id': existing_engagement_obj.enfants_concernes.first().id if hasattr(existing_engagement_obj, 'enfants_concernes') and hasattr(existing_engagement_obj.enfants_concernes, 'exists') and existing_engagement_obj.enfants_concernes.exists() else (existing_engagement_obj.enfants_concernes.id if hasattr(existing_engagement_obj, 'enfants_concernes') and hasattr(existing_engagement_obj.enfants_concernes, 'id') else None),
+                        'classe': existing_engagement_obj.classe,
+                        'localisation': existing_engagement_obj.localisation_option,
+                        'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
+                        'budget': str(existing_engagement_obj.tarif_horaire_propose) if existing_engagement_obj.tarif_horaire_propose else None,
+                        'duree_mois': existing_engagement_obj.duree_mois,
                     }
             except Exception:
                 pass

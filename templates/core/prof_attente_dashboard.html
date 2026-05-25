@@ -473,7 +473,7 @@
                 <div class="form-group-m">
                     <label>Tarif horaire de base (FCFA / Heure de cours)</label>
                     <input type="number" name="tarif_horaire" min="1000" step="500"
-                        value="{{ teacher.tarif_horaire|default:'' }}" placeholder="Ex: 3500" required>
+                        value="{% if teacher.tarif_horaire %}{{ teacher.tarif_horaire|floatformat:'0' }}{% endif %}" placeholder="Ex: 3500" required>
                 </div>
             </div>
 
