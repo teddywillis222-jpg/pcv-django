@@ -409,10 +409,11 @@
         background: white;
         border-radius: 20px;
         width: 100%;
-        max-width: 500px;
-        padding: 1.5rem;
-        max-height: 80vh;
-        overflow-y: auto;
+        max-width: 520px;
+        padding: 1rem;
+        max-height: none; /* allow content to render without internal scroll */
+        overflow: visible;
+        box-sizing: border-box;
     }
 
     /* Bottom Sheet */
@@ -824,20 +825,20 @@
         </form>
     </div>
     <!-- Welcome Pricing Modal -->
-    <div id="welcomePricingModal" class="modal-overlay" style="z-index: 5000;">
-        <div class="modal-content" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 3.5rem; margin-bottom: 1rem;">👋</div>
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1rem; line-height: 1.2;">Avant de commencer</h3>
-            <p style="color: var(--text-gray); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem; text-align: left;">
+    <div id="welcomePricingModal" class="modal-overlay" style="z-index: 5000; align-items: flex-start; padding-top: 2.25rem;">
+        <div class="modal-content" style="text-align: center; padding: 1rem; max-height: 95vh; overflow: visible; height: auto;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">👋</div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem; line-height: 1.15;">Avant de commencer</h3>
+            <p style="color: var(--text-gray); line-height: 1.45; margin-bottom: 0.75rem; font-size: 0.92rem; text-align: left;">
                 Sur <strong>Prof Chez Vous</strong>, la collaboration avec un professeur se fait à travers des engagements structurés.
                 <br><br>
-                Selon votre plan, certains avantages et frais peuvent s’appliquer lors de l’envoi ou de la validation d’un engagement.
+                Selon votre plan, certains avantages et frais peuvent s’appliquer lors de la validation d’un engagement.
                 <br><br>
                 👉 Pour éviter toute surprise et comprendre comment fonctionne la plateforme, nous vous recommandons vivement de consulter votre plan.
             </p>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="{% url 'gestion_plan' %}" class="btn-eng-main" style="display: block; padding: 1rem; text-decoration: none; border-radius: 14px; background: var(--primary); color: white; font-weight: 700;" onclick="closeWelcomePricingModal()">Découvrir mon plan</a>
-                <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #94a3b8; font-weight: 700; cursor: pointer; padding: 0.5rem; font-size: 0.9rem;">Je comprends, continuer</button>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="{% url 'gestion_plan' %}" class="btn-eng-main" style="display: block; padding: 0.85rem; text-decoration: none; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 0.95rem;" onclick="closeWelcomePricingModal()">Découvrir mon plan</a>
+                <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #94a3b8; font-weight: 700; cursor: pointer; padding: 0.4rem; font-size: 0.88rem;">Je comprends, continuer</button>
             </div>
         </div>
     </div>
