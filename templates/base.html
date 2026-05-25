@@ -257,6 +257,17 @@
             transition: color 0.3s ease;
             position: relative;
         }
+        /* Neutralize Android blue tap highlight and unify click behavior */
+        html, body, a, button, input, textarea, select {
+            -webkit-tap-highlight-color: transparent; /* Chrome Android */
+            tap-highlight-color: transparent;
+            -webkit-touch-callout: none; /* iOS prevent callout */
+            -webkit-user-select: none;
+        }
+
+        /* Preserve keyboard focus for accessibility */
+        :focus { outline: none; }
+        :focus-visible { outline: 3px solid rgba(21,128,61,0.12); outline-offset: 2px; }
 
         .nav-link:hover {
             color: var(--success-600);
