@@ -128,6 +128,35 @@
         color: var(--primary);
     }
 
+    /* Modern button/link behavior for dashboard: remove underlines and add subtle hover lift */
+    .dashboard-layout a,
+    .dashboard-layout button,
+    .dash-main a,
+    .dash-main button,
+    .dash-sidebar a,
+    .dash-sidebar button,
+    .sidebar-menu-item,
+    .btn-eng-main,
+    .btn-dash {
+        text-decoration: none !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+    }
+
+    .dashboard-layout a:hover,
+    .dashboard-layout button:hover,
+    .dash-main a:hover,
+    .dash-sidebar a:hover,
+    .btn-eng-main:hover,
+    .btn-dash:hover,
+    .sidebar-menu-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+        text-decoration: none !important;
+    }
+
+    .dashboard-layout a:active,
+    .dashboard-layout button:active { transform: translateY(0); }
+
     /* Bottom Nav (Mobile only) */
     .bottom-nav {
         position: fixed;
@@ -367,7 +396,7 @@
         font-size: 0.75rem;
         font-weight: 700;
         color: var(--primary);
-        text-decoration: underline;
+        text-decoration: none;
     }
 
 
@@ -628,7 +657,7 @@
                         </div>
                     </div>
                     <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();"
-                        style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-decoration: underline; white-space: nowrap; margin-left: 0.5rem;">Voir
+                        style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-decoration: none; white-space: nowrap; margin-left: 0.5rem;">Voir
                         profil</a>
                 </div>
                 {% endfor %}

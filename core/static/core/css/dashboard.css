@@ -196,6 +196,23 @@ body {
     transform: scale(0.98);
 }
 
+/* Global dashboard link/button polish: remove underlines and add subtle hover lift */
+.dashboard-wrapper a,
+.dashboard-wrapper button {
+    text-decoration: none !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.dashboard-wrapper a:hover,
+.dashboard-wrapper button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+    text-decoration: none !important;
+}
+
+.dashboard-wrapper a:active,
+.dashboard-wrapper button:active { transform: translateY(0); }
+
 /* Stats Cards Grid */
 .stats-grid {
     display: grid;
