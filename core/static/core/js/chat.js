@@ -390,11 +390,18 @@ function filterEngagements() {
     const childId = document.getElementById('childFilter')?.value;
     document.querySelectorAll('.eng-row, .c-eng-card').forEach(row => {
         if (!childId || childId === 'all') {
-            row.style.display = 'block';
-        } else {
-            const childIds = (row.getAttribute('data-child-ids') || row.getAttribute('data-child-id') || '').split(',');
-            row.style.display = childIds.includes(String(childId)) ? 'block' : 'none';
+            row.style.display = '';
+            return;
         }
+        // Trim chaque ID pour éviter les espaces/retours à la ligne du template Django
+        const rawIds = (row.getAttribute('data-child-ids') || row.getAttribute('data-child-id') || '').trim();
+        if (!rawIds) {
+            // Engagement sans enfant lié → toujours visible (cas apprenant direct)
+            row.style.display = '';
+            return;
+        }
+        const childIds = rawIds.split(',').map(s => s.trim()).filter(Boolean);
+        row.style.display = childIds.includes(String(childId)) ? '' : 'none';
     });
 }
 
