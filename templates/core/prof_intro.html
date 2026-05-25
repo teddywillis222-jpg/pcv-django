@@ -14,13 +14,11 @@
 
     /* Hero Section */
     .hero-section {
-        padding: 3.5rem 0.75rem 2.5rem; /* remontée du hero + réduction des espaces */
-        text-align: center;
+        padding: 0.75rem 0.75rem 2.5rem;
+        text-align: left;
         background: linear-gradient(135deg, rgba(34, 197, 94, 0.04) 0%, rgba(248, 250, 252, 1) 100%);
         position: relative;
     }
-    
-    /* hero-badge removed — cleaned up for a more cinematic hero */
 
     .hero-title {
         font-size: clamp(2.5rem, 6vw, 4.5rem);
@@ -29,8 +27,6 @@
         margin-bottom: 1.5rem;
         color: #0f172a;
         max-width: 900px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
     .hero-title span {
@@ -41,7 +37,7 @@
         font-size: clamp(1.1rem, 2vw, 1.25rem);
         color: #475569;
         max-width: 700px;
-        margin: 0 auto 2.5rem;
+        margin: 0 0 2.5rem;
         line-height: 1.7;
     }
 
@@ -199,25 +195,26 @@
 
     /* Final CTA Section */
     .final-cta {
-        padding: 3.5rem 0.75rem; /* moins massif */
+        padding: 3.5rem 0.75rem;
         text-align: center;
-        background: linear-gradient(180deg, #071426 0%, #0f172a 100%);
-        color: white;
+        background: #f8fafc; /* fond neutre — la couleur sombre est portée par le conteneur intérieur */
     }
 
     .final-cta-content {
         max-width: 820px;
         margin: 0 auto;
-        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-        padding: 2rem;
-        border-radius: 16px; /* arrondi plus doux */
-        box-shadow: 0 12px 30px rgba(2,6,23,0.3);
+        background: linear-gradient(160deg, #071426 0%, #0f172a 100%);
+        padding: 3rem 2.5rem;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(2, 6, 23, 0.25);
+        color: white;
     }
 
     .final-cta h2 {
         font-size: clamp(2rem, 5vw, 3.5rem);
         font-weight: 900;
         margin-bottom: 1.5rem;
+        color: white;
     }
 
     .final-cta p {
@@ -229,8 +226,7 @@
 
     @media (max-width: 768px) {
         .hero-section {
-            padding: 2.5rem 0.6rem 1.6rem; /* mobile: hero remonté */
-            text-align: left;
+            padding: 0.5rem 0.75rem 1.5rem;
         }
         
         .comparison-container {
@@ -243,21 +239,11 @@
         }
         
         .final-cta {
-            padding: 2rem 0.6rem;
-        }
-    }
-
-    /* Right-align titles on small screens for an editorial layout */
-    @media (max-width: 560px) {
-        .hero-title,
-        .hero-subtitle {
-            text-align: right;
-            margin-right: 0.5rem;
+            padding: 2rem 0.75rem;
         }
 
-        .hero-cta {
-            margin-left: auto;
-            margin-right: 0.5rem;
+        .final-cta-content {
+            padding: 2rem 1.25rem;
         }
     }
 </style>
