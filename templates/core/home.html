@@ -5,453 +5,377 @@
 
 {% block extra_head %}
 <meta name="description" content="Prof Chez Vous connecte les parents et élèves avec les meilleurs professeurs particuliers au Bénin. Cours de maths, anglais, français à domicile à Cotonou, Calavi et partout ailleurs.">
-<link rel="preload" as="image" href="{% static 'core/images/hero_home.png' %}" fetchpriority="high">
+<link rel="preload" as="image" href="{% static 'core/images/hero_home.webp' %}" fetchpriority="high">
 {% endblock %}
 
 {% block extra_css %}
 <style>
-/* Override default container for full width hero */
+/* Reset & Base Mobile First */
+:root {
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-500: #64748b;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    --brand-success: #10b981;
+    --brand-success-dark: #059669;
+}
+
 main.container {
     padding-top: 0 !important;
     max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    overflow-x: hidden; /* Prevent horizontal scroll on body */
+}
+
+/* Typography tweaks */
+h1, h2, h3, h4 {
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+}
+p {
+    color: var(--slate-500);
 }
 
 /* --- HERO SECTION --- */
 .hero-wrapper {
     position: relative;
     width: 100%;
-    min-height: 70vh;
+    min-height: 85vh; /* Better for mobile, feels native */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end; /* Push content to bottom on mobile */
     align-items: center;
-    background-color: #0f172a; /* Fallback color for slow loading */
+    background-color: var(--slate-900);
     background: url("{% static 'core/images/hero_home.webp' %}") center/cover no-repeat;
-    padding: 1.5rem 1rem 3rem 1rem;
+    padding: 1.5rem 1rem 4rem 1rem;
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
+    overflow: hidden;
 }
 
 .hero-wrapper::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(22, 163, 74, 0.6) 100%);
+    background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.8) 60%, rgba(15,23,42,0.95) 100%);
     z-index: 1;
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    text-align: center;
-    max-width: 900px;
+    text-align: left;
     width: 100%;
-    margin-top: -5vh; 
+    max-width: 900px;
 }
 
 .hero-title {
     color: #ffffff;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 .hero-subtitle {
-    color: #e2e8f0;
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--slate-200);
+    font-size: 1rem;
     font-weight: 500;
-    line-height: 1.6;
-    margin-bottom: 3rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    max-width: 100%;
 }
 
-/* --- RECHERCHE COMPONENT --- */
+/* --- RECHERCHE COMPONENT (GLASSMORPHISM) --- */
 .search-box {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 1.25rem;
     width: 100%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    text-align: left; /* Aligne le texte des champs à gauche */
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
 
 .search-form {
     display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
-.search-input-group {
-    flex: 1;
-    position: relative;
-    display: flex;
     flex-direction: column;
+    gap: 0.75rem;
 }
 
 .search-input-group label {
-    color: #ffffff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
-    padding-left: 0.5rem;
+    display: none; /* Hide labels for cleaner look */
 }
 
-/* HARMONISATION DIMENSION INPUTS ET SELECTS */
-.search-input-group input, 
-.search-input-group select {
+/* TomSelect Overrides inside Hero */
+.search-box .ts-wrapper {
     width: 100%;
-    height: 48px; /* RÉDUIT : plus ergonomique */
-    padding: 0 1rem;
-    border: none;
-    border-radius: 10px;
-    background: #ffffff;
-    font-size: 1rem;
-    color: #0f172a;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    box-sizing: border-box;
-    font-family: inherit;
 }
-
-.search-input-group input:focus, 
-.search-input-group select:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.3);
+.search-box .ts-control {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    min-height: 56px !important;
+    padding: 0.75rem 1.25rem !important;
+    font-size: 1rem !important;
+    color: var(--slate-900) !important;
+}
+.search-box .ts-control input {
+    color: var(--slate-900) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+.search-box .ts-control input::placeholder {
+    color: var(--slate-500) !important;
+    font-weight: 500 !important;
 }
 
 .btn-search {
-    background: var(--success-600);
+    background: var(--brand-success);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 0 1.5rem;
-    height: 48px; /* RÉDUIT : identique aux inputs */
+    border-radius: 16px;
+    height: 56px;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin-top: 1.6rem; 
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 16px rgba(22, 163, 74, 0.3);
-    box-sizing: border-box;
+    margin-top: 0.5rem;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-search:active {
+    transform: scale(0.98);
 }
 
-.btn-search:hover {
-    background: var(--success-700);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 20px rgba(22, 163, 74, 0.4);
-}
-
-/* --- SECTION COMMENT CA MARCHE --- */
-/* Resserrement global du padding PC */
-.section-padding {
-    padding: 2.5rem 1rem;
-}
-.bg-light { background: #f8fafc; }
-.bg-white { background: #ffffff; }
-
-.section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 0 1rem;
-}
-.section-header h2 {
-    font-size: clamp(2rem, 4vw, 2.5rem);
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 1rem;
-}
-.section-header p {
-    font-size: 1.15rem;
-    color: #64748b;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.step-card {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-    border: 1px solid #f1f5f9;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.step-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-}
-.step-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
-    border-radius: 20px;
+/* --- HORIZONTAL SWIPE CAROUSEL BASE --- */
+.swipe-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 24px; /* Visual hint to swipe */
+    gap: 1rem;
+    scroll-behavior: smooth;
 }
-.step-icon svg { width: 40px; height: 40px; }
-.icon-green { background: #dcfce7; color: #16a34a; }
-.icon-blue { background: #dbeafe; color: #2563eb; }
-.icon-amber { background: #fef3c7; color: #d97706; }
+.swipe-container::-webkit-scrollbar {
+    display: none;
+}
+.swipe-item {
+    scroll-snap-align: center;
+    flex-shrink: 0;
+}
 
-.step-card h3 {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: #1e293b;
-    margin-bottom: 1rem;
+/* --- SECTION ESPACEMENT --- */
+.section-mobile {
+    padding: 2.5rem 0 1rem 0;
 }
-.step-card p {
-    color: #64748b;
-    line-height: 1.7;
-    font-size: 1rem;
+.section-mobile-header {
+    padding: 0 1rem;
+    margin-bottom: 1.25rem;
+}
+.section-mobile-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+.section-mobile-header p {
+    font-size: 0.95rem;
     margin: 0;
 }
 
-/* --- SECTION DIFFERENCE (FLAT DESIGN) --- */
-.diff-card {
+/* --- CHIPS (RECHERCHES POPULAIRES) --- */
+.chips-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem 1.5rem 1rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.chips-container::-webkit-scrollbar { display: none; }
+.chip {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    color: var(--slate-800);
+    padding: 0 1.25rem;
+    height: 48px; /* Touch target */
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.chip:active {
+    background: var(--slate-200);
+}
+
+/* --- LA DIFFERENCE (CAROUSEL) --- */
+.diff-card-mobile {
+    background: var(--slate-50);
+    border-radius: 24px;
+    padding: 1.75rem;
+    width: 80vw; /* Shows next card edge */
+    max-width: 320px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 2rem;
-    border-left: 4px solid var(--success-600);
-    background: #f8fafc;
-    border-radius: 0 20px 20px 0;
-    transition: background 0.3s ease;
 }
-.diff-card:hover { background: #f1f5f9; }
-.diff-icon { margin-bottom: 1rem; }
-.diff-icon svg { width: 48px; height: 48px; }
-.diff-card h3 {
-    font-size: 1.4rem;
+.diff-icon-m {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.diff-icon-m svg {
+    width: 28px;
+    height: 28px;
+}
+.diff-card-mobile h3 {
+    font-size: 1.25rem;
     font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
-.diff-card p {
-    color: #475569;
-    line-height: 1.7;
-    font-size: 1rem;
+.diff-card-mobile p {
+    font-size: 0.95rem;
+    line-height: 1.6;
     margin: 0;
 }
 
 /* --- PROFESSEURS DISPONIBLES --- */
-.prof-scroll-container::-webkit-scrollbar { display: none; }
-
-.prof-wrapper {
-    display: flex;
-    gap: 1.5rem;
-    padding: 1rem 0;
-    width: max-content;
+.prof-card-mobile {
+    width: 85vw;
+    max-width: 340px;
 }
 
-.prof-scroll-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    overflow-x: auto;
-    padding: 1.5rem 0.5rem 2.5rem 0.5rem;
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    -ms-overflow-style: none; /* IE/Edge */
-    scroll-behavior: smooth;
-}
-
-/* Hide scroll controls on mobile */
-.scroll-controls { display: none !important; }
-@media (min-width: 1024px) {
-    .scroll-controls { display: flex !important; }
-}
-
-/* --- CTA FINAL --- */
-.cta-final {
-    max-width: 1200px;
-    margin: 2rem auto 0;
-    background: linear-gradient(135deg, var(--success-600), #10b981);
-    border-radius: 24px;
-    padding: 3.5rem 2rem;
+/* CTA FINAL */
+.cta-mobile {
+    margin: 2rem 1rem 3rem 1rem;
+    background: var(--slate-900);
+    border-radius: 32px;
+    padding: 3rem 1.5rem;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cta-mobile::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 60%);
+    pointer-events: none;
+}
+.cta-mobile h2 {
     color: white;
-    box-shadow: 0 20px 40px rgba(22, 163, 74, 0.25);
-}
-.cta-final h2 {
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 900;
-    margin-bottom: 1.5rem;
-}
-.btn-white {
-    background: white;
-    color: var(--success-700);
-    padding: 1rem 2.5rem;
-    border-radius: 16px;
-    font-size: 1.1rem;
+    font-size: 1.75rem;
     font-weight: 800;
-    text-decoration: none;
-    display: inline-block;
-    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
 }
-.btn-white:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.cta-mobile p {
+    color: var(--slate-200);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+.btn-primary-m {
+    background: var(--brand-success);
+    color: white;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+.btn-primary-m:active {
+    transform: scale(0.98);
+}
 
-/* ========================================= */
-/* --- RESPONSIVE MOBILE EXTREME TWEAKS  --- */
-/* ========================================= */
-@media (max-width: 900px) {
-    /* --- HERO --- */
+/* Desktop adaptations */
+@media (min-width: 768px) {
     .hero-wrapper {
-        min-height: auto;
-        padding: 0.5rem 1rem 1.5rem 1rem; /* Remontée maximale de la section */
+        min-height: 70vh;
+        border-radius: 0;
+        justify-content: center;
+        padding-top: 6rem;
     }
     .hero-content {
-        margin-top: 0;
-        text-align: left; /* Alignement exigé à gauche */
+        text-align: center;
     }
     .hero-title {
-        font-size: 2rem; /* Taille de police réduite */
-        text-align: left;
-        margin-bottom: 1rem;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        text-align: center;
     }
     .hero-subtitle {
-        font-size: 1rem; /* Taille de police réduite */
-        text-align: left;
-        margin-bottom: 2rem;
-        margin-left: 0;
-    }
-
-    /* --- RECHERCHE --- */
-    .search-box {
-        padding: 1.25rem;
-        border-radius: 16px;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
     .search-form {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.8rem;
+        flex-direction: row;
+        align-items: center;
     }
-    .search-input-group label {
-        font-size: 0.8rem;
-        margin-bottom: 0.3rem;
-    }
-    .search-input-group input, 
-    .search-input-group select {
-        height: 50px; /* Dimension uniforme maintenue */
-        font-size: 0.95rem;
-        padding: 0 1rem;
-    }
-    .btn-search {
-        margin-top: 0.5rem;
-        height: 50px;
-        font-size: 1rem;
-    }
-
-    /* --- ESPACEMENTS SECTIONS --- */
-    .section-padding {
-        padding: 1.5rem 10px; /* Resserrement horizontal (10px) et vertical maximal */
-    }
-
-    .section-header {
-        margin-bottom: 2rem;
-        padding: 0;
-    }
-    .section-header h2 {
-        font-size: 1.6rem;
-        margin-bottom: 0.5rem;
-    }
-    .section-header p {
-        font-size: 1rem;
-    }
-
-    /* --- CARTES & GRILLES (BOUFFENT L'ESPACE) --- */
-    .grid-3 {
-        grid-template-columns: 1fr;
-        gap: 12px; /* Rapprochement des cartes */
-        padding: 0;
-    }
-
-    .step-card {
-        padding: 1.5rem 1.25rem;
-        border-radius: 16px;
-    }
-    .step-icon {
-        width: 60px;
-        height: 60px;
-        margin-bottom: 1rem;
-        border-radius: 16px;
-    }
-    .step-icon svg {
-        width: 30px;
-        height: 30px;
-    }
-    .step-card h3 {
-        font-size: 1.15rem;
-        margin-bottom: 0.5rem;
-    }
-    .step-card p {
-        font-size: 0.9rem;
-    }
-
-    /* Section Différence */
-    .diff-card {
-        padding: 1.5rem 1.25rem;
-        border-radius: 16px;
-        border-left: none;
-        border-top: 4px solid var(--success-600);
-    }
-    .diff-icon svg {
-        width: 36px;
-        height: 36px;
-    }
-    .diff-card h3 {
-        font-size: 1.15rem;
-    }
-    .diff-card p {
-        font-size: 0.9rem;
-    }
-
-    /* Professeurs */
-    .prof-scroll-container {
-        padding: 0 0 1rem 0;
-        margin: 0 -10px; /* Force l'overflow du père s'il y a un margin */
-    }
-    .prof-wrapper {
-        display: flex !important;
-        gap: 12px;
-        padding: 0 10px;
-        width: max-content;
-    }
-    /* Professeurs cards are now styled globally in teacher_card.css */
+    .search-input-group { flex: 1; }
+    .btn-search { margin-top: 0; flex: 0 0 auto; padding: 0 2rem; }
     
-    /* CTA Final */
-    .cta-final {
-        margin: 1.5rem 0 0;
-        padding: 2.5rem 1rem;
-        border-radius: 16px;
+    .swipe-container {
+        flex-wrap: wrap;
+        justify-content: center;
+        overflow-x: visible;
+        padding-right: 1rem;
     }
-    .cta-final h2 {
-        font-size: 1.4rem;
-        margin-bottom: 1.25rem;
+    .diff-card-mobile {
+        width: 30%;
+        max-width: none;
     }
-    .btn-white {
-        padding: 0.875rem 2rem;
-        font-size: 1rem;
+    .prof-card-mobile {
+        width: 320px;
+    }
+    .chips-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .section-mobile-header {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 2rem auto;
+    }
+    .cta-mobile {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4rem 2rem;
+    }
+    .btn-primary-m {
+        max-width: 300px;
+        margin: 0 auto;
     }
 }
 </style>
@@ -462,15 +386,14 @@ main.container {
 <!-- HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
-        <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
-        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
+        <h1 class="hero-title">Votre prof idéal, à portée de main.</h1>
+        <p class="hero-subtitle">Des cours particuliers à domicile au Bénin. Vérifiés, sécurisés et suivis en temps réel.</p>
         
         <div class="search-box">
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
                 <div class="search-input-group">
-                    <label for="matiere-hero">Matière</label>
-                    <select id="matiere-hero" name="matiere" class="pcv-multi-select">
-                        <option value="">Ex: Mathématiques, Piano, Anglais...</option>
+                    <select name="matiere" class="pcv-multi-select" placeholder="Quelle matière ?">
+                        <option value="">Quelle matière ?</option>
                         {% for val, label in MATIERE_CHOICES %}
                         <option value="{{ val }}">{{ label }}</option>
                         {% endfor %}
@@ -478,9 +401,8 @@ main.container {
                 </div>
                 
                 <div class="search-input-group">
-                    <label for="localisation-hero">Localisation</label>
-                    <select id="localisation-hero" name="localisation" class="pcv-multi-select">
-                        <option value="">Ex: Agla, Calavi, Cotonou...</option>
+                    <select name="localisation" class="pcv-multi-select" placeholder="Dans quelle ville ?">
+                        <option value="">Dans quelle ville ?</option>
                         {% for code, label in LOCALISATION_CHOICES %}
                         <option value="{{ code }}">{{ label }}</option>
                         {% endfor %}
@@ -492,180 +414,92 @@ main.container {
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    Rechercher
+                    <span class="desktop-only" style="margin-left: 8px;">Rechercher</span>
                 </button>
             </form>
         </div>
     </div>
 </section>
 
-<!-- SECTION COMMENT CA MARCHE -->
-<section class="section-padding bg-light">
-    <div class="section-header">
-        <h2>Comment ça marche ?</h2>
-        <p>Trouver le professeur idéal n'a jamais été aussi simple et sécurisé.</p>
+<!-- RECHERCHES POPULAIRES (CHIPS) -->
+<section class="section-mobile bg-white">
+    <div class="section-mobile-header">
+        <h2>Recherches rapides</h2>
     </div>
     
-    <div class="grid-3">
-        <div class="step-card">
-            <div class="step-icon icon-blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </div>
-            <h3>1. Recherchez</h3>
-            <p>Parcourez les profils vérifiés de nos professeurs selon la matière, la classe et votre ville.</p>
-        </div>
-        
-        <div class="step-card">
-            <div class="step-icon icon-amber">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            </div>
-            <h3>2. Proposez un engagement</h3>
-            <p>Sélectionnez un créneau et envoyez une demande d'engagement détaillée au professeur de votre choix.</p>
-        </div>
-        
-        <div class="step-card">
-            <div class="step-icon icon-green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            </div>
-            <h3>3. Apprenez</h3>
-            <p>Une fois l'engagement validé, commencez les cours et suivez la progression en temps réel.</p>
-        </div>
+    <div class="chips-container">
+        <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
+        <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
+        <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
+        <a href="{% url 'recherche' %}?localisation=Cotonou" class="chip">📍 Cotonou</a>
+        <a href="{% url 'recherche' %}?localisation=Abomey-Calavi" class="chip">📍 Calavi</a>
+        <a href="{% url 'recherche' %}?classe=Primaire" class="chip">🎒 Primaire</a>
+        <a href="{% url 'recherche' %}?classe=Lycée" class="chip">🎓 Lycée</a>
     </div>
 </section>
 
-<!-- RECHERCHES POPULAIRES -->
-<section class="section-padding bg-white">
-    <div class="section-header">
-        <h2>Recherches Populaires</h2>
-        <p>Accédez directement aux professeurs les plus recherchés près de chez vous.</p>
+<!-- PROFESSEURS DISPONIBLES (HORIZONTAL SWIPE) -->
+<section class="section-mobile bg-slate-50">
+    <div class="section-mobile-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h2>Professeurs à la une</h2>
+            <p>Sélectionnés pour leur excellence</p>
+        </div>
+        <a href="{% url 'recherche' %}" style="color: var(--brand-success); font-weight: 700; text-decoration: none; font-size: 0.9rem;">Tout voir</a>
     </div>
     
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; padding: 0 1rem;">
-        <div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid var(--success-600); padding-left: 0.75rem;">Matières Phares</h3>
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                <li><a href="{% url 'recherche' %}?matiere=Mathématiques" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Mathématiques</a></li>
-                <li><a href="{% url 'recherche' %}?matiere=Anglais" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof d'Anglais</a></li>
-                <li><a href="{% url 'recherche' %}?matiere=Français" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Français</a></li>
-                <li><a href="{% url 'recherche' %}?matiere=Physique-Chimie" style="color: #64748b; text-decoration: none; font-weight: 500;">Prof de Physique-Chimie</a></li>
-            </ul>
-        </div>
-        
-        <div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid #3b82f6; padding-left: 0.75rem;">Villes & Quartiers</h3>
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                <li><a href="{% url 'recherche' %}?localisation=Cotonou" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Cotonou</a></li>
-                <li><a href="{% url 'recherche' %}?localisation=Abomey-Calavi" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Calavi</a></li>
-                <li><a href="{% url 'recherche' %}?localisation=Agla" style="color: #64748b; text-decoration: none; font-weight: 500;">Professeur à Agla</a></li>
-                <li><a href="{% url 'recherche' %}?localisation=Porto-Novo" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours à Porto-Novo</a></li>
-            </ul>
-        </div>
-        
-        <div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem; border-left: 4px solid #8b5cf6; padding-left: 0.75rem;">Niveaux Scolaires</h3>
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                <li><a href="{% url 'recherche' %}?classe=Primaire" style="color: #64748b; text-decoration: none; font-weight: 500;">Répétiteur Primaire</a></li>
-                <li><a href="{% url 'recherche' %}?classe=Collège" style="color: #64748b; text-decoration: none; font-weight: 500;">Soutien au Collège</a></li>
-                <li><a href="{% url 'recherche' %}?classe=Lycée" style="color: #64748b; text-decoration: none; font-weight: 500;">Cours niveau Lycée</a></li>
-                <li><a href="{% url 'recherche' %}?classe=Université" style="color: #64748b; text-decoration: none; font-weight: 500;">Appui Universitaire</a></li>
-            </ul>
-        </div>
+    <div class="swipe-container" id="profScroll">
+        {% for prof in top_professeurs %}
+            <div class="swipe-item prof-card-mobile">
+                {% include "core/components/_teacher_card.html" with teacher=prof %}
+            </div>
+        {% empty %}
+            <div style="padding: 2rem; text-align: center; color: var(--slate-500); width: 100%;">
+                Aucun professeur disponible.
+            </div>
+        {% endfor %}
     </div>
 </section>
 
-<!-- LA DIFFERENCE PROF CHEZ VOUS -->
-<section class="section-padding bg-white">
-    <div class="section-header">
-        <h2>La Différence Prof Chez Vous</h2>
-        <p>Trois piliers qui font de notre plateforme la référence au Bénin</p>
+<!-- LA DIFFERENCE (HORIZONTAL SWIPE) -->
+<section class="section-mobile bg-white">
+    <div class="section-mobile-header">
+        <h2>La différence Prof Chez Vous</h2>
+        <p>Pourquoi nous sommes n°1</p>
     </div>
     
-    <div class="grid-3">
-        <div class="diff-card">
-            <div class="diff-icon" style="color: #10b981;">
+    <div class="swipe-container">
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #10b981;">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
             </div>
-            <h3>Sélection rigoureuse</h3>
-            <p>Chaque professeur passe par un processus strict : vérification des diplômes et tests de compétences. Seuls les meilleurs sont retenus pour une excellence constante.</p>
+            <h3>Sélection stricte</h3>
+            <p>Diplômes vérifiés et tests de compétences. Seuls les meilleurs enseignent à vos enfants.</p>
         </div>
         
-        <div class="diff-card">
-            <div class="diff-icon" style="color: #3b82f6;">
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #3b82f6;">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
             </div>
-            <h3>Un cadre structuré</h3>
-            <p>Notre système d'engagement encadre juridiquement vos relations. Nous protégeons votre temps grâce à un processus de collaboration organisé. <a href="{% url 'cgu' %}" style="color: var(--success-600); font-weight: 600; text-decoration: underline;">Voir nos CGU</a></p>
+            <h3>Cadre sécurisé</h3>
+            <p>Engagements contractuels clairs et transparents protégeant aussi bien les parents que les professeurs.</p>
         </div>
         
-        <div class="diff-card">
-            <div class="diff-icon" style="color: #8b5cf6;">
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #8b5cf6;">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
             </div>
-            <h3>Suivi en temps réel</h3>
-            <p>Depuis votre espace, pilotez la progression avec des outils modernes. Analysez les performances et suivez l'évolution des objectifs, où que vous soyez.</p>
+            <h3>Suivi en direct</h3>
+            <p>Tableau de bord interactif pour suivre la progression, le paiement et les objectifs atteints.</p>
         </div>
     </div>
 </section>
 
-<!-- PROFESSEURS DISPONIBLES & CTA -->
-<section class="section-padding bg-light" style="position: relative;">
-    <div class="section-header" style="text-align: left; padding-left: 0.5rem; max-width: 1300px; margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; align-items: flex-end;">
-        <div>
-            <h2 style="margin-bottom: 0.5rem;">Professeurs Disponibles</h2>
-            <p style="font-size: 0.95rem; color: #64748b; margin: 0;">Découvrez une sélection de nos meilleurs enseignants validés.</p>
-        </div>
-        <!-- Scroll Buttons (Desktop Only) -->
-        <div class="scroll-controls" style="display: flex; gap: 0.75rem;">
-            <button onclick="scrollProfs('left')" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--success-700); transition: all 0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <button onclick="scrollProfs('right')" style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--success-700); transition: all 0.2s;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-        </div>
-    </div>
-    
-    <div class="prof-scroll-container" id="profScroll">
-        <div class="prof-wrapper">
-            {% for prof in top_professeurs %}
-                <div style="width: 320px; flex-shrink: 0; scroll-snap-align: start;">
-                    {% include "core/components/_teacher_card.html" with teacher=prof %}
-                </div>
-            {% empty %}
-            <div style="padding: 2rem; text-align: center; color: #94a3b8; width: 100%;">
-                Aucun professeur disponible pour le moment.
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <script>
-        function scrollProfs(direction) {
-            const container = document.getElementById('profScroll');
-            const scrollAmount = 340; // Card width + gap
-            if (direction === 'left') {
-                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            }
-        }
-
-
-        function openTeacherProfile(slug) {
-            window.location.href = `/professeur/${slug}/`;
-        }
-    </script>
-    
-    <!-- CTA Final -->
-    <div class="cta-final">
-        <h2>Prêt à trouver le professeur idéal ?</h2>
-        <div style="margin-bottom: 2rem;">
-            <a href="{% url 'recherche' %}" class="btn-white">Rechercher maintenant</a>
-        </div>
-        <p style="font-size: 0.95rem; opacity: 0.9;">
-            Encore des questions ? <a href="{% url 'faq' %}" style="color: white; font-weight: 700; text-decoration: underline;">Consultez notre FAQ</a> ou contactez le <a href="https://wa.me/message/QROCDDNKZIXAE1" target="_blank" style="color: white; font-weight: 700; text-decoration: underline;">Support</a>.
-        </p>
-    </div>
+<!-- CTA FINAL -->
+<section class="cta-mobile">
+    <h2>Prêt à exceller ?</h2>
+    <p>Trouvez le professeur parfait dès aujourd'hui.</p>
+    <a href="{% url 'recherche' %}" class="btn-primary-m">Rechercher un prof</a>
 </section>
 
 {% endblock %}
