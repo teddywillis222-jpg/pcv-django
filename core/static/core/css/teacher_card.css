@@ -12,7 +12,7 @@
     padding: 1rem;
     gap: 1rem;
     width: 100%;
-    min-height: 200px; /* Generous vertical space */
+    min-height: 220px; /* Extra generous vertical space */
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
     position: relative;
@@ -118,13 +118,13 @@
     flex-direction: column;
     justify-content: space-between;
     min-width: 0; /* Important for truncation */
-    padding: 0.25rem 0;
+    padding: 0.5rem 0; /* More vertical breathing */
 }
 
 .info-top {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.4rem; /* More spacing between name/subjects/badges */
 }
 
 .name-badge-row {
@@ -155,7 +155,7 @@
 .info-text-group {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.3rem; /* Generous spacing between matière/location/classes */
 }
 
 .info-text {

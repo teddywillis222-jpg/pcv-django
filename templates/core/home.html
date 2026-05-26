@@ -43,14 +43,14 @@ p {
 .hero-wrapper {
     position: relative;
     width: 100%;
-    min-height: 85vh; /* Better for mobile, feels native */
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Push content to bottom on mobile */
+    justify-content: center; /* Center content vertically */
     align-items: center;
     background-color: var(--slate-900);
     background: url("{% static 'core/images/hero_home.webp' %}") center/cover no-repeat;
-    padding: 1.5rem 1rem 4rem 1rem;
+    padding: 5rem 1rem 2.5rem 1rem; /* Reduced bottom, navbar offset top */
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
     overflow: hidden;
@@ -177,13 +177,13 @@ p {
     flex-shrink: 0;
 }
 
-/* --- SECTION ESPACEMENT --- */
+/* --- SECTION ESPACEMENT (condensé) --- */
 .section-mobile {
-    padding: 2.5rem 0 1rem 0;
+    padding: 1.5rem 0 0.5rem 0; /* Reduced to minimize scroll fatigue */
 }
 .section-mobile-header {
     padding: 0 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 .section-mobile-header h2 {
     font-size: 1.5rem;
@@ -199,8 +199,9 @@ p {
 .chips-container {
     display: flex;
     overflow-x: auto;
+    flex-wrap: wrap; /* Allow wrapping to fill space */
     gap: 0.5rem;
-    padding: 0.5rem 1rem 1.5rem 1rem;
+    padding: 0.25rem 1rem 0.75rem 1rem; /* Tightened vertical padding */
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
@@ -210,13 +211,13 @@ p {
     border: 1px solid var(--slate-200);
     color: var(--slate-800);
     padding: 0 1.25rem;
-    height: 48px; /* Touch target */
+    height: 44px; /* Touch target */
     border-radius: 24px;
     display: flex;
     align-items: center;
     white-space: nowrap;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     text-decoration: none;
     transition: background 0.2s;
 }
@@ -226,7 +227,8 @@ p {
 
 /* --- LA DIFFERENCE (CAROUSEL) --- */
 .diff-card-mobile {
-    background: var(--slate-50);
+    background: linear-gradient(135deg, rgba(241,245,249,0.8), rgba(236,253,245,0.4)); /* Subtle slate + emerald tint */
+    border: 1px solid rgba(226,232,240,0.6);
     border-radius: 24px;
     padding: 1.75rem;
     width: 80vw; /* Shows next card edge */
@@ -268,10 +270,10 @@ p {
 
 /* CTA FINAL */
 .cta-mobile {
-    margin: 2rem 1rem 3rem 1rem;
+    margin: 1rem 1rem 2rem 1rem; /* Tightened margins */
     background: var(--slate-900);
     border-radius: 32px;
-    padding: 3rem 1.5rem;
+    padding: 2.5rem 1.5rem;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -324,7 +326,8 @@ p {
         min-height: 70vh;
         border-radius: 0;
         justify-content: center;
-        padding-top: 6rem;
+        padding-top: 8rem;
+        padding-bottom: 4rem;
     }
     .hero-content {
         text-align: center;
@@ -386,8 +389,8 @@ p {
 <!-- HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
-        <h1 class="hero-title">Votre prof idéal, à portée de main.</h1>
-        <p class="hero-subtitle">Des cours particuliers à domicile au Bénin. Vérifiés, sécurisés et suivis en temps réel.</p>
+        <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
+        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
         
         <div class="search-box">
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
@@ -431,10 +434,14 @@ p {
         <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
         <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
         <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
+        <a href="{% url 'recherche' %}?matiere=Physique-Chimie" class="chip">🔬 Physique-Chimie</a>
         <a href="{% url 'recherche' %}?localisation=Cotonou" class="chip">📍 Cotonou</a>
         <a href="{% url 'recherche' %}?localisation=Abomey-Calavi" class="chip">📍 Calavi</a>
+        <a href="{% url 'recherche' %}?localisation=Porto-Novo" class="chip">📍 Porto-Novo</a>
         <a href="{% url 'recherche' %}?classe=Primaire" class="chip">🎒 Primaire</a>
+        <a href="{% url 'recherche' %}?classe=Collège" class="chip">📚 Collège</a>
         <a href="{% url 'recherche' %}?classe=Lycée" class="chip">🎓 Lycée</a>
+        <a href="{% url 'recherche' %}?classe=Université" class="chip">🏛️ Université</a>
     </div>
 </section>
 
