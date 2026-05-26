@@ -50,7 +50,8 @@ p {
     align-items: center;
     background-color: var(--slate-900);
     background: url("{% static 'core/images/hero_home.webp' %}") center/cover no-repeat;
-    padding: 5rem 1rem 2.5rem 1rem; /* Reduced bottom, navbar offset top */
+    padding: 3.5rem 1rem 2.5rem 1rem; /* Tighter top padding */
+    margin-top: -5px; /* Pull hero up to meet navbar seamlessly */
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
     overflow: hidden;
