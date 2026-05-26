@@ -1,226 +1,253 @@
-/* Teacher Card Component Styles - Refined Version */
+/* Teacher Card Component Styles - Premium Hybrid Mobile-First */
 
-/* --- GLOBAL CARD (Search, Favorites) --- */
 .teacher-card.premium-card {
-    background: white;
-    border-radius: 16px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid #eef2f6;
-    transition: all 0.3s ease;
+    background: #ffffff;
+    border-radius: 16px; /* rounded-2xl */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); /* Subtle premium shadow */
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Horizontal layout by default */
+    padding: 0.75rem;
     gap: 1rem;
     width: 100%;
-    max-width: 100%;
-    min-height: auto;
     box-sizing: border-box;
-    overflow: hidden; /* Réactivé pour permettre la troncature ellipsis */
-    -webkit-tap-highlight-color: transparent; /* Remove blue flash on Android */
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+    align-items: stretch;
 }
 
 .teacher-card.premium-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    transform: translateY(-3px);
-    border-color: var(--success-200);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
 }
 
-.teacher-card .card-main-info {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
+/* Left Photo Section (40%) */
+.card-photo-section {
+    flex: 0 0 35%; /* roughly 40% depending on paddings */
+    max-width: 140px;
+    min-width: 110px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden; /* For image zoom */
+}
+
+.teacher-photo {
     width: 100%;
-}
-
-.teacher-card .profile-image-container {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    overflow: visible; /* Permet à l'overlay de déborder */
-    background: #f1f5f9;
-    flex-shrink: 0;
-    position: relative; /* Ancrage pour le badge overlay */
-}
-
-/* Photo clipée séparément pour ne pas couper l'overlay */
-.teacher-card .profile-image-container img,
-.teacher-card .profile-image-container .no-image {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
+    height: 100%;
+    aspect-ratio: 3/4; /* Vertical massive photo */
     object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.4s ease;
     display: block;
 }
 
-/* Badge "Suivi Rigoureux" — pastille en overlay sur la photo */
-.teacher-card .photo-badge-rigoureux {
-    position: absolute;
-    bottom: -5px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #4f46e5;          /* Indigo vif */
-    color: white;
-    border: 2px solid white;
+.teacher-card.premium-card:hover .teacher-photo {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.avatar-initials.teacher-photo {
+    background: #f1f5f9;
+    color: #64748b;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 4px rgba(79,70,229,0.35);
-    cursor: default;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+/* Absolute Badges on Photo */
+.photo-badge-rigoureux {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(79,70,229,0.4);
     z-index: 2;
 }
 
-.teacher-card .teacher-details {
-    flex: 1;
-    min-width: 0; /* Critical for truncation */
-}
-
-.teacher-card .name-badge-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 2px;
-    width: 100%;
-    overflow: hidden; /* Réactivé pour permettre la troncature du nom */
-    min-width: 0;
-}
-
-/* Le nom tronque quand trop long */
-.teacher-card .teacher-name {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #1e293b;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-    flex: 0 1 auto; /* Changé de 1 à 0 1 auto pour rester collé au badge si le nom est court */
-    min-width: 0;
-}
-
-/* La coche certifié reste toujours visible, collée au nom */
-.teacher-card .cert-icon {
-    flex-shrink: 0;          /* Ne jamais comprimer */
-    display: inline-flex;    /* Aligne l'icône verticalement */
-    align-items: center;
-    color: #16a34a;          /* Couleur verte */
-    vertical-align: middle;
-    width: 16px;
-    height: 16px;
-}
-
-.teacher-card .teacher-subjects {
-    font-size: 0.85rem;
-    color: var(--success-600);
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 2px;
-}
-
-.teacher-card .teacher-classes, 
-.teacher-card .teacher-location {
-    font-size: 0.8rem;
-    color: #64748b;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.teacher-card .badges-row {
-    display: flex;
-    overflow-x: auto;
-    gap: 0.4rem;
-    margin-top: 0.25rem;
-    padding-bottom: 4px;
-    scrollbar-width: none; /* Hide scrollbar for clean look */
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
-}
-
-.teacher-card .badges-row::-webkit-scrollbar {
-    display: none;
-}
-
-.teacher-card .tag-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.tag-rating    { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
-.tag-available { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
-.tag-trial     { background: #fdf2f8; color: #9d174d; border: 1px solid #fce7f3; }
-.tag-exp       { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
-/* Note: le badge Suivi Rigoureux est affiché en overlay sur la photo (.photo-badge-rigoureux) */
-
-.teacher-card .price-row {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #1e293b;
-    margin-top: 0.25rem;
-}
-
-.teacher-card .card-footer {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    margin-top: 0.5rem;
-}
-
-.teacher-card .btn-consult {
-    flex: 1;
-    padding: 0.7rem;
-    background: var(--success-600);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-}
-
-.teacher-card .btn-consult:hover {
-    background: var(--success-700);
-}
-
-.teacher-card .favorite-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+.favorite-btn-glass {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
     cursor: pointer;
-    color: #94a3b8;
     transition: all 0.2s;
+    z-index: 2;
+    padding: 0;
 }
 
-.teacher-card .favorite-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #fecaca;
+.favorite-btn-glass:hover, .favorite-btn-glass.active {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: white;
+}
+.favorite-btn-glass.active svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+.favorite-btn-glass:hover svg {
+    stroke: #ef4444;
 }
 
-.teacher-card .favorite-btn.active {
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #fecaca;
+/* Right Info Section (60%) */
+.card-info-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0; /* Important for truncation */
+    padding: 0.25rem 0;
+}
+
+.info-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.name-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.teacher-name {
+    font-size: 1.1rem;
+    font-weight: 700; /* semibold/bold */
+    color: #0f172a; /* slate-900 */
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.cert-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.info-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.info-text {
+    font-size: 0.85rem; /* text-sm */
+    color: #64748b; /* slate-500 */
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4; /* leading-relaxed */
+}
+
+.info-subjects {
+    color: #475569; /* slate-600 */
+    font-weight: 500;
+}
+
+/* Micro Badges */
+.micro-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.micro-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+}
+
+/* Highly transparent background with colored text */
+.badge-rating {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+.badge-rating .badge-count {
+    opacity: 0.7;
+    margin-left: 2px;
+}
+.badge-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+.badge-purple {
+    background: rgba(139, 92, 246, 0.1);
+    color: #7c3aed;
+}
+.badge-neutral {
+    background: rgba(100, 116, 139, 0.1);
+    color: #475569;
+}
+
+/* Info Bottom */
+.info-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+}
+
+.price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.price-amount {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.price-currency {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* Action Arrow */
+.action-arrow {
+    color: #cbd5e1; /* slate-300 */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.teacher-card.premium-card:hover .action-arrow {
+    color: #10b981; /* brand success */
+    transform: translateX(4px); /* Slide right on hover */
 }
 
 
@@ -241,7 +268,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    -webkit-tap-highlight-color: transparent; /* Remove blue flash on Android */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .teacher-card-compact:hover {
@@ -269,7 +296,7 @@
 .teacher-card-compact .compact-name {
     font-size: 0.85rem;
     font-weight: 800;
-    color: #1e293b;
+    color: #0f172a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -287,30 +314,31 @@
 }
 
 .teacher-card-compact .compact-matiere {
-    color: var(--success-600);
-    font-weight: 700;
+    color: #0f172a;
+    font-weight: 600;
 }
 
 .teacher-card-compact .compact-rating {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #b45309;
+    color: #d97706;
 }
 
 .teacher-card-compact .btn-view {
     width: 100%;
     padding: 0.5rem;
-    background: var(--success-50);
-    color: var(--success-600);
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
     border: none;
     border-radius: 8px;
     font-weight: 700;
     font-size: 0.8rem;
     cursor: pointer;
     margin-top: 0.25rem;
+    transition: all 0.2s;
 }
 
 .teacher-card-compact .btn-view:hover {
-    background: var(--success-600);
+    background: #10b981;
     color: white;
 }

@@ -1,71 +1,23 @@
-<div class="teacher-card premium-card" data-prof-id="{{ teacher.id }}" onclick="openTeacherProfile('{{ teacher.slug }}')">
-    <!-- Header with Photo and Name Info -->
-    <div class="card-main-info">
-        <!-- Photo avec badge "Suivi Rigoureux" en overlay -->
-        <div class="profile-image-container">
-            {% if teacher.photo_de_profil %}
-                <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}">
-            {% else %}
-                <div class="avatar-initials" style="width: 70px; height: 70px; border-radius: 12px; background: #e2e8f0; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.4rem; border: 2px solid #f1f5f9;">
-                    {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
-                </div>
-            {% endif %}
-            {% if teacher.suivi_rigoureux %}
-                <div class="photo-badge-rigoureux" title="Suivi rigoureux : ce professeur remplit régulièrement ses bilans de séances">
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-            {% endif %}
-        </div>
-        
-        <div class="teacher-details">
-            <div class="name-badge-row" style="display: flex; align-items: center; gap: 4px; min-width: 0; overflow: visible;">
-                <span class="teacher-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1;">{{ teacher.prenom }} {{ teacher.nom }}</span>
-                {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
-                    <svg class="cert-icon" width="16" height="16" viewBox="0 0 24 24" fill="#16a34a" title="Professeur certifié ProfChezVous" style="flex-shrink: 0; display: block;">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                {% endif %}
+<div class="teacher-card premium-card group" data-prof-id="{{ teacher.id }}" onclick="openTeacherProfile('{{ teacher.slug }}')">
+    <!-- Left Photo Section (40% on mobile) -->
+    <div class="card-photo-section">
+        {% if teacher.photo_de_profil %}
+            <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}" class="teacher-photo">
+        {% else %}
+            <div class="avatar-initials teacher-photo">
+                {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
             </div>
-            <p class="teacher-subjects">{{ teacher.matiere_enseignee }}</p>
-            <p class="teacher-classes">{{ teacher.classes_labels|default:"Toutes classes" }}</p>
-            <p class="teacher-location">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                {{ teacher.ville_quartier }}
-            </p>
-        </div>
-    </div>
-
-    <!-- Dynamic Badges Row -->
-    <div class="badges-row">
-        <div class="tag-badge tag-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}">
-            <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }}
-            <span style="font-size: 0.65rem; opacity: 0.8; margin-left: 2px;">({{ teacher.nombre_avis }} avis)</span>
-        </div>
+        {% endif %}
         
-        {% if teacher.est_disponible != False %}
-            <div class="tag-badge tag-available">Disponible</div>
+        <!-- Suivi Rigoureux Badge -->
+        {% if teacher.suivi_rigoureux %}
+            <div class="photo-badge-rigoureux" title="Suivi rigoureux : ce professeur remplit régulièrement ses bilans de séances">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
         {% endif %}
 
-        {% if teacher.essai_gratuit_actif %}
-            <div class="tag-badge tag-trial">Essai possible</div>
-        {% endif %}
-
-        {% if teacher.annees_d_experience %}
-            <div class="tag-badge tag-exp">{{ teacher.annees_d_experience }} ans exp.</div>
-        {% endif %}
-    </div>
-
-    <!-- Price Info -->
-    <div class="price-row">
-        {{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }} <span style="font-size: 0.8rem; font-weight: 500; opacity: 0.7;">FCFA/h</span>
-    </div>
-
-    <!-- Card Footer: Consulter and Favorite -->
-    <div class="card-footer">
-        <button class="btn-consult">Consulter le profil</button>
-        <button class="favorite-btn {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" 
+        <!-- Favorite Button (Glassmorphism top right) -->
+        <button class="favorite-btn-glass {% if user.is_authenticated and user in teacher.parents_favoris.all %}active{% endif %}" 
                 title="Ajouter aux favoris"
                 {% if user.is_authenticated and user.profile.role == 'PROF' %}
                     style="opacity: 0.4; cursor: not-allowed; pointer-events: none;"
@@ -75,12 +27,68 @@
                 {% else %}
                     onclick="event.stopPropagation(); toggleFavoriteAjax(this, '{{ teacher.id }}')"
                 {% endif %}>
-            <svg width="20" height="20" viewBox="0 0 24 24" 
+            <svg width="16" height="16" viewBox="0 0 24 24" 
                  fill="{% if user.is_authenticated and user in teacher.parents_favoris.all %}#ef4444{% else %}none{% endif %}" 
                  stroke="{% if user.is_authenticated and user in teacher.parents_favoris.all %}#ef4444{% else %}currentColor{% endif %}" 
-                 stroke-width="2">
+                 stroke-width="2.5">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
         </button>
+    </div>
+    
+    <!-- Right Info Section (60% on mobile) -->
+    <div class="card-info-section">
+        <div class="info-top">
+            <!-- Name & Cert -->
+            <div class="name-badge-row">
+                <h3 class="teacher-name">{{ teacher.prenom }} {{ teacher.nom }}</h3>
+                {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
+                    <svg class="cert-icon" width="16" height="16" viewBox="0 0 24 24" fill="#10b981" title="Professeur certifié ProfChezVous">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                {% endif %}
+            </div>
+            
+            <!-- Subjects & Location -->
+            <div class="info-text-group">
+                <p class="info-text info-subjects">{{ teacher.matiere_enseignee }}</p>
+                <p class="info-text info-meta">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; vertical-align:middle; display:inline-block;"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {{ teacher.ville_quartier }}
+                </p>
+                <p class="info-text info-classes">{{ teacher.classes_labels|default:"Toutes classes" }}</p>
+            </div>
+
+            <!-- Micro Badges -->
+            <div class="micro-badges">
+                <div class="micro-badge badge-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}">
+                    ★ {{ teacher.moyenne_avis|floatformat:1 }} <span class="badge-count">({{ teacher.nombre_avis }})</span>
+                </div>
+                {% if teacher.est_disponible != False %}
+                    <div class="micro-badge badge-success">Disponible</div>
+                {% endif %}
+                {% if teacher.essai_gratuit_actif %}
+                    <div class="micro-badge badge-purple">Essai possible</div>
+                {% endif %}
+                {% if teacher.annees_d_experience %}
+                    <div class="micro-badge badge-neutral">{{ teacher.annees_d_experience }} ans</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="info-bottom">
+            <!-- Price -->
+            <div class="price-block">
+                <span class="price-amount">{{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }}</span>
+                <span class="price-currency">FCFA/h</span>
+            </div>
+            
+            <!-- Action Arrow -->
+            <div class="action-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </div>
+        </div>
     </div>
 </div>
