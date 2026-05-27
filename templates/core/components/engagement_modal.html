@@ -45,44 +45,43 @@
                 </select>
             </div>
 
-            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
-                <div style="min-width:0;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
-                    <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
                         <!-- Rempli par JS -->
                     </select>
                 </div>
-                <div style="min-width:0;">
+                <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Classe de l'élève <span style="color:#ef4444">*</span></label>
-                    <select id="eng_classe" name="classe" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <select id="eng_classe" name="classe" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
                         <!-- Rempli par JS -->
                     </select>
                 </div>
             </div>
             
-            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
-                <div style="min-width:0;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
-                    <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
-                        <option value="">Sélectionnez le mode de cours</option>
-                        <option value="PARENT_HOME">Présentiel chez le parent</option>
-                        <option value="APPRENANT_HOME">Présentiel chez l'apprenant</option>
-                        <option value="ONLINE">En ligne (visioconférence)</option>
-                        <option value="HYBRID">Hybride (Présentiel + En ligne)</option>
-                        <option value="THIRD_PLACE">Lieu tiers (bibliothèque, centre éducatif)</option>
-                        <option value="SMALL_GROUP">Cours en groupe restreint</option>
-                        <option value="DISTANCE">À distance (téléphone, audio)</option>
-                    </select>
-                </div>
-                <div id="eng_field_localisation" style="min-width:0;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
-                    <select id="eng_localisation" name="localisation" class="pcv-multi-select" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
-                        <option value="">Sélectionnez un quartier-ville</option>
-                        {% for code, label in LOCALISATION_CHOICES %}
-                        <option value="{{ code }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
+                <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <option value="">Sélectionnez le mode de cours</option>
+                    <option value="PARENT_HOME">Présentiel chez le parent</option>
+                    <option value="APPRENANT_HOME">Présentiel chez l'apprenant</option>
+                    <option value="ONLINE">En ligne (visioconférence)</option>
+                    <option value="HYBRID">Hybride (Présentiel + En ligne)</option>
+                    <option value="THIRD_PLACE">Lieu tiers (bibliothèque, centre éducatif)</option>
+                    <option value="SMALL_GROUP">Cours en groupe restreint</option>
+                    <option value="DISTANCE">À distance (téléphone, audio)</option>
+                </select>
+            </div>
+
+            <div id="eng_field_localisation" style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
+                <select id="eng_localisation" name="localisation" class="pcv-multi-select" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
+                    <option value="">Sélectionnez un quartier-ville</option>
+                    {% for code, label in LOCALISATION_CHOICES %}
+                    <option value="{{ code }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div id="eng_field_visio" style="margin-bottom: 1.25rem; display: none;">
@@ -98,10 +97,10 @@
 
             <!-- Champs Spécifiques STANDARD -->
             <div id="eng_group_standard">
-                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
-                    <div style="min-width:0;">
+                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Fréquence <span style="color:#ef4444">*</span></label>
-                        <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
+                        <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
                             <option value="1">1 séance / semaine</option>
                             <option value="2">2 séances / semaine</option>
                             <option value="3">3 séances / semaine</option>
@@ -109,9 +108,9 @@
                             <option value="5">5 séances / semaine</option>
                         </select>
                     </div>
-                    <div style="min-width:0;">
+                    <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée par séance <span style="color:#ef4444">*</span></label>
-                        <select id="eng_duree" name="duree_seance" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
+                        <select id="eng_duree" name="duree_seance" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
                             <option value="1H">1h</option>
                             <option value="1H30">1h30</option>
                             <option value="2H">2h</option>
@@ -119,13 +118,16 @@
                             <option value="3H">3h</option>
                         </select>
                     </div>
-                    <div style="min-width:0;">
+                </div>
+
+                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date de début souhaitée <span style="color:#ef4444">*</span></label>
-                        <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
+                        <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
-                    <div style="min-width:0;">
+                    <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Durée totale (mois) <span style="color:#ef4444">*</span></label>
-                        <input type="number" id="eng_duree_mois" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
+                        <input type="number" id="eng_duree_mois" name="duree_mois" min="1" max="12" placeholder="Ex: 3" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
                     </div>
                 </div>
 
@@ -137,15 +139,13 @@
 
             <!-- Champs Spécifiques ESSAI -->
             <div id="eng_group_essai" style="display: none; background: #f8fafc; padding: 1.25rem; border-radius: 1rem; border: 2px dashed #cbd5e1; margin-bottom: 1.5rem;">
-                <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date et Heure de l'essai souhaitée <span style="color:#ef4444">*</span></label>
-                        <input type="datetime-local" id="eng_date_essai" name="date_essai" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Précisions pour l'essai</label>
-                        <textarea name="description_essai" rows="3" placeholder="Précisez un lieu de rencontre, vos attentes spécifiques pour ce test..." style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit;"></textarea>
-                    </div>
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date et Heure de l'essai souhaitée <span style="color:#ef4444">*</span></label>
+                    <input type="datetime-local" id="eng_date_essai" name="date_essai" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Précisions pour l'essai</label>
+                    <textarea name="description_essai" rows="3" placeholder="Précisez un lieu de rencontre, vos attentes spécifiques pour ce test..." style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit;"></textarea>
                 </div>
             </div>
             
