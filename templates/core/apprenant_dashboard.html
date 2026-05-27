@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block title %}Espace Apprenant - Prof Chez Vous{% endblock %}
-{% block body_class %}dashboard-page{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -298,59 +297,6 @@
     .badge-termine { background: #f1f5f9; color: #475569; }
     .badge-refuse { background: #fee2e2; color: #b91c1c; }
 
-    /* Layout improvements for Full-width Sections */
-    .full-width-section {
-        margin-left: -1rem;
-        margin-right: -1rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    @media (min-width: 1024px) {
-        .full-width-section {
-            margin-left: -1.5rem;
-            margin-right: -1.5rem;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-    }
-
-    /* See More Arrow Circle */
-    .see-more-circle {
-        flex: 0 0 auto;
-        width: 140px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        gap: 0.75rem;
-        color: var(--text-gray);
-    }
-    .see-more-circle .circle {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-    .see-more-circle:hover .circle {
-        background: var(--text-dark);
-        color: white;
-        transform: translateX(4px);
-    }
-    .see-more-circle:hover {
-        color: var(--text-dark);
-    }
-
     /* Section Headers */
     .section-header {
         display: flex;
@@ -375,9 +321,6 @@
         font-size: 1.1rem;
         font-weight: 800;
         color: var(--text-dark);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
     }
 
     /* History Line */
@@ -508,7 +451,7 @@
         <div id="main-dash" class="dash-section">
 
             <!-- Mon Profil Résumé -->
-            <section class="full-width-section" style="padding-top: 0; margin-bottom: 0;">
+            <section style="margin-bottom: 1.5rem;">
                 <div class="sidebar-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem;">
                     <div>
                         <h2 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Bonjour, {{ apprenant.nom }} ! 👋</h2>
@@ -521,13 +464,11 @@
             </section>
 
             <!-- Recommandations -->
-            <section class="full-width-section">
+            <section style="margin-top: 1rem;">
                 <div class="section-header">
-                    <h2 class="section-title">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        Recommandations pour toi
-                    </h2>
+                    <h2 class="section-title">Recommandations pour toi</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
+                        <a href="{% url 'recherche' %}" style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
                         <!-- Scroll Buttons (Desktop Only) -->
                         <div class="scroll-controls" style="display: flex; gap: 0.5rem;">
                             <button onclick="scrollSection('reco-scroll-app', 'left')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
@@ -548,23 +489,12 @@
                         <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block; padding: 0.5rem 1rem; background: var(--primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.8rem;">Recherche manuelle</a>
                     </div>
                     {% endfor %}
-                    {% if recommandations|length >= 4 %}
-                    <a href="{% url 'recherche' %}" class="see-more-circle">
-                        <div class="circle">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </div>
-                        <span style="font-weight: 700; font-size: 0.8rem;">Voir tout</span>
-                    </a>
-                    {% endif %}
                 </div>
             </section>
 
             <!-- Engagements Rapides -->
-            <section class="full-width-section" style="border-bottom: none;">
-                <h2 class="section-title" style="margin-bottom: 0.75rem;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dark)" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    Mes engagements
-                </h2>
+            <section style="margin-top: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>

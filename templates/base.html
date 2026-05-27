@@ -162,8 +162,8 @@
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            box-shadow: none;
-            border-bottom: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .dashboard-page .navbar {
@@ -205,14 +205,14 @@
 
         .plan-header-badge {
             position: absolute;
-            top: 4px;
+            top: 2px;
             left: 100%;
-            margin-left: 2px;
+            margin-left: 4px;
             font-size: 0.55rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 4px 6px;
+            padding: 2px 6px;
             border-radius: 6px;
             line-height: 1;
             white-space: nowrap;
@@ -542,7 +542,6 @@
             .navbar {
                 background: transparent !important;
                 backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
                 box-shadow: none !important;
                 border-bottom: none !important;
             }
@@ -553,9 +552,9 @@
                 display: none;
             }
 
-            .navbar-actions .btn-nav.desktop-only,
-            .navbar-actions .btn-nav-outline.desktop-only,
-            .navbar-actions .logout-form.desktop-only {
+            .navbar-actions .btn-nav,
+            .navbar-actions .btn-nav-outline,
+            .navbar-actions .logout-form {
                 display: none;
             }
 
@@ -564,80 +563,24 @@
             }
 
             .navbar-brand {
-                font-size: 1.25rem;
+                font-size: 1.5rem;
                 padding-left: 0 !important;
             }
 
             .navbar-container {
-                padding: 0.75rem 1rem;
-            }
-
-            /* Mobile Icon Buttons */
-            .mobile-icon-nav {
-                display: flex !important;
+                padding: 1.25rem 1rem;
             }
         }
 
         /* Très petits écrans */
         @media (max-width: 480px) {
             .navbar-brand {
-                font-size: 1.15rem;
+                font-size: 1.3rem;
             }
 
             .navbar-container {
-                padding: 0.5rem 0.75rem;
+                padding: 0.75rem;
             }
-        }
-
-        /* --- Mobile Icon Nav Buttons --- */
-        .mobile-icon-nav {
-            display: none; /* Hidden on desktop */
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .mobile-icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-            padding: 0;
-        }
-
-        .mobile-icon-btn:active {
-            transform: scale(0.92);
-        }
-
-        /* Default state: NOT on dashboard */
-        .mobile-icon-btn.icon-home {
-            background: rgba(16, 185, 129, 0.12);
-            color: #059669;
-        }
-        .mobile-icon-btn.icon-burger {
-            background: #059669;
-            color: #ffffff;
-        }
-
-        /* ON dashboard: swap the colors */
-        .dashboard-page .mobile-icon-btn.icon-home {
-            background: #059669;
-            color: #ffffff;
-        }
-        .dashboard-page .mobile-icon-btn.icon-burger {
-            background: rgba(16, 185, 129, 0.12);
-            color: #059669;
-        }
-
-        /* Non-authenticated: login icon instead of home */
-        .mobile-icon-btn.icon-login {
-            background: rgba(16, 185, 129, 0.12);
-            color: #059669;
         }
 
         body {
@@ -710,47 +653,23 @@
             <!-- Actions Desktop -->
             <div class="navbar-actions">
                 {% if user.is_authenticated %}
-                <a href="{% url 'post_signup_redirect' %}" class="btn-nav desktop-only">Mon espace</a>
-                <form action="{% url 'logout' %}" method="post" class="logout-form desktop-only">
+                <a href="{% url 'post_signup_redirect' %}" class="btn-nav">Mon espace</a>
+                <form action="{% url 'logout' %}" method="post" class="logout-form">
                     {% csrf_token %}
                     <button type="submit" class="logout-btn">Déconnexion</button>
                 </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="btn-nav-outline desktop-only">Se connecter</a>
-                <a href="{% url 'signup' %}" class="btn-nav desktop-only">S'inscrire</a>
+                <a href="{% url 'login' %}" class="btn-nav-outline">Se connecter</a>
+                <a href="{% url 'signup' %}" class="btn-nav">S'inscrire</a>
                 {% endif %}
                 
-                <!-- Mobile Icon Nav (Home + Burger) -->
-                <div class="mobile-icon-nav">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'post_signup_redirect' %}" class="mobile-icon-btn icon-home" title="Mon espace">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline points="9 22 9 12 15 12 15 22"/>
-                        </svg>
-                    </a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="mobile-icon-btn icon-login" title="Connexion">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            <polyline points="10 17 15 12 10 7"/>
-                            <line x1="15" y1="12" x2="3" y2="12"/>
-                        </svg>
-                    </a>
-                    {% endif %}
-
-                    <button class="mobile-icon-btn icon-burger" onclick="toggleMobileMenu()" id="mobileMenuToggle">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="burger-svg">
-                            <line x1="3" y1="6" x2="21" y2="6"/>
-                            <line x1="3" y1="12" x2="15" y2="12"/>
-                            <line x1="3" y1="18" x2="21" y2="18"/>
-                        </svg>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="close-svg" style="display:none;">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
+                <!-- Menu Burger Moderne -->
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuToggle">
+                    <div class="mobile-menu-icon">
+                        <span class="menu-bar menu-bar-1"></span>
+                        <span class="menu-bar menu-bar-2"></span>
+                    </div>
+                </button>
             </div>
         </div>
     </header>
@@ -962,8 +881,6 @@
             const mobileMenu = document.querySelector('.mobile-menu');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             const toggleBtn = document.getElementById('mobileMenuToggle');
-            const burgerSvg = toggleBtn.querySelector('.burger-svg');
-            const closeSvg = toggleBtn.querySelector('.close-svg');
             
             mobileMenu.classList.toggle('active');
             mobileMenuOverlay.classList.toggle('active');
@@ -971,12 +888,8 @@
             
             if (mobileMenu.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
-                if (burgerSvg) burgerSvg.style.display = 'none';
-                if (closeSvg) closeSvg.style.display = 'block';
             } else {
                 document.body.style.overflow = '';
-                if (burgerSvg) burgerSvg.style.display = 'block';
-                if (closeSvg) closeSvg.style.display = 'none';
             }
         }
         
@@ -984,16 +897,10 @@
             const mobileMenu = document.querySelector('.mobile-menu');
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             const toggleBtn = document.getElementById('mobileMenuToggle');
-            if (toggleBtn) {
-                const burgerSvg = toggleBtn.querySelector('.burger-svg');
-                const closeSvg = toggleBtn.querySelector('.close-svg');
-                if (burgerSvg) burgerSvg.style.display = 'block';
-                if (closeSvg) closeSvg.style.display = 'none';
-            }
             
             mobileMenu.classList.remove('active');
             mobileMenuOverlay.classList.remove('active');
-            if (toggleBtn) toggleBtn.classList.remove('active');
+            toggleBtn.classList.remove('active');
             document.body.style.overflow = '';
         }
 

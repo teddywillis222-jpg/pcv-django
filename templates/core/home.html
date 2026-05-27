@@ -18,8 +18,9 @@
     --slate-500: #64748b;
     --slate-800: #1e293b;
     --slate-900: #0f172a;
-    --brand-success: #10b981;
-    --brand-success-dark: #059669;
+    /* Use app primary color variables to stay consistent */
+    --brand-success: var(--primary-dark);
+    --brand-success-dark: var(--primary-dark);
 }
 
 main.container {
@@ -40,7 +41,7 @@ p {
 }
 
 /* --- HERO SECTION --- */
-.hero-wrapper {
+    .hero-wrapper {
     position: relative;
     width: 100%;
     min-height: 80vh;
@@ -50,8 +51,8 @@ p {
     align-items: center;
     background-color: var(--slate-900);
     background: url("{% static 'core/images/hero_home.webp' %}") center/cover no-repeat;
-    padding: 3.5rem 1rem 2.5rem 1rem; /* Tighter top padding */
-    margin-top: -5px; /* Pull hero up to meet navbar seamlessly */
+    padding: calc(3.5rem - 15px) 1rem 2.5rem 1rem; /* reduce top spacing by 15px */
+    margin-top: -10px; /* pull hero slightly more to remove gap (reduced by 5px) */
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
     overflow: hidden;
@@ -150,7 +151,7 @@ p {
     justify-content: center;
     gap: 0.5rem;
     margin-top: 0.5rem;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 8px 20px rgba(22,163,74,0.32); /* use primary color tone */
     transition: transform 0.2s, box-shadow 0.2s;
 }
 .btn-search:active {
@@ -220,10 +221,24 @@ p {
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
 }
+
+.chip:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+}
+
 .chip:active {
     background: var(--slate-200);
+}
+
+.chip:focus {
+    outline: none;
+}
+
+.chip:focus-visible {
+    box-shadow: 0 0 0 4px rgba(22,163,74,0.12);
 }
 
 /* --- LA DIFFERENCE (CAROUSEL) --- */
@@ -315,7 +330,7 @@ p {
     width: 100%;
     position: relative;
     z-index: 2;
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 8px 20px rgba(22,163,74,0.28);
 }
 .btn-primary-m:active {
     transform: scale(0.98);
@@ -327,7 +342,7 @@ p {
         min-height: 70vh;
         border-radius: 0;
         justify-content: center;
-        padding-top: 8rem;
+        padding-top: calc(8rem - 15px); /* reduce desktop top spacing by 15px */
         padding-bottom: 4rem;
     }
     .hero-content {

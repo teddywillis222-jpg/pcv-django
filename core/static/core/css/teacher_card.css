@@ -209,8 +209,8 @@
     margin-left: 2px;
 }
 .badge-success {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
+    background: rgba(22,163,74,0.08);
+    color: var(--primary-dark);
 }
 .badge-purple {
     background: rgba(139, 92, 246, 0.1);
@@ -254,20 +254,20 @@
     height: 40px;
     min-width: 40px;
     border-radius: 50%;
-    background: #10b981; /* Emerald-500 */
+    background: var(--primary-dark);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 12px rgba(22,163,74,0.28);
     flex-shrink: 0;
 }
 
 .teacher-card.premium-card:hover .action-arrow {
-    background: #059669; /* Emerald-600 deeper */
+    background: var(--primary-dark);
     transform: translateX(3px);
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 16px rgba(22,163,74,0.34);
 }
 
 .teacher-card.premium-card:active .action-arrow {
@@ -351,18 +351,18 @@
 .teacher-card-compact .btn-view {
     width: 100%;
     padding: 0.5rem;
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
+    background: rgba(22,163,74,0.08);
+    color: var(--primary-dark);
     border: none;
     border-radius: 8px;
     font-weight: 700;
     font-size: 0.8rem;
     cursor: pointer;
     margin-top: 0.25rem;
-    transition: all 0.2s;
+    transition: all 0.18s;
 }
 
 .teacher-card-compact .btn-view:hover {
-    background: #10b981;
+    background: var(--primary-dark);
     color: white;
 }
