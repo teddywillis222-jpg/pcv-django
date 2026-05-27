@@ -245,6 +245,73 @@
         min-width: 0; /* Important */
     }
 
+    /* Kids selector - Netflix/Stories style */
+    .kids-selector {
+        margin: 0 -8px 1rem -8px;
+        padding: 0.5rem 8px;
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        align-items: center;
+        scrollbar-width: none;
+    }
+    .kids-selector::-webkit-scrollbar { display: none; }
+
+    .kid-item {
+        flex: 0 0 auto;
+        width: 72px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        opacity: 0.9;
+        padding: 4px;
+    }
+
+    .kid-item.inactive { opacity: 0.7; }
+
+    .kid-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 1.1rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+    }
+
+    .kid-item:hover .kid-avatar,
+    .kid-item:focus .kid-avatar { transform: scale(1.05); }
+
+    .kid-item.active .kid-avatar {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-md);
+        opacity: 1;
+    }
+
+    .kid-name {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        line-height: 1;
+    }
+
+    .kid-class {
+        font-size: 0.72rem;
+        color: var(--text-gray);
+        margin-top: -2px;
+    }
+
     .carousel-container::-webkit-scrollbar {
         display: none;
     }
@@ -642,23 +709,14 @@
                     Ajouter</button>
             </header>
 
-            <section class="carousel-container" style="margin-bottom: 1.5rem; gap: 1rem; padding-bottom: 0.5rem;">
+            <!-- Kids selector: avatars horizontal (Stories / Netflix style) -->
+            <section class="kids-selector" aria-label="Sélecteur d'enfants">
                 {% for enfant in enfants %}
-                <div class="enfant-card {% if enfant.id == active_enfant.id %}active{% endif %}"
-                    onclick="location.href='?enfant_id={{ enfant.id }}'"
-                    style="cursor: pointer; padding: 0.75rem 1rem; border-radius: 12px; min-width: max-content; display: flex; align-items: center; gap: 1rem; background: {% if enfant.id == active_enfant.id %}white{% else %}transparent{% endif %}; border: 1px solid {% if enfant.id == active_enfant.id %}var(--primary){% else %}#e2e8f0{% endif %};">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <div class="avatar"
-                            style="width: 32px; height: 32px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: var(--primary); border-radius: 50%; margin: 0; font-weight: 800;">
-                            {{ enfant.prenom|first|upper }}</div>
-                        <div>
-                            <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-dark);">{{ enfant.prenom }}</h4>
-                            <p style="margin: 0; font-size: 0.75rem; color: var(--text-gray);">{{ enfant.get_classe_display }}</p>
-                        </div>
-                    </div>
-                    <a href="{% url 'profil_eleve' 'enfant' enfant.id %}" onclick="event.stopPropagation();"
-                        style="font-size: 0.75rem; color: var(--primary); font-weight: 600; text-decoration: none; white-space: nowrap; margin-left: 0.5rem;">Voir
-                        profil</a>
+                <div tabindex="0" role="button" class="kid-item {% if enfant.id == active_enfant.id %}active{% else %}inactive{% endif %}"
+                    onclick="location.href='?enfant_id={{ enfant.id }}'" onkeydown="if(event.key==='Enter'){ location.href='?enfant_id={{ enfant.id }}' }">
+                    <div class="kid-avatar">{{ enfant.prenom|first|upper }}</div>
+                    <div class="kid-name">{{ enfant.prenom }}</div>
+                    <div class="kid-class">{{ enfant.get_classe_display }}</div>
                 </div>
                 {% endfor %}
             </section>
