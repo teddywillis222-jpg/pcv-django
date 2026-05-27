@@ -735,10 +735,10 @@ def prof_dashboard(request):
     # On regroupe EN_ATTENTE, CONFIRME (qui est "En cours") et EN_COURS
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    )
+    ).exclude(type_engagement=EngagementType.ESSAI)
     
     # "Finalisés/actifs" (Uniquement les engagements ayant le statut FINALISE)
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
     # "Essai"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI).exclude(statut_general=StatutGeneral.TERMINE)
@@ -748,9 +748,9 @@ def prof_dashboard(request):
 
     # 2. Statistiques dynamiques (Plus fiables que les compteurs stockés)
     # Contrats actifs = Uniquement FINALISE
-    nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).count()
+    nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI).count()
     # Cours terminés = TERMINE
-    nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).count()
+    nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).exclude(type_engagement=EngagementType.ESSAI).count()
     
     # 3. Centre de Notifications (Messages non lus)
     unread_messages_count = Message.objects.filter(
@@ -927,15 +927,15 @@ def parent_dashboard(request):
     # Onglet "En cours" : En attente ou Confirmé/En cours
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    )
+    ).exclude(type_engagement=EngagementType.ESSAI)
     
     # Onglet "Actifs" : Finalisé
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
     # Onglet "Terminé" (Historique rapide) : Terminé, Annulé, Refusé
     engs_termines = engagements.filter(
         statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-    )
+    ).exclude(type_engagement=EngagementType.ESSAI)
     
     # Historique complet pour le modal/liste (tous les statuts, mais non masqués)
     engagements_tous = engagements.all()
@@ -1095,15 +1095,15 @@ def apprenant_dashboard(request):
     # Onglet "En cours" : En attente ou Confirmé/En cours
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    )
+    ).exclude(type_engagement=EngagementType.ESSAI)
     
     # Onglet "Actifs" : Finalisé
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
     # Onglet "Terminé" (Historique rapide) : Terminé, Annulé, Refusé
     engs_termines = engagements.filter(
         statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-    )
+    ).exclude(type_engagement=EngagementType.ESSAI)
     
     # Historique complet pour le modal/liste (tous les statuts)
     engagements_tous = engagements.all()
@@ -2652,6 +2652,7 @@ def api_engagement_details(request, engagement_id):
         'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
         'heure_fin': engagement.date_heure_fin_essai.strftime("%H:%M") if engagement.date_heure_fin_essai else None,
         'description_essai': engagement.description_essai,
+        'client_role': engagement.parent_apprenant.profile.role if hasattr(engagement.parent_apprenant, 'profile') else 'PARENT',
     }
     
     return JsonResponse({'success': True, 'engagement': data})

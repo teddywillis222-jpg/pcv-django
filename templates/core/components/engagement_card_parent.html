@@ -19,7 +19,11 @@
             </p>
         </div>
         <span class="eng-status-badge {{ status_class }}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
-            {{ eng.get_statut_general_display }}
+            {% if eng.type_engagement == 'ESSAI' %}
+                {{ eng.essai_status_label }}
+            {% else %}
+                {{ eng.get_statut_general_display }}
+            {% endif %}
         </span>
     </div>
 
@@ -66,7 +70,7 @@
              </button>
         {% else %}
              <button onclick="openDetailModal({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-dark); padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer;">
-                Voir les détails
+                {% if eng.type_engagement == 'ESSAI' %}Voir l'essai{% else %}Voir les détails{% endif %}
              </button>
         {% endif %}
         

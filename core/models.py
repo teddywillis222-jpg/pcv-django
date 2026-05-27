@@ -865,6 +865,26 @@ class Engagement(models.Model):
         blank=True,
     )
 
+    @property
+    def essai_status_label(self):
+        from .choices import EngagementType, StatutGeneral
+        from django.utils import timezone
+        if self.type_engagement != EngagementType.ESSAI:
+            return ""
+            
+        if self.statut_general in [StatutGeneral.REFUSE, StatutGeneral.ANNULE]:
+            return self.get_statut_general_display()
+            
+        if self.statut_general == StatutGeneral.EN_ATTENTE:
+            return "Programmé"
+            
+        if self.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE, StatutGeneral.TERMINE]:
+            if self.date_heure_fin_essai and self.date_heure_fin_essai < timezone.now():
+                return "Complétée"
+            return "Confirmé"
+            
+        return "Programmé"
+
     def save(self, *args, **kwargs):
         self.matiere = clean_subjects(self.matiere)
         super().save(*args, **kwargs)

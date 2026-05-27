@@ -381,7 +381,7 @@
                 if (eng.status === 'EN_ATTENTE') {
                     actionsHtml = `
                         <div style="display:flex; gap:0.75rem; margin-top: 1.5rem;">
-                            <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter')">Accepter</button>
+                            <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter', ${isTrial}, '${eng.client_role || 'PARENT'}')">Accepter</button>
                             <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
                         </div>
                     `;
@@ -394,6 +394,27 @@
                 let trialInfoHtml = '';
                 if (isTrial) {
                     trialInfoHtml = `
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Matière</span>
+                            <span style="font-weight: 700;">${eng.matiere}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Classe</span>
+                            <span style="font-weight: 700;">${eng.classe}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Mode</span>
+                            <span style="font-weight: 700;">${eng.mode}</span>
+                        </div>
+                        ${eng.plateforme ? `
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Plateforme</span>
+                            <span style="font-weight: 700;">${eng.plateforme}</span>
+                        </div>` : ''}
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
+                            <span style="color: #64748b;">Lieu</span>
+                            <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
+                        </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Date d'essai</span>
                             <span style="font-weight: 700;">${eng.date_essai}</span>
@@ -489,8 +510,20 @@
 
     let pendingAcceptId = null;
 
-    function openAcceptModal(id) {
+    function openAcceptModal(id, isTrial = false, clientRole = 'PARENT') {
         pendingAcceptId = id;
+        
+        // Update popup text dynamically
+        const pDesc = document.querySelector('#acceptConfirmModal p');
+        if (pDesc) {
+            if (isTrial) {
+                const roleTxt = (clientRole === 'APPRENANT') ? 'cet apprenant' : 'ce parent';
+                pDesc.textContent = `Vous confirmez ainsi la programmation de la séance d'essai avec ${roleTxt}.`;
+            } else {
+                pDesc.textContent = "Vous serez redirigé vers la conversation privée avec ce parent pour finaliser les détails de cet engagement.";
+            }
+        }
+        
         document.getElementById('acceptConfirmModal').style.display = 'flex';
         
         // Configuration du bouton de confirmation
@@ -511,10 +544,10 @@
         confirmBtn.innerHTML = 'Confirmer';
     }
 
-    async function handleEngAction(id, action) {
+    async function handleEngAction(id, action, isTrial = false, clientRole = 'PARENT') {
         if (action === 'accepter') {
             closeEngModal(); // Fermer le modal de détails s'il est ouvert
-            openAcceptModal(id);
+            openAcceptModal(id, isTrial, clientRole);
             return;
         }
         

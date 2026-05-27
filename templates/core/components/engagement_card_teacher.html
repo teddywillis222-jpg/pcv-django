@@ -17,7 +17,11 @@
             </p>
         </div>
         <span class="badge-status {% if eng.statut_general == 'EN_ATTENTE' %}status-pending{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'FINALISE' %}status-active{% else %}status-inactive{% endif %}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px; text-transform: uppercase;">
-            {{ eng.get_statut_general_display }}
+            {% if eng.type_engagement == 'ESSAI' %}
+                {{ eng.essai_status_label }}
+            {% else %}
+                {{ eng.get_statut_general_display }}
+            {% endif %}
         </span>
     </div>
 
@@ -85,7 +89,7 @@
                 {% if eng.statut_general != 'EN_ATTENTE' %}
                 <!-- Voir détails (toujours utile pour le prof) -->
                 <button type="button" class="menu-item" onclick="openEngModal({{ eng.id }})" style="display: block; width: 100%; text-align: left; padding: 0.85rem 1rem; background: none; border: none; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9;">
-                    📄 Voir les détails
+                    {% if eng.type_engagement == 'ESSAI' %}📄 Voir l'essai{% else %}📄 Voir les détails{% endif %}
                 </button>
                 {% endif %}
 
