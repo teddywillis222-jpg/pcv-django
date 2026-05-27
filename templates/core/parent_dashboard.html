@@ -312,6 +312,48 @@
         margin-top: -2px;
     }
 
+    /* Carousel end arrow (app-like) */
+    .carousel-end-arrow {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 0.5rem;
+        text-decoration: none;
+    }
+    .carousel-end-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+    }
+    .carousel-end-badge:hover {
+        transform: translateX(6px);
+        background: var(--primary-dark);
+        box-shadow: 0 12px 30px rgba(16, 97, 45, 0.2);
+    }
+
+    /* Section title icon and full-bleed separator */
+    .section-title { display: flex; align-items: center; gap: 0.6rem; }
+    .section-title svg { width: 20px; height: 20px; stroke: currentColor; fill: none; opacity: 0.95; }
+
+    .section-separator {
+        height: 1px;
+        background: rgba(0,0,0,0.05);
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+
     .carousel-container::-webkit-scrollbar {
         display: none;
     }
@@ -725,9 +767,8 @@
             <!-- Recommandations -->
             <section style="margin-top: 1rem;">
                 <div class="section-header">
-                    <h2 class="section-title">Recommandations pour {{ active_enfant.prenom }}</h2>
+                    <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations pour {{ active_enfant.prenom }}</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
-                        <a href="{% url 'recherche' %}" style="font-size: 0.75rem; font-weight: 700; color: var(--text-gray);">Voir tout</a>
                         <!-- Scroll Buttons (Desktop Only) -->
                         <div class="scroll-controls" style="display: flex; gap: 0.5rem;">
                             <button onclick="scrollSection('reco-scroll', 'left')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
@@ -748,7 +789,16 @@
                         <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
                     </div>
                     {% endfor %}
+
+                    {% if recommandations %}
+                    <a href="{% url 'recherche' %}" class="carousel-end-arrow" title="Voir plus de professeurs">
+                        <span class="carousel-end-badge" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                        </span>
+                    </a>
+                    {% endif %}
                 </div>
+            <div class="section-separator" aria-hidden="true"></div>
             </section>
 
             <!-- Engagements Rapides -->
@@ -1273,6 +1323,14 @@
     function openTeacherProfile(slug) {
         window.location.href = `/professeur/${slug}/`;
     }
+
+    // Center the active kid in the selector on load (mobile-friendly)
+    document.addEventListener('DOMContentLoaded', function () {
+        const active = document.querySelector('.kids-selector .kid-item.active');
+        if (active && typeof active.scrollIntoView === 'function') {
+            active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    });
 </script>
 
 {% include 'core/components/engagement_modals.html' %}
