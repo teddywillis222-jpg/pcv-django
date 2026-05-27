@@ -1373,6 +1373,8 @@ def professeur_detail(request, teacher_slug):
                 'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
                 'budget': str(existing_engagement_obj.budget_convenu) if existing_engagement_obj.budget_convenu else None,
                 'duree_mois': existing_engagement_obj.duree_mois,
+                'date_essai': timezone.localtime(existing_engagement_obj.date_heure_essai).strftime('%Y-%m-%dT%H:%M') if existing_engagement_obj.date_heure_essai else None,
+                'description_essai': existing_engagement_obj.description_essai,
             })
 
     # Conversion des codes en noms lisibles
@@ -1516,6 +1518,8 @@ def api_teacher_profile(request, teacher_slug):
                         'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
                         'budget': str(existing_engagement_obj.budget_convenu) if existing_engagement_obj.budget_convenu else None,
                         'duree_mois': existing_engagement_obj.duree_mois,
+                        'date_essai': timezone.localtime(existing_engagement_obj.date_heure_essai).strftime('%Y-%m-%dT%H:%M') if existing_engagement_obj.date_heure_essai else None,
+                        'description_essai': existing_engagement_obj.description_essai,
                     }
             except Exception:
                 pass
@@ -1596,6 +1600,8 @@ def api_engagement(request):
         if existing:
             if existing.statut_general == StatutGeneral.EN_ATTENTE:
                 engagement = existing
+            elif existing.type_engagement == EngagementType.ESSAI and existing.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and type_eng == EngagementType.NORMAL:
+                pass # Allow creating a new standard engagement without raising error
             else:
                 return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
 
@@ -2651,9 +2657,9 @@ def api_engagement_details(request, engagement_id):
         'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
         'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-même"),
         # Essai specific fields
-        'date_essai': engagement.date_heure_essai.strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
-        'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
-        'heure_fin': engagement.date_heure_fin_essai.strftime("%H:%M") if engagement.date_heure_fin_essai else None,
+        'date_essai': timezone.localtime(engagement.date_heure_essai).strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
+        'heure_debut': timezone.localtime(engagement.date_heure_essai).strftime("%H:%M") if engagement.date_heure_essai else None,
+        'heure_fin': timezone.localtime(engagement.date_heure_fin_essai).strftime("%H:%M") if engagement.date_heure_fin_essai else None,
         'description_essai': engagement.description_essai,
         'client_role': engagement.parent_apprenant.profile.role if hasattr(engagement.parent_apprenant, 'profile') else 'PARENT',
     }

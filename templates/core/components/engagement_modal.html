@@ -383,6 +383,9 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             if (existingEng.budget) document.querySelector('input[name="budget"]').value = existingEng.budget;
             if (existingEng.duree_mois) document.getElementById('eng_duree_mois').value = existingEng.duree_mois;
             
+            if (existingEng.date_essai) document.getElementById('eng_date_essai').value = existingEng.date_essai;
+            if (existingEng.description_essai) document.querySelector('textarea[name="description_essai"]').value = existingEng.description_essai;
+            
             document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
         } else {
             document.querySelector('#engagementModal h3').textContent = 'Proposer un engagement';
