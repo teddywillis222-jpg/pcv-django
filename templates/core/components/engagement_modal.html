@@ -28,21 +28,22 @@
             <input type="hidden" id="eng_teacher_id" name="teacher_id">
             <input type="hidden" id="eng_teacher_name_hidden" name="teacher_name">
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Type d'engagement <span style="color:#ef4444">*</span></label>
-                <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; cursor: pointer; font-weight: 600; color: #1e293b; transition: border-color 0.2s;" required>
-                    <option value="standard">Engagement Standard (Cours réguliers)</option>
-                    <option value="essai">Engagement d'Essai (Cours de test unique)</option>
-                </select>
-                <p id="eng_type_notice" style="display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #ef4444; font-weight: 500;">L'option essai requiert un abonnement Access+ Premium.</p>
-            </div>
+            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Type d'engagement <span style="color:#ef4444">*</span></label>
+                    <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; cursor: pointer; font-weight: 600; color: #1e293b; transition: border-color 0.2s;" required>
+                        <option value="standard">Engagement Standard</option>
+                        <option value="essai">Engagement d'Essai</option>
+                    </select>
+                    <p id="eng_type_notice" style="display: none; margin-top: 0.5rem; font-size: 0.75rem; color: #ef4444; font-weight: 500;">L'essai requiert un abonnement Premium.</p>
+                </div>
 
-            <!-- Champs Communs -->
-            <div id="eng_field_enfants" style="margin-bottom: 1.25rem; display: none;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Élève / Enfant bénéficiaire <span style="color:#ef4444">*</span></label>
-                <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
-                    <!-- Rempli par JS -->
-                </select>
+                <div id="eng_field_enfants" style="display: none;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Élève concerné <span style="color:#ef4444">*</span></label>
+                    <select id="eng_enfant_id" name="enfant_id" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                        <!-- Rempli par JS -->
+                    </select>
+                </div>
             </div>
 
             <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
@@ -60,39 +61,41 @@
                 </div>
             </div>
             
-            <div style="margin-bottom: 1.25rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
-                <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
-                    <option value="">Sélectionnez le mode de cours</option>
-                    <option value="PARENT_HOME">Présentiel chez le parent</option>
-                    <option value="APPRENANT_HOME">Présentiel chez l'apprenant</option>
-                    <option value="ONLINE">En ligne (visioconférence)</option>
-                    <option value="HYBRID">Hybride (Présentiel + En ligne)</option>
-                    <option value="THIRD_PLACE">Lieu tiers (bibliothèque, centre éducatif)</option>
-                    <option value="SMALL_GROUP">Cours en groupe restreint</option>
-                    <option value="DISTANCE">À distance (téléphone, audio)</option>
-                </select>
-            </div>
+            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
+                    <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                        <option value="">Sélectionnez le mode</option>
+                        <option value="PARENT_HOME">Chez le parent</option>
+                        <option value="APPRENANT_HOME">Chez l'apprenant</option>
+                        <option value="ONLINE">En ligne (visio)</option>
+                        <option value="HYBRID">Hybride</option>
+                        <option value="THIRD_PLACE">Lieu tiers</option>
+                        <option value="SMALL_GROUP">En groupe</option>
+                        <option value="DISTANCE">À distance</option>
+                    </select>
+                </div>
 
-            <div id="eng_field_localisation" style="margin-bottom: 1.25rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation (Quartier/Ville) <span style="color:#ef4444">*</span></label>
-                <select id="eng_localisation" name="localisation" class="pcv-multi-select" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
-                    <option value="">Sélectionnez un quartier-ville</option>
-                    {% for code, label in LOCALISATION_CHOICES %}
-                    <option value="{{ code }}">{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+                <div id="eng_field_localisation">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Localisation <span style="color:#ef4444">*</span></label>
+                    <select id="eng_localisation" name="localisation" class="pcv-multi-select" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;">
+                        <option value="">Sélectionnez un quartier</option>
+                        {% for code, label in LOCALISATION_CHOICES %}
+                        <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-            <div id="eng_field_visio" style="margin-bottom: 1.25rem; display: none;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Plateforme visio préférée</label>
-                <select name="plateforme_visio" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
-                    <option value="">Sélectionnez une plateforme</option>
-                    <option value="zoom">Zoom</option>
-                    <option value="google_meet">Google Meet</option>
-                    <option value="teams">Microsoft Teams</option>
-                    <option value="whatsapp">WhatsApp Visio</option>
-                </select>
+                <div id="eng_field_visio" style="display: none;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Plateforme préférée</label>
+                    <select name="plateforme_visio" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
+                        <option value="">Sélectionnez une plateforme</option>
+                        <option value="zoom">Zoom</option>
+                        <option value="google_meet">Google Meet</option>
+                        <option value="teams">Microsoft Teams</option>
+                        <option value="whatsapp">WhatsApp Visio</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Champs Spécifiques STANDARD -->

@@ -253,6 +253,23 @@
     </div>
 </div>
 
+<!-- Modal Confirmation Refus -->
+<div class="modal-overlay" id="refuseConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 6000; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="modal-content" style="background: white; border-radius: 20px; width: 100%; max-width: 400px; padding: 2rem; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Refuser la proposition ?</h3>
+        <p style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
+            Cette action est irréversible. Le parent sera notifié de votre refus.
+        </p>
+        <div style="display: flex; gap: 0.75rem;">
+            <button onclick="closeRefuseModal()" style="flex: 1; padding: 0.875rem; border-radius: 12px; background: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s;">Annuler</button>
+            <button id="confirmRefuseBtn" style="flex: 1; padding: 0.875rem; border-radius: 12px; background: #ef4444; color: white; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239,68,68,0.2);">Confirmer le refus</button>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Complementary styles for engagement cards */
     .options-menu {
@@ -544,10 +561,44 @@
         confirmBtn.innerHTML = 'Confirmer';
     }
 
+    let pendingRefuseId = null;
+
+    function openRefuseModal(id, clientRole = 'PARENT') {
+        pendingRefuseId = id;
+        
+        const pDesc = document.querySelector('#refuseConfirmModal p');
+        if (pDesc) {
+            const roleTxt = (clientRole === 'APPRENANT') ? 'l\'apprenant' : 'le parent';
+            pDesc.textContent = `Cette action est irréversible. ${roleTxt.charAt(0).toUpperCase() + roleTxt.slice(1)} sera notifié de votre refus.`;
+        }
+        
+        document.getElementById('refuseConfirmModal').style.display = 'flex';
+        
+        const confirmBtn = document.getElementById('confirmRefuseBtn');
+        confirmBtn.onclick = async function() {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border:2px solid #fff;border-bottom-color:transparent;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>';
+            await processEngAction(pendingRefuseId, 'refuser');
+            closeRefuseModal();
+        };
+    }
+
+    function closeRefuseModal() {
+        pendingRefuseId = null;
+        document.getElementById('refuseConfirmModal').style.display = 'none';
+        const confirmBtn = document.getElementById('confirmRefuseBtn');
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = 'Confirmer le refus';
+    }
+
     async function handleEngAction(id, action, isTrial = false, clientRole = 'PARENT') {
         if (action === 'accepter') {
             closeEngModal(); // Fermer le modal de détails s'il est ouvert
             openAcceptModal(id, isTrial, clientRole);
+            return;
+        } else if (action === 'refuser') {
+            closeEngModal();
+            openRefuseModal(id, clientRole);
             return;
         }
         

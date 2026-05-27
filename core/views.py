@@ -10,6 +10,7 @@ import json
 from django.conf import settings
 from django.db.models import Avg, Count
 
+from django.db import transaction
 from django.utils import timezone
 from .forms import (
     ApprenantCreateProfileForm,
@@ -1370,7 +1371,7 @@ def professeur_detail(request, teacher_slug):
                 'classe': existing_engagement_obj.classe,
                 'localisation': existing_engagement_obj.localisation_option,
                 'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
-                'budget': str(existing_engagement_obj.tarif_horaire_propose) if existing_engagement_obj.tarif_horaire_propose else None,
+                'budget': str(existing_engagement_obj.budget_convenu) if existing_engagement_obj.budget_convenu else None,
                 'duree_mois': existing_engagement_obj.duree_mois,
             })
 
@@ -1513,7 +1514,7 @@ def api_teacher_profile(request, teacher_slug):
                         'classe': existing_engagement_obj.classe,
                         'localisation': existing_engagement_obj.localisation_option,
                         'date_debut': existing_engagement_obj.date_debut.strftime('%Y-%m-%d') if existing_engagement_obj.date_debut else None,
-                        'budget': str(existing_engagement_obj.tarif_horaire_propose) if existing_engagement_obj.tarif_horaire_propose else None,
+                        'budget': str(existing_engagement_obj.budget_convenu) if existing_engagement_obj.budget_convenu else None,
                         'duree_mois': existing_engagement_obj.duree_mois,
                     }
             except Exception:
@@ -1667,6 +1668,7 @@ def api_engagement(request):
 @csrf_exempt
 @login_required
 @require_http_methods(["POST"])
+@transaction.atomic
 def api_engagement_action(request, engagement_id):
     """API pour qu'un professeur accepte ou refuse un engagement."""
     from .choices import StatutGeneral, ConversationStatus
@@ -1691,8 +1693,9 @@ def api_engagement_action(request, engagement_id):
             engagement.date_confirmation = timezone.now()
             
             # Calcul du temps de réponse (en minutes)
+            from decimal import Decimal
             diff = engagement.date_confirmation - engagement.date_creation
-            engagement.temps_reponse_prof = diff.total_seconds() / 60
+            engagement.temps_reponse_prof = Decimal(str(round(diff.total_seconds() / 60, 2)))
             
             # 1. Trouver ou Créer la conversation (plus robuste que get_or_create)
             conversation = Conversation.objects.filter(

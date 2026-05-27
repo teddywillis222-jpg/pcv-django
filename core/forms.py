@@ -470,6 +470,11 @@ class TeacherProfileForm(forms.ModelForm):
                 if field_name == "telephone_whatsapp":
                     self.fields[field_name].widget.attrs.update({"class": "phone-input"})
 
+    def clean_nom(self):
+        if self.instance and self.instance.pk:
+            return self.instance.nom
+        return self.cleaned_data.get('nom')
+
     def clean_matiere_enseignee(self):
         matieres = self.cleaned_data.get('matiere_enseignee')
         if isinstance(matieres, list):
