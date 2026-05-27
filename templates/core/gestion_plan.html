@@ -490,15 +490,15 @@
     </div>
 
     <!-- Block 1: Plan Actuel -->
-    <div class="plan-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}premium{% endif %}">
-        <div class="plan-badge {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}badge-premium{% else %}badge-standard{% endif %}">
+    <div class="plan-card {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}premium{% endif %}">
+        <div class="plan-badge {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}badge-premium{% else %}badge-standard{% endif %}">
             Plan {{ abonnement.get_type_abonnement_display }}
         </div>
         
         <div class="plan-header">
             <h2>{{ abonnement.get_type_abonnement_display }}</h2>
             <p class="plan-desc">
-                {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+                {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
                     Vous bénéficiez d’un accès prioritaire et d’échanges illimités dans la limite mensuelle.
                 {% else %}
                     Vous payez uniquement lorsque vous souhaitez débloquer une discussion confirmée.
@@ -507,7 +507,7 @@
         </div>
 
         <!-- Block 3: Suivi Consommation (Visible si Premium) -->
-        {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+        {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
         <div class="usage-section">
             <div class="usage-header">
                 <span class="usage-title">Quota mensuel (Engagements confirmés)</span>
@@ -530,7 +530,7 @@
     <h3 class="section-title">Comparer les plans</h3>
     <div class="compare-grid">
         <!-- Standard -->
-        <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
+        <div class="compare-card {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
             <div class="compare-header">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span class="compare-name">Standard</span>
@@ -565,13 +565,13 @@
             <p style="font-size: 0.8rem; color: var(--text-gray); font-style: italic; margin-top: 0.5rem; line-height: 1.4;">
                 ℹ️ En Plan Standard, ce frais d’activation de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }} après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
             </p>
-            {% if abonnement.type_abonnement != TypeAbonnement.STANDARD %}
+            {% if abonnement.type_abonnement != 'STANDARD' and abonnement.type_abonnement != TypeAbonnement.STANDARD %}
                 <a href="#" class="btn-action btn-outline">Revenir au Standard</a>
             {% endif %}
         </div>
 
         <!-- Premium -->
-        <div class="compare-card {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
+        <div class="compare-card {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
             <div class="compare-header">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
@@ -603,7 +603,7 @@
                     Accès aux essais gratuits proposés par certains professeurs
                 </li>
             </ul>
-            {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+            {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
                 <a href="{% url 'payer_premium' %}" class="btn-action btn-premium-cta">Passer à Premium</a>
             {% else %}
                 <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium);">Gérer mon abonnement</a>
