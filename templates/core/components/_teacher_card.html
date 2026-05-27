@@ -64,11 +64,11 @@
                 <div class="micro-badge badge-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}">
                     ★ {{ teacher.moyenne_avis|floatformat:1 }} <span class="badge-count">({{ teacher.nombre_avis }})</span>
                 </div>
-                {% if teacher.est_disponible != False %}
-                    <div class="micro-badge badge-success">Disponible</div>
-                {% endif %}
                 {% if teacher.essai_gratuit_actif %}
                     <div class="micro-badge badge-purple">Essai possible</div>
+                {% endif %}
+                {% if teacher.est_disponible != False %}
+                    <div class="micro-badge badge-success">Disponible</div>
                 {% endif %}
                 {% if teacher.annees_d_experience %}
                     <div class="micro-badge badge-neutral">{{ teacher.annees_d_experience }} ans</div>
