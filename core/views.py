@@ -1154,7 +1154,7 @@ def gestion_plan(request):
         return redirect("finalisation_compte")
     
     # Plan actuel
-    abonnement = request.user.abonnements.order_by('-date_debut').first()
+    abonnement = request.user.abonnements.order_by('-id').first()
     if not abonnement:
         # Créer un abonnement standard par défaut
         abonnement = Abonnement.objects.create(
@@ -1192,7 +1192,7 @@ def gestion_plan(request):
     # 2. Abonnements Premium (si existants)
     abonnements_premium = request.user.abonnements.filter(
         type_abonnement=TypeAbonnement.ACCESS_PREMIUM
-    ).order_by('-date_debut')[:5]
+    ).order_by('-id')[:5]
     
     for ab in abonnements_premium:
         history.append({
@@ -3122,6 +3122,9 @@ def fedapay_premium_callback(request):
                 abonnement = local_txn.user.abonnements.order_by('-id').first()
                 if abonnement:
                     abonnement.type_abonnement = TypeAbonnement.ACCESS_PREMIUM
+                    abonnement.date_debut = timezone.now().date()
+                    from datetime import timedelta
+                    abonnement.date_fin = timezone.now().date() + timedelta(days=30)
                     abonnement.save()
             
             local_txn.save()
