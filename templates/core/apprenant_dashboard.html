@@ -504,9 +504,10 @@
                     <a href="{% url 'profil_eleve' 'apprenant' apprenant.id %}" style="padding: 0.5rem 1rem; background: #f1f5f9; color: var(--text-dark); border-radius: 8px; font-weight: 700; font-size: 0.8rem; text-decoration: none;">Voir détails</a>
                 </div>
             </section>
+            <div class="section-separator" aria-hidden="true" style="margin-top: 0.6rem;"></div>
 
             <!-- Recommandations -->
-            <section style="margin-top: 1rem;">
+            <section style="margin-top: 0.6rem;">
                 <div class="section-header">
                     <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations pour toi</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
@@ -543,7 +544,7 @@
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">
-                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements</h2>
+                <h2 class="section-title" style="margin-bottom: 0.6rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>

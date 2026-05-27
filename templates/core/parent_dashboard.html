@@ -247,8 +247,8 @@
 
     /* Kids selector - Netflix/Stories style */
     .kids-selector {
-        margin: 0 -8px 1rem -8px;
-        padding: 0.5rem 8px;
+        margin: 0 -8px 0.5rem -8px;
+        padding: 0.4rem 8px;
         display: flex;
         gap: 0.75rem;
         overflow-x: auto;
@@ -260,23 +260,23 @@
 
     .kid-item {
         flex: 0 0 auto;
-        width: 72px;
+        width: 68px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         text-align: center;
         cursor: pointer;
         transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-        opacity: 0.9;
-        padding: 4px;
+        opacity: 0.95;
+        padding: 2px;
     }
 
     .kid-item.inactive { opacity: 0.7; }
 
     .kid-avatar {
-        width: 56px;
-        height: 56px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -284,7 +284,7 @@
         background: #f1f5f9;
         color: var(--primary);
         font-weight: 800;
-        font-size: 1.1rem;
+        font-size: 1rem;
         transition: transform 0.18s ease, box-shadow 0.18s ease;
         border: 2px solid transparent;
         box-sizing: border-box;
@@ -741,9 +741,9 @@
 
         <div id="main-dash" class="dash-section">
             <!-- Enfants Selector -->
-            <header class="section-header" style="margin-bottom: 0.5rem; padding-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <header class="section-header" style="margin-bottom: 0.25rem; padding-top: 0.25rem; flex-wrap: wrap; gap: 0.4rem;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <h1 class="section-title">Mes enfants</h1>
+                    <h1 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 20a4.5 4.5 0 019 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16.5" cy="9" r="2.2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes enfants</h1>
                 </div>
                 <button
                     onclick="openChildSheet()"
@@ -762,10 +762,11 @@
                 </div>
                 {% endfor %}
             </section>
+            <div class="section-separator" aria-hidden="true" style="margin-top: 0.5rem;"></div>
 
 
             <!-- Recommandations -->
-            <section style="margin-top: 1rem;">
+            <section style="margin-top: 0.6rem;">
                 <div class="section-header">
                     <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations pour {{ active_enfant.prenom }}</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
@@ -803,7 +804,7 @@
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">
-                <h2 class="section-title" style="margin-bottom: 0.75rem;">Mes engagements pour {{ active_enfant.prenom }}</h2>
+                <h2 class="section-title" style="margin-bottom: 0.6rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements pour {{ active_enfant.prenom }}</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
@@ -847,6 +848,7 @@
 
                 </div>
             </section>
+            <div class="section-separator" aria-hidden="true" style="margin-top: 0.6rem;"></div>
         </div>
 
         <!-- Section Favoris -->
