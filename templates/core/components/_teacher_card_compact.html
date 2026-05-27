@@ -26,5 +26,17 @@
         <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }} <small>({{ teacher.nombre_avis }} avis)</small>
     </div>
 
+    <div class="compact-badges" style="display:flex; gap:0.4rem; align-items:center; margin-top:0.35rem;">
+        {% if teacher.essai_gratuit_actif %}
+            <span class="micro-badge badge-purple" style="font-size:0.75rem; padding:0.15rem 0.45rem; border-radius:12px;">Essai possible</span>
+        {% endif %}
+        {% if teacher.est_disponible != False %}
+            <span class="micro-badge badge-success" style="font-size:0.75rem; padding:0.15rem 0.45rem; border-radius:12px;">Disponible</span>
+        {% endif %}
+        {% if teacher.annees_d_experience %}
+            <span class="micro-badge badge-neutral" style="font-size:0.75rem; padding:0.15rem 0.45rem; border-radius:12px;">{{ teacher.annees_d_experience }} ans</span>
+        {% endif %}
+    </div>
+
     <button class="btn-view arrow-action" type="button" aria-label="Voir le profil">Voir le profil</button>
 </div>
