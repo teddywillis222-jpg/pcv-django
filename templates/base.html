@@ -351,16 +351,38 @@
         }
 
         /* Menu Burger Moderne */
-        .mobile-menu-toggle {
+        .mobile-icons-group {
             display: none;
-            background: transparent;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .mobile-icon-btn {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 2001;
+            background: rgba(22, 163, 74, 0.06); /* subtle */
+            color: var(--success-600);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+            padding: 0;
+        }
+
+        .mobile-icon-btn.icon-active {
+            background: var(--success-600);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .mobile-icon-btn.icon-subtle {
+            background: rgba(22, 163, 74, 0.06);
+            color: var(--success-600);
+            box-shadow: none;
         }
 
         .mobile-menu-toggle:active {
@@ -558,7 +580,7 @@
                 display: none;
             }
 
-            .mobile-menu-toggle {
+            .mobile-icons-group {
                 display: flex;
             }
 
@@ -663,13 +685,22 @@
                 <a href="{% url 'signup' %}" class="btn-nav">S'inscrire</a>
                 {% endif %}
                 
-                <!-- Menu Burger Moderne -->
-                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuToggle">
-                    <div class="mobile-menu-icon">
-                        <span class="menu-bar menu-bar-1"></span>
-                        <span class="menu-bar menu-bar-2"></span>
+                    <!-- Mobile Icons Group: Home + Burger -->
+                    <div class="mobile-icons-group" id="mobileIconsGroup">
+                        <a href="{% url 'post_signup_redirect' %}" id="mobileHomeBtn" class="mobile-icon-btn" title="Mon espace">
+                            <!-- Home Icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        </a>
+
+                        <button class="mobile-icon-btn mobile-burger-btn" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Menu">
+                            <!-- Burger Icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        </button>
                     </div>
-                </button>
             </div>
         </div>
     </header>
@@ -923,6 +954,47 @@
 
         // Système d'exhortation global
         const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+
+        // Mobile icons state: Home vs Burger depending on current page (dashboard)
+        function updateMobileNavIcons() {
+            const homeBtn = document.getElementById('mobileHomeBtn');
+            const burgerBtn = document.getElementById('mobileMenuToggle');
+            if (!homeBtn || !burgerBtn) return;
+
+            const path = window.location.pathname || '/';
+            const isDashboard = document.body.classList.contains('dashboard-page') || /dashboard|espace|mon-espace|post_signup_redirect/i.test(path);
+
+            if (isDashboard) {
+                homeBtn.classList.add('icon-active');
+                homeBtn.classList.remove('icon-subtle');
+                burgerBtn.classList.add('icon-subtle');
+                burgerBtn.classList.remove('icon-active');
+            } else {
+                homeBtn.classList.add('icon-subtle');
+                homeBtn.classList.remove('icon-active');
+                burgerBtn.classList.add('icon-active');
+                burgerBtn.classList.remove('icon-subtle');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateMobileNavIcons();
+
+            const homeBtn = document.getElementById('mobileHomeBtn');
+            if (homeBtn) {
+                homeBtn.addEventListener('click', function() {
+                    // Immediate visual feedback before navigation
+                    homeBtn.classList.add('icon-active');
+                    homeBtn.classList.remove('icon-subtle');
+                    const burgerBtn = document.getElementById('mobileMenuToggle');
+                    if (burgerBtn) {
+                        burgerBtn.classList.add('icon-subtle');
+                        burgerBtn.classList.remove('icon-active');
+                    }
+                    // Let the link navigate normally; update on next page load will be applied
+                });
+            }
+        });
 
         function showAuthModal() {
             const modal = document.getElementById('authExhortationModal');
