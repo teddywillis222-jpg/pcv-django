@@ -364,29 +364,31 @@
             align-items: center;
             justify-content: center;
             border-radius: 12px;
-            border: none;
+            border: 1px solid rgba(22,163,74,0.06);
             cursor: pointer;
-            background: rgba(22, 163, 74, 0.06); /* subtle */
-            color: var(--success-600);
-            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+            background: transparent;
+            color: var(--success-700);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
             padding: 0;
         }
 
+        /* Modern, simple active state without hiding the icon */
         .mobile-icon-btn.icon-active {
-            background: var(--success-600);
-            color: #ffffff;
-            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.22);
-            transform: translateY(-1px);
+            background: rgba(22,163,74,0.12);
+            color: var(--success-700);
+            box-shadow: 0 8px 20px rgba(16,97,45,0.12);
+            transform: translateY(-2px);
+            border-color: rgba(22,163,74,0.14);
         }
 
         .mobile-icon-btn.icon-subtle {
-            background: rgba(22, 163, 74, 0.06);
-            color: var(--success-600);
+            background: transparent;
+            color: rgba(22,163,74,0.9);
             box-shadow: none;
         }
 
         .mobile-menu-toggle:active {
-            transform: scale(0.9);
+            transform: scale(0.96);
         }
 
         .mobile-menu-icon {
@@ -1085,6 +1087,50 @@
                 buttonEl.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
             }
         }
+
+        // Ensure a global openTeacherProfile exists so cards work from any page
+        if (typeof window.openTeacherProfile !== 'function') {
+            window.openTeacherProfile = function(slug) {
+                if (!slug) return;
+                // Navigate to the teacher profile page
+                window.location.href = `/professeur/${slug}/`;
+            }
+        }
+
+        // Global delegated handler for teacher card clicks and arrow actions
+        document.addEventListener('click', function(e) {
+            const arrow = e.target.closest('.arrow-action');
+            if (arrow) {
+                const card = arrow.closest('.teacher-card, .teacher-card-compact');
+                const slug = card && (card.dataset.teacherSlug || card.getAttribute('data-teacher-slug'));
+                if (!slug) return;
+
+                const isSearchPage = window.location.pathname.includes('/recherche');
+
+                if (isSearchPage && typeof openTeacherProfile === 'function') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openTeacherProfile(slug);
+                    return;
+                }
+
+                // Default: go to profile page
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/professeur/${slug}/`;
+                return;
+            }
+
+            // Clicks on whole card: navigate to profile (same behavior across pages)
+            const card = e.target.closest('.teacher-card, .teacher-card-compact');
+            if (card) {
+                const slug = card.dataset.teacherSlug || card.getAttribute('data-teacher-slug');
+                if (!slug) return;
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/professeur/${slug}/`;
+            }
+        }, { capture: true });
     </script>
 
     <!-- Modal d'exhortation global -->

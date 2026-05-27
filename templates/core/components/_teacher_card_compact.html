@@ -1,4 +1,4 @@
-<div class="teacher-card-compact" onclick="openTeacherProfile('{{ teacher.slug }}')">
+<div class="teacher-card-compact" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}">
     <div class="profile-image-container" style="width: 65px; height: 65px; border-radius: 50%; overflow: hidden; margin-bottom: 0.25rem;">
         {% if teacher.photo_de_profil %}
             <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }}" class="compact-photo" style="width: 100%; height: 100%; object-fit: cover;">
@@ -26,5 +26,5 @@
         <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }} <small>({{ teacher.nombre_avis }} avis)</small>
     </div>
 
-    <button class="btn-view">Voir le profil</button>
+    <button class="btn-view arrow-action" type="button" aria-label="Voir le profil">Voir le profil</button>
 </div>

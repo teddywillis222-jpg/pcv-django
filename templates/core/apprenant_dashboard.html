@@ -355,6 +355,7 @@
     .section-title svg { width: 20px; height: 20px; stroke: currentColor; fill: none; opacity: 0.95; }
 
     .section-separator {
+        display: none; /* hidden on desktop by default */
         height: 1px;
         background: rgba(0,0,0,0.05);
         width: 100vw;
@@ -363,6 +364,10 @@
         right: 50%;
         margin-left: -50vw;
         margin-right: -50vw;
+    }
+
+    @media (max-width: 1023px) {
+        .section-separator { display: block; }
     }
 
     /* History Line */

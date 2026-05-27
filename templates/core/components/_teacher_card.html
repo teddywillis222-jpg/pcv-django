@@ -1,4 +1,4 @@
-<div class="teacher-card premium-card group" data-prof-id="{{ teacher.id }}" onclick="openTeacherProfile('{{ teacher.slug }}')">
+<div class="teacher-card premium-card group" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}">
     <!-- Left Photo Section (40% on mobile) -->
     <div class="card-photo-section">
         {% if teacher.photo_de_profil %}
@@ -84,7 +84,7 @@
             </div>
             
             <!-- Action Arrow -->
-            <div class="action-arrow">
+            <div class="action-arrow arrow-action" role="button" tabindex="0" aria-label="Voir le profil">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
