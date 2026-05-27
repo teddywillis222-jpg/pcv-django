@@ -534,7 +534,7 @@
             <div class="compare-header">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span class="compare-name">Standard</span>
-                    {% if abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+                    {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
                     <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
                     {% endif %}
                 </div>
@@ -575,8 +575,8 @@
             <div class="compare-header">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
-                    {% if abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--premium); background: white; padding: 2px 8px; border-radius: 50px; width: fit-content; border: 1px solid var(--premium);">Plan actuel</span>
+                    {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
                     {% endif %}
                 </div>
                 <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }}{{ DEFAULT_CURRENCY|lower }}<small>/mois</small></span>
@@ -651,26 +651,43 @@
             <p><strong>Qu’est-ce qu’un engagement sur Prof Chez Vous ?</strong></p>
             <p>Un engagement est la manière officielle de collaborer avec un professeur sur Prof Chez Vous. Il permet de formaliser clairement les attentes entre le parent ou l’apprenant et le professeur avant le début des cours.</p>
             
-            <p><strong>La proposition d’un engagement</strong></p>
-            <p>La première étape consiste à choisir un professeur. Vous pouvez effectuer cette recherche directement sur la page de recherche, où sont listés les professeurs vérifiés correspondant à vos besoins.</p>
-            
-            <p>Vous pouvez également sélectionner un professeur depuis votre espace personnel. En cliquant sur « Voir le profil », vous accédez à son profil public, puis vous pouvez initier la collaboration via le bouton « Proposer un engagement ».</p>
-            
-            <p>Vous remplissez alors un formulaire structuré précisant notamment :<br>
-            – la matière<br>
-            – le niveau<br>
-            – les disponibilités<br>
-            – les objectifs attendus</p>
-            
-            <p>👉 <strong>Selon votre plan, la proposition d’un engagement est toujours gratuite.</strong><br>
-            Aucun paiement n’est demandé au moment de l’envoi.</p>
-            
-            <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
-            * messagerie sécurisée<br>
-            * planification des séances<br>
-            * journal de suivi pédagogique (pour les parents)</p>
-            
-            <p>– <strong>Avec les plans Access+</strong>, ces frais ne s’appliquent pas : les engagements confirmés sont inclus dans la limite prévue par votre abonnement.</p>
+            {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+                <p><strong>La proposition d’un engagement</strong></p>
+                <p>La première étape consiste à choisir un professeur. Vous pouvez effectuer cette recherche directement sur la page de recherche, où sont listés les professeurs vérifiés correspondant à vos besoins.</p>
+                
+                <p>Vous pouvez également sélectionner un professeur depuis votre espace personnel. En cliquant sur « Voir le profil », vous accédez à son profil public, puis vous pouvez initier la collaboration via le bouton « Proposer un engagement ».</p>
+                
+                <p>Vous remplissez alors un formulaire structuré précisant notamment :<br>
+                – la matière<br>
+                – le niveau<br>
+                – les disponibilités<br>
+                – les objectifs attendus</p>
+                
+                <p>👉 <strong>Selon votre plan, la proposition d’un engagement est toujours gratuite.</strong><br>
+                Aucun paiement n’est demandé au moment de l’envoi.</p>
+                
+                <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
+                * messagerie sécurisée<br>
+                * planification des séances<br>
+                * journal de suivi pédagogique (pour les parents)</p>
+            {% else %}
+                <p><strong>Conditions du Plan Access+ Premium</strong></p>
+                <p>Avec votre plan actuel, vous bénéficiez de :</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Engagements gratuits après confirmation du professeur</li>
+                    <li>Accès prioritaire aux professeurs les mieux notés</li>
+                    <li>Assistance dédiée en cas de besoin</li>
+                </ul>
+                <div style="background: #f1f5f9; padding: 15px; border-radius: 12px; margin-top: 15px;">
+                    <p style="margin-bottom: 8px;"><strong>Statistique d'utilisation :</strong> {{ confirmations_ce_mois }} / {{ PREMIUM_ENGAGEMENT_QUOTA }} engagements consommés ce mois.</p>
+                    {% if abonnement.date_fin %}
+                    <p style="margin-bottom: 12px;"><strong>Date de validité :</strong> Expire le : {{ abonnement.date_fin|date:"d/m/Y" }}</p>
+                    {% else %}
+                    <p style="margin-bottom: 12px;"><strong>Date de validité :</strong> Renouvellement mensuel automatique</p>
+                    {% endif %}
+                    <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium); text-decoration: none; display: block; text-align: center;">Gérer mon plan</a>
+                </div>
+            {% endif %}
             
             <p>Une fois la proposition envoyée, le professeur est notifié et peut l’accepter ou la refuser.</p>
         </div>
