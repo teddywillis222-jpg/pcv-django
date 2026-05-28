@@ -14,10 +14,9 @@
 
     /* Hero Section */
     .hero-section {
-        padding: 0.75rem 0.75rem 2.5rem;
-        text-align: left;
         position: relative;
         overflow: hidden;
+        min-height: 60vh;
     }
 
     .hero-title {
@@ -253,7 +252,7 @@
 <div class="intro-page">
     
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero-section relative overflow-hidden flex flex-col items-center justify-center text-center">
         <!-- Arrière-plan vidéo (caché sur mobile pour économiser les données) -->
         <video class="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" 
                autoplay loop muted playsinline 
@@ -267,11 +266,10 @@
              style="background-image: url('{% static 'videos/hero-prof-poster.jpg' %}');"></div>
 
         <!-- Overlay semi-transparent pour la lisibilité -->
-        <!-- background-color forcé au cas où bg-white/85 n'est pas supporté par la version Tailwind actuelle -->
-        <div class="absolute inset-0 z-10" style="background-color: rgba(255, 255, 255, 0.85);"></div>
+        <div class="absolute inset-0 bg-white/80 z-10"></div>
 
-        <!-- Contenu du Hero (au premier plan) -->
-        <div class="relative z-20">
+        <!-- Contenu du Hero (au premier plan, parfaitement centré) -->
+        <div class="relative z-20 flex flex-col items-center justify-center text-center p-4 py-12 md:py-24">
             <h1 class="hero-title">Devenez plus qu'un simple profil.<br><span>Soyez le guide qu'ils recherchent.</span></h1>
             <p class="hero-subtitle">Nous avons conçu un espace dédié aux enseignants qui transmettent avec rigueur et passion. Créez un profil qui met en valeur votre véritable expertise.</p>
             <a href="{% url 'prof_create_profile' %}" class="hero-cta">
