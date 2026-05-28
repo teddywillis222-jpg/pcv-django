@@ -99,8 +99,19 @@ class Profile(models.Model):
     @property
     def current_plan(self):
         """Retourne le code du plan d'abonnement actuel."""
+        from django.utils import timezone
         latest = self.user.abonnements.order_by('-id').first()
         if latest:
+            if latest.type_abonnement == 'ACCESS_PREMIUM' and latest.date_fin and latest.date_fin < timezone.now().date():
+                from .choices import TypeAbonnement
+                from .models import Abonnement
+                # Créer un abonnement standard suite à l'expiration
+                Abonnement.objects.create(
+                    user=self.user,
+                    type_abonnement=TypeAbonnement.STANDARD,
+                    date_debut=timezone.now().date()
+                )
+                return TypeAbonnement.STANDARD
             return latest.type_abonnement
         return "STANDARD"
 

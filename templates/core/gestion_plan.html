@@ -434,6 +434,51 @@
         to { transform: translateY(0); opacity: 1; }
     }
 
+    /* Side Panel Styles */
+    .side-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        max-width: 400px;
+        height: 100vh;
+        background: white;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        z-index: 2001;
+        display: none;
+        flex-direction: column;
+        animation: slideInRight 0.3s ease-out forwards;
+    }
+
+    @keyframes slideInRight {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+    }
+
+    .side-panel-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .side-panel-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    .modal-overlay-panel {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+    }
+
+
     .modal-header {
         padding: 1.5rem;
         border-bottom: 1px solid #f1f5f9;
@@ -575,7 +620,7 @@
                 ℹ️ En Plan Standard, ce frais d’activation de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }} après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
             </p>
             {% if abonnement.type_abonnement != 'STANDARD' and abonnement.type_abonnement != TypeAbonnement.STANDARD %}
-                <a href="#" class="btn-action btn-outline">Revenir au Standard</a>
+                <a href="#" class="btn-action btn-outline" onclick="openDowngradeModal()">Revenir au Standard</a>
             {% endif %}
         </div>
 
@@ -638,7 +683,7 @@
         </div>
         {% if history %}
         <div style="text-align: center; margin-top: 1rem;">
-            <a href="#" class="nav-link" style="font-size: 0.9rem; color: var(--primary);">Voir tout l'historique</a>
+            <a href="#" class="nav-link" style="font-size: 0.9rem; color: var(--primary);" onclick="openSidePanel('historySidePanel')">Voir tout l'historique</a>
         </div>
         {% endif %}
     </div>
@@ -706,6 +751,56 @@
     </div>
 </div>
 
+<!-- Downgrade Modal -->
+<div class="modal-overlay" id="downgradeModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Revenir au Plan Standard</h3>
+            <button class="btn-close" onclick="closeModal('downgradeModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Êtes-vous sûr de vouloir revenir au Plan Standard ?</strong></p>
+            <p style="margin-top:1rem; color:#dc2626; font-weight:bold;">⚠️ Conséquences immédiates :</p>
+            <ul style="margin-left: 20px; margin-top:10px; color: var(--text-dark); line-height:1.5;">
+                <li>Vos quotas mensuels gratuits seront annulés.</li>
+                <li>Le tarif standard de <strong>2000f par engagement confirmé</strong> s'appliquera de nouveau.</li>
+                <li>Si vous avez un engagement avec le statut "en attente" ou "en cours", vous devrez payer 2000f pour débloquer la messagerie correspondante.</li>
+            </ul>
+        </div>
+        <div class="modal-footer" style="gap:1rem;">
+            <button class="btn-close" onclick="closeModal('downgradeModal')">Annuler</button>
+            <form method="POST" action="{% url 'downgrade_to_standard' %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn-action btn-primary" style="background:#dc2626; padding:0.75rem 1.5rem; font-size:1rem;">Confirmer le retour</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- History Side Panel -->
+<div class="modal-overlay-panel" id="historySidePanelOverlay" onclick="closeSidePanel('historySidePanel')"></div>
+<div class="side-panel" id="historySidePanel">
+    <div class="side-panel-header">
+        <h3 style="font-weight:900; margin:0;">Historique complet</h3>
+        <button class="btn-close" onclick="closeSidePanel('historySidePanel')" style="padding:0.5rem 1rem;">×</button>
+    </div>
+    <div class="side-panel-body">
+        <div class="history-list">
+            {% for item in history %}
+            <div class="history-item">
+                <div class="hist-info">
+                    <span class="hist-type">{{ item.type }}</span>
+                    <span class="hist-meta">{{ item.libelle }} — {{ item.date|date:"d M Y" }}</span>
+                </div>
+                <div class="hist-amount">{{ item.montant }}</div>
+            </div>
+            {% empty %}
+            <p style="text-align: center; color: var(--text-gray); padding: 1rem;">Aucun historique de paiement disponible.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 <script>
     function openModal(id) {
         document.getElementById(id).style.display = 'flex';
@@ -714,6 +809,24 @@
 
     function closeModal(id) {
         document.getElementById(id).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function openDowngradeModal() {
+        event.preventDefault();
+        openModal('downgradeModal');
+    }
+
+    function openSidePanel(id) {
+        event.preventDefault();
+        document.getElementById(id).style.display = 'flex';
+        document.getElementById(id + 'Overlay').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidePanel(id) {
+        document.getElementById(id).style.display = 'none';
+        document.getElementById(id + 'Overlay').style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 

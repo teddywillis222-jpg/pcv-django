@@ -6,6 +6,7 @@
 {% block extra_css %}
 <!-- Plugin Select Multiple Moderne -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
 
 <style>
     :root {
@@ -26,10 +27,10 @@
     .profil-container {
         max-width: 850px;
         margin: 3rem auto;
-        background: var(--card-bg);
+        background: transparent;
         border-radius: 20px;
         padding: 2.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        box-shadow: none;
     }
 
     .profil-header {
@@ -623,15 +624,140 @@
 </div>
 
 <script>
-    // Loading state for submit button
+    // Soumission asynchrone avec compression et barre de progression
     const mainForm = document.querySelector('form');
     const submitBtn = document.getElementById('mainSubmitBtn');
+
+    // UI Progress Bar elements
+    const progressContainer = document.createElement('div');
+    progressContainer.style.display = 'none';
+    progressContainer.style.marginTop = '15px';
+    progressContainer.style.background = '#e2e8f0';
+    progressContainer.style.borderRadius = '8px';
+    progressContainer.style.height = '10px';
+    progressContainer.style.overflow = 'hidden';
+    
+    const progressBar = document.createElement('div');
+    progressBar.style.height = '100%';
+    progressBar.style.width = '0%';
+    progressBar.style.background = 'var(--primary)';
+    progressBar.style.transition = 'width 0.3s ease';
+    
+    progressContainer.appendChild(progressBar);
+    
+    const progressText = document.createElement('div');
+    progressText.style.display = 'none';
+    progressText.style.textAlign = 'center';
+    progressText.style.fontSize = '0.85rem';
+    progressText.style.color = 'var(--text-gray)';
+    progressText.style.marginTop = '8px';
+    
+    if (submitBtn) {
+        submitBtn.parentNode.insertBefore(progressContainer, submitBtn.nextSibling);
+        submitBtn.parentNode.insertBefore(progressText, progressContainer.nextSibling);
+    }
+
+    async function compressImageIfNeeded(file) {
+        if (!file || !file.type.startsWith('image/')) return file;
+        const options = {
+            maxSizeMB: 0.8,
+            maxWidthOrHeight: 1600,
+            useWebWorker: true
+        };
+        try {
+            return await imageCompression(file, options);
+        } catch (error) {
+            console.error('Erreur de compression pour', file.name, error);
+            return file; // Retourne l'original en cas d'échec
+        }
+    }
+
     if (mainForm && submitBtn) {
-        mainForm.addEventListener('submit', function() {
+        mainForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // UI Updates
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Transmission en cours...</span>';
+            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Traitement et compression...</span>';
             submitBtn.style.opacity = '0.7';
             submitBtn.style.cursor = 'not-allowed';
+            
+            progressContainer.style.display = 'block';
+            progressText.style.display = 'block';
+            progressText.textContent = "Compression des fichiers...";
+            progressBar.style.width = '5%';
+
+            const formData = new FormData(mainForm);
+            const compressedFormData = new FormData();
+            
+            // Process fields and compress images
+            for (const [key, value] of formData.entries()) {
+                if (value instanceof File && value.size > 0) {
+                    const compressedFile = await compressImageIfNeeded(value);
+                    compressedFormData.append(key, compressedFile, compressedFile.name);
+                } else {
+                    compressedFormData.append(key, value);
+                }
+            }
+
+            progressText.textContent = "Envoi en cours... (0%)";
+
+            // AJAX request with progress
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', mainForm.action || window.location.href, true);
+            // Django requires CSRF token header if not using the middleware properly with FormData, 
+            // but FormData already includes csrfmiddlewaretoken, so we just add the requested-with header.
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = Math.round((event.loaded / event.total) * 100);
+                    progressBar.style.width = percentComplete + '%';
+                    progressText.textContent = "Envoi en cours... (" + percentComplete + "%)";
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    progressText.textContent = "Dossier soumis avec succès ! Redirection...";
+                    progressBar.style.background = '#10b981'; // green
+                    // Either redirect given by response or fallback
+                    if (xhr.responseURL && xhr.responseURL !== window.location.href) {
+                        window.location.href = xhr.responseURL;
+                    } else {
+                        window.location.href = "{% url 'prof_attente_dashboard' %}";
+                    }
+                } else {
+                    // Try to parse JSON error or display generic text
+                    let errorMsg = "Une erreur est survenue lors de l'envoi.";
+                    try {
+                        const res = JSON.parse(xhr.responseText);
+                        if (res.error) errorMsg = res.error;
+                    } catch(e) {}
+                    
+                    progressText.textContent = "Erreur : " + errorMsg;
+                    progressText.style.color = '#ef4444';
+                    progressBar.style.background = '#ef4444';
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                }
+            };
+
+            xhr.onerror = function() {
+                progressText.textContent = "Erreur de connexion lors de l'envoi.";
+                progressText.style.color = '#ef4444';
+                progressBar.style.background = '#ef4444';
+                
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            };
+
+            xhr.send(compressedFormData);
         });
     }
 

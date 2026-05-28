@@ -49,7 +49,8 @@ urlpatterns = [
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),
     path("apprenant/dashboard/", core_views.apprenant_dashboard, name="apprenant_dashboard"),
     path("mon-plan/", core_views.gestion_plan, name="gestion_plan"),
-    
+    path("mon-plan/downgrade/", core_views.downgrade_to_standard, name="downgrade_to_standard"),
+
     path("profil-eleve/<str:type_eleve>/<int:id_eleve>/", core_views.profil_eleve, name="profil_eleve"),
     path("enfant/<int:id_enfant>/edit/", core_views.edit_enfant, name="edit_enfant"),
     

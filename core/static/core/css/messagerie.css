@@ -30,7 +30,7 @@
 ======================================= */
 .msg-page-bg {
     min-height: 100vh;
-    background: white;
+    background: transparent;
     padding-bottom: 2rem; /* Réduit de 5rem */
 }
 
@@ -189,7 +189,7 @@
     display: flex;
     flex-direction: column;
     padding: 0; /* Edge to edge */
-    background: white;
+    background: transparent;
 }
 
 /* Carte de conversation */
@@ -198,7 +198,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    background: white;
+    background: transparent;
     text-decoration: none !important;
     color: inherit;
     position: relative;

@@ -1226,6 +1226,23 @@ def gestion_plan(request):
     return render(request, "core/gestion_plan.html", context)
 
 
+@login_required
+@require_http_methods(["POST"])
+def downgrade_to_standard(request):
+    from django.utils import timezone
+    from .models import Abonnement, TypeAbonnement
+    
+    # Créer un abonnement standard à partir d'aujourd'hui
+    Abonnement.objects.create(
+        user=request.user,
+        type_abonnement=TypeAbonnement.STANDARD,
+        date_debut=timezone.now().date()
+    )
+    # L'historique des engagements payants ou non sera géré par la logique existante 
+    # de verrouillage (is_blocked) qui s'appuie sur le plan en cours.
+    return redirect('gestion_plan')
+
+
 
 # Vues pour le système de recherche et profils hybride
 def track_teacher_view(request, teacher_profile):
