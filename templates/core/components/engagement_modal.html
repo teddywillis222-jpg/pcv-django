@@ -186,7 +186,7 @@
         <p style="color: #64748b; margin-bottom: 2rem; line-height: 1.6;">Votre proposition d'engagement a été soumise avec succès. Le professeur a été notifié et vous répondra très bientôt.</p>
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             <a id="btn_go_dashboard" href="#" style="padding: 1rem; background: #16a34a; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s;">Accéder à mon espace</a>
-            <button onclick="document.getElementById('engagementSuccessModal').style.display='none'" style="padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer;">Rester sur cette page</button>
+            <button onclick="closeEngagementSuccessModal()" style="padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer;">Rester sur cette page</button>
         </div>
     </div>
 </div>
@@ -262,6 +262,13 @@ function openEngagementFromTrial(trialData) {
     
     toggleEngagementFields();
     document.getElementById('engagementModal').style.display = 'flex';
+    try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
+}
+
+function closeEngagementSuccessModal() {
+    const successModal = document.getElementById('engagementSuccessModal');
+    if (successModal) successModal.style.display = 'none';
+    try { unlockBodyScroll(); } catch(e) { document.body.style.overflow = ''; }
 }
 
 function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null, classesStr = '') {
@@ -409,11 +416,13 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         
         toggleEngagementFields();
         document.getElementById('engagementModal').style.display = 'flex';
+        try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
     });
 }
 
 function closeEngagementModal() {
     document.getElementById('engagementModal').style.display = 'none';
+    try { unlockBodyScroll(); } catch(e) { document.body.style.overflow = ''; }
 }
 
 function toggleModeFields() {
@@ -540,6 +549,7 @@ async function submitEngagement(event) {
             dashBtn.href = isParent ? '/parent/dashboard/' : '/apprenant/dashboard/';
             
             successModal.style.display = 'flex';
+            try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
         } else {
             alert(result.error || 'Erreur lors de l\'envoi');
         }

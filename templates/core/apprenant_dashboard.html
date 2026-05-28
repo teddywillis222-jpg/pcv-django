@@ -641,7 +641,7 @@
 </div>
 
 <!-- Modal Détails Engagement -->
-<div id="detailModal" class="modal-overlay" onclick="if(event.target == this) closeDetailModal()">
+<div id="detailModal" class="modal-overlay" onclick="overlayClickHandler(this, 'detailModal', 'closeDetailModal', event)">
     <div class="modal-content">
         <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
             <h3 id="modal-title" style="margin: 0;">Détails de l'engagement</h3>

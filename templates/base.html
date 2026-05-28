@@ -1284,5 +1284,32 @@
         });
     </script>
     {% endif %}
+    <script>
+        // Generic overlay click handler and modal helpers
+        function overlayClickHandler(overlayEl, relatedModalId, closeFnName, event) {
+            // Only handle clicks directly on the overlay itself
+            if (event && event.target !== overlayEl) return;
+
+            // Try to locate the real modal container (prefer relatedModalId)
+            const modal = relatedModalId ? document.getElementById(relatedModalId) : overlayEl;
+            // If modal (or its related content) contains an explicit close button, do NOT close on overlay click
+            if (modal && modal.querySelector) {
+                const hasClose = modal.querySelector('.modal-close, .text-modal-close, button[onclick*="close"], .close-btn');
+                if (hasClose) return;
+            }
+
+            // Call the provided close function if available
+            if (closeFnName && typeof window[closeFnName] === 'function') {
+                try { window[closeFnName](); } catch(e) { console.warn('overlay close function error', e); }
+            } else {
+                // Fallback: hide overlay element and restore scroll
+                try { overlayEl.style.display = 'none'; } catch(e){}
+                document.body.style.overflow = '';
+            }
+        }
+
+        function lockBodyScroll() { document.body.style.overflow = 'hidden'; }
+        function unlockBodyScroll() { document.body.style.overflow = ''; }
+    </script>
 </body>
 </html>

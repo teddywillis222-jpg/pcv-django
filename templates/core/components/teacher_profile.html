@@ -1,7 +1,7 @@
 <div class="teacher-profile">
 
     <!-- ===== En-tête Profil : Photo + Nom + Badges + Étoiles ===== -->
-    <div class="info-card" style="text-align: center; padding: 2rem 1.5rem 1.75rem;">
+    <div class="info-card" style="text-align: center; padding: 1.25rem 0.75rem 1rem;">
 
         <!-- Photo de profil -->
         {% if teacher.photo_de_profil %}
@@ -491,7 +491,7 @@
 
 <!-- Modals -->
 {% if teacher.presentation %}
-<div class="text-modal-overlay" id="presentationModal-{{ teacher.id }}" onclick="if(event.target===this) closeTextModal('presentationModal-{{ teacher.id }}')">
+<div class="text-modal-overlay" id="presentationModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'presentationModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
             <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Présentation</h3>
@@ -505,7 +505,7 @@
 {% endif %}
 
 {% if teacher.methodologie %}
-<div class="text-modal-overlay" id="methodologieModal-{{ teacher.id }}" onclick="if(event.target===this) closeTextModal('methodologieModal-{{ teacher.id }}')">
+<div class="text-modal-overlay" id="methodologieModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'methodologieModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
             <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Méthodologie</h3>

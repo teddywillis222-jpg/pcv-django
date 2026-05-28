@@ -1,7 +1,7 @@
 <!-- ════════════════════════════════
      MODAL PAIEMENT / DÉBLOCAGE
 ════════════════════════════════ -->
-<div id="paymentModalOverlay" class="modal-overlay" onclick="hidePaymentModal()"></div>
+<div id="paymentModalOverlay" class="modal-overlay" onclick="overlayClickHandler(this, 'paymentModal', 'hidePaymentModal', event)"></div>
 <div id="paymentModal" style="
     position:fixed; inset:0; z-index:8001;
     display:none; align-items:flex-end; justify-content:center;
@@ -58,7 +58,7 @@
 <!-- ════════════════════════════════
      MODAL ENGAGEMENT — DÉTAIL / ÉDITION
 ════════════════════════════════ -->
-<div id="engReviewModalOverlay" class="modal-overlay" onclick="hideEngReviewModal()"></div>
+<div id="engReviewModalOverlay" class="modal-overlay" onclick="overlayClickHandler(this, 'engReviewModal', 'hideEngReviewModal', event)"></div>
 <div id="engReviewModal" class="modal-overlay" style="z-index:8001;">
     <div class="modal-card" onclick="event.stopPropagation()">
         <button class="modal-close" onclick="hideEngReviewModal()">✕</button>
