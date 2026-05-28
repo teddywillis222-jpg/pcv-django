@@ -1375,6 +1375,7 @@ def professeur_detail(request, teacher_slug):
                 'duree_mois': existing_engagement_obj.duree_mois,
                 'date_essai': timezone.localtime(existing_engagement_obj.date_heure_essai).strftime('%Y-%m-%dT%H:%M') if existing_engagement_obj.date_heure_essai else None,
                 'description_essai': existing_engagement_obj.description_essai,
+                'indications_geographiques': existing_engagement_obj.indications_geographiques,
             })
 
     # Conversion des codes en noms lisibles
@@ -1520,6 +1521,7 @@ def api_teacher_profile(request, teacher_slug):
                         'duree_mois': existing_engagement_obj.duree_mois,
                         'date_essai': timezone.localtime(existing_engagement_obj.date_heure_essai).strftime('%Y-%m-%dT%H:%M') if existing_engagement_obj.date_heure_essai else None,
                         'description_essai': existing_engagement_obj.description_essai,
+                        'indications_geographiques': existing_engagement_obj.indications_geographiques,
                     }
             except Exception:
                 pass
@@ -1626,6 +1628,7 @@ def api_engagement(request):
         engagement.classe = data.get('classe', '')
         engagement.mode_de_cours = data.get('course_mode', '')
         engagement.localisation_option = data.get('localisation', '')
+        engagement.indications_geographiques = data.get('indications_geographiques', '')
         engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
         
         if type_eng == EngagementType.ESSAI:
@@ -2140,6 +2143,7 @@ def api_update_engagement(request, engagement_id):
         engagement.periode_engagement = data.get('periode', engagement.periode_engagement)
         engagement.duree_mois = data.get('duree_mois', engagement.duree_mois)
         engagement.localisation_option = data.get('localisation', engagement.localisation_option)
+        engagement.indications_geographiques = data.get('indications_geographiques', engagement.indications_geographiques)
         engagement.plateforme_visio_preferee = data.get('visio', engagement.plateforme_visio_preferee)
         
         enfant_id = data.get('enfant_id')
@@ -2651,6 +2655,7 @@ def api_engagement_details(request, engagement_id):
         'mode': engagement.get_mode_de_cours_display(),
         'mode_raw': engagement.mode_de_cours,
         'lieu': engagement.localisation_option,
+        'indications_geographiques': engagement.indications_geographiques,
         'budget': str(engagement.budget_convenu) if engagement.budget_convenu else None,
         'frequence': engagement.get_frequence_hebdomadaire_display(),
         'duree': engagement.get_duree_seance_display(),

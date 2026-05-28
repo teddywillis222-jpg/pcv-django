@@ -748,6 +748,10 @@ class Engagement(models.Model):
         blank=True,
         help_text="Format « Quartier-Ville »",
     )
+    indications_geographiques = models.TextField(
+        blank=True,
+        help_text="Indications pour trouver la maison (pour les cours à domicile)",
+    )
     plateforme_visio_preferee = models.CharField(max_length=100, blank=True)
     duree_seance = models.CharField(
         max_length=10,
@@ -887,6 +891,15 @@ class Engagement(models.Model):
 
     def save(self, *args, **kwargs):
         self.matiere = clean_subjects(self.matiere)
+        
+        # Sécurité anti-contournement: Masquer les numéros de téléphone dans les indications
+        if self.indications_geographiques:
+            import re
+            # Regex agressive : détecte toute suite d'au moins 8 chiffres séparés éventuellement par des espaces, points ou tirets,
+            # avec ou sans indicatif (+229, 00229).
+            phone_regex = r'(?:(?:\+|00)?229[\s\.\-]*)?(?:\d[\s\.\-]*){8,}'
+            self.indications_geographiques = re.sub(phone_regex, '[Numéro masqué par sécurité]', self.indications_geographiques)
+            
         super().save(*args, **kwargs)
 
     def __str__(self):

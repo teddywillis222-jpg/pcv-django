@@ -98,6 +98,18 @@
                 </div>
             </div>
 
+            <!-- Indications géographiques (visible uniquement si cours à domicile) -->
+            <div id="eng_field_indications" style="display: none; margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Indications pour trouver votre maison</label>
+                <textarea id="eng_indications_geo" name="indications_geographiques" rows="3"
+                    placeholder="Ex: Calavi Kpota, virer juste après la Pharmacie du Peuple, 3ème maison à barrière bleue."
+                    style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; box-sizing: border-box;"></textarea>
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; padding: 0.6rem 0.85rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.6rem;">
+                    <span style="font-size: 1rem; flex-shrink: 0;">⚠️</span>
+                    <p style="margin: 0; font-size: 0.78rem; color: #9a3412; line-height: 1.4; font-weight: 500;">Sécurité : Pour votre protection, l'échange de numéros de téléphone est interdit à cette étape. Tout numéro détecté sera automatiquement masqué par le système.</p>
+                </div>
+            </div>
+
             <!-- Champs Spécifiques STANDARD -->
             <div id="eng_group_standard">
                 <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
@@ -385,6 +397,7 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             
             if (existingEng.date_essai) document.getElementById('eng_date_essai').value = existingEng.date_essai;
             if (existingEng.description_essai) document.querySelector('textarea[name="description_essai"]').value = existingEng.description_essai;
+            if (existingEng.indications_geographiques) document.getElementById('eng_indications_geo').value = existingEng.indications_geographiques;
             
             document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
         } else {
@@ -408,15 +421,22 @@ function toggleModeFields() {
     const visioField = document.getElementById('eng_field_visio');
     const locField = document.getElementById('eng_field_localisation');
     const locInput = document.getElementById('eng_localisation');
+    const indicationsField = document.getElementById('eng_field_indications');
+
+    // Modes à domicile : chez le parent, chez l'apprenant, hybride, lieu tiers, groupe
+    const isDomicile = ['PARENT_HOME', 'APPRENANT_HOME', 'HYBRID', 'THIRD_PLACE', 'SMALL_GROUP'].includes(mode);
 
     if (mode === 'ONLINE') {
         visioField.style.display = 'block';
         locField.style.display = 'none';
         locInput.required = false;
+        indicationsField.style.display = 'none';
     } else {
         visioField.style.display = 'none';
         locField.style.display = 'block';
         locInput.required = true;
+        // Afficher les indications uniquement pour les modes physiques (pas distance)
+        indicationsField.style.display = isDomicile ? 'block' : 'none';
     }
 }
 
