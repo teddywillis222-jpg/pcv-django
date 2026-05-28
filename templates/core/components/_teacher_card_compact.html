@@ -22,7 +22,7 @@
     
     <p class="compact-info">{{ teacher.classes_labels|default:"Toutes classes" }}</p>
 
-    <div class="compact-meta" style="display:flex; gap:0.5rem; align-items:center; margin-top:0.35rem; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px;">
+    <div class="compact-meta" style="display:flex; gap:0.5rem; align-items:center; margin-top:0.35rem; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; scrollbar-width: none; max-width: 100%;">
         <div class="compact-rating" style="flex:0 0 auto; white-space:nowrap;">
             <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }} <small>({{ teacher.nombre_avis }} avis)</small>
         </div>

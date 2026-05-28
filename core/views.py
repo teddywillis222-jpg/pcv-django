@@ -1598,10 +1598,19 @@ def api_engagement(request):
 
         engagement = None
         if existing:
-            if existing.statut_general == StatutGeneral.EN_ATTENTE:
+            if existing.type_engagement == EngagementType.ESSAI and type_eng == EngagementType.NORMAL:
+                from django.utils import timezone
+                dt_fin = existing.date_heure_fin_essai or existing.date_heure_essai
+                if dt_fin and dt_fin > timezone.now():
+                    return JsonResponse({'error': "Vous avez un cours d'essai programmé avec ce professeur. Vous pourrez basculer sur un engagement standard une fois la séance complétée (date et heure passées) ou en annulant l'essai en cours."}, status=400)
+                
+                if existing.statut_general == StatutGeneral.EN_ATTENTE:
+                    engagement = existing
+                else:
+                    # Allow creating a new standard engagement without raising error
+                    pass
+            elif existing.statut_general == StatutGeneral.EN_ATTENTE:
                 engagement = existing
-            elif existing.type_engagement == EngagementType.ESSAI and existing.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and type_eng == EngagementType.NORMAL:
-                pass # Allow creating a new standard engagement without raising error
             else:
                 return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
 

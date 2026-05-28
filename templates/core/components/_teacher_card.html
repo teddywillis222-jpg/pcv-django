@@ -60,18 +60,18 @@
             </div>
 
             <!-- Micro Badges -->
-            <div class="micro-badges">
-                <div class="micro-badge badge-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}">
+            <div class="micro-badges" style="display: flex; gap: 0.4rem; overflow-x: auto; white-space: nowrap; scrollbar-width: none; max-width: 100%; padding-bottom: 2px;">
+                <div class="micro-badge badge-rating" title="{% if teacher.has_real_reviews %}Moyenne basée sur {{ teacher.nombre_avis }} avis{% else %}Note attribuée par l'équipe (En attente d'avis){% endif %}" style="flex-shrink: 0;">
                     ★ {{ teacher.moyenne_avis|floatformat:1 }} <span class="badge-count">({{ teacher.nombre_avis }})</span>
                 </div>
                 {% if teacher.essai_gratuit_actif %}
-                    <div class="micro-badge badge-purple">Essai possible</div>
+                    <div class="micro-badge badge-purple" style="flex-shrink: 0;">Essai possible</div>
                 {% endif %}
                 {% if teacher.est_disponible != False %}
-                    <div class="micro-badge badge-success">Disponible</div>
+                    <div class="micro-badge badge-success" style="flex-shrink: 0;">Disponible</div>
                 {% endif %}
                 {% if teacher.annees_d_experience %}
-                    <div class="micro-badge badge-neutral">{{ teacher.annees_d_experience }} ans</div>
+                    <div class="micro-badge badge-neutral" style="flex-shrink: 0;">{{ teacher.annees_d_experience }} ans</div>
                 {% endif %}
             </div>
         </div>
