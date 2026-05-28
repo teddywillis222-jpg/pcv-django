@@ -674,7 +674,7 @@
                 👉 Pour éviter toute surprise et comprendre comment fonctionne la plateforme, nous vous recommandons vivement de consulter votre plan.
             </p>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <button class="btn-eng-main" style="display: block; width: 100%; border: none; padding: 0.85rem; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer;" onclick="closeWelcomePricingModal(); window.location.href='{% url \'gestion_plan\' %}';">Découvrir mon plan</button>
+                <button class="btn-eng-main" style="display: block; width: 100%; border: none; padding: 0.85rem; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer;" onclick="closeWelcomePricingModal(); window.location.href='{% url &quot;gestion_plan&quot; %}';">Découvrir mon plan</button>
                 <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #94a3b8; font-weight: 700; cursor: pointer; padding: 0.4rem; font-size: 0.88rem;">Je comprends, continuer</button>
             </div>
         </div>
@@ -818,7 +818,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Heures</span>
-                            <span style="font-weight: 700;">${eng.heure_debut} - ${eng.heure_fin || '?'}</span>
+                            <span style="font-weight: 700;">${eng.heure_debut}${eng.heure_fin ? ' - ' + eng.heure_fin : ''}</span>
                         </div>
                     `;
                     if (eng.description_essai) {
@@ -856,6 +856,11 @@
                             <span style="color: #64748b;">Lieu</span>
                             <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
                         </div>
+                        ${eng.indications_geographiques ? `
+                        <div style="margin-bottom: 0.5rem;">
+                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications géographiques</span>
+                            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b;">${eng.indications_geographiques}</div>
+                        </div>` : ''}
                         ${!isTrial ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Budget</span>

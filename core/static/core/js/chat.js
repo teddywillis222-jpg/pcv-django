@@ -91,6 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (fileInput) { fileInput.value = ''; input.placeholder = 'Écrivez un message…'; }
         }
 
+        // Cacher le placeholder vide s'il existe
+        const emptyPlaceholder = document.getElementById('empty-chat-placeholder');
+        if (emptyPlaceholder) {
+            emptyPlaceholder.style.display = 'none';
+        }
+
         try {
             const fd = new FormData();
             if (text) fd.append('texte', text);
@@ -164,16 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
         
-        input.addEventListener('keydown', function (e) {
-            // Soumission sur Entrée (sans Shift)
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                if (chatForm) {
-                    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                }
-            }
-        });
-
         // Sur iOS : scroll to bottom quand le clavier apparaît
         input.addEventListener('focus', function () {
             setTimeout(() => scrollToBottom(), 200);

@@ -28,7 +28,7 @@
             <input type="hidden" id="eng_teacher_id" name="teacher_id">
             <input type="hidden" id="eng_teacher_name_hidden" name="teacher_name">
             
-            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Type d'engagement <span style="color:#ef4444">*</span></label>
                     <select id="eng_type" name="engagement_type" onchange="toggleEngagementFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; cursor: pointer; font-weight: 600; color: #1e293b; transition: border-color 0.2s;" required>
@@ -46,7 +46,7 @@
                 </div>
             </div>
 
-            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
                     <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
@@ -61,7 +61,7 @@
                 </div>
             </div>
             
-            <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
                     <select id="eng_mode" name="course_mode" onchange="toggleModeFields()" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
@@ -112,7 +112,7 @@
 
             <!-- Champs Spécifiques STANDARD -->
             <div id="eng_group_standard">
-                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Fréquence <span style="color:#ef4444">*</span></label>
                         <select id="eng_frequence" name="frequence" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff;">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
 
-                <div class="eng-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Date de début <span style="color:#ef4444">*</span></label>
                         <input type="date" name="date_debut" id="eng_date_debut" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;">

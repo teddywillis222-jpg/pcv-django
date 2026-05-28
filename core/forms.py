@@ -437,6 +437,7 @@ class TeacherProfileForm(forms.ModelForm):
             "presentation",
             "methodologie",
             "tarif_horaire",
+            "annees_d_experience",
             "photo_de_profil",
             "fichier_cni",
             "autorisation_publicitaire",
