@@ -41,6 +41,12 @@
     font-family: var(--font);
 }
 
+@media (max-width: 768px) {
+    .msg-container {
+        margin: 0 -15px; /* Compense le padding de .container pour prendre tout l'écran */
+    }
+}
+
 /* ========================================
    HEADER COLLANT
 ======================================= */
@@ -49,7 +55,7 @@
     top: 0;
     z-index: 100;
     background: white;
-    padding: 0.75rem 1rem 0.5rem; /* Réduit */
+    padding: 0.75rem 15px 0.5rem; /* Ajusté pour moins de marge */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid #f1f5f9;
@@ -196,8 +202,8 @@
 .conv-card {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
+    gap: 0.75rem; /* Réduit de 1rem à 0.75rem */
+    padding: 0.75rem 15px; /* Marges latérales réduites à 15px pour l'edge-to-edge */
     background: transparent;
     text-decoration: none !important;
     color: inherit;

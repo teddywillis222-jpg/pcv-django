@@ -644,7 +644,11 @@
                     {% if request.user.is_authenticated and request.user.profile %}
                         {% if request.user.profile.role == 'PARENT' or request.user.profile.role == 'APPRENANT' %}
                             <span class="plan-header-badge {% if request.user.profile.current_plan == 'ACCESS_PREMIUM' %}badge-premium{% else %}badge-standard{% endif %}">
-                                {{ request.user.profile.current_plan_label }}
+                                {% if request.user.profile.current_plan == 'ACCESS_PREMIUM' %}
+                                    Access+
+                                {% else %}
+                                    {{ request.user.profile.current_plan_label }}
+                                {% endif %}
                             </span>
                         {% endif %}
                     {% endif %}
@@ -687,12 +691,23 @@
                 <a href="{% url 'signup' %}" class="btn-nav">S'inscrire</a>
                 {% endif %}
                 
-                    <!-- Mobile Icons Group: Home + Burger -->
+                    <!-- Mobile Icons Group: Home/Login + Burger -->
                     <div class="mobile-icons-group" id="mobileIconsGroup">
+                        {% if user.is_authenticated %}
                         <a href="{% url 'post_signup_redirect' %}" id="mobileHomeBtn" class="mobile-icon-btn" title="Mon espace">
                             <!-- Home Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                         </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" id="mobileLoginBtn" class="mobile-icon-btn" title="Se connecter">
+                            <!-- Login Icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </a>
+                        {% endif %}
 
                         <button class="mobile-icon-btn mobile-burger-btn" id="mobileMenuToggle" onclick="toggleMobileMenu()" aria-label="Menu">
                             <!-- Burger Icon -->
