@@ -1635,7 +1635,8 @@ def api_engagement(request):
         engagement.classe = data.get('classe', '')
         engagement.mode_de_cours = data.get('course_mode', '')
         engagement.localisation_option = data.get('localisation', '')
-        engagement.indications_geographiques = data.get('indications_geographiques', '')
+        # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
+        engagement.indications_geographiques = data.get('indications_geographiques', '') if type_eng == EngagementType.ESSAI else ''
         engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
         
         if type_eng == EngagementType.ESSAI:
@@ -2162,7 +2163,11 @@ def api_update_engagement(request, engagement_id):
         engagement.periode_engagement = data.get('periode', engagement.periode_engagement)
         engagement.duree_mois = data.get('duree_mois', engagement.duree_mois)
         engagement.localisation_option = data.get('localisation', engagement.localisation_option)
-        engagement.indications_geographiques = data.get('indications_geographiques', engagement.indications_geographiques)
+        # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
+        if engagement.type_engagement == EngagementType.ESSAI:
+            engagement.indications_geographiques = data.get('indications_geographiques', engagement.indications_geographiques)
+        else:
+            engagement.indications_geographiques = ''
         engagement.plateforme_visio_preferee = data.get('visio', engagement.plateforme_visio_preferee)
         
         enfant_id = data.get('enfant_id')

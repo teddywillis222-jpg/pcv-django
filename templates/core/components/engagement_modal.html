@@ -430,6 +430,7 @@ function toggleModeFields() {
 
     // Modes à domicile : chez le parent, chez l'apprenant, hybride, lieu tiers, groupe
     const isDomicile = ['PARENT_HOME', 'APPRENANT_HOME', 'HYBRID', 'THIRD_PLACE', 'SMALL_GROUP'].includes(mode);
+    const type = document.getElementById('eng_type').value;
 
     if (mode === 'ONLINE') {
         visioField.style.display = 'block';
@@ -440,8 +441,8 @@ function toggleModeFields() {
         visioField.style.display = 'none';
         locField.style.display = 'block';
         locInput.required = true;
-        // Afficher les indications uniquement pour les modes physiques (pas distance)
-        indicationsField.style.display = isDomicile ? 'block' : 'none';
+        // Afficher les indications uniquement pour les modes physiques (pas distance) ET si c'est un essai
+        indicationsField.style.display = (isDomicile && type === 'essai') ? 'block' : 'none';
     }
 }
 
@@ -478,11 +479,14 @@ function toggleEngagementFields() {
         document.getElementById('eng_duree').required = true;
         document.getElementById('eng_date_debut').required = true;
         document.getElementById('eng_duree_mois').required = true;
-        
+        document.querySelector('input[name="budget"]').required = true;
         submitBtn.disabled = false;
         submitBtn.style.opacity = '1';
         submitBtn.title = "";
     }
+    
+    // Mettre à jour l'affichage des indications géographiques
+    toggleModeFields();
 
     // Gérer le required de l'enfant uniquement si parent
     const enfantSelect = document.getElementById('eng_enfant_id');
@@ -491,8 +495,6 @@ function toggleEngagementFields() {
     } else {
         enfantSelect.required = false;
     }
-
-    toggleModeFields();
 }
 
 async function submitEngagement(event) {
