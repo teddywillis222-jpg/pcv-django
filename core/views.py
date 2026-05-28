@@ -1689,8 +1689,8 @@ def api_engagement(request):
 @transaction.atomic
 def api_engagement_action(request, engagement_id):
     """API pour qu'un professeur accepte ou refuse un engagement."""
-    from .choices import StatutGeneral, ConversationStatus
-    from .models import Engagement, Conversation
+    from .choices import StatutGeneral, ConversationStatus, EngagementType
+    from .models import Engagement, Conversation, Message
     
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
@@ -1739,7 +1739,19 @@ def api_engagement_action(request, engagement_id):
             
             # 4. Mettre à jour les stats du professeur
             teacher = engagement.professeur
-            teacher.nb_engagements_confirmes = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.CONFIRME).count()
+            teacher.nb_engagements_confirmes = Engagement.objects.filter(
+                professeur=teacher, 
+                statut_general=StatutGeneral.CONFIRME
+            ).exclude(type_engagement=EngagementType.ESSAI).count()
+            
+            # Message automatique pour essai
+            if engagement.type_engagement == EngagementType.ESSAI:
+                Message.objects.create(
+                    conversation=conversation,
+                    auteur=engagement.professeur.user,
+                    destinataire=engagement.parent_apprenant,
+                    contenu_texte="J'ai bien confirmé notre séance d'essai. Préparez-vous pour notre rencontre !"
+                )
             
             # Mise à jour du temps de réponse moyen
             responses = Engagement.objects.filter(professeur=teacher, temps_reponse_prof__isnull=False).values_list('temps_reponse_prof', flat=True)
