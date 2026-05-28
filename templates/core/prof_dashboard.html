@@ -105,9 +105,19 @@
             <!-- Engagement Management Tabs -->
             <div class="tabs-container">
                 <div class="tabs-header">
-                    <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">En cours ({{ engs_en_cours.count }})</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs ({{ engs_actifs.count }})</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">Essais</button>
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">
+                        En cours
+                        {% if badge_en_cours > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_en_cours }}</span>
+                        {% endif %}
+                    </button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">
+                        Essais
+                        {% if badge_essais > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais }}</span>
+                        {% endif %}
+                    </button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
                 </div>
 

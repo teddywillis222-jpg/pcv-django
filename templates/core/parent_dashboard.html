@@ -811,10 +811,20 @@
             <section style="margin-top: 1.5rem;">
                 <h2 class="section-title" style="margin-bottom: 0.6rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements pour {{ active_enfant.prenom }}</h2>
                 <div class="glass-tabs">
-                    <button class="tab-pill active" onclick="switchTab(event, 'encours')">En cours</button>
+                    <button class="tab-pill active" onclick="switchTab(event, 'encours')">
+                        En cours
+                        {% if badge_en_cours > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_en_cours }}</span>
+                        {% endif %}
+                    </button>
                     <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
                     <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminés</button>
-                    <button class="tab-pill" onclick="switchTab(event, 'essais')">Essais</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'essais')">
+                        Essais
+                        {% if badge_essais > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais }}</span>
+                        {% endif %}
+                    </button>
                 </div>
 
                 <div id="tab-content">
@@ -980,7 +990,7 @@
                 👉 Pour éviter toute surprise et comprendre comment fonctionne la plateforme, nous vous recommandons vivement de consulter votre plan.
             </p>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="{% url 'gestion_plan' %}" class="btn-eng-main" style="display: block; padding: 0.85rem; text-decoration: none; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 0.95rem;" onclick="closeWelcomePricingModal()">Découvrir mon plan</a>
+                <button class="btn-eng-main" style="display: block; width: 100%; border: none; padding: 0.85rem; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 0.95rem; cursor: pointer;" onclick="closeWelcomePricingModal(); window.location.href='{% url \'gestion_plan\' %}';">Découvrir mon plan</button>
                 <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #94a3b8; font-weight: 700; cursor: pointer; padding: 0.4rem; font-size: 0.88rem;">Je comprends, continuer</button>
             </div>
         </div>
@@ -1288,7 +1298,6 @@
             quartierInput.value = "{{ parent_details.quartier_ville|escapejs }}";
         }
     });
-    // Welcome Pricing Modal Logic
     function closeWelcomePricingModal() {
         document.getElementById('welcomePricingModal').style.display = 'none';
         fetch('/api/mark-welcome-seen/', {
@@ -1296,7 +1305,8 @@
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json'
-            }
+            },
+            keepalive: true
         }).catch(e => console.warn(e));
     }
 

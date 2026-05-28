@@ -773,6 +773,8 @@ def prof_dashboard(request):
         "completion": teacher.completion_percentage,
         "nb_actifs": nb_actifs,
         "nb_termines": nb_termines,
+        "badge_en_cours": engs_en_cours.count(),
+        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
     }
 
     # Annonce
@@ -969,7 +971,10 @@ def parent_dashboard(request):
         "abonnement": abonnement,
         "favoris": favoris,
         "enfant_form": enfant_form,
+        "enfant_form": enfant_form,
         "show_welcome_popup": not profile.a_vu_popup_bienvenue,
+        "badge_en_cours": engs_en_cours.count(),
+        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
     }
     
     if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
@@ -1132,6 +1137,8 @@ def apprenant_dashboard(request):
         "abonnement": abonnement,
         "favoris": favoris,
         "show_welcome_popup": not profile.a_vu_popup_bienvenue,
+        "badge_en_cours": engs_en_cours.count(),
+        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
     }
 
     # Annonce (Parents/Apprenants)
