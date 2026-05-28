@@ -283,13 +283,29 @@ def messagerie(request):
         statut_class = "statut-default"
         
         if eng:
+            from .choices import TypeAbonnement, EngagementType
+            # Déterminer si le paiement est exigible :
+            # NON exigible si l'utilisateur est Premium OU si c'est un essai
+            is_trial = (eng.type_engagement == EngagementType.ESSAI)
+            is_user_premium = (
+                hasattr(request.user, 'profile')
+                and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+            )
+            needs_payment = (
+                eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+                and not eng.paiement_effectue
+                and not is_trial
+                and not is_user_premium
+                and user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]
+            )
+
             if eng.statut_general == StatutGeneral.FINALISE:
                 statut_label = "Actif"
                 statut_class = "statut-active"
             elif eng.statut_general == StatutGeneral.TERMINE:
                 statut_label = "Terminé"
                 statut_class = "statut-finished"
-            elif eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
+            elif needs_payment:
                 statut_label = "Paiement requis"
                 statut_class = "statut-blocked"
             elif eng.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]:
@@ -300,9 +316,10 @@ def messagerie(request):
         is_blocked = False
         if eng and eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
             if user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
-                from .choices import TypeAbonnement
-                is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
-                if not is_premium:
+                from .choices import TypeAbonnement, EngagementType
+                is_trial = (eng.type_engagement == EngagementType.ESSAI)
+                is_user_premium = request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+                if not is_user_premium and not is_trial:
                     is_blocked = True
             else:
                 # Le professeur n'est jamais bloqué
@@ -1353,7 +1370,7 @@ def professeur_detail(request, teacher_slug):
     
     if request.user.is_authenticated:
         # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
-        if request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists():
+        if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
             is_premium = True
 
         # Vérifier conversation existante
@@ -1506,7 +1523,7 @@ def api_teacher_profile(request, teacher_slug):
                 
             try:
                 # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
-                if request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists():
+                if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
                     is_premium = True
 
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
@@ -1830,14 +1847,19 @@ def conversation_detail(request, conversation_id):
     # Déterminer le rôle
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
     
-    # Vérifier l'abonnement
-    from .choices import TypeAbonnement, Localisation
-    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+    # Vérifier l'abonnement via la propriété current_plan (gère l'expiration)
+    from .choices import TypeAbonnement, Localisation, EngagementType
+    is_premium = (
+        hasattr(request.user, 'profile')
+        and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+    )
+    is_trial = eng and eng.type_engagement == EngagementType.ESSAI
     
     for msg in raw_messages:
         # Masquage Paywall (Backend Security)
+        # Pas de masquage pour les Premium ni pour les essais
         msg.is_locked = False
-        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
+        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
                 # Vérifier si le message vient après la confirmation/création de l'engagement
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
@@ -1878,7 +1900,7 @@ def conversation_detail(request, conversation_id):
     is_blocked = False
     hide_input = False
     blocking_message = ""
-    # eng, is_premium, user_role sont déjà définis plus haut
+    # eng, is_premium, is_trial, user_role sont déjà définis plus haut
     
     from .models import Profile
     is_user_prof = (user_role == Profile.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
@@ -1889,9 +1911,9 @@ def conversation_detail(request, conversation_id):
             is_blocked = True
             hide_input = True
             blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a été refusé."
-        # 2. Bloqué si confirmé/en cours mais non payé (sauf Access+ Premium)
+        # 2. Bloqué si confirmé/en cours mais non payé (sauf Access+ Premium ou essai)
         elif eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
-            if not is_premium:
+            if not is_premium and not is_trial:
                 is_blocked = True
                 hide_input = True
                 blocking_message = "Paiement requis pour continuer les échanges."
@@ -2003,7 +2025,7 @@ def api_send_message(request, conversation_id):
     # des envois successifs fluides aux utilisateurs autorisés (Premium/Payé).
         
     # Vérifier le blocage (même logique que conversation_detail)
-    from .choices import TypeAbonnement
+    from .choices import TypeAbonnement, EngagementType
     user_role = None
     try:
         user_role = request.user.profile.role
@@ -2016,8 +2038,9 @@ def api_send_message(request, conversation_id):
             if active_eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
                 return JsonResponse({'error': 'En attente de la confirmation du professeur.' if active_eng.statut_general == 'EN_ATTENTE' else 'Cet engagement a été refusé.'}, status=403)
                 
-            is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
-            if active_eng.statut_general in ['CONFIRME', 'EN_COURS'] and not active_eng.paiement_effectue and not is_premium:
+            is_premium = request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+            is_trial = active_eng.type_engagement == EngagementType.ESSAI
+            if active_eng.statut_general in ['CONFIRME', 'EN_COURS'] and not active_eng.paiement_effectue and not is_premium and not is_trial:
                 return JsonResponse({'error': 'Paiement requis pour continuer les échanges'}, status=402)
 
     try:
@@ -2118,10 +2141,14 @@ def api_fetch_new_messages(request, conversation_id):
         if unread_ids:
             newly_read = list(conversation.messages.filter(id__in=unread_ids, lu=True).values_list('id', flat=True))
 
-    from .choices import TypeAbonnement
+    from .choices import TypeAbonnement, EngagementType
     eng = conversation.engagement_actif
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
-    is_premium = request.user.abonnements.filter(type_abonnement=TypeAbonnement.ACCESS_PREMIUM).exists()
+    is_premium = (
+        hasattr(request.user, 'profile')
+        and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+    )
+    is_trial = eng and eng.type_engagement == EngagementType.ESSAI
     
     messages_data = []
     for msg in new_messages:
@@ -2130,8 +2157,8 @@ def api_fetch_new_messages(request, conversation_id):
         file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
         is_locked = False
         
-        # Masquage Paywall (Backend Security)
-        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium:
+        # Masquage Paywall (Backend Security) — exempt Premium et essais
+        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
                 if msg.date_envoi >= ref_date:
