@@ -1,7 +1,52 @@
 import os
 import requests
+import logging
 from django.conf import settings
 from .models import TransactionFedaPay
+
+logger = logging.getLogger(__name__)
+
+def send_whatsapp_notification(to_number, message_body):
+    """
+    Envoie un message WhatsApp via l'API Twilio (en utilisant requests pour éviter d'ajouter des dépendances).
+    """
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    from_number = os.environ.get('TWILIO_WHATSAPP_NUMBER')
+
+    if not all([account_sid, auth_token, from_number]):
+        logger.error("Configuration Twilio manquante dans l'environnement. (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN ou TWILIO_WHATSAPP_NUMBER)")
+        return False
+
+    # Formatage du numéro d'expédition
+    if not from_number.startswith('whatsapp:'):
+        from_number = f"whatsapp:{from_number}"
+
+    # Formatage du numéro de destination
+    to_number = str(to_number).strip()
+    if not to_number.startswith('whatsapp:'):
+        if to_number.startswith('+'):
+            to_number = f"whatsapp:{to_number}"
+        else:
+            to_number = f"whatsapp:+{to_number}"
+
+    url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
+    auth = (account_sid, auth_token)
+    data = {
+        'From': from_number,
+        'To': to_number,
+        'Body': message_body
+    }
+
+    try:
+        response = requests.post(url, data=data, auth=auth, timeout=10)
+        if response.status_code not in [200, 201]:
+            logger.error(f"Échec de l'envoi WhatsApp Twilio. Code: {response.status_code}, Erreur: {response.text}")
+            return False
+        return True
+    except Exception as e:
+        logger.error(f"Exception lors de l'envoi WhatsApp Twilio: {str(e)}")
+        return False
 
 def initier_paiement_engagement(engagement, user, callback_url):
     """
