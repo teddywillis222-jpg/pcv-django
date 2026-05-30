@@ -32,8 +32,8 @@ def formater_telephone_benin(numero):
         
     final_number = "+229" + local_part
     
-    # Vérifier la longueur totale de 13 caractères (+ et 12 chiffres)
-    if len(final_number) != 13 or not final_number[1:].isdigit():
+    # Vérifier la longueur totale de 14 caractères (+229 suivi de 10 chiffres)
+    if len(final_number) != 14 or not final_number[1:].isdigit():
         raise forms.ValidationError("Le numéro de téléphone est invalide pour le Bénin. Entrez un numéro valide à 10 chiffres.")
         
     return final_number
