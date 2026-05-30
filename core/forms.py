@@ -7,42 +7,15 @@ import re
 def formater_telephone_benin(numero):
     if not numero:
         return numero
-    # Retirer tous les espaces, tirets et points
-    raw = str(numero).replace(" ", "").replace("-", "").replace(".", "")
-    
-    if raw.startswith('+229'):
-        pass
-    elif raw.startswith('229'):
-        raw = "+" + raw
-    else:
-        # Si l'utilisateur a saisi avec un 0 au début, on l'enlève
-        if raw.startswith('0') and not raw.startswith('00'):
-            raw = raw[1:]
-        raw = "+229" + raw
-
-    # Analyser la partie locale
-    local_part = raw[4:]
-    
-    if local_part == "47528839":
-        # EXCEPTION TEST TWILIO SANDBOX: Conserver le format à 8 chiffres pour ce numéro précis
-        pass
-    else:
-        if len(local_part) == 8:
-            # 8 chiffres (ancien format), insérer 01
-            local_part = "01" + local_part
-        elif len(local_part) == 9 and local_part.startswith('1'):
-            # 9 chiffres commençant par 1, remplacer par 01
-            local_part = "01" + local_part[1:]
         
-    final_number = "+229" + local_part
+    # Retire uniquement les espaces cachés ou accidentels au début et à la fin de la saisie.
+    cleaned = str(numero).strip()
     
-    # Vérifier la longueur totale (12 caractères pour l'exception test, 14 pour les normaux)
-    if final_number == "+22947528839":
-        pass
-    elif len(final_number) != 14 or not final_number[1:].isdigit():
-        raise forms.ValidationError("Le numéro de téléphone est invalide pour le Bénin. Entrez un numéro valide à 10 chiffres.")
+    # Vérifie si la chaîne fait exactement 10 chiffres et ne contient que des nombres, et commence par 01.
+    if len(cleaned) != 10 or not cleaned.isdigit() or not cleaned.startswith('01'):
+        raise forms.ValidationError("Format invalide. Vous devez saisir exactement 10 chiffres commençant par 01 (ex: 01XXXXXXXX).")
         
-    return final_number
+    return f"+229{cleaned}"
 
 
 from .models import Apprenant, Enfant, Parent, Profile
@@ -251,7 +224,7 @@ class ParentForm(forms.ModelForm):
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
         self.fields['numero_whatsapp'].required = True
-        self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "Ex: 01 23 45 67 89", "class": "phone-input"})
+        self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "01XXXXXXXX", "class": "phone-input"})
 
     def clean_numero_whatsapp(self):
         numero = self.cleaned_data.get('numero_whatsapp')
@@ -422,7 +395,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
                 self.fields[field_name].required = False
         
         if "telephone" in self.fields:
-            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89", "style": "height: 52px;"})
+            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "01XXXXXXXX", "style": "height: 52px;"})
 
     def clean_telephone(self):
         numero = self.cleaned_data.get('telephone')
@@ -504,7 +477,10 @@ class TeacherProfileForm(forms.ModelForm):
             
         self.fields["nom"].label = "Nom Complet"
         
-        self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01 XX XX XX XX"})
+        self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01XXXXXXXX"})
+        
+        if "annees_d_experience" in self.fields:
+            self.fields["annees_d_experience"].required = False
 
         if self.instance and self.instance.pk and self.instance.matiere_enseignee:
             if isinstance(self.instance.matiere_enseignee, str):

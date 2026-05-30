@@ -3,7 +3,7 @@
     <div style="background: white; border-radius: 1rem; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
         <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 20;">
             <div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Proposer un engagement</h3>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0;">Contacter ce professeur</h3>
                 <div id="eng_prof_display" style="font-size: 0.9rem; color: #64748b; margin-top: 0.25rem; font-weight: 500;"></div>
             </div>
             <button type="button" onclick="closeEngagementModal()" style="background: #f1f5f9; border: none; cursor: pointer; color: #64748b; padding: 0.5rem; border-radius: 50%; transition: all 0.2s;">
@@ -404,7 +404,7 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
             
             document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
         } else {
-            document.querySelector('#engagementModal h3').textContent = 'Proposer un engagement';
+            document.querySelector('#engagementModal h3').textContent = 'Contacter ce professeur';
             document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
         }
 
