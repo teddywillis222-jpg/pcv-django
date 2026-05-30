@@ -1657,12 +1657,14 @@ def api_engagement(request):
             else:
                 return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
 
+        is_new_engagement = False
         if not engagement:
             engagement = Engagement(
                 professeur=teacher,
                 parent_apprenant=request.user,
                 statut_general=StatutGeneral.EN_ATTENTE
             )
+            is_new_engagement = True
             
         engagement.type_engagement = type_eng
         engagement.matiere = data.get('matiere', '')
@@ -1718,27 +1720,28 @@ def api_engagement(request):
         engagement.save()
 
         # --- DEBUT NOTIFICATION WHATSAPP PROFESSEUR ---
-        import threading
-        from .services import send_whatsapp_notification
-        from .choices import EngagementType
-        
-        teacher_phone = getattr(engagement.professeur, 'telephone', None)
-        if not teacher_phone and hasattr(engagement.professeur, 'user'):
-            teacher_phone = getattr(engagement.professeur.user, 'telephone', None)
+        if is_new_engagement:
+            import threading
+            from .services import send_whatsapp_notification
+            # EngagementType est déjà disponible au niveau global ou local selon le contexte du fichier
             
-        if teacher_phone:
-            prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip()
-            type_str = "un cours d'ESSAI GRATUIT" if engagement.type_engagement == EngagementType.ESSAI else "une proposition d'ENGAGEMENT STANDARD"
-            matiere_str = engagement.matiere
-            
-            msg_body = (
-                f"Bonjour Professeur {prof_name}, Bonne nouvelle ! Vous avez reçu {type_str} "
-                f"de la part d'un parent pour la matière {matiere_str}. "
-                "Connectez-vous vite sur profchezvousapp.com pour consulter les détails et accepter la demande. "
-                "L'équipe Prof Chez Vous."
-            )
-            # Envoi asynchrone pour ne pas bloquer la réponse HTTP
-            threading.Thread(target=send_whatsapp_notification, args=(teacher_phone, msg_body)).start()
+            teacher_phone = getattr(engagement.professeur, 'telephone', None)
+            if not teacher_phone and hasattr(engagement.professeur, 'user'):
+                teacher_phone = getattr(engagement.professeur.user, 'telephone', None)
+                
+            if teacher_phone:
+                prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip()
+                type_str = "un cours d'ESSAI GRATUIT" if engagement.type_engagement == EngagementType.ESSAI else "une proposition d'ENGAGEMENT STANDARD"
+                matiere_str = engagement.matiere
+                
+                msg_body = (
+                    f"Bonjour Professeur {prof_name}, Bonne nouvelle ! Vous avez reçu {type_str} "
+                    f"de la part d'un parent pour la matière {matiere_str}. "
+                    "Connectez-vous vite sur profchezvousapp.com pour consulter les détails et accepter la demande. "
+                    "L'équipe Prof Chez Vous."
+                )
+                # Envoi asynchrone pour ne pas bloquer la réponse HTTP
+                threading.Thread(target=send_whatsapp_notification, args=(teacher_phone, msg_body)).start()
         # --- FIN NOTIFICATION WHATSAPP PROFESSEUR ---
 
         return JsonResponse({
