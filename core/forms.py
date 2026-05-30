@@ -4,6 +4,41 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
 
+def formater_telephone_benin(numero):
+    if not numero:
+        return numero
+    # Retirer tous les espaces, tirets et points
+    raw = str(numero).replace(" ", "").replace("-", "").replace(".", "")
+    
+    if raw.startswith('+229'):
+        pass
+    elif raw.startswith('229'):
+        raw = "+" + raw
+    else:
+        # Si l'utilisateur a saisi avec un 0 au début, on l'enlève
+        if raw.startswith('0') and not raw.startswith('00'):
+            raw = raw[1:]
+        raw = "+229" + raw
+
+    # Analyser la partie locale
+    local_part = raw[4:]
+    
+    if len(local_part) == 8:
+        # 8 chiffres (ancien format), insérer 01
+        local_part = "01" + local_part
+    elif len(local_part) == 9 and local_part.startswith('1'):
+        # 9 chiffres commençant par 1, remplacer par 01
+        local_part = "01" + local_part[1:]
+        
+    final_number = "+229" + local_part
+    
+    # Vérifier la longueur totale de 13 caractères (+ et 12 chiffres)
+    if len(final_number) != 13 or not final_number[1:].isdigit():
+        raise forms.ValidationError("Le numéro de téléphone est invalide pour le Bénin. Entrez un numéro valide à 10 chiffres.")
+        
+    return final_number
+
+
 from .models import Apprenant, Enfant, Parent, Profile
 from .choices import ClassLevel, CourseMode, Localisation, Matiere
 
@@ -210,8 +245,11 @@ class ParentForm(forms.ModelForm):
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
         self.fields['numero_whatsapp'].required = True
-        self.fields['numero_whatsapp'].required = True
         self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "Ex: 01 23 45 67 89", "class": "phone-input"})
+
+    def clean_numero_whatsapp(self):
+        numero = self.cleaned_data.get('numero_whatsapp')
+        return formater_telephone_benin(numero)
 
 
 class EnfantForm(forms.ModelForm):
@@ -380,6 +418,10 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         if "telephone" in self.fields:
             self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "Ex: 01 23 45 67 89", "style": "height: 52px;"})
 
+    def clean_telephone(self):
+        numero = self.cleaned_data.get('telephone')
+        return formater_telephone_benin(numero)
+
 
 from .models import TeacherProfile
 from .choices import SupportCategory
@@ -495,6 +537,10 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(categories, list) and len(categories) > 4:
             raise forms.ValidationError("Vous ne pouvez sélectionner que 4 catégories maximum.")
         return categories
+
+    def clean_telephone_whatsapp(self):
+        numero = self.cleaned_data.get('telephone_whatsapp')
+        return formater_telephone_benin(numero)
 
 
 from .models import ProfessorAnnouncement
