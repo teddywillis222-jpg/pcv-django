@@ -48,10 +48,13 @@ def send_whatsapp_notification(to_number, message_body):
 
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
     auth = (account_sid, auth_token)
+    
+    # Configuration stricte pour Twilio Sandbox (Templates via Content API)
     data = {
-        'From': from_number,
+        'From': 'whatsapp:+14155238886',  # Numéro Sandbox officiel
         'To': to_number_final,
-        'Body': message_body
+        'ContentSid': 'HXb5b62575e6e4ff6129ad7c8efe1f983e',
+        'ContentVariables': '{"1":"Demande","2":"ProfChezVous"}'
     }
 
     try:

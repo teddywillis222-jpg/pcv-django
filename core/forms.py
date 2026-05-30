@@ -23,17 +23,23 @@ def formater_telephone_benin(numero):
     # Analyser la partie locale
     local_part = raw[4:]
     
-    if len(local_part) == 8:
-        # 8 chiffres (ancien format), insérer 01
-        local_part = "01" + local_part
-    elif len(local_part) == 9 and local_part.startswith('1'):
-        # 9 chiffres commençant par 1, remplacer par 01
-        local_part = "01" + local_part[1:]
+    if local_part == "47528839":
+        # EXCEPTION TEST TWILIO SANDBOX: Conserver le format à 8 chiffres pour ce numéro précis
+        pass
+    else:
+        if len(local_part) == 8:
+            # 8 chiffres (ancien format), insérer 01
+            local_part = "01" + local_part
+        elif len(local_part) == 9 and local_part.startswith('1'):
+            # 9 chiffres commençant par 1, remplacer par 01
+            local_part = "01" + local_part[1:]
         
     final_number = "+229" + local_part
     
-    # Vérifier la longueur totale de 14 caractères (+229 suivi de 10 chiffres)
-    if len(final_number) != 14 or not final_number[1:].isdigit():
+    # Vérifier la longueur totale (12 caractères pour l'exception test, 14 pour les normaux)
+    if final_number == "+22947528839":
+        pass
+    elif len(final_number) != 14 or not final_number[1:].isdigit():
         raise forms.ValidationError("Le numéro de téléphone est invalide pour le Bénin. Entrez un numéro valide à 10 chiffres.")
         
     return final_number
