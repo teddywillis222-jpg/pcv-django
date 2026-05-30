@@ -1725,9 +1725,12 @@ def api_engagement(request):
             from .services import send_whatsapp_notification
             # EngagementType est déjà disponible au niveau global ou local selon le contexte du fichier
             
-            teacher_phone = getattr(engagement.professeur, 'telephone', None)
+            teacher_phone = getattr(engagement.professeur, 'telephone_whatsapp', None)
             if not teacher_phone and hasattr(engagement.professeur, 'user'):
-                teacher_phone = getattr(engagement.professeur.user, 'telephone', None)
+                if hasattr(engagement.professeur.user, 'parent'):
+                    teacher_phone = getattr(engagement.professeur.user.parent, 'numero_whatsapp', None)
+                elif hasattr(engagement.professeur.user, 'apprenant'):
+                    teacher_phone = getattr(engagement.professeur.user.apprenant, 'telephone', None)
                 
             if teacher_phone:
                 prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip()
@@ -1835,9 +1838,11 @@ def api_engagement_action(request, engagement_id):
             import threading
             from .services import send_whatsapp_notification
             
-            parent_phone = getattr(engagement.parent_apprenant, 'telephone', None)
-            if not parent_phone and hasattr(engagement.parent_apprenant, 'parent'):
-                parent_phone = getattr(engagement.parent_apprenant.parent, 'telephone', None)
+            parent_phone = None
+            if hasattr(engagement.parent_apprenant, 'parent'):
+                parent_phone = getattr(engagement.parent_apprenant.parent, 'numero_whatsapp', None)
+            elif hasattr(engagement.parent_apprenant, 'apprenant'):
+                parent_phone = getattr(engagement.parent_apprenant.apprenant, 'telephone', None)
                 
             if parent_phone:
                 parent_name = engagement.parent_apprenant.first_name or "Parent"
