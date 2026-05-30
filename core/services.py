@@ -22,30 +22,50 @@ def send_whatsapp_notification(to_number, message_body):
     if not from_number.startswith('whatsapp:'):
         from_number = f"whatsapp:{from_number}"
 
-    # Formatage du numéro de destination
-    to_number = str(to_number).strip()
-    if not to_number.startswith('whatsapp:'):
-        if to_number.startswith('+'):
-            to_number = f"whatsapp:{to_number}"
+    # Nettoyage et formatage du numéro de destination
+    raw_number = str(to_number).strip().replace(" ", "").replace("-", "")
+    
+    # Enlever 'whatsapp:' s'il est déjà là pour faciliter le traitement
+    if raw_number.startswith('whatsapp:'):
+        raw_number = raw_number[9:]
+        
+    # S'il ne commence pas par '+' on force le format international
+    if not raw_number.startswith('+'):
+        # Si ça commence par 0, on le retire
+        if raw_number.startswith('0') and not raw_number.startswith('00'):
+            raw_number = raw_number[1:]
+        
+        # Si ça ne commence pas par 229 (l'indicatif du Bénin), on l'ajoute
+        if not raw_number.startswith('229'):
+            raw_number = f"+229{raw_number}"
         else:
-            to_number = f"whatsapp:+{to_number}"
+            raw_number = f"+{raw_number}"
+
+    to_number_final = f"whatsapp:{raw_number}"
+
+    logger.info(f"Tentative d'envoi WhatsApp Twilio. Numéro original: {to_number} -> Format final: {to_number_final}")
+    print(f"--- TWILIO WHATSAPP : Préparation de l'envoi vers {to_number_final} ---")
 
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json"
     auth = (account_sid, auth_token)
     data = {
         'From': from_number,
-        'To': to_number,
+        'To': to_number_final,
         'Body': message_body
     }
 
     try:
         response = requests.post(url, data=data, auth=auth, timeout=10)
         if response.status_code not in [200, 201]:
-            logger.error(f"Échec de l'envoi WhatsApp Twilio. Code: {response.status_code}, Erreur: {response.text}")
+            logger.error(f"Échec de l'envoi WhatsApp Twilio. Code: {response.status_code}, Erreur complète: {response.text}")
+            print(f"--- TWILIO ERROR : Code {response.status_code} | Msg: {response.text} ---")
             return False
+            
+        print(f"--- TWILIO SUCCESS : Message envoyé à {to_number_final} ---")
         return True
     except Exception as e:
         logger.error(f"Exception lors de l'envoi WhatsApp Twilio: {str(e)}")
+        print(f"--- TWILIO EXCEPTION : {str(e)} ---")
         return False
 
 def initier_paiement_engagement(engagement, user, callback_url):
