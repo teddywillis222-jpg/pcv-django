@@ -8,12 +8,18 @@ def formater_telephone_benin(numero):
     if not numero:
         return numero
         
-    # Retire uniquement les espaces cachés ou accidentels au début et à la fin de la saisie.
-    cleaned = str(numero).strip()
+    # Retire les espaces et tirets accidentels
+    cleaned = str(numero).strip().replace(" ", "").replace("-", "")
     
+    # S'il a déjà l'indicatif +229 ou 229, on le retire pour la validation
+    if cleaned.startswith('+229'):
+        cleaned = cleaned[4:]
+    elif cleaned.startswith('229') and len(cleaned) == 13:
+        cleaned = cleaned[3:]
+        
     # Vérifie si la chaîne fait exactement 10 chiffres et ne contient que des nombres, et commence par 01.
     if len(cleaned) != 10 or not cleaned.isdigit() or not cleaned.startswith('01'):
-        raise forms.ValidationError("Format invalide. Vous devez saisir exactement 10 chiffres commençant par 01 (ex: 01XXXXXXXX).")
+        raise forms.ValidationError(f"Format invalide pour '{numero}'. Vous devez saisir exactement 10 chiffres commençant par 01 (ex: 01XXXXXXXX).")
         
     return f"+229{cleaned}"
 
