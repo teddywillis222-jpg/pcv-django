@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Finalisation de l'engagement | Prof Chez Vous{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+    <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: #1e293b; margin-bottom: 20px;">Finalisation de l'engagement avec {{ professeur.prenom }} {{ professeur.nom }}</h1>
+        
+        <div style="padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <p style="color: #475569; margin-bottom: 10px;">Votre séance d'essai a été réalisée avec succès. C'est le moment de finaliser votre accord pour continuer l'accompagnement.</p>
+        </div>
+
+        <!-- Formulaire et détails à venir -->
+        <p style="color: #64748b; font-style: italic;">(Formulaire de finalisation à implémenter prochainement)</p>
+
+        <div style="margin-top: 30px;">
+            <a href="{% url 'parent_dashboard' %}" style="display: inline-block; background: #16a34a; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600;">Retour au tableau de bord</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -80,6 +80,7 @@ urlpatterns = [
     path("api/engagement/<int:engagement_id>/demander-cloture/", core_views.api_demander_cloture, name="api_demander_cloture"),
     path("api/engagement/<int:eng_id>/masquer/", core_views.masquer_engagement, name="masquer_engagement"),
     path("api/engagement/<int:eng_id>/masquer-prof/", core_views.masquer_engagement_prof, name="masquer_engagement_prof"),
+    path("finalisation-engagement/<int:engagement_id>/", core_views.finalisation_engagement, name="finalisation_engagement"),
     
     path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
     path("api/professeur/toggle-essai/", core_views.api_toggle_essai, name="api_toggle_essai"),

@@ -1362,6 +1362,7 @@ def professeur_detail(request, teacher_slug):
     # Auth context
     is_parent = False
     is_premium = False
+    can_schedule_trial = True
     parent_children = []
     parent_children_json = "[]"
     existing_engagement = None
@@ -1372,6 +1373,15 @@ def professeur_detail(request, teacher_slug):
         # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
         if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
             is_premium = True
+        elif hasattr(request.user, 'profile'):
+            from django.utils import timezone
+            import datetime
+            limit_date = timezone.now() - datetime.timedelta(days=90)
+            essais_recent = request.user.engagements_client.filter(
+                date_creation__gte=limit_date
+            ).count()
+            if essais_recent >= 1:
+                can_schedule_trial = False
 
         # Vérifier conversation existante
         from .models import Conversation
@@ -1388,14 +1398,14 @@ def professeur_detail(request, teacher_slug):
         # Vérifier engagement existant (priorité à l'attente pour modification)
         existing_engagement_obj = teacher.engagements.filter(
             parent_apprenant=request.user,
-            statut_general=StatutGeneral.EN_ATTENTE
+            statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]
         ).first()
         
         if not existing_engagement_obj:
             # Sinon vérifier s'il y a un engagement actif
             existing_engagement_obj = teacher.engagements.filter(
                 parent_apprenant=request.user,
-                statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+                statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
             ).first()
 
         if existing_engagement_obj:
@@ -1434,6 +1444,7 @@ def professeur_detail(request, teacher_slug):
         'engagements_actifs': engagements_actifs,
         'is_parent': is_parent,
         'is_premium': is_premium,
+        'can_schedule_trial': can_schedule_trial,
         'readable_modes': readable_modes,
         'readable_classes': readable_classes,
         'parent_children': parent_children,
@@ -1510,6 +1521,7 @@ def api_teacher_profile(request, teacher_slug):
         # Contexte d'authentification sécurisé
         is_parent = False
         is_premium = False
+        can_schedule_trial = True
         parent_children = []
         existing_engagement = None
         existing_conversation_id = None
@@ -1525,6 +1537,15 @@ def api_teacher_profile(request, teacher_slug):
                 # is_premium est vrai si l'utilisateur a un abonnement actif ACCESS_PREMIUM
                 if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
                     is_premium = True
+                elif hasattr(request.user, 'profile'):
+                    from django.utils import timezone
+                    import datetime
+                    limit_date = timezone.now() - datetime.timedelta(days=90)
+                    essais_recent = request.user.engagements_client.filter(
+                        date_creation__gte=limit_date
+                    ).count()
+                    if essais_recent >= 1:
+                        can_schedule_trial = False
 
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
                     is_parent = True
@@ -1534,14 +1555,14 @@ def api_teacher_profile(request, teacher_slug):
                 # Vérifier engagement existant (priorité à l'attente pour modification)
                 existing_engagement_obj = teacher.engagements.filter(
                     parent_apprenant=request.user,
-                    statut_general=StatutGeneral.EN_ATTENTE
+                    statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]
                 ).first()
                 
                 if not existing_engagement_obj:
                     # Sinon vérifier s'il y a un engagement actif
                     existing_engagement_obj = teacher.engagements.filter(
                         parent_apprenant=request.user,
-                        statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
+                        statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
                     ).first()
 
                 existing_engagement_dict = None
@@ -1581,6 +1602,7 @@ def api_teacher_profile(request, teacher_slug):
             'engagements_actifs': engagements_actifs,
             'is_parent': is_parent,
             'is_premium': is_premium,
+            'can_schedule_trial': can_schedule_trial,
             'existing_conversation_id': existing_conversation_id,
             'readable_modes': readable_modes,
             'readable_classes': readable_classes,
@@ -1637,7 +1659,7 @@ def api_engagement(request):
         existing = Engagement.objects.filter(
             professeur=teacher,
             parent_apprenant=request.user
-        ).exclude(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE, StatutGeneral.FINALISE]).first()
+        ).exclude(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).first()
 
         engagement = None
         if existing:
@@ -1647,12 +1669,12 @@ def api_engagement(request):
                 if dt_fin and dt_fin > timezone.now():
                     return JsonResponse({'error': "Vous avez un cours d'essai programmé avec ce professeur. Vous pourrez basculer sur un engagement standard une fois la séance complétée (date et heure passées) ou en annulant l'essai en cours."}, status=400)
                 
-                if existing.statut_general == StatutGeneral.EN_ATTENTE:
+                if existing.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
                     engagement = existing
                 else:
                     # Allow creating a new standard engagement without raising error
                     pass
-            elif existing.statut_general == StatutGeneral.EN_ATTENTE:
+            elif existing.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
                 engagement = existing
             else:
                 return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
@@ -1662,7 +1684,7 @@ def api_engagement(request):
             engagement = Engagement(
                 professeur=teacher,
                 parent_apprenant=request.user,
-                statut_general=StatutGeneral.EN_ATTENTE
+                statut_general=StatutGeneral.ESSAI_PROGRAMME
             )
             is_new_engagement = True
             
@@ -3384,3 +3406,17 @@ def api_demander_cloture(request, engagement_id):
         return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Clôture confirmée. L\'engagement est maintenant terminé.'})
     else:
         return JsonResponse({'error': 'Vous avez déjà initié cette demande.'}, status=400)
+
+@login_required
+def finalisation_engagement(request, engagement_id):
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    
+    # V�rification des droits d'acc�s
+    if engagement.parent_apprenant != request.user:
+        return redirect('home')
+
+    context = {
+        'engagement': engagement,
+        'professeur': engagement.professeur
+    }
+    return render(request, 'core/finalisation_engagement.html', context)

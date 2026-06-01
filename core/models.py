@@ -807,7 +807,7 @@ class Engagement(models.Model):
     statut_general = models.CharField(
         max_length=20,
         choices=StatutGeneral.CHOICES,
-        default=StatutGeneral.EN_ATTENTE,
+        default=StatutGeneral.ESSAI_PROGRAMME,
     )
 
     # Négociation / Budget
@@ -884,17 +884,16 @@ class Engagement(models.Model):
     def essai_status_label(self):
         from .choices import EngagementType, StatutGeneral
         from django.utils import timezone
-        if self.type_engagement != EngagementType.ESSAI:
-            return ""
+        # Retrait de la restriction type_engagement pour s'adapter au nouveau flux
             
         if self.statut_general in [StatutGeneral.REFUSE, StatutGeneral.ANNULE]:
             return self.get_statut_general_display()
             
-        if self.statut_general == StatutGeneral.EN_ATTENTE:
+        if self.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
             return "Programmé"
             
-        if self.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE, StatutGeneral.TERMINE]:
-            if self.date_heure_fin_essai and self.date_heure_fin_essai < timezone.now():
+        if self.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE, StatutGeneral.TERMINE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE, StatutGeneral.ENGAGEMENT_FINALISE]:
+            if (self.date_heure_fin_essai and self.date_heure_fin_essai < timezone.now()) or self.statut_general in [StatutGeneral.ESSAI_REALISE, StatutGeneral.ENGAGEMENT_FINALISE]:
                 return "Complétée"
             return "Confirmé"
             

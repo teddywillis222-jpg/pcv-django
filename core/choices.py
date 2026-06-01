@@ -250,18 +250,37 @@ class StatutEssai:
 
 
 class StatutGeneral:
+    # --- Anciens statuts (Maintenus pour rétrocompatibilité) ---
     EN_ATTENTE = "EN_ATTENTE"
     CONFIRME = "CONFIRME"
     EN_COURS = "EN_COURS"
     FINALISE = "FINALISE"
+    
+    # --- Nouveaux statuts ---
+    ESSAI_PROGRAMME = "ESSAI_PROGRAMME"
+    ESSAI_CONFIRME = "ESSAI_CONFIRME"
+    ESSAI_REALISE = "ESSAI_REALISE"
+    ENGAGEMENT_FINALISE = "ENGAGEMENT_FINALISE"
+    
+    # --- Statuts Communs ---
     REFUSE = "REFUSE"
     ANNULE = "ANNULE"
     TERMINE = "TERMINE"
+    
     CHOICES = [
-        (EN_ATTENTE, "En attente"),
-        (CONFIRME, "En cours"),
-        (EN_COURS, "En cours"),
-        (FINALISE, "Finalisé"),
+        # Anciens
+        (EN_ATTENTE, "En attente (Ancien)"),
+        (CONFIRME, "En cours (Ancien)"),
+        (EN_COURS, "En cours (Ancien)"),
+        (FINALISE, "Finalisé (Ancien)"),
+        
+        # Nouveaux
+        (ESSAI_PROGRAMME, "Essai programmé"),
+        (ESSAI_CONFIRME, "Essai confirmé"),
+        (ESSAI_REALISE, "Essai réalisé"),
+        (ENGAGEMENT_FINALISE, "Engagement finalisé"),
+        
+        # Communs
         (REFUSE, "Refusé"),
         (ANNULE, "Annulé"),
         (TERMINE, "Terminé"),
