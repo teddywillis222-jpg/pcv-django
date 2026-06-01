@@ -115,6 +115,9 @@ urlpatterns = [
     path("api/mark-welcome-seen/", core_views.api_mark_welcome_seen, name="api_mark_welcome_seen"),
     path("api/announcement/<int:pk>/dismiss/", core_views.dismiss_announcement, name="dismiss_announcement"),
     
+    # Charte Essai Gratuit
+    path("charte-essai-gratuit/", core_views.charte_essai_gratuit, name="charte_essai"),
+    
     # Interface Admin Custom
     path("admin-outils/creer-annonce/", core_views.create_announcement, name="create_announcement"),
 ]

@@ -29,11 +29,11 @@ from django.template.loader import render_to_string
 def annotate_teachers_with_ratings(queryset):
     """
     Annote un queryset de TeacherProfile avec :
-    - Les moyennes d'avis réels ou d'équipe (moyenne_avis, nombre_avis, has_real_reviews)
-    - Le badge "Suivi Rigoureux" (suivi_rigoureux) selon la règle d'assiduité par récence :
-        * Condition 1 (Seuil) : >= 3 bilans de séances enregistrés au total
-        * Condition 2 (Récence) : SI engagement actif (FINALISE), le dernier bilan < 14 jours
-                                   SI aucun engagement actif, la règle de récence est ignorée
+    - Les moyennes d'avis rÃ©els ou d'Ã©quipe (moyenne_avis, nombre_avis, has_real_reviews)
+    - Le badge "Suivi Rigoureux" (suivi_rigoureux) selon la rÃ¨gle d'assiduitÃ© par rÃ©cence :
+        * Condition 1 (Seuil) : >= 3 bilans de sÃ©ances enregistrÃ©s au total
+        * Condition 2 (RÃ©cence) : SI engagement actif (FINALISE), le dernier bilan < 14 jours
+                                   SI aucun engagement actif, la rÃ¨gle de rÃ©cence est ignorÃ©e
     """
     from django.db.models.functions import Coalesce, Cast, Now
     from django.db.models import (
@@ -42,7 +42,7 @@ def annotate_teachers_with_ratings(queryset):
     )
     from django.utils import timezone
 
-    # Seuil : nombre total de bilans de séances (Seance) enregistrés par ce prof
+    # Seuil : nombre total de bilans de sÃ©ances (Seance) enregistrÃ©s par ce prof
     # Un "bilan" = une Seance dont le champ objectifs est non vide
     nb_bilans_total = Count(
         'engagements__seances',
@@ -91,20 +91,20 @@ def annotate_teachers_with_ratings(queryset):
         # True si :
         #   - Seuil atteint : >= SUIVI_RIGOUREUX_SEUIL_BILANS bilans au total
         #   ET
-        #   - Soit aucun engagement actif (on ignore la récence)
+        #   - Soit aucun engagement actif (on ignore la rÃ©cence)
         #   - Soit le dernier bilan date de moins de SUIVI_RIGOUREUX_JOURS_RECENCE jours
         suivi_rigoureux=Case(
-            # Seuil non atteint → False (nouveaux profs ou profs qui n'ont jamais rempli)
+            # Seuil non atteint â†’ False (nouveaux profs ou profs qui n'ont jamais rempli)
             When(_nb_bilans_total__lt=settings.SUIVI_RIGOUREUX_SEUIL_BILANS, then=Value(False)),
-            # Seuil atteint + aucun engagement actif → True (bon passif, pas pénalisé)
+            # Seuil atteint + aucun engagement actif â†’ True (bon passif, pas pÃ©nalisÃ©)
             When(_nb_engagements_actifs=0, then=Value(True)),
-            # Seuil atteint + engagement actif + dernier bilan récent → True
+            # Seuil atteint + engagement actif + dernier bilan rÃ©cent â†’ True
             When(
                 _nb_engagements_actifs__gt=0,
                 _date_dernier_bilan__gte=date_limite_rigueur,
                 then=Value(True)
             ),
-            # Seuil atteint + engagement actif + dernier bilan trop ancien → False
+            # Seuil atteint + engagement actif + dernier bilan trop ancien â†’ False
             default=Value(False),
             output_field=BooleanField()
         )
@@ -115,7 +115,7 @@ def home(request):
     from .choices import ValidationStatus
     from django.db.models import F
     
-    # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
+    # On rÃ©cupÃ¨re 24 professeurs validÃ©s alÃ©atoirement (ou les plus rÃ©cents)
     top_professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
     ).order_by('-profil_complet', '?')[:24]
@@ -125,7 +125,7 @@ def home(request):
     return render(request, "core/home.html", {"top_professeurs": top_professeurs})
 
 def faq(request):
-    """Page FAQ - Questions fréquentes"""
+    """Page FAQ - Questions frÃ©quentes"""
     return render(request, "core/faq.html")
 
 def support(request):
@@ -133,11 +133,11 @@ def support(request):
     return render(request, "core/support.html")
 
 def cgu(request):
-    """Page des Conditions Générales d'Utilisation"""
+    """Page des Conditions GÃ©nÃ©rales d'Utilisation"""
     return render(request, "core/cgu.html")
 
 def politique_confidentialite(request):
-    """Page de la Politique de Confidentialité"""
+    """Page de la Politique de ConfidentialitÃ©"""
     return render(request, "core/politique_confidentialite.html")
 
 @login_required
@@ -146,13 +146,13 @@ def messagerie(request):
     from .choices import StatutGeneral
     from .models import Conversation, Profile as Role, Profile
     
-    # Sécurité Rôle
+    # SÃ©curitÃ© RÃ´le
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
         return redirect("finalisation_compte")
 
-    # Base Queryset optimisé
+    # Base Queryset optimisÃ©
     from django.db.models import Q, Count, Max
     
     conversations = Conversation.objects.filter(
@@ -214,11 +214,11 @@ def messagerie(request):
 
     conversations = conversations.order_by('-dernier_message_date', '-date_creation')
 
-    # 3. Traitement des données pour le template (Contextualisation)
+    # 3. Traitement des donnÃ©es pour le template (Contextualisation)
     formatted_conversations = []
     for conv in conversations:
         eng = conv.engagement_actif
-        # Déterminer le nom, la photo et l'initiale à afficher
+        # DÃ©terminer le nom, la photo et l'initiale Ã  afficher
         display_initial = "?"
         display_photo = None
         if user_profile.role == Role.ROLE_PARENT or user_profile.role == Role.ROLE_APPRENANT:
@@ -242,7 +242,7 @@ def messagerie(request):
                         enfants_liste = e.enfants_concernes.all()
                         break
             if not enfants_liste and hasattr(conv.parent, 'parent'):
-                # Prendre le premier enfant du parent par défaut
+                # Prendre le premier enfant du parent par dÃ©faut
                 enfants_liste = conv.parent.parent.enfants.all()
                 
             if enfants_liste:
@@ -252,7 +252,7 @@ def messagerie(request):
             else:
                 if conv.parent and hasattr(conv.parent, 'profile'):
                     if conv.parent.profile.role == Role.ROLE_APPRENANT and hasattr(conv.parent, 'apprenant'):
-                        # Le modèle Apprenant n'a pas de prenom, on utilise nom + first_name du User
+                        # Le modÃ¨le Apprenant n'a pas de prenom, on utilise nom + first_name du User
                         apprenant_nom = conv.parent.apprenant.nom or conv.parent.first_name or conv.parent.username
                         display_name = f"{apprenant_nom}"
                     elif hasattr(conv.parent, 'parent'):
@@ -262,7 +262,7 @@ def messagerie(request):
                 else:
                     display_name = "Utilisateur PCV"
             
-            # Initiale basée sur le prénom de l'utilisateur parent
+            # Initiale basÃ©e sur le prÃ©nom de l'utilisateur parent
             if conv.parent:
                 display_initial = conv.parent.first_name[0] if conv.parent.first_name else conv.parent.username[0]
             
@@ -284,7 +284,7 @@ def messagerie(request):
         
         if eng:
             from .choices import TypeAbonnement, EngagementType
-            # Déterminer si le paiement est exigible :
+            # DÃ©terminer si le paiement est exigible :
             # NON exigible si l'utilisateur est Premium OU si c'est un essai
             is_trial = (eng.type_engagement == EngagementType.ESSAI)
             is_user_premium = (
@@ -303,7 +303,7 @@ def messagerie(request):
                 statut_label = "Actif"
                 statut_class = "statut-active"
             elif eng.statut_general == StatutGeneral.TERMINE:
-                statut_label = "Terminé"
+                statut_label = "TerminÃ©"
                 statut_class = "statut-finished"
             elif needs_payment:
                 statut_label = "Paiement requis"
@@ -322,10 +322,10 @@ def messagerie(request):
                 if not is_user_premium and not is_trial:
                     is_blocked = True
             else:
-                # Le professeur n'est jamais bloqué
+                # Le professeur n'est jamais bloquÃ©
                 is_blocked = False
 
-        # Non-lus (utilise le compteur annoté pour performance)
+        # Non-lus (utilise le compteur annotÃ© pour performance)
         has_unread = conv.unread_count > 0
 
         formatted_conversations.append({
@@ -361,7 +361,7 @@ def recherche(request):
         statut_de_validation=ValidationStatus.VALIDE
     )
     
-    # Récupération des paramètres de recherche
+    # RÃ©cupÃ©ration des paramÃ¨tres de recherche
     matiere = request.GET.get('matiere', '').strip()
     localisation = request.GET.get('localisation', '').strip()
     classe = request.GET.get('classe', '').strip()
@@ -391,15 +391,15 @@ def recherche(request):
         elif prix == f"{thresholds[2]}+":
             professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
 
-    # 3. Annotation des ratings + badge Suivi Rigoureux via le helper centralisé
+    # 3. Annotation des ratings + badge Suivi Rigoureux via le helper centralisÃ©
     professeurs = annotate_teachers_with_ratings(professeurs)
 
-    # 4. Tri des résultats
+    # 4. Tri des rÃ©sultats
     sort_by = request.GET.get('sort', '').strip()
     if sort_by == 'recent_active':
         professeurs = professeurs.order_by('-user__last_login', '-id')
     else:
-        # Ordre par défaut : 1) Certifiés en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus récent
+        # Ordre par dÃ©faut : 1) CertifiÃ©s en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus rÃ©cent
         professeurs = professeurs.order_by(
             '-est_certifie',
             '-suivi_rigoureux',
@@ -417,18 +417,18 @@ def recherche(request):
         parent_children_json = json.dumps(parent_children)
 
     # --- SEO Dynamique ---
-    seo_title = "Rechercher un professeur particulier au Bénin | ProfChezVous"
-    seo_description = "Trouvez le professeur idéal pour vos cours à domicile au Bénin. Sélectionnez votre matière, votre quartier et votre niveau."
+    seo_title = "Rechercher un professeur particulier au BÃ©nin | ProfChezVous"
+    seo_description = "Trouvez le professeur idÃ©al pour vos cours Ã  domicile au BÃ©nin. SÃ©lectionnez votre matiÃ¨re, votre quartier et votre niveau."
 
     if matiere and localisation:
-        seo_title = f"Meilleurs Professeurs de {matiere} à {localisation} | ProfChezVous"
-        seo_description = f"Découvrez nos professeurs de {matiere} certifiés disponibles à {localisation}. Soutien scolaire de qualité à domicile."
+        seo_title = f"Meilleurs Professeurs de {matiere} Ã  {localisation} | ProfChezVous"
+        seo_description = f"DÃ©couvrez nos professeurs de {matiere} certifiÃ©s disponibles Ã  {localisation}. Soutien scolaire de qualitÃ© Ã  domicile."
     elif matiere:
-        seo_title = f"Cours particuliers de {matiere} au Bénin | ProfChezVous"
-        seo_description = f"Trouvez un professeur de {matiere} compétent pour des cours à domicile partout au Bénin. Tous niveaux."
+        seo_title = f"Cours particuliers de {matiere} au BÃ©nin | ProfChezVous"
+        seo_description = f"Trouvez un professeur de {matiere} compÃ©tent pour des cours Ã  domicile partout au BÃ©nin. Tous niveaux."
     elif localisation:
-        seo_title = f"Professeurs particuliers à {localisation} | ProfChezVous"
-        seo_description = f"Besoin d'un prof à {localisation} ? Découvrez notre sélection d'enseignants vérifiés pour vos enfants."
+        seo_title = f"Professeurs particuliers Ã  {localisation} | ProfChezVous"
+        seo_description = f"Besoin d'un prof Ã  {localisation} ? DÃ©couvrez notre sÃ©lection d'enseignants vÃ©rifiÃ©s pour vos enfants."
 
     context = {
         'professeurs': professeurs,
@@ -458,7 +458,7 @@ def signup(request):
             user = form.save()
             role = form.cleaned_data["role"]
             Profile.objects.create(user=user, role=role)
-            # Création automatique d'abonnement (Standard, 2000f)
+            # CrÃ©ation automatique d'abonnement (Standard, 2000f)
             Abonnement.objects.create(
                 user=user,
                 type_abonnement=TypeAbonnement.STANDARD,
@@ -466,7 +466,7 @@ def signup(request):
                 date_debut=date.today(),
             )
             from django.contrib import messages
-            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
+            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a Ã©tÃ© crÃ©Ã© avec succÃ¨s.")
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect("post_signup_redirect")
     else:
@@ -494,7 +494,7 @@ def login_view(request):
 
 
 def finalisation_compte(request):
-    """Page pour finaliser le compte (rôle + nom) après Google Login."""
+    """Page pour finaliser le compte (rÃ´le + nom) aprÃ¨s Google Login."""
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -537,8 +537,8 @@ def finalisation_compte(request):
 
 def post_signup_redirect(request):
     """
-    Redirection intelligente après connexion ou inscription.
-    Vérifie l'existence du profil métier (Prof, Parent, Apprenant) pour orienter l'utilisateur.
+    Redirection intelligente aprÃ¨s connexion ou inscription.
+    VÃ©rifie l'existence du profil mÃ©tier (Prof, Parent, Apprenant) pour orienter l'utilisateur.
     """
     if not request.user.is_authenticated:
         return redirect("home")
@@ -547,16 +547,16 @@ def post_signup_redirect(request):
     if request.user.is_staff or request.user.is_superuser:
         return redirect("/admin/")
 
-    # 2. Récupération du profil de base
+    # 2. RÃ©cupÃ©ration du profil de base
     try:
         profile = request.user.profile
     except Profile.DoesNotExist:
-        # Cas rare si le signal n'a pas fonctionné
+        # Cas rare si le signal n'a pas fonctionnÃ©
         return redirect("home")
 
-    # 3. Logique de redirection directe par rôle
+    # 3. Logique de redirection directe par rÃ´le
     
-    # --- RÔLE : PROFESSEUR ---
+    # --- RÃ”LE : PROFESSEUR ---
     if profile.role == Profile.ROLE_PROF:
         teacher = getattr(request.user, "teacher_profile", None)
         if teacher:
@@ -566,24 +566,24 @@ def post_signup_redirect(request):
             return redirect("prof_attente_dashboard")
         return redirect("prof_intro")
 
-    # --- RÔLE : PARENT ---
+    # --- RÃ”LE : PARENT ---
     elif profile.role == Profile.ROLE_PARENT:
         parent = getattr(request.user, "parent", None)
         # Si le parent existe et a au moins un enfant, dashboard direct
         if parent and parent.enfants.exists():
             return redirect("parent_dashboard")
-        # Sinon, création de profil (Parent + Premier enfant)
+        # Sinon, crÃ©ation de profil (Parent + Premier enfant)
         return redirect("parent_create_profile")
 
-    # --- RÔLE : APPRENANT (Élève autonome) ---
+    # --- RÃ”LE : APPRENANT (Ã‰lÃ¨ve autonome) ---
     elif profile.role == Profile.ROLE_APPRENANT:
         apprenant = getattr(request.user, "apprenant", None)
-        # Si le profil métier existe, dashboard direct
+        # Si le profil mÃ©tier existe, dashboard direct
         if apprenant:
             return redirect("apprenant_dashboard")
         return redirect("apprenant_create_profile")
 
-    # Par défaut
+    # Par dÃ©faut
     return redirect("home")
 
 
@@ -664,7 +664,7 @@ def prof_attente_dashboard(request):
 
     from .choices import ValidationStatus
     
-    # On ne redirige plus automatiquement pour permettre d'afficher le message de succès sur cette page
+    # On ne redirige plus automatiquement pour permettre d'afficher le message de succÃ¨s sur cette page
     # if teacher_instance.statut_de_validation == ValidationStatus.VALIDE:
     #     return redirect("prof_dashboard")
 
@@ -676,13 +676,13 @@ def prof_attente_dashboard(request):
         tarif = request.POST.get("tarif_horaire")
         if tarif: teacher_instance.tarif_horaire = tarif
         
-        # Sauvegarde des disponibilités (Grille)
+        # Sauvegarde des disponibilitÃ©s (Grille)
         teacher_instance.grille_disponibilites = request.POST.getlist("disponibilites")
         
         teacher_instance.save()
         return redirect("prof_attente_dashboard")
 
-    # Calcul pourcentage complétion
+    # Calcul pourcentage complÃ©tion
     completion = teacher_instance.completion_percentage
     jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
     
@@ -695,7 +695,7 @@ def prof_attente_dashboard(request):
 
 @login_required
 def prof_edit_profile(request):
-    """Page d'édition du profil pour le professeur (Workflow complet)"""
+    """Page d'Ã©dition du profil pour le professeur (Workflow complet)"""
     try:
         profile = request.user.profile
         teacher = request.user.teacher_profile
@@ -749,13 +749,13 @@ def prof_dashboard(request):
         'enfants_concernes', 'conversation'
     ).order_by("-date_creation")
     
-    # "En cours" (Demandes en attente ou confirmées mais pas encore finalisées)
+    # "En cours" (Demandes en attente ou confirmÃ©es mais pas encore finalisÃ©es)
     # On regroupe EN_ATTENTE, CONFIRME (qui est "En cours") et EN_COURS
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
     ).exclude(type_engagement=EngagementType.ESSAI)
     
-    # "Finalisés/actifs" (Uniquement les engagements ayant le statut FINALISE)
+    # "FinalisÃ©s/actifs" (Uniquement les engagements ayant le statut FINALISE)
     engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
     # "Essai"
@@ -764,10 +764,10 @@ def prof_dashboard(request):
     # "Historique" (Tous les statuts confondus)
     engs_tous = engagements.all()
 
-    # 2. Statistiques dynamiques (Plus fiables que les compteurs stockés)
+    # 2. Statistiques dynamiques (Plus fiables que les compteurs stockÃ©s)
     # Contrats actifs = Uniquement FINALISE
     nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI).count()
-    # Cours terminés = TERMINE
+    # Cours terminÃ©s = TERMINE
     nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).exclude(type_engagement=EngagementType.ESSAI).count()
     
     # 3. Centre de Notifications (Messages non lus)
@@ -866,7 +866,7 @@ def parent_dashboard(request):
             enfant = enfant_form.save(commit=False)
             enfant.parent = parent
             enfant.save()
-            # redirection vers le dashboard avec le nouvel enfant sélectionné
+            # redirection vers le dashboard avec le nouvel enfant sÃ©lectionnÃ©
             from django.urls import reverse
             return redirect(f"{reverse('parent_dashboard')}?enfant_id={enfant.id}")
 
@@ -874,17 +874,17 @@ def parent_dashboard(request):
     if not enfants.exists():
         return redirect("parent_create_profile")
 
-    # 1. Sélection de l'enfant actif (par URL, sinon le 1er par défaut)
+    # 1. SÃ©lection de l'enfant actif (par URL, sinon le 1er par dÃ©faut)
     enfant_id = request.GET.get("enfant_id")
     active_enfant = enfants.filter(id=enfant_id).first() if enfant_id else enfants.first()
 
-    # 2. Recommandations dynamiques basées sur l'enfant actif et le parent
+    # 2. Recommandations dynamiques basÃ©es sur l'enfant actif et le parent
     from django.db.models import Q, Case, When, Value, IntegerField
     recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
     
     score_annotation = Value(0, output_field=IntegerField())
     
-    # Critère 1: Matières faibles (3 points)
+    # CritÃ¨re 1: MatiÃ¨res faibles (3 points)
     if active_enfant and active_enfant.matieres:
         q_matieres = Q()
         for mat in active_enfant.matieres:
@@ -895,7 +895,7 @@ def parent_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 2: Classe en commun (2 points)
+    # CritÃ¨re 2: Classe en commun (2 points)
     if active_enfant and active_enfant.classe:
         score_annotation = score_annotation + Case(
             When(classes_enseignees__icontains=active_enfant.classe, then=Value(2)),
@@ -903,7 +903,7 @@ def parent_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 3: Ville / Quartier du parent (1 point)
+    # CritÃ¨re 3: Ville / Quartier du parent (1 point)
     if parent.quartier_ville:
         score_annotation = score_annotation + Case(
             When(ville_quartier=parent.quartier_ville, then=Value(1)),
@@ -911,8 +911,8 @@ def parent_dashboard(request):
             output_field=IntegerField()
         )
 
-    # Appliquer l'annotation et trier par score décroissant
-    # puis badge suivi rigoureux comme critère secondaire
+    # Appliquer l'annotation et trier par score dÃ©croissant
+    # puis badge suivi rigoureux comme critÃ¨re secondaire
     recommandations_annotees = recommandations.annotate(
         match_score=score_annotation
     ).filter(match_score__gt=0).order_by("-match_score", "-profil_complet", "-est_certifie", "?")[:8]
@@ -921,7 +921,7 @@ def parent_dashboard(request):
     recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
     recommandations_list = list(recommandations_annotees)
     
-    # Compléter avec d'autres profs si insuffisant
+    # ComplÃ©ter avec d'autres profs si insuffisant
     if len(recommandations_list) < 8:
         fallback = recommandations.exclude(id__in=[r.id for r in recommandations_list]).order_by("?")[:8 - len(recommandations_list)]
         # Appliquer les ratings aussi sur le fallback
@@ -930,45 +930,45 @@ def parent_dashboard(request):
         
     recommandations = recommandations_list
 
-    # 3. Engagements : On prend TOUS les engagements du parent pour être sûr de ne rien rater
-    # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
+    # 3. Engagements : On prend TOUS les engagements du parent pour Ãªtre sÃ»r de ne rien rater
+    # (MÃªme si certains n'ont pas Ã©tÃ© correctement liÃ©s Ã  un enfant lors de la crÃ©ation)
     engagements_base = request.user.engagements_client.filter(masque_par_parent=False).select_related(
         'professeur', 'professeur__user'
     ).prefetch_related(
         'enfants_concernes', 'conversation', 'professeur__parents_favoris'
     )
     
-    # On filtre ceux de l'enfant actif OU ceux qui n'ont AUCUN enfant lié (orphelins)
+    # On filtre ceux de l'enfant actif OU ceux qui n'ont AUCUN enfant liÃ© (orphelins)
     from django.db.models import Q
     engagements = engagements_base.filter(
         Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
     ).distinct().order_by("-date_creation")
 
-    # Onglet "En cours" : En attente ou Confirmé/En cours
+    # Onglet "En cours" : En attente ou ConfirmÃ©/En cours
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
     ).exclude(type_engagement=EngagementType.ESSAI)
     
-    # Onglet "Actifs" : Finalisé
+    # Onglet "Actifs" : FinalisÃ©
     engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
-    # Onglet "Terminé" (Historique rapide) : Terminé, Annulé, Refusé
+    # Onglet "TerminÃ©" (Historique rapide) : TerminÃ©, AnnulÃ©, RefusÃ©
     engs_termines = engagements.filter(
         statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
     ).exclude(type_engagement=EngagementType.ESSAI)
     
-    # Historique complet pour le modal/liste (tous les statuts, mais non masqués)
+    # Historique complet pour le modal/liste (tous les statuts, mais non masquÃ©s)
     engagements_tous = engagements.all()
 
     # Onglet "Essais"
     engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
-    # 4. Données additionnelles
+    # 4. DonnÃ©es additionnelles
     favoris = request.user.professeurs_favoris.all()
     abonnement = getattr(parent, "abonnement", None)
     enfant_form = EnfantForm()
 
-    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
+    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiÃ©s, badge, note
     favoris = annotate_teachers_with_ratings(favoris).order_by(
         '-est_certifie', '-suivi_rigoureux', '-profil_complet', '-moyenne_avis'
     )
@@ -1059,13 +1059,13 @@ def apprenant_dashboard(request):
 
     from .choices import ValidationStatus, StatutGeneral, EngagementType, ObjectifMotivation, CreneauDisponibilite
 
-    # 1. Recommandations dynamiques basées sur la classe, matières et localisation de l'apprenant
+    # 1. Recommandations dynamiques basÃ©es sur la classe, matiÃ¨res et localisation de l'apprenant
     from django.db.models import Q, Case, When, Value, IntegerField
     base_recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
     
     score_annotation = Value(0, output_field=IntegerField())
     
-    # Critère 1: Matières recherchées (3 points)
+    # CritÃ¨re 1: MatiÃ¨res recherchÃ©es (3 points)
     if apprenant.matieres_recherchees:
         q_matieres = Q()
         for mat in apprenant.matieres_recherchees:
@@ -1076,7 +1076,7 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 2: Classe en commun (2 points)
+    # CritÃ¨re 2: Classe en commun (2 points)
     if apprenant.classe:
         score_annotation = score_annotation + Case(
             When(classes_enseignees__icontains=apprenant.classe, then=Value(2)),
@@ -1084,7 +1084,7 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 3: Ville / Quartier (1 point)
+    # CritÃ¨re 3: Ville / Quartier (1 point)
     if apprenant.quartier_ville:
         score_annotation = score_annotation + Case(
             When(ville_quartier=apprenant.quartier_ville, then=Value(1)),
@@ -1092,7 +1092,7 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
     
-    # Appliquer le score et limiter aux 8 meilleurs résultats
+    # Appliquer le score et limiter aux 8 meilleurs rÃ©sultats
     recommandations_annotees = base_recommandations.annotate(
         reco_score=score_annotation
     ).filter(reco_score__gt=0).order_by("-reco_score", "-profil_complet", "-est_certifie", "?")[:8]
@@ -1101,7 +1101,7 @@ def apprenant_dashboard(request):
     recommandations_annotees = annotate_teachers_with_ratings(recommandations_annotees)
     recommandations_list = list(recommandations_annotees)
     
-    # Compléter avec d'autres profs si insuffisant
+    # ComplÃ©ter avec d'autres profs si insuffisant
     if len(recommandations_list) < 8:
         fallback = base_recommandations.exclude(
             id__in=[r.id for r in recommandations_list]
@@ -1112,18 +1112,18 @@ def apprenant_dashboard(request):
         
     recommandations = recommandations_list
 
-    # 2. Engagements filtrés pour l'apprenant (parent_apprenant=request.user)
+    # 2. Engagements filtrÃ©s pour l'apprenant (parent_apprenant=request.user)
     engagements = request.user.engagements_client.all().order_by("-date_creation")
 
-    # Onglet "En cours" : En attente ou Confirmé/En cours
+    # Onglet "En cours" : En attente ou ConfirmÃ©/En cours
     engs_en_cours = engagements.filter(
         statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
     ).exclude(type_engagement=EngagementType.ESSAI)
     
-    # Onglet "Actifs" : Finalisé
+    # Onglet "Actifs" : FinalisÃ©
     engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
     
-    # Onglet "Terminé" (Historique rapide) : Terminé, Annulé, Refusé
+    # Onglet "TerminÃ©" (Historique rapide) : TerminÃ©, AnnulÃ©, RefusÃ©
     engs_termines = engagements.filter(
         statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
     ).exclude(type_engagement=EngagementType.ESSAI)
@@ -1138,7 +1138,7 @@ def apprenant_dashboard(request):
     abonnement = request.user.abonnements.first()
     favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
 
-    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
+    # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiÃ©s, badge, note
     favoris = annotate_teachers_with_ratings(favoris).order_by(
         '-est_certifie', '-suivi_rigoureux', '-profil_complet', '-moyenne_avis'
     )
@@ -1172,7 +1172,7 @@ def gestion_plan(request):
     from datetime import datetime
     from .models import Profile
     
-    # Sécurité Rôle
+    # SÃ©curitÃ© RÃ´le
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
@@ -1181,7 +1181,7 @@ def gestion_plan(request):
     # Plan actuel
     abonnement = request.user.abonnements.order_by('-id').first()
     if not abonnement:
-        # Créer un abonnement standard par défaut
+        # CrÃ©er un abonnement standard par dÃ©faut
         abonnement = Abonnement.objects.create(
             user=request.user,
             type_abonnement=TypeAbonnement.STANDARD,
@@ -1197,10 +1197,10 @@ def gestion_plan(request):
         date_confirmation__gte=first_day_of_month
     ).count()
     
-    # Historique de paiements (synthétique)
+    # Historique de paiements (synthÃ©tique)
     history = []
     
-    # 1. Engagements payés
+    # 1. Engagements payÃ©s
     engagements_payes = Engagement.objects.filter(
         parent_apprenant=request.user,
         paiement_effectue=True
@@ -1208,7 +1208,7 @@ def gestion_plan(request):
     
     for eng in engagements_payes:
         history.append({
-            'type': 'Déblocage conversation',
+            'type': 'DÃ©blocage conversation',
             'libelle': f"Prof. {eng.professeur.nom}" if eng.professeur else "Professeur PCV",
             'montant': f"{settings.DEFAULT_ENGAGEMENT_PRICE} {settings.DEFAULT_CURRENCY}",
             'date': eng.date_confirmation
@@ -1249,19 +1249,19 @@ def downgrade_to_standard(request):
     from django.utils import timezone
     from .models import Abonnement, TypeAbonnement
     
-    # Créer un abonnement standard à partir d'aujourd'hui
+    # CrÃ©er un abonnement standard Ã  partir d'aujourd'hui
     Abonnement.objects.create(
         user=request.user,
         type_abonnement=TypeAbonnement.STANDARD,
         date_debut=timezone.now().date()
     )
-    # L'historique des engagements payants ou non sera géré par la logique existante 
+    # L'historique des engagements payants ou non sera gÃ©rÃ© par la logique existante 
     # de verrouillage (is_blocked) qui s'appuie sur le plan en cours.
     return redirect('gestion_plan')
 
 
 
-# Vues pour le système de recherche et profils hybride
+# Vues pour le systÃ¨me de recherche et profils hybride
 def track_teacher_view(request, teacher_profile):
     from django.utils import timezone
     from datetime import timedelta
@@ -1281,7 +1281,7 @@ def track_teacher_view(request, teacher_profile):
     except Profile.DoesNotExist:
         pass
         
-    # Ne pas compter si c'est le professeur lui-même
+    # Ne pas compter si c'est le professeur lui-mÃªme
     if request.user.id == teacher_profile.user.id:
         return
         
@@ -1298,10 +1298,10 @@ def track_teacher_view(request, teacher_profile):
             professeur_vise=teacher_profile,
             visiteur_utilisateur=request.user
         )
-        # Recalcul de nb_vues_total basé sur les vues conservées (max 60 jours)
+        # Recalcul de nb_vues_total basÃ© sur les vues conservÃ©es (max 60 jours)
         teacher_profile.nb_vues_total = VueProfil.objects.filter(professeur_vise=teacher_profile).count()
         
-        # Calcul des vues du mois (pour info, depuis le début du mois)
+        # Calcul des vues du mois (pour info, depuis le dÃ©but du mois)
         first_day_of_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         teacher_profile.nb_vues_mois = VueProfil.objects.filter(
             professeur_vise=teacher_profile, 
@@ -1316,7 +1316,7 @@ def professeur_detail(request, teacher_slug):
     
     track_teacher_view(request, teacher)
     
-    # Calcul des stats sécurisé
+    # Calcul des stats sÃ©curisÃ©
     from django.db.models import Avg, Count
     engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
     temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
@@ -1337,7 +1337,7 @@ def professeur_detail(request, teacher_slug):
         teacher.moyenne_avis = teacher.note_initiale_equipe
         teacher.nombre_avis = 1
 
-    # Badge "Suivi Rigoureux" — calculé sur l'instance unique (même règle que l'annotation SQL)
+    # Badge "Suivi Rigoureux" â€” calculÃ© sur l'instance unique (mÃªme rÃ¨gle que l'annotation SQL)
     from django.utils import timezone as tz
     _date_limite = tz.now() - tz.timedelta(days=settings.SUIVI_RIGOUREUX_JOURS_RECENCE)
     _nb_bilans = teacher.engagements.filter(
@@ -1346,13 +1346,13 @@ def professeur_detail(request, teacher_slug):
     _nb_actifs = teacher.engagements.filter(statut_general=StatutGeneral.FINALISE).count()
 
     if _nb_bilans < settings.SUIVI_RIGOUREUX_SEUIL_BILANS:
-        # Seuil non atteint → pas de badge
+        # Seuil non atteint â†’ pas de badge
         teacher.suivi_rigoureux = False
     elif _nb_actifs == 0:
-        # Bon passif, pas d'engagement actif → badge conservé
+        # Bon passif, pas d'engagement actif â†’ badge conservÃ©
         teacher.suivi_rigoureux = True
     else:
-        # Engagement actif : vérifier la récence du dernier bilan
+        # Engagement actif : vÃ©rifier la rÃ©cence du dernier bilan
         from django.db.models import Max as _Max
         _last_bilan = teacher.engagements.filter(
             seances__objectifs__gt=''
@@ -1383,7 +1383,7 @@ def professeur_detail(request, teacher_slug):
             if essais_recent >= 1:
                 can_schedule_trial = False
 
-        # Vérifier conversation existante
+        # VÃ©rifier conversation existante
         from .models import Conversation
         conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
         if conv:
@@ -1395,14 +1395,14 @@ def professeur_detail(request, teacher_slug):
                 parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
                 parent_children_json = json.dumps(parent_children)
                 
-        # Vérifier engagement existant (priorité à l'attente pour modification)
+        # VÃ©rifier engagement existant (prioritÃ© Ã  l'attente pour modification)
         existing_engagement_obj = teacher.engagements.filter(
             parent_apprenant=request.user,
             statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]
         ).first()
         
         if not existing_engagement_obj:
-            # Sinon vérifier s'il y a un engagement actif
+            # Sinon vÃ©rifier s'il y a un engagement actif
             existing_engagement_obj = teacher.engagements.filter(
                 parent_apprenant=request.user,
                 statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
@@ -1431,7 +1431,7 @@ def professeur_detail(request, teacher_slug):
 
     # Conversion des codes en noms lisibles
     mode_map = dict(CourseMode.CHOICES)
-    class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
+    class_map = {'6EME': '6Ã¨me', '5EME': '5Ã¨me', '4EME': '4Ã¨me', '3EME': '3Ã¨me', '2NDE': '2nde', '1ERE': '1Ã¨re', 'TLE': 'Terminale'}
     
     readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
     readable_classes = [class_map.get(c, c) for c in teacher.classes_enseignees]
@@ -1460,12 +1460,12 @@ def professeur_detail(request, teacher_slug):
         statut_de_validation=ValidationStatus.VALIDE
     ).exclude(id=teacher.id)
 
-    # Priorité 1: Même matière (plus flexible avec icontains)
+    # PrioritÃ© 1: MÃªme matiÃ¨re (plus flexible avec icontains)
     same_matiere = related_teachers.filter(matiere_enseignee__icontains=teacher.matiere_enseignee)
     if same_matiere.count() >= 4:
         related_teachers = same_matiere.order_by('?')[:4]
     else:
-        # Priorité 2: Même ville/quartier
+        # PrioritÃ© 2: MÃªme ville/quartier
         same_loc = related_teachers.filter(ville_quartier=teacher.ville_quartier)
         related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
 
@@ -1476,13 +1476,13 @@ def professeur_detail(request, teacher_slug):
 
 @require_http_methods(["GET"])
 def api_teacher_profile(request, teacher_slug):
-    """API pour récupérer les données du professeur (pour le side panel) avec gestion d'erreur robuste"""
+    """API pour rÃ©cupÃ©rer les donnÃ©es du professeur (pour le side panel) avec gestion d'erreur robuste"""
     try:
         teacher = TeacherProfile.objects.get(slug=teacher_slug)
         
         track_teacher_view(request, teacher)
         
-        # Calcul des stats sécurisé
+        # Calcul des stats sÃ©curisÃ©
         from django.db.models import Avg, Count
         
         engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
@@ -1518,7 +1518,7 @@ def api_teacher_profile(request, teacher_slug):
             teacher.moyenne_avis = teacher.note_initiale_equipe
             teacher.nombre_avis = 1
         
-        # Contexte d'authentification sécurisé
+        # Contexte d'authentification sÃ©curisÃ©
         is_parent = False
         is_premium = False
         can_schedule_trial = True
@@ -1527,7 +1527,7 @@ def api_teacher_profile(request, teacher_slug):
         existing_conversation_id = None
         
         if request.user.is_authenticated:
-            # Vérifier conversation existante
+            # VÃ©rifier conversation existante
             from .models import Conversation
             conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
             if conv:
@@ -1552,14 +1552,14 @@ def api_teacher_profile(request, teacher_slug):
                     if hasattr(request.user, 'parent'):
                         parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
                 
-                # Vérifier engagement existant (priorité à l'attente pour modification)
+                # VÃ©rifier engagement existant (prioritÃ© Ã  l'attente pour modification)
                 existing_engagement_obj = teacher.engagements.filter(
                     parent_apprenant=request.user,
                     statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]
                 ).first()
                 
                 if not existing_engagement_obj:
-                    # Sinon vérifier s'il y a un engagement actif
+                    # Sinon vÃ©rifier s'il y a un engagement actif
                     existing_engagement_obj = teacher.engagements.filter(
                         parent_apprenant=request.user,
                         statut_general__in=[StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
@@ -1590,7 +1590,7 @@ def api_teacher_profile(request, teacher_slug):
         
         # Conversion des codes en noms lisibles
         mode_map = dict(CourseMode.CHOICES)
-        class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
+        class_map = {'6EME': '6Ã¨me', '5EME': '5Ã¨me', '4EME': '4Ã¨me', '3EME': '3Ã¨me', '2NDE': '2nde', '1ERE': '1Ã¨re', 'TLE': 'Terminale'}
         readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
         readable_classes = [class_map.get(c, c) for c in teacher.classes_enseignees]
             
@@ -1620,19 +1620,19 @@ def api_teacher_profile(request, teacher_slug):
         })
         
     except TeacherProfile.DoesNotExist:
-        return JsonResponse({'error': 'Professeur non trouvé'}, status=404)
+        return JsonResponse({'error': 'Professeur non trouvÃ©'}, status=404)
     except Exception as e:
         import traceback
-        print(traceback.format_exc()) # Log l'erreur complète sur Render
+        print(traceback.format_exc()) # Log l'erreur complÃ¨te sur Render
         return JsonResponse({'error': f"Erreur interne: {str(e)}"}, status=500)
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_engagement(request):
-    """API pour créer une proposition d'engagement (Standard ou Essai)"""
+    """API pour crÃ©er une proposition d'engagement (Standard ou Essai)"""
     if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Utilisateur non authentifié'}, status=401)
+        return JsonResponse({'error': 'Utilisateur non authentifiÃ©'}, status=401)
     
     try:
         data = json.loads(request.body)
@@ -1649,13 +1649,13 @@ def api_engagement(request):
         localisation = data.get('localisation', '')
         plateforme = data.get('plateforme_visio', '')
         
-        # Créer la conversation si besoin
+        # CrÃ©er la conversation si besoin
         # Pour faire simple on associe juste l'engagement
         
         engagement_type_str = data.get('engagement_type', 'standard')
         type_eng = EngagementType.ESSAI if engagement_type_str == 'essai' else EngagementType.NORMAL
         
-        # Recherche d'un engagement existant non terminé
+        # Recherche d'un engagement existant non terminÃ©
         existing = Engagement.objects.filter(
             professeur=teacher,
             parent_apprenant=request.user
@@ -1667,7 +1667,7 @@ def api_engagement(request):
                 from django.utils import timezone
                 dt_fin = existing.date_heure_fin_essai or existing.date_heure_essai
                 if dt_fin and dt_fin > timezone.now():
-                    return JsonResponse({'error': "Vous avez un cours d'essai programmé avec ce professeur. Vous pourrez basculer sur un engagement standard une fois la séance complétée (date et heure passées) ou en annulant l'essai en cours."}, status=400)
+                    return JsonResponse({'error': "Vous avez un cours d'essai programmÃ© avec ce professeur. Vous pourrez basculer sur un engagement standard une fois la sÃ©ance complÃ©tÃ©e (date et heure passÃ©es) ou en annulant l'essai en cours."}, status=400)
                 
                 if existing.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
                     engagement = existing
@@ -1677,7 +1677,7 @@ def api_engagement(request):
             elif existing.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
                 engagement = existing
             else:
-                return JsonResponse({'error': 'Vous avez déjà un engagement actif ou confirmé avec ce professeur.'}, status=400)
+                return JsonResponse({'error': 'Vous avez dÃ©jÃ  un engagement actif ou confirmÃ© avec ce professeur.'}, status=400)
 
         is_new_engagement = False
         if not engagement:
@@ -1693,7 +1693,7 @@ def api_engagement(request):
         engagement.classe = data.get('classe', '')
         engagement.mode_de_cours = data.get('course_mode', '')
         engagement.localisation_option = data.get('localisation', '')
-        # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
+        # SÃ©curitÃ© : indications gÃ©ographiques uniquement pour les essais (anti-contournement)
         engagement.indications_geographiques = data.get('indications_geographiques', '') if type_eng == EngagementType.ESSAI else ''
         engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
         
@@ -1726,14 +1726,14 @@ def api_engagement(request):
             from .models import Enfant
             try:
                 enfant = Enfant.objects.get(id=int(enfant_id))
-                # Vérifier que l'enfant appartient bien au parent (sécurité)
+                # VÃ©rifier que l'enfant appartient bien au parent (sÃ©curitÃ©)
                 if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
                     engagement.enfants_concernes.clear()
                     engagement.enfants_concernes.add(enfant)
             except (Enfant.DoesNotExist, ValueError):
                 pass
         
-        # Fallback : si aucun enfant n'est lié et que le parent n'en a qu'un seul
+        # Fallback : si aucun enfant n'est liÃ© et que le parent n'en a qu'un seul
         if not engagement.enfants_concernes.exists() and hasattr(request.user, 'parent'):
             enfants = request.user.parent.enfants.all()
             if enfants.count() == 1:
@@ -1745,7 +1745,7 @@ def api_engagement(request):
         if is_new_engagement:
             import threading
             from .services import send_whatsapp_notification
-            # EngagementType est déjà disponible au niveau global ou local selon le contexte du fichier
+            # EngagementType est dÃ©jÃ  disponible au niveau global ou local selon le contexte du fichier
             
             teacher_phone = getattr(engagement.professeur, 'telephone_whatsapp', None)
             if not teacher_phone and hasattr(engagement.professeur, 'user'):
@@ -1760,18 +1760,18 @@ def api_engagement(request):
                 matiere_str = engagement.matiere
                 
                 msg_body = (
-                    f"Bonjour Professeur {prof_name}, Bonne nouvelle ! Vous avez reçu {type_str} "
-                    f"de la part d'un parent pour la matière {matiere_str}. "
-                    "Connectez-vous vite sur profchezvousapp.com pour consulter les détails et accepter la demande. "
-                    "L'équipe Prof Chez Vous."
+                    f"Bonjour Professeur {prof_name}, Bonne nouvelle ! Vous avez reÃ§u {type_str} "
+                    f"de la part d'un parent pour la matiÃ¨re {matiere_str}. "
+                    "Connectez-vous vite sur profchezvousapp.com pour consulter les dÃ©tails et accepter la demande. "
+                    "L'Ã©quipe Prof Chez Vous."
                 )
-                # Envoi asynchrone pour ne pas bloquer la réponse HTTP
+                # Envoi asynchrone pour ne pas bloquer la rÃ©ponse HTTP
                 threading.Thread(target=send_whatsapp_notification, args=(teacher_phone, msg_body)).start()
         # --- FIN NOTIFICATION WHATSAPP PROFESSEUR ---
 
         return JsonResponse({
             'success': True,
-            'message': 'Votre proposition d\'engagement a été enregistrée avec succès.',
+            'message': 'Votre proposition d\'engagement a Ã©tÃ© enregistrÃ©e avec succÃ¨s.',
             'engagement_id': engagement.id
         })
     except Exception as e:
@@ -1789,28 +1789,28 @@ def api_engagement_action(request, engagement_id):
     
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # Sécurité: Seul le professeur concerné peut agir
+    # SÃ©curitÃ©: Seul le professeur concernÃ© peut agir
     if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
-        return JsonResponse({'error': 'Action non autorisée'}, status=403)
+        return JsonResponse({'error': 'Action non autorisÃ©e'}, status=403)
         
     try:
         data = json.loads(request.body)
         action = data.get('action') # 'accepter' ou 'refuser'
         
-        # Sécurité: Ne pas agir sur un engagement déjà traité
+        # SÃ©curitÃ©: Ne pas agir sur un engagement dÃ©jÃ  traitÃ©
         if engagement.statut_general != StatutGeneral.EN_ATTENTE:
-            return JsonResponse({'error': 'Cet engagement a déjà été traité.'}, status=400)
+            return JsonResponse({'error': 'Cet engagement a dÃ©jÃ  Ã©tÃ© traitÃ©.'}, status=400)
 
         if action == 'accepter':
             engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
             engagement.date_confirmation = timezone.now()
             
-            # Calcul du temps de réponse (en minutes)
+            # Calcul du temps de rÃ©ponse (en minutes)
             from decimal import Decimal
             diff = engagement.date_confirmation - engagement.date_creation
             engagement.temps_reponse_prof = Decimal(str(round(diff.total_seconds() / 60, 2)))
             
-            # 1. Trouver ou Créer la conversation (plus robuste que get_or_create)
+            # 1. Trouver ou CrÃ©er la conversation (plus robuste que get_or_create)
             conversation = Conversation.objects.filter(
                 professeur=engagement.professeur,
                 parent=engagement.parent_apprenant
@@ -1825,14 +1825,14 @@ def api_engagement_action(request, engagement_id):
                 # Ajouter les participants au ManyToMany
                 conversation.participants.add(engagement.professeur.user, engagement.parent_apprenant)
             
-            # 2. Lier l'engagement à la conversation
+            # 2. Lier l'engagement Ã  la conversation
             engagement.conversation = conversation
             
-            # 3. Mettre à jour l'engagement actif de la conversation
+            # 3. Mettre Ã  jour l'engagement actif de la conversation
             conversation.engagement_actif = engagement
             conversation.save()
             
-            # 4. Mettre à jour les stats du professeur
+            # 4. Mettre Ã  jour les stats du professeur
             teacher = engagement.professeur
             teacher.nb_engagements_confirmes = Engagement.objects.filter(
                 professeur=teacher, 
@@ -1845,10 +1845,10 @@ def api_engagement_action(request, engagement_id):
                     conversation=conversation,
                     auteur=engagement.professeur.user,
                     destinataire=engagement.parent_apprenant,
-                    contenu_texte="J'ai bien confirmé notre séance d'essai. Préparez-vous pour notre rencontre !"
+                    contenu_texte="J'ai bien confirmÃ© notre sÃ©ance d'essai. PrÃ©parez-vous pour notre rencontre !"
                 )
             
-            # Mise à jour du temps de réponse moyen
+            # Mise Ã  jour du temps de rÃ©ponse moyen
             responses = Engagement.objects.filter(professeur=teacher, temps_reponse_prof__isnull=False).values_list('temps_reponse_prof', flat=True)
             total_time = sum(responses) + engagement.temps_reponse_prof
             teacher.temps_moyen_reponse = total_time / (len(responses) + 1)
@@ -1873,19 +1873,19 @@ def api_engagement_action(request, engagement_id):
                 
                 msg_body = (
                     f"Bonjour {parent_name}, Le Professeur {prof_name} vient de CONFIRMER {type_str} "
-                    f"pour votre enfant ! Vous pouvez dès à présent vous connecter sur votre espace pour consulter son planning de cours. "
-                    "Merci pour votre confiance, L'équipe Prof Chez Vous."
+                    f"pour votre enfant ! Vous pouvez dÃ¨s Ã  prÃ©sent vous connecter sur votre espace pour consulter son planning de cours. "
+                    "Merci pour votre confiance, L'Ã©quipe Prof Chez Vous."
                 )
                 # Envoi asynchrone
                 threading.Thread(target=send_whatsapp_notification, args=(parent_phone, msg_body)).start()
             # --- FIN NOTIFICATION WHATSAPP PARENT ---
 
-            return JsonResponse({'success': True, 'message': 'Engagement accepté', 'conversation_id': conversation.id})
+            return JsonResponse({'success': True, 'message': 'Engagement acceptÃ©', 'conversation_id': conversation.id})
             
         elif action == 'refuser':
             engagement.statut_general = StatutGeneral.REFUSE
             engagement.save()
-            return JsonResponse({'success': True, 'message': 'Engagement refusé'})
+            return JsonResponse({'success': True, 'message': 'Engagement refusÃ©'})
             
         else:
             return JsonResponse({'error': 'Action inconnue'}, status=400)
@@ -1896,19 +1896,19 @@ def api_engagement_action(request, engagement_id):
 
 @login_required
 def conversation_detail(request, conversation_id):
-    """Page de discussion privée entre deux participants."""
+    """Page de discussion privÃ©e entre deux participants."""
     from .choices import StatutGeneral, TypeAbonnement
     from .models import Conversation, Message, Profile as Role
     from django.contrib import messages as django_messages
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
-    # Sécurité stricte: Vérification que l'utilisateur est bien participant
+    # SÃ©curitÃ© stricte: VÃ©rification que l'utilisateur est bien participant
     if request.user not in conversation.participants.all():
-        django_messages.error(request, "Accès non autorisé à cette conversation.")
+        django_messages.error(request, "AccÃ¨s non autorisÃ© Ã  cette conversation.")
         return redirect("messagerie")
     
-    # Vérification que l'utilisateur a un profil valide
+    # VÃ©rification que l'utilisateur a un profil valide
     try:
         user_profile = request.user.profile
     except Role.DoesNotExist:
@@ -1922,10 +1922,10 @@ def conversation_detail(request, conversation_id):
     has_shown_finalization_badge = False
     
     eng = conversation.engagement_actif
-    # Déterminer le rôle
+    # DÃ©terminer le rÃ´le
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
     
-    # Vérifier l'abonnement via la propriété current_plan (gère l'expiration)
+    # VÃ©rifier l'abonnement via la propriÃ©tÃ© current_plan (gÃ¨re l'expiration)
     from .choices import TypeAbonnement, Localisation, EngagementType
     is_premium = (
         hasattr(request.user, 'profile')
@@ -1939,7 +1939,7 @@ def conversation_detail(request, conversation_id):
         msg.is_locked = False
         if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
-                # Vérifier si le message vient après la confirmation/création de l'engagement
+                # VÃ©rifier si le message vient aprÃ¨s la confirmation/crÃ©ation de l'engagement
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
                 if msg.date_envoi >= ref_date:
                     msg.is_locked = True
@@ -1959,44 +1959,44 @@ def conversation_detail(request, conversation_id):
         chat_messages.append(msg)
         last_date = msg_date
     
-    # Marquer la conversation comme lue selon le rôle
+    # Marquer la conversation comme lue selon le rÃ´le
     if user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
         conversation.conversation_lue_par_parent = True
     elif user_profile.role == Role.ROLE_PROF:
         conversation.conversation_lue_par_prof = True
     conversation.save()
     
-    # Marquer les messages reçus comme lus (messages où l'utilisateur est destinataire)
+    # Marquer les messages reÃ§us comme lus (messages oÃ¹ l'utilisateur est destinataire)
     conversation.messages.filter(destinataire=request.user, lu=False).update(
         lu=True, date_lecture=timezone.now()
     )
     
-    # Engagements liés
+    # Engagements liÃ©s
     linked_engagements = conversation.engagements.all().order_by("-date_creation")
     
-    # Logique de blocage (cohérente avec api_send_message)
+    # Logique de blocage (cohÃ©rente avec api_send_message)
     is_blocked = False
     hide_input = False
     blocking_message = ""
-    # eng, is_premium, is_trial, user_role sont déjà définis plus haut
+    # eng, is_premium, is_trial, user_role sont dÃ©jÃ  dÃ©finis plus haut
     
     from .models import Profile
     is_user_prof = (user_role == Profile.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
 
     if eng and user_role in ['PARENT', 'APPRENANT']:
-        # 1. Bloqué si en attente ou refusé
+        # 1. BloquÃ© si en attente ou refusÃ©
         if eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
             is_blocked = True
             hide_input = True
-            blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a été refusé."
-        # 2. Bloqué si confirmé/en cours mais non payé (sauf Access+ Premium ou essai)
+            blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a Ã©tÃ© refusÃ©."
+        # 2. BloquÃ© si confirmÃ©/en cours mais non payÃ© (sauf Access+ Premium ou essai)
         elif eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
             if not is_premium and not is_trial:
                 is_blocked = True
                 hide_input = True
-                blocking_message = "Paiement requis pour continuer les échanges."
+                blocking_message = "Paiement requis pour continuer les Ã©changes."
                 
-    is_eligible_to_finalize = True  # On autorise par défaut
+    is_eligible_to_finalize = True  # On autorise par dÃ©faut
 
     # Autres infos pour le header
     if request.user == conversation.parent:
@@ -2020,7 +2020,7 @@ def conversation_detail(request, conversation_id):
     elif user_role == Role.ROLE_PROF and conversation.parent and hasattr(conversation.parent, 'parent'):
         parent_children = conversation.parent.parent.enfants.all()
         
-    # Nom à afficher (règles dynamiques)
+    # Nom Ã  afficher (rÃ¨gles dynamiques)
     eng = conversation.engagement_actif
     other_role = other_user.profile.role if other_user and hasattr(other_user, 'profile') else None
     
@@ -2042,7 +2042,7 @@ def conversation_detail(request, conversation_id):
                     enfants_liste = e.enfants_concernes.all()
                     break
         if not enfants_liste and hasattr(other_user, 'parent'):
-            # Prendre le premier enfant du parent par défaut
+            # Prendre le premier enfant du parent par dÃ©faut
             enfants_liste = other_user.parent.enfants.all()
             
         if enfants_liste:
@@ -2095,14 +2095,14 @@ def api_send_message(request, conversation_id):
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
-    # Sécurité stricte
+    # SÃ©curitÃ© stricte
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
     
     # Suppression de la validation anti-spam stricte (5 msg/min) pour permettre 
-    # des envois successifs fluides aux utilisateurs autorisés (Premium/Payé).
+    # des envois successifs fluides aux utilisateurs autorisÃ©s (Premium/PayÃ©).
         
-    # Vérifier le blocage (même logique que conversation_detail)
+    # VÃ©rifier le blocage (mÃªme logique que conversation_detail)
     from .choices import TypeAbonnement, EngagementType
     user_role = None
     try:
@@ -2114,23 +2114,23 @@ def api_send_message(request, conversation_id):
         active_eng = conversation.engagement_actif
         if active_eng:
             if active_eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
-                return JsonResponse({'error': 'En attente de la confirmation du professeur.' if active_eng.statut_general == 'EN_ATTENTE' else 'Cet engagement a été refusé.'}, status=403)
+                return JsonResponse({'error': 'En attente de la confirmation du professeur.' if active_eng.statut_general == 'EN_ATTENTE' else 'Cet engagement a Ã©tÃ© refusÃ©.'}, status=403)
                 
             is_premium = request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
             is_trial = active_eng.type_engagement == EngagementType.ESSAI
             if active_eng.statut_general in ['CONFIRME', 'EN_COURS'] and not active_eng.paiement_effectue and not is_premium and not is_trial:
-                return JsonResponse({'error': 'Paiement requis pour continuer les échanges'}, status=402)
+                return JsonResponse({'error': 'Paiement requis pour continuer les Ã©changes'}, status=402)
 
     try:
         texte = request.POST.get('texte', '').strip()
         fichier = request.FILES.get('fichier')
         
-        # Validation renforcée du contenu
+        # Validation renforcÃ©e du contenu
         if not texte and not fichier:
             return JsonResponse({'error': 'Un message ou un fichier est requis'}, status=400)
         
         if texte and len(texte) > 2000:
-            return JsonResponse({'error': 'Le message ne peut pas dépasser 2000 caractères'}, status=400)
+            return JsonResponse({'error': 'Le message ne peut pas dÃ©passer 2000 caractÃ¨res'}, status=400)
             
         if request.user == conversation.parent:
             destinataire = conversation.professeur.user if conversation.professeur else None
@@ -2138,7 +2138,7 @@ def api_send_message(request, conversation_id):
             destinataire = conversation.parent
             
         if not destinataire:
-            return JsonResponse({'error': 'Destinataire introuvable (profil incomplet ou supprimé).'}, status=400)
+            return JsonResponse({'error': 'Destinataire introuvable (profil incomplet ou supprimÃ©).'}, status=400)
         
         message = Message.objects.create(
             conversation=conversation,
@@ -2148,10 +2148,10 @@ def api_send_message(request, conversation_id):
             contenu_media=fichier
         )
         
-        # Mettre à jour la conversation
+        # Mettre Ã  jour la conversation
         if fichier:
             is_image = fichier.content_type.startswith('image/')
-            prefix = "📷 Photo" if is_image else "📄 Fichier"
+            prefix = "ðŸ“· Photo" if is_image else "ðŸ“„ Fichier"
             conversation.dernier_message_texte = f"{prefix} {texte}" if texte else prefix
         else:
             conversation.dernier_message_texte = texte
@@ -2178,14 +2178,14 @@ def api_send_message(request, conversation_id):
 @login_required
 @require_http_methods(["GET"])
 def api_fetch_new_messages(request, conversation_id):
-    """API pour récupérer les nouveaux messages (Polling AJAX)."""
+    """API pour rÃ©cupÃ©rer les nouveaux messages (Polling AJAX)."""
     from .models import Conversation
     from django.utils import timezone
     
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
         
     last_msg_id = request.GET.get('last_msg_id', 0)
     try:
@@ -2195,7 +2195,7 @@ def api_fetch_new_messages(request, conversation_id):
         
     new_messages = conversation.messages.filter(id__gt=last_msg_id).order_by('date_envoi')
     
-    # Marquer les messages reçus comme lus
+    # Marquer les messages reÃ§us comme lus
     if new_messages.exists():
         unread_received = new_messages.filter(destinataire=request.user, lu=False)
         if unread_received.exists():
@@ -2211,7 +2211,7 @@ def api_fetch_new_messages(request, conversation_id):
         except Exception:
             pass
 
-    # Gérer newly_read: les messages de l'utilisateur qui étaient non lus et qui sont passés à lu
+    # GÃ©rer newly_read: les messages de l'utilisateur qui Ã©taient non lus et qui sont passÃ©s Ã  lu
     unread_ids_str = request.GET.get('unread_ids', '')
     newly_read = []
     if unread_ids_str:
@@ -2235,7 +2235,7 @@ def api_fetch_new_messages(request, conversation_id):
         file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
         is_locked = False
         
-        # Masquage Paywall (Backend Security) — exempt Premium et essais
+        # Masquage Paywall (Backend Security) â€” exempt Premium et essais
         if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
             if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
                 ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
@@ -2272,7 +2272,7 @@ def api_update_engagement(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
     if engagement.parent_apprenant != request.user:
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
         
     try:
         data = json.loads(request.body)
@@ -2285,7 +2285,7 @@ def api_update_engagement(request, engagement_id):
         engagement.periode_engagement = data.get('periode', engagement.periode_engagement)
         engagement.duree_mois = data.get('duree_mois', engagement.duree_mois)
         engagement.localisation_option = data.get('localisation', engagement.localisation_option)
-        # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
+        # SÃ©curitÃ© : indications gÃ©ographiques uniquement pour les essais (anti-contournement)
         if engagement.type_engagement == EngagementType.ESSAI:
             engagement.indications_geographiques = data.get('indications_geographiques', engagement.indications_geographiques)
         else:
@@ -2309,25 +2309,25 @@ def api_update_engagement(request, engagement_id):
 @login_required
 @require_http_methods(["POST"])
 def api_finalize_engagement(request, engagement_id):
-    """API pour qu'un parent finalise un engagement après accord."""
+    """API pour qu'un parent finalise un engagement aprÃ¨s accord."""
     from .choices import StatutGeneral
     from .models import Engagement
     
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
     if engagement.parent_apprenant != request.user:
-        return JsonResponse({'error': 'Action non autorisée'}, status=403)
+        return JsonResponse({'error': 'Action non autorisÃ©e'}, status=403)
         
     try:
         engagement.statut_general = StatutGeneral.FINALISE
         engagement.save()
         
-        # Mettre à jour stats prof
+        # Mettre Ã  jour stats prof
         teacher = engagement.professeur
         teacher.nb_engagements_finalises = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.FINALISE).count()
         teacher.save()
         
-        return JsonResponse({'success': True, 'message': 'Engagement finalisé avec succès'})
+        return JsonResponse({'success': True, 'message': 'Engagement finalisÃ© avec succÃ¨s'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
@@ -2338,7 +2338,7 @@ from django.db.models import Avg, Count
 from .models import Evaluation
 
 def debug_admin_pcv(request):
-    """Point d'entrée du dashboard administrateur (sans authentification pour tests)"""
+    """Point d'entrÃ©e du dashboard administrateur (sans authentification pour tests)"""
     return render(request, "core/admin_dashboard/base.html")
 
 def admin_api_accueil(request):
@@ -2359,7 +2359,7 @@ def admin_api_accueil(request):
     moyenne_generale = evaluations.aggregate(Avg('note'))['note__avg'] or 0
 
     # 2. Engagements Prioritaires
-    # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + Délai >= 30 min
+    # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + DÃ©lai >= 30 min
     limite_temps = timezone.now() - timedelta(minutes=30)
     engagements_prioritaires = Engagement.objects.filter(
         statut_general=StatutGeneral.EN_ATTENTE,
@@ -2384,7 +2384,7 @@ def admin_api_accueil(request):
 def admin_api_professeurs(request):
     """Retourne le HTML partiel pour la liste des professeurs selon le filtre"""
     statut = request.GET.get('statut', ValidationStatus.EN_ATTENTE)
-    # tri par date de création ou un autre critère pour avoir une liste consistante (user date_joined par ex)
+    # tri par date de crÃ©ation ou un autre critÃ¨re pour avoir une liste consistante (user date_joined par ex)
     professeurs = TeacherProfile.objects.filter(statut_de_validation=statut).order_by('-user__date_joined')
     
     context = {
@@ -2405,20 +2405,20 @@ def admin_api_prof_action(request, prof_id):
         prof.statut_de_validation = ValidationStatus.VALIDE
         prof.save()
         # TODO: Envoi d'email de confirmation (simulation pour le test)
-        print(f"[SIMULATION EMAIL] Profil validé envoyé à {prof.email}")
-        return JsonResponse({'success': True, 'message': 'Professeur validé avec succès.'})
+        print(f"[SIMULATION EMAIL] Profil validÃ© envoyÃ© Ã  {prof.email}")
+        return JsonResponse({'success': True, 'message': 'Professeur validÃ© avec succÃ¨s.'})
         
     elif action == 'incomplet':
-        raison = request.POST.get('raison', 'Informations incomplètes.')
+        raison = request.POST.get('raison', 'Informations incomplÃ¨tes.')
         prof.statut_de_validation = ValidationStatus.INCOMPLET
         prof.save()
-        print(f"[SIMULATION EMAIL] Profil incomplet envoyé à {prof.email}. Raison: {raison}")
-        return JsonResponse({'success': True, 'message': 'Statut mis à jour et email envoyé.'})
+        print(f"[SIMULATION EMAIL] Profil incomplet envoyÃ© Ã  {prof.email}. Raison: {raison}")
+        return JsonResponse({'success': True, 'message': 'Statut mis Ã  jour et email envoyÃ©.'})
         
     elif action == 'valider_note':
         note = request.POST.get('note', '')
-        print(f"[SIMULATION EMAIL] Email envoyé à {prof.email} avec la note d'évaluation: {note}")
-        return JsonResponse({'success': True, 'message': 'Note enregistrée et email envoyé.'})
+        print(f"[SIMULATION EMAIL] Email envoyÃ© Ã  {prof.email} avec la note d'Ã©valuation: {note}")
+        return JsonResponse({'success': True, 'message': 'Note enregistrÃ©e et email envoyÃ©.'})
         
     return JsonResponse({'error': 'Action non reconnue.'}, status=400)
 
@@ -2440,13 +2440,13 @@ def profil_eleve(request, type_eleve, id_eleve):
         if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
             is_owner = True
         elif not is_teacher:
-            raise Http404("Profil introuvable ou accès refusé.")
+            raise Http404("Profil introuvable ou accÃ¨s refusÃ©.")
             
         obj_text = enfant.objectif_principal
         objectifs = []
         difficultes = []
-        if obj_text and "DIFFICULTÉS:" in obj_text:
-            parts = obj_text.split("DIFFICULTÉS:")
+        if obj_text and "DIFFICULTÃ‰S:" in obj_text:
+            parts = obj_text.split("DIFFICULTÃ‰S:")
             obj_str = parts[0].replace("OBJECTIFS:", "").strip()
             diff_str = parts[1].strip()
             objectifs = [o.strip() for o in obj_str.split(',') if o.strip()]
@@ -2477,21 +2477,21 @@ def profil_eleve(request, type_eleve, id_eleve):
         if apprenant.user == request.user:
             is_owner = True
         elif not is_teacher:
-            raise Http404("Profil introuvable ou accès refusé.")
+            raise Http404("Profil introuvable ou accÃ¨s refusÃ©.")
             
         eleve_data = {
             'type': 'apprenant',
             'id': apprenant.id,
             'nom': apprenant.nom,
             'photo_url': apprenant.photo_de_profil.url if apprenant.photo_de_profil else None,
-            'quartier_ville': getattr(apprenant, 'quartier_ville', "Non spécifié"),
+            'quartier_ville': getattr(apprenant, 'quartier_ville', "Non spÃ©cifiÃ©"),
             'classe': apprenant.get_classe_display() if hasattr(apprenant, 'get_classe_display') else apprenant.classe,
             'matieres': apprenant.matieres_recherchees,
             'difficultes': [apprenant.description_difficultes] if apprenant.description_difficultes else [],
             'objectifs': [obj_dict.get(o, o) for o in apprenant.objectifs_motivations]
         }
     else:
-        raise Http404("Type d'élève invalide.")
+        raise Http404("Type d'Ã©lÃ¨ve invalide.")
 
     return render(request, "core/profil_eleve.html", {
         "eleve": eleve_data,
@@ -2513,14 +2513,14 @@ def edit_enfant(request, id_enfant):
         if form.is_valid():
             form.save()
             from django.contrib import messages
-            messages.success(request, f"Le profil de {enfant.prenom} a été mis à jour.")
+            messages.success(request, f"Le profil de {enfant.prenom} a Ã©tÃ© mis Ã  jour.")
             return redirect("profil_eleve", type_eleve='enfant', id_eleve=enfant.id)
     else:
-        # Pré-remplir les champs multiples si nécessaire
+        # PrÃ©-remplir les champs multiples si nÃ©cessaire
         initial = {}
         obj_text = enfant.objectif_principal
-        if obj_text and "DIFFICULTÉS:" in obj_text:
-            parts = obj_text.split("DIFFICULTÉS:")
+        if obj_text and "DIFFICULTÃ‰S:" in obj_text:
+            parts = obj_text.split("DIFFICULTÃ‰S:")
             obj_str = parts[0].replace("OBJECTIFS:", "").strip()
             diff_str = parts[1].strip()
             initial['objectifs_motivations'] = [o.strip() for o in obj_str.split(',') if o.strip()]
@@ -2536,7 +2536,7 @@ def edit_enfant(request, id_enfant):
 
 
 # ==========================================
-# ESPACE DE SUIVI PÉDAGOGIQUE
+# ESPACE DE SUIVI PÃ‰DAGOGIQUE
 # ==========================================
 
 @login_required
@@ -2547,7 +2547,7 @@ def suivi_engagement(request, engagement_id):
     is_parent_apprenant = engagement.parent_apprenant == request.user
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     if not (is_parent_apprenant or is_prof):
-        raise Http404("Accès refusé.")
+        raise Http404("AccÃ¨s refusÃ©.")
         
     seances = engagement.seances.all().order_by('-date_seance')[:5]
     
@@ -2565,10 +2565,10 @@ def toutes_seances(request, engagement_id):
     
     is_parent_apprenant = engagement.parent_apprenant == request.user
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
-    is_apprenant = hasattr(request.user, 'apprenant') and engagement.parent_apprenant == request.user # L'apprenant est l'utilisateur lié à l'engagement
+    is_apprenant = hasattr(request.user, 'apprenant') and engagement.parent_apprenant == request.user # L'apprenant est l'utilisateur liÃ© Ã  l'engagement
     
     if not (is_parent_apprenant or is_prof or is_apprenant):
-        raise Http404("Accès refusé.")
+        raise Http404("AccÃ¨s refusÃ©.")
         
     seances = engagement.seances.all().order_by('-date_seance')
     
@@ -2599,22 +2599,22 @@ def toutes_seances(request, engagement_id):
 def api_ajouter_seance(request, engagement_id):
     from .models import Seance, NotionSeance
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
         
     engagement = get_object_or_404(Engagement, id=engagement_id)
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     
     if not is_prof:
-        return JsonResponse({"error": "Accès refusé. Seul le professeur peut ajouter une séance."}, status=403)
+        return JsonResponse({"error": "AccÃ¨s refusÃ©. Seul le professeur peut ajouter une sÃ©ance."}, status=403)
         
     try:
         from datetime import datetime
         date_seance_str = request.POST.get('date_seance')
         date_seance = datetime.strptime(date_seance_str, "%Y-%m-%d").date()
         
-        # Vérification : 1 seule séance par jour
+        # VÃ©rification : 1 seule sÃ©ance par jour
         if Seance.objects.filter(engagement=engagement, date_seance=date_seance).exists():
-            return JsonResponse({"error": f"Vous avez déjà enregistré une séance pour la date du {date_seance.strftime('%d/%m/%Y')}."}, status=400)
+            return JsonResponse({"error": f"Vous avez dÃ©jÃ  enregistrÃ© une sÃ©ance pour la date du {date_seance.strftime('%d/%m/%Y')}."}, status=400)
             
         objectifs = request.POST.get('objectifs')
         difficultes_presentes = request.POST.get('difficultes_presentes') == 'oui'
@@ -2624,7 +2624,7 @@ def api_ajouter_seance(request, engagement_id):
         import json
         notions_data = request.POST.get('notions_json')
         if not notions_data:
-            return JsonResponse({"error": "Aucune notion trouvée."}, status=400)
+            return JsonResponse({"error": "Aucune notion trouvÃ©e."}, status=400)
             
         notions = json.loads(notions_data)
         if len(notions) == 0:
@@ -2669,7 +2669,7 @@ def api_ajouter_seance(request, engagement_id):
         
         engagement.save()
         
-        return JsonResponse({"success": True, "message": "Séance ajoutée avec succès."})
+        return JsonResponse({"success": True, "message": "SÃ©ance ajoutÃ©e avec succÃ¨s."})
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
@@ -2678,11 +2678,11 @@ def api_ajouter_seance(request, engagement_id):
 def api_valider_seance(request, seance_id):
     from .models import Seance
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
         
     seance = get_object_or_404(Seance, id=seance_id)
     if seance.engagement.parent_apprenant != request.user:
-        return JsonResponse({"error": "Accès refusé. Seul le parent/apprenant peut valider."}, status=403)
+        return JsonResponse({"error": "AccÃ¨s refusÃ©. Seul le parent/apprenant peut valider."}, status=403)
         
     seance.validee = True
     seance.save()
@@ -2694,11 +2694,11 @@ from django.db.models import F
 
 def api_track_teacher_views(request):
     """
-    Endpoint pour incrémenter le nombre d'apparitions (vues) des professeurs
-    lorsque leur carte entre réellement dans le champ visuel sur la page de recherche.
+    Endpoint pour incrÃ©menter le nombre d'apparitions (vues) des professeurs
+    lorsque leur carte entre rÃ©ellement dans le champ visuel sur la page de recherche.
     """
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
         
     try:
         data = json.loads(request.body)
@@ -2715,7 +2715,7 @@ def api_track_teacher_views(request):
                 )
                 return JsonResponse({"success": True, "tracked": len(valid_ids)})
                 
-        return JsonResponse({"success": False, "error": "Données invalides."})
+        return JsonResponse({"success": False, "error": "DonnÃ©es invalides."})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
@@ -2723,7 +2723,7 @@ def api_track_teacher_views(request):
 @login_required
 def toggle_favori(request, prof_id):
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
     
     prof = get_object_or_404(TeacherProfile, id=prof_id)
     if request.user in prof.parents_favoris.all():
@@ -2738,11 +2738,11 @@ def toggle_favori(request, prof_id):
 @login_required
 def masquer_engagement(request, eng_id):
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
         
     engagement = get_object_or_404(Engagement, id=eng_id)
     if engagement.parent_apprenant != request.user:
-        return JsonResponse({"error": "Accès refusé."}, status=403)
+        return JsonResponse({"error": "AccÃ¨s refusÃ©."}, status=403)
         
     engagement.masque_par_parent = True
     engagement.save()
@@ -2751,11 +2751,11 @@ def masquer_engagement(request, eng_id):
 @login_required
 def masquer_engagement_prof(request, eng_id):
     if request.method != "POST":
-        return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        return JsonResponse({"error": "MÃ©thode non autorisÃ©e."}, status=405)
         
     engagement = get_object_or_404(Engagement, id=eng_id)
     if not hasattr(request.user, 'teacher_profile') or engagement.professeur != request.user.teacher_profile:
-        return JsonResponse({"error": "Accès refusé."}, status=403)
+        return JsonResponse({"error": "AccÃ¨s refusÃ©."}, status=403)
         
     engagement.masque_pour_professeur = True
     engagement.save()
@@ -2764,11 +2764,11 @@ def masquer_engagement_prof(request, eng_id):
 
 @login_required
 def api_toggle_essai(request):
-    """Bascule l'activation de l'essai gratuit pour le professeur connecté."""
+    """Bascule l'activation de l'essai gratuit pour le professeur connectÃ©."""
     try:
         teacher = request.user.teacher_profile
     except TeacherProfile.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Accès réservé aux professeurs.'}, status=403)
+        return JsonResponse({'success': False, 'error': 'AccÃ¨s rÃ©servÃ© aux professeurs.'}, status=403)
 
     if request.method == 'POST':
         teacher.essai_gratuit_actif = not teacher.essai_gratuit_actif
@@ -2776,23 +2776,23 @@ def api_toggle_essai(request):
         return JsonResponse({
             'success': True,
             'actif': teacher.essai_gratuit_actif,
-            'message': 'Statut de l\'essai gratuit mis à jour.'
+            'message': 'Statut de l\'essai gratuit mis Ã  jour.'
         })
     
-    return JsonResponse({'success': False, 'error': 'Méthode non autorisée.'}, status=405)
+    return JsonResponse({'success': False, 'error': 'MÃ©thode non autorisÃ©e.'}, status=405)
 
 
 @login_required
 def api_engagement_details(request, engagement_id):
-    """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
+    """API pour rÃ©cupÃ©rer les dÃ©tails complets d'un engagement (pour les modaux)."""
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # Sécurité: Seuls les acteurs de l'engagement peuvent voir les détails
+    # SÃ©curitÃ©: Seuls les acteurs de l'engagement peuvent voir les dÃ©tails
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     is_client = engagement.parent_apprenant == request.user
     
     if not (is_prof or is_client):
-        return JsonResponse({'error': 'Accès refusé'}, status=403)
+        return JsonResponse({'error': 'AccÃ¨s refusÃ©'}, status=403)
         
     data = {
         'id': engagement.id,
@@ -2815,7 +2815,7 @@ def api_engagement_details(request, engagement_id):
         'teacher_id': engagement.professeur.id,
         'teacher_name': f"{engagement.professeur.prenom} {engagement.professeur.nom}",
         'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
-        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-même"),
+        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-mÃªme"),
         # Essai specific fields
         'date_essai': timezone.localtime(engagement.date_heure_essai).strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
         'heure_debut': timezone.localtime(engagement.date_heure_essai).strftime("%H:%M") if engagement.date_heure_essai else None,
@@ -2845,7 +2845,7 @@ def api_fictional_payment(request):
             
             conversation = get_object_or_404(Conversation, id=conversation_id)
             if request.user not in conversation.participants.all():
-                return JsonResponse({'error': 'Accès non autorisé'}, status=403)
+                return JsonResponse({'error': 'AccÃ¨s non autorisÃ©'}, status=403)
                 
             eng = conversation.engagement_actif
             if not eng:
@@ -2853,7 +2853,7 @@ def api_fictional_payment(request):
                 
             eng.paiement_effectue = True
             eng.save()
-            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectué (fictif)'})
+            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectuÃ© (fictif)'})
             
         elif payment_type == 'premium':
             # Upgrade vers premium pour le mois en cours
@@ -2866,7 +2866,7 @@ def api_fictional_payment(request):
             abonnement.date_debut = timezone.now().date()
             abonnement.date_fin = timezone.now().date() + timedelta(days=30)
             abonnement.save()
-            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectué (fictif)'})
+            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectuÃ© (fictif)'})
             
         else:
             return JsonResponse({'error': 'Type de paiement invalide'}, status=400)
@@ -2878,11 +2878,11 @@ def api_fictional_payment(request):
 @login_required
 @require_http_methods(["POST"])
 def api_archive_conversation(request, conversation_id):
-    """Archive ou désarchive une conversation pour l'utilisateur courant."""
+    """Archive ou dÃ©sarchive une conversation pour l'utilisateur courant."""
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
         
     if request.user in conversation.archivee_par.all():
         conversation.archivee_par.remove(request.user)
@@ -2901,7 +2901,7 @@ def api_delete_conversation(request, conversation_id):
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
     conversation.masquee_par.add(request.user)
     return JsonResponse({'success': True})
 
@@ -2910,8 +2910,8 @@ def api_delete_conversation(request, conversation_id):
 @require_http_methods(["GET"])
 def api_ping(request):
     """
-    Endpoint léger appelé toutes les X secondes par le front-end
-    pour vérifier s'il y a des mises à jour d'engagements ou de messages.
+    Endpoint lÃ©ger appelÃ© toutes les X secondes par le front-end
+    pour vÃ©rifier s'il y a des mises Ã  jour d'engagements ou de messages.
     """
     import datetime
     
@@ -2922,11 +2922,11 @@ def api_ping(request):
         try:
             last_check = datetime.datetime.fromtimestamp(int(last_check_str) / 1000.0, tz=datetime.timezone.utc)
             
-            # Vérifier les nouveaux messages non lus
+            # VÃ©rifier les nouveaux messages non lus
             if Message.objects.filter(destinataire=request.user, lu=False, date_envoi__gt=last_check).exists():
                 has_updates = True
             
-            # Vérifier les mises à jour d'engagement
+            # VÃ©rifier les mises Ã  jour d'engagement
             if not has_updates:
                 user_engs = Engagement.objects.filter(
                     Q(professeur__user=request.user) | Q(parent_apprenant=request.user)
@@ -2942,11 +2942,11 @@ def api_ping(request):
 
 @login_required
 def api_toggle_essai(request):
-    """Bascule l'activation de l'essai gratuit pour le professeur connecté."""
+    """Bascule l'activation de l'essai gratuit pour le professeur connectÃ©."""
     try:
         teacher = request.user.teacher_profile
     except TeacherProfile.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Accès réservé aux professeurs.'}, status=403)
+        return JsonResponse({'success': False, 'error': 'AccÃ¨s rÃ©servÃ© aux professeurs.'}, status=403)
 
     if request.method == 'POST':
         teacher.essai_gratuit_actif = not teacher.essai_gratuit_actif
@@ -2954,23 +2954,23 @@ def api_toggle_essai(request):
         return JsonResponse({
             'success': True,
             'actif': teacher.essai_gratuit_actif,
-            'message': 'Statut de l\'essai gratuit mis à jour.'
+            'message': 'Statut de l\'essai gratuit mis Ã  jour.'
         })
     
-    return JsonResponse({'success': False, 'error': 'Méthode non autorisée.'}, status=405)
+    return JsonResponse({'success': False, 'error': 'MÃ©thode non autorisÃ©e.'}, status=405)
 
 
 @login_required
 def api_engagement_details(request, engagement_id):
-    """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
+    """API pour rÃ©cupÃ©rer les dÃ©tails complets d'un engagement (pour les modaux)."""
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # Sécurité: Seuls les acteurs de l'engagement peuvent voir les détails
+    # SÃ©curitÃ©: Seuls les acteurs de l'engagement peuvent voir les dÃ©tails
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     is_client = engagement.parent_apprenant == request.user
     
     if not (is_prof or is_client):
-        return JsonResponse({'error': 'Accès refusé'}, status=403)
+        return JsonResponse({'error': 'AccÃ¨s refusÃ©'}, status=403)
         
     data = {
         'id': engagement.id,
@@ -2992,7 +2992,7 @@ def api_engagement_details(request, engagement_id):
         'teacher_id': engagement.professeur.id,
         'teacher_name': f"{engagement.professeur.prenom} {engagement.professeur.nom}",
         'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
-        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-même"),
+        'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-mÃªme"),
         # Essai specific fields
         'date_essai': engagement.date_heure_essai.strftime("%d/%m/%Y") if engagement.date_heure_essai else None,
         'heure_debut': engagement.date_heure_essai.strftime("%H:%M") if engagement.date_heure_essai else None,
@@ -3021,7 +3021,7 @@ def api_fictional_payment(request):
             
             conversation = get_object_or_404(Conversation, id=conversation_id)
             if request.user not in conversation.participants.all():
-                return JsonResponse({'error': 'Accès non autorisé'}, status=403)
+                return JsonResponse({'error': 'AccÃ¨s non autorisÃ©'}, status=403)
                 
             eng = conversation.engagement_actif
             if not eng:
@@ -3029,7 +3029,7 @@ def api_fictional_payment(request):
                 
             eng.paiement_effectue = True
             eng.save()
-            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectué (fictif)'})
+            return JsonResponse({'status': 'success', 'message': 'Paiement standard effectuÃ© (fictif)'})
             
         elif payment_type == 'premium':
             # Upgrade vers premium pour le mois en cours
@@ -3042,7 +3042,7 @@ def api_fictional_payment(request):
             abonnement.date_debut = timezone.now().date()
             abonnement.date_fin = timezone.now().date() + timedelta(days=30)
             abonnement.save()
-            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectué (fictif)'})
+            return JsonResponse({'status': 'success', 'message': 'Passage au plan Premium effectuÃ© (fictif)'})
             
         else:
             return JsonResponse({'error': 'Type de paiement invalide'}, status=400)
@@ -3054,11 +3054,11 @@ def api_fictional_payment(request):
 @login_required
 @require_http_methods(["POST"])
 def api_archive_conversation(request, conversation_id):
-    """Archive ou désarchive une conversation pour l'utilisateur courant."""
+    """Archive ou dÃ©sarchive une conversation pour l'utilisateur courant."""
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
         
     if request.user in conversation.archivee_par.all():
         conversation.archivee_par.remove(request.user)
@@ -3077,7 +3077,7 @@ def api_delete_conversation(request, conversation_id):
     from .models import Conversation
     conversation = get_object_or_404(Conversation, id=conversation_id)
     if request.user not in conversation.participants.all():
-        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        return JsonResponse({'error': 'Non autorisÃ©'}, status=403)
     conversation.masquee_par.add(request.user)
     return JsonResponse({'success': True})
 
@@ -3086,8 +3086,8 @@ def api_delete_conversation(request, conversation_id):
 @require_http_methods(["GET"])
 def api_ping(request):
     """
-    Endpoint léger appelé toutes les X secondes par le front-end
-    pour vérifier s'il y a des mises à jour d'engagements ou de messages.
+    Endpoint lÃ©ger appelÃ© toutes les X secondes par le front-end
+    pour vÃ©rifier s'il y a des mises Ã  jour d'engagements ou de messages.
     """
     import datetime
     
@@ -3098,11 +3098,11 @@ def api_ping(request):
         try:
             last_check = datetime.datetime.fromtimestamp(int(last_check_str) / 1000.0, tz=datetime.timezone.utc)
             
-            # Vérifier les nouveaux messages non lus
+            # VÃ©rifier les nouveaux messages non lus
             if Message.objects.filter(destinataire=request.user, lu=False, date_envoi__gt=last_check).exists():
                 has_updates = True
             
-            # Vérifier les mises à jour d'engagement
+            # VÃ©rifier les mises Ã  jour d'engagement
             if not has_updates:
                 user_engs = Engagement.objects.filter(
                     Q(professeur__user=request.user) | Q(parent_apprenant=request.user)
@@ -3150,29 +3150,29 @@ def create_announcement(request):
         if form.is_valid():
             announcement = form.save(commit=False)
             if announcement.is_active:
-                # Désactiver TOUTES les annonces précédentes actives
+                # DÃ©sactiver TOUTES les annonces prÃ©cÃ©dentes actives
                 ProfessorAnnouncement.objects.filter(is_active=True).update(is_active=False)
             announcement.save()
-            messages.success(request, "L'annonce a été publiée avec succès !")
+            messages.success(request, "L'annonce a Ã©tÃ© publiÃ©e avec succÃ¨s !")
             return redirect('create_announcement')
     else:
         form = AnnouncementForm()
 
     return render(request, 'core/admin_create_announcement.html', {'form': form})
 
-# --- Intégration FedaPay ---
+# --- IntÃ©gration FedaPay ---
 
 @login_required
 def payer_engagement(request, engagement_id):
     """Vue pour initialiser le paiement et rediriger vers FedaPay."""
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # Vérifications de sécurité
+    # VÃ©rifications de sÃ©curitÃ©
     if request.user != engagement.parent_apprenant:
         from django.http import HttpResponseForbidden
-        return HttpResponseForbidden("Vous n'êtes pas autorisé à payer cet engagement.")
+        return HttpResponseForbidden("Vous n'Ãªtes pas autorisÃ© Ã  payer cet engagement.")
     if engagement.paiement_effectue:
-        messages.info(request, "Ce paiement a déjà été effectué.")
+        messages.info(request, "Ce paiement a dÃ©jÃ  Ã©tÃ© effectuÃ©.")
         if engagement.conversation:
             return redirect('conversation_detail', conversation_id=engagement.conversation.id)
         return redirect('parent_dashboard')
@@ -3187,8 +3187,8 @@ def payer_engagement(request, engagement_id):
         payment_url = initier_paiement_engagement(engagement, request.user, callback_url)
         return redirect(payment_url)
     except Exception as e:
-        print(f"🔴 ERREUR FEDAPAY : {str(e)}")
-        # On relève l'erreur pour qu'elle s'affiche en gros sur votre écran (DEBUG=True)
+        print(f"ðŸ”´ ERREUR FEDAPAY : {str(e)}")
+        # On relÃ¨ve l'erreur pour qu'elle s'affiche en gros sur votre Ã©cran (DEBUG=True)
         raise e
 
 
@@ -3220,14 +3220,14 @@ def fedapay_callback(request):
             if status == 'approved':
                 import django.utils.timezone as timezone
                 local_txn.date_validation = timezone.now()
-                # Débloquer la messagerie
+                # DÃ©bloquer la messagerie
                 engagement = local_txn.engagement
                 engagement.paiement_effectue = True
                 engagement.save()
             
             local_txn.save()
             
-            # Si c'est une requête GET, on redirige l'utilisateur
+            # Si c'est une requÃªte GET, on redirige l'utilisateur
             if request.method == 'GET':
                 if status == 'approved':
                     return redirect('paiement_succes', engagement_id=local_txn.engagement.id)
@@ -3287,7 +3287,7 @@ def fedapay_premium_callback(request):
             if status == 'approved' and not local_txn.date_validation:
                 import django.utils.timezone as timezone
                 local_txn.date_validation = timezone.now()
-                # Mettre à jour l'abonnement de l'utilisateur
+                # Mettre Ã  jour l'abonnement de l'utilisateur
                 from .choices import TypeAbonnement
                 abonnement = local_txn.user.abonnements.order_by('-id').first()
                 if abonnement:
@@ -3301,9 +3301,9 @@ def fedapay_premium_callback(request):
             
             if request.method == 'GET':
                 if status == 'approved':
-                    messages.success(request, "Votre abonnement Access+ Premium a été activé avec succès !")
+                    messages.success(request, "Votre abonnement Access+ Premium a Ã©tÃ© activÃ© avec succÃ¨s !")
                 else:
-                    messages.error(request, "Le paiement de votre abonnement a échoué ou a été annulé.")
+                    messages.error(request, "Le paiement de votre abonnement a Ã©chouÃ© ou a Ã©tÃ© annulÃ©.")
                 return redirect('gestion_plan')
                 
         except TransactionFedaPay.DoesNotExist:
@@ -3322,16 +3322,16 @@ def api_rate_professeur(request, engagement_id):
     try:
         engagement = Engagement.objects.get(id=engagement_id)
         if engagement.parent_apprenant != request.user:
-            return JsonResponse({'error': 'Accès refusé. Vous n\'êtes pas autorisé à évaluer ce professeur.'}, status=403)
+            return JsonResponse({'error': 'AccÃ¨s refusÃ©. Vous n\'Ãªtes pas autorisÃ© Ã  Ã©valuer ce professeur.'}, status=403)
             
         data = json.loads(request.body)
         note = int(data.get('note', 0))
         commentaire = data.get('commentaire', '').strip()
         
         if note < 1 or note > 5:
-            return JsonResponse({'error': 'La note doit être comprise entre 1 et 5.'}, status=400)
+            return JsonResponse({'error': 'La note doit Ãªtre comprise entre 1 et 5.'}, status=400)
             
-        # Vérifier si une évaluation existe déjà pour ce couple parent/professeur
+        # VÃ©rifier si une Ã©valuation existe dÃ©jÃ  pour ce couple parent/professeur
         evaluation, created = Evaluation.objects.update_or_create(
             parent_evaluateur=request.user,
             professeur_evalue=engagement.professeur,
@@ -3344,7 +3344,7 @@ def api_rate_professeur(request, engagement_id):
         
         return JsonResponse({
             'success': True, 
-            'message': 'Évaluation enregistrée avec succès.' if created else 'Évaluation mise à jour avec succès.',
+            'message': 'Ã‰valuation enregistrÃ©e avec succÃ¨s.' if created else 'Ã‰valuation mise Ã  jour avec succÃ¨s.',
             'note': note
         })
     except Exception as e:
@@ -3355,29 +3355,29 @@ def api_rate_professeur(request, engagement_id):
 def api_demander_annulation(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # Vérification des droits
+    # VÃ©rification des droits
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     is_parent = engagement.parent_apprenant == request.user
     
     if not (is_prof or is_parent):
-        return JsonResponse({'error': 'Accès refusé.'}, status=403)
+        return JsonResponse({'error': 'AccÃ¨s refusÃ©.'}, status=403)
         
     if engagement.statut_general == StatutGeneral.ANNULE:
-        return JsonResponse({'error': 'Cet engagement est déjà annulé.'}, status=400)
+        return JsonResponse({'error': 'Cet engagement est dÃ©jÃ  annulÃ©.'}, status=400)
         
     if engagement.annulation_initiee_par is None:
         # 1. Initiation
         engagement.annulation_initiee_par = request.user
         engagement.save()
-        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande d\'annulation envoyée. En attente de confirmation de l\'autre partie.'})
+        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande d\'annulation envoyÃ©e. En attente de confirmation de l\'autre partie.'})
     elif engagement.annulation_initiee_par != request.user:
         # 2. Confirmation par l'autre partie
         engagement.annulation_confirmee = True
         engagement.statut_general = StatutGeneral.ANNULE
         engagement.save()
-        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Annulation confirmée. L\'engagement est maintenant annulé.'})
+        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Annulation confirmÃ©e. L\'engagement est maintenant annulÃ©.'})
     else:
-        return JsonResponse({'error': 'Vous avez déjà initié cette demande.'}, status=400)
+        return JsonResponse({'error': 'Vous avez dÃ©jÃ  initiÃ© cette demande.'}, status=400)
 
 @login_required
 @require_POST
@@ -3388,30 +3388,30 @@ def api_demander_cloture(request, engagement_id):
     is_parent = engagement.parent_apprenant == request.user
     
     if not (is_prof or is_parent):
-        return JsonResponse({'error': 'Accès refusé.'}, status=403)
+        return JsonResponse({'error': 'AccÃ¨s refusÃ©.'}, status=403)
         
     if engagement.statut_general == StatutGeneral.TERMINE:
-        return JsonResponse({'error': 'Cet engagement est déjà terminé.'}, status=400)
+        return JsonResponse({'error': 'Cet engagement est dÃ©jÃ  terminÃ©.'}, status=400)
         
     if engagement.cloture_initiee_par is None:
         # 1. Initiation
         engagement.cloture_initiee_par = request.user
         engagement.save()
-        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande de clôture envoyée. En attente de confirmation de l\'autre partie.'})
+        return JsonResponse({'success': True, 'action': 'initiated', 'message': 'Demande de clÃ´ture envoyÃ©e. En attente de confirmation de l\'autre partie.'})
     elif engagement.cloture_initiee_par != request.user:
         # 2. Confirmation par l'autre partie
         engagement.cloture_confirmee = True
         engagement.statut_general = StatutGeneral.TERMINE
         engagement.save()
-        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'Clôture confirmée. L\'engagement est maintenant terminé.'})
+        return JsonResponse({'success': True, 'action': 'confirmed', 'message': 'ClÃ´ture confirmÃ©e. L\'engagement est maintenant terminÃ©.'})
     else:
-        return JsonResponse({'error': 'Vous avez déjà initié cette demande.'}, status=400)
+        return JsonResponse({'error': 'Vous avez dÃ©jÃ  initiÃ© cette demande.'}, status=400)
 
 @login_required
 def finalisation_engagement(request, engagement_id):
     engagement = get_object_or_404(Engagement, id=engagement_id)
     
-    # V�rification des droits d'acc�s
+    # Vérification des droits d'accès
     if engagement.parent_apprenant != request.user:
         return redirect('home')
 
@@ -3420,3 +3420,9 @@ def finalisation_engagement(request, engagement_id):
         'professeur': engagement.professeur
     }
     return render(request, 'core/finalisation_engagement.html', context)
+
+def charte_essai_gratuit(request):
+    """
+    Affiche la page de la charte de l'essai gratuit.
+    """
+    return render(request, 'core/charte_essai.html')

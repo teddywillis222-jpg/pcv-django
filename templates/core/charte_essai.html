@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Charte de l'Essai Gratuit | Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    .charte-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .charte-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .charte-header h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+    }
+
+    .charte-header p {
+        font-size: 1.15rem;
+        color: #475569;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .charte-content {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+    }
+
+    .charte-content h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 3.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .charte-content h2:first-child {
+        margin-top: 0;
+    }
+
+    .charte-content h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .charte-content p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #475569;
+        margin-bottom: 1.25rem;
+    }
+
+    .charte-content ul {
+        margin: 0 0 1.5rem 0;
+        padding-left: 1.5rem;
+        color: #475569;
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .charte-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    .charte-content li::marker {
+        color: var(--primary);
+    }
+
+    .charte-footer {
+        margin-top: 4rem;
+        padding: 2rem;
+        background: #f8fafc;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .charte-footer h2 {
+        border-bottom: none;
+        justify-content: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+        .charte-container { margin: 2rem auto; }
+        .charte-header h1 { font-size: 2rem; }
+        .charte-content { padding: 1.5rem; border-radius: 16px; }
+        .charte-content h2 { font-size: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="charte-container">
+    <div class="charte-header">
+        <h1>Charte de l’Essai Gratuit</h1>
+        <p>Les principes fondateurs pour une première rencontre réussie et en toute confiance sur Prof Chez Vous.</p>
+    </div>
+
+    <div class="charte-content">
+        <p>Chez <strong>Prof Chez Vous</strong>, nous croyons que la réussite scolaire repose avant tout sur une relation de confiance mutuelle entre le professeur, l’apprenant et ses parents.</p>
+        
+        <p>Trouver le bon professeur ne se résume pas à consulter un profil ou à lire quelques informations. Il est souvent nécessaire de se rencontrer, d’échanger et de vérifier que les attentes, la méthode de travail et les personnalités sont compatibles.</p>
+        
+        <p>C’est pour cette raison que nous avons mis en place l’<strong>Essai Gratuit</strong>.</p>
+        
+        <p>Cette première rencontre permet à chacun de se découvrir dans un cadre clair, transparent et respectueux. La présente charte définit les principes qui encadrent cette étape importante.</p>
+
+        <h2>🎯 1. L’objectif de l’Essai Gratuit</h2>
+        <p>L’essai gratuit n’est ni un cours particulier complet, ni une séance de révisions intensives.</p>
+        <p>Il s’agit avant tout d’une rencontre de découverte et d’un diagnostic pédagogique destiné à permettre aux deux parties de vérifier si une future collaboration est envisageable.</p>
+
+        <h3>Pour le parent et l’apprenant</h3>
+        <p>Cette rencontre permet de :</p>
+        <ul>
+            <li>découvrir le professeur ;</li>
+            <li>apprécier sa ponctualité et son professionnalisme ;</li>
+            <li>observer sa manière d’expliquer ;</li>
+            <li>évaluer la qualité du contact humain ;</li>
+            <li>déterminer si sa méthode correspond aux besoins de l’apprenant.</li>
+        </ul>
+
+        <h3>Pour le professeur</h3>
+        <p>Cette rencontre permet de :</p>
+        <ul>
+            <li>évaluer le niveau réel de l’apprenant ;</li>
+            <li>identifier ses principales difficultés ;</li>
+            <li>comprendre ses besoins pédagogiques ;</li>
+            <li>découvrir son environnement de travail ;</li>
+            <li>vérifier si les conditions de la collaboration lui conviennent.</li>
+        </ul>
+        <p>L’essai constitue donc une étape de validation mutuelle avant tout engagement durable.</p>
+
+        <h2>⏱️ 2. Déroulement recommandé de la séance</h2>
+        <p>Pour maximiser l’efficacité de cette première rencontre, la durée recommandée est de <strong>45 minutes</strong>.</p>
+        <p>Bien que Prof Chez Vous ne soit pas physiquement présent pour contrôler le déroulement de la séance, les parties sont invitées à respecter l’organisation suivante.</p>
+
+        <h3>Première partie : Évaluation pédagogique (environ 30 minutes)</h3>
+        <p>Le professeur échange avec l’apprenant et peut proposer :</p>
+        <ul>
+            <li>un mini-exercice ;</li>
+            <li>quelques questions ciblées ;</li>
+            <li>une activité d’évaluation ;</li>
+            <li>un échange pédagogique adapté au niveau concerné.</li>
+        </ul>
+        <p>L’objectif est d’identifier les forces, les difficultés et la manière dont l’apprenant réagit à l’accompagnement proposé.</p>
+
+        <h3>Deuxième partie : Débriefing et discussion (environ 15 minutes)</h3>
+        <p>Le professeur présente ses premières observations au parent.</p>
+        <p>Cette phase permet aux deux parties de discuter librement :</p>
+        <ul>
+            <li>des besoins de l’apprenant ;</li>
+            <li>des objectifs à atteindre ;</li>
+            <li>de la fréquence souhaitée des cours ;</li>
+            <li>de l’organisation pratique ;</li>
+            <li>ainsi que des modalités financières de leur éventuelle collaboration.</li>
+        </ul>
+
+        <h2>🤝 3. Engagements du parent et de l’apprenant</h2>
+        <p>En programmant un essai gratuit, le parent ou l’apprenant s’engage à :</p>
+        
+        <h3>Faire preuve de sérieux</h3>
+        <p>La demande d’essai doit être effectuée uniquement lorsqu’il existe une réelle intention de rechercher un professeur et d’envisager une collaboration en cas de satisfaction mutuelle.</p>
+        <p>L’essai ne doit jamais être utilisé comme un simple moyen d’obtenir gratuitement du temps, des conseils ou une évaluation sans projet concret.</p>
+
+        <h3>Respecter les horaires convenus</h3>
+        <p>Le parent s’engage à être disponible à l’heure prévue et à prévenir le professeur en cas d’empêchement.</p>
+
+        <h3>Favoriser un climat respectueux</h3>
+        <p>Le parent et l’apprenant s’engagent à accueillir le professeur dans un cadre respectueux et propice à l’échange.</p>
+
+        <h2>🛡️ 4. Engagements du professeur</h2>
+        <p>En acceptant une demande d’essai, le professeur s’engage à :</p>
+
+        <h3>Faire preuve de ponctualité</h3>
+        <p>Se présenter à l’heure convenue.</p>
+
+        <h3>Adopter une posture professionnelle</h3>
+        <ul>
+            <li>tenue correcte ;</li>
+            <li>comportement exemplaire ;</li>
+            <li>langage respectueux ;</li>
+            <li>attitude digne de confiance.</li>
+        </ul>
+
+        <h3>Mettre en avant sa méthodologie</h3>
+        <p>L’objectif de l’essai est de démontrer sa capacité à accompagner l’apprenant et non de réaliser une séance complète de soutien scolaire.</p>
+        <p>Le professeur est invité à présenter sa méthode de travail, son approche pédagogique et sa manière d’aider l’élève à progresser.</p>
+
+        <h3>Réaliser une évaluation honnête</h3>
+        <p>Les observations formulées à l’issue de l’essai doivent être sincères, objectives et constructives.</p>
+
+        <h2>📊 5. Pourquoi déclarer sa collaboration sur Prof Chez Vous après l’essai ?</h2>
+        <p>L’essai gratuit constitue uniquement une phase de découverte.</p>
+        <p>Lorsqu’un parent et un professeur décident de poursuivre ensemble, il est fortement recommandé de déclarer officiellement leur collaboration sur Prof Chez Vous.</p>
+        <p>Cette déclaration permet d’activer des outils conçus pour faciliter le suivi et améliorer la qualité de l’accompagnement.</p>
+
+        <h3>L’espace de suivi pédagogique</h3>
+        <p>La déclaration donne accès à :</p>
+        <ul>
+            <li>l’espace de suivi dédié ;</li>
+            <li>le journal numérique des séances ;</li>
+            <li>l’historique complet des bilans réalisés ;</li>
+            <li>les indicateurs de progression de l’apprenant ;</li>
+            <li>les statistiques de suivi disponibles sur la plateforme.</li>
+        </ul>
+
+        <h3>Une preuve claire de l’accord conclu</h3>
+        <p>La finalisation de l’engagement permet de conserver une trace des principaux éléments convenus entre les parties.</p>
+        <p>En cas de malentendu ou de litige, chacun peut se référer aux informations enregistrées sur la plateforme.</p>
+
+        <h3>Une meilleure organisation</h3>
+        <p>La centralisation des informations permet aux parents comme aux professeurs de conserver un historique structuré de leur collaboration.</p>
+
+        <h3>La garantie de remplacement PCV</h3>
+        <p>Lorsqu’une collaboration est déclarée sur Prof Chez Vous, la plateforme peut intervenir plus facilement en cas de difficulté majeure et accompagner la recherche d’une solution adaptée.</p>
+
+        <h2>⚙️ 6. Fonctionnement des droits d’essai</h2>
+        
+        <h3>Utilisateurs du Plan Standard</h3>
+        <p>Afin de préserver le temps des professeurs et de maintenir un équilibre au sein de la plateforme, chaque utilisateur du plan Standard dispose d’un essai gratuit tous les 90 jours.</p>
+
+        <h3>Utilisateurs Premium</h3>
+        <p>Les abonnés Premium bénéficient d’une plus grande flexibilité.</p>
+        <p>Si le premier professeur rencontré ne correspond pas aux attentes de l’apprenant, ils peuvent programmer immédiatement d’autres essais sans devoir attendre l’expiration du délai applicable au plan Standard.</p>
+
+        <h2>🌟 7. L’esprit de l’Essai Gratuit</h2>
+        <p>L’Essai Gratuit repose sur la confiance, le respect du temps de chacun et la volonté commune de favoriser la réussite des apprenants.</p>
+        <p>Il ne s’agit ni d’une formalité administrative, ni d’un cours gratuit déguisé.</p>
+        <p>C’est une opportunité offerte aux parents, aux apprenants et aux professeurs de se rencontrer, d’échanger et de construire les bases d’une collaboration durable dans les meilleures conditions possibles.</p>
+
+        <div class="charte-footer">
+            <h2>✅ Acceptation de la charte</h2>
+            <p>En programmant, confirmant ou participant à un Essai Gratuit sur Prof Chez Vous, les parties reconnaissent avoir pris connaissance de la présente charte et s’engagent à en respecter les principes et l’esprit.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
