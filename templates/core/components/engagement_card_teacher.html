@@ -93,14 +93,14 @@
                 {% endif %}
 
                 <!-- Messagerie -->
-                {% if eng.conversation and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'REFUSE' %}
+                {% if eng.conversation %}
                 <a href="{% url 'conversation_detail' eng.conversation.id %}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--dash-text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
                     💬 Rejoindre la messagerie
                 </a>
                 {% endif %}
 
                 <!-- Actions de gestion -->
-                {% if eng.statut_general == 'FINALISE' or eng.statut_general == 'EN_COURS' %}
+                {% if eng.statut_general == \'FINALISE\' %}
                 <button type="button" class="menu-item" onclick="openClotureModal('{{ eng.id }}', '{% if eng.cloture_initiee_par %}{{ eng.cloture_initiee_par.id }}{% endif %}')" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 0.85rem 1rem; color: var(--dash-text-dark); font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9; cursor: pointer;">
                     {% if not eng.cloture_initiee_par %}
                         ✅ Demander la clôture

@@ -742,32 +742,21 @@ def prof_dashboard(request):
     except TeacherProfile.DoesNotExist:
         return redirect("prof_create_profile")
 
-    # 1. Gestion des Engagements par onglets
+    # 1. Gestion des Engagements
     engagements = teacher.engagements.select_related(
         'parent_apprenant'
     ).prefetch_related(
         'enfants_concernes', 'conversation'
     ).order_by("-date_creation")
     
-    # "En cours" (Demandes en attente ou confirmÃ©es mais pas encore finalisÃ©es)
-    # On regroupe EN_ATTENTE, CONFIRME (qui est "En cours") et EN_COURS
-    engs_en_cours = engagements.filter(
-        statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    ).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # "FinalisÃ©s/actifs" (Uniquement les engagements ayant le statut FINALISE)
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # "Essai"
-    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI).exclude(statut_general=StatutGeneral.TERMINE)
-    
-    # "Historique" (Tous les statuts confondus)
+    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
+    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
+    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
     engs_tous = engagements.all()
 
-    # 2. Statistiques dynamiques (Plus fiables que les compteurs stockÃ©s)
-    # Contrats actifs = Uniquement FINALISE
+    # 2. Statistiques dynamiques
     nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI).count()
-    # Cours terminÃ©s = TERMINE
     nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).exclude(type_engagement=EngagementType.ESSAI).count()
     
     # 3. Centre de Notifications (Messages non lus)
@@ -781,17 +770,18 @@ def prof_dashboard(request):
 
     context = {
         "teacher": teacher,
-        "engs_en_cours": engs_en_cours,
-        "engs_actifs": engs_actifs,
+        "engs_essais_programmes": engs_essais_programmes,
+        "engs_essais_confirmes": engs_essais_confirmes,
+        "engs_finalises": engs_finalises,
+        "engs_termines": engs_termines,
         "engs_tous": engs_tous,
-        "engs_essais": engs_essais,
         "unread_count": unread_messages_count,
         "parents_favoris": parents_favoris,
         "completion": teacher.completion_percentage,
         "nb_actifs": nb_actifs,
         "nb_termines": nb_termines,
-        "badge_en_cours": engs_en_cours.count(),
-        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
+        "badge_essais_programmes": engs_essais_programmes.count(),
+        "badge_essais_confirmes": engs_essais_confirmes.count(),
     }
 
     # Annonce
@@ -944,24 +934,11 @@ def parent_dashboard(request):
         Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
     ).distinct().order_by("-date_creation")
 
-    # Onglet "En cours" : En attente ou ConfirmÃ©/En cours
-    engs_en_cours = engagements.filter(
-        statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    ).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Onglet "Actifs" : FinalisÃ©
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Onglet "TerminÃ©" (Historique rapide) : TerminÃ©, AnnulÃ©, RefusÃ©
-    engs_termines = engagements.filter(
-        statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-    ).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Historique complet pour le modal/liste (tous les statuts, mais non masquÃ©s)
+    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
+    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
+    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
     engagements_tous = engagements.all()
-
-    # Onglet "Essais"
-    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
     # 4. DonnÃ©es additionnelles
     favoris = request.user.professeurs_favoris.all()
@@ -980,18 +957,17 @@ def parent_dashboard(request):
         "enfants": enfants,
         "active_enfant": active_enfant,
         "recommandations": recommandations,
-        "engagements_en_cours": engs_en_cours,
-        "engagements_actifs": engs_actifs,
+        "engagements_essais_programmes": engs_essais_programmes,
+        "engagements_essais_confirmes": engs_essais_confirmes,
+        "engagements_finalises": engs_finalises,
         "engagements_termines": engs_termines,
-        "engagements_essais": engs_essais,
         "engagements_tous": engagements_tous,
         "abonnement": abonnement,
         "favoris": favoris,
         "enfant_form": enfant_form,
-        "enfant_form": enfant_form,
         "show_welcome_popup": not profile.a_vu_popup_bienvenue,
-        "badge_en_cours": engs_en_cours.count(),
-        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
+        "badge_essais_programmes": engs_essais_programmes.count(),
+        "badge_essais_confirmes": engs_essais_confirmes.count(),
     }
     
     if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
@@ -1115,24 +1091,11 @@ def apprenant_dashboard(request):
     # 2. Engagements filtrÃ©s pour l'apprenant (parent_apprenant=request.user)
     engagements = request.user.engagements_client.all().order_by("-date_creation")
 
-    # Onglet "En cours" : En attente ou ConfirmÃ©/En cours
-    engs_en_cours = engagements.filter(
-        statut_general__in=[StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-    ).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Onglet "Actifs" : FinalisÃ©
-    engs_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Onglet "TerminÃ©" (Historique rapide) : TerminÃ©, AnnulÃ©, RefusÃ©
-    engs_termines = engagements.filter(
-        statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-    ).exclude(type_engagement=EngagementType.ESSAI)
-    
-    # Historique complet pour le modal/liste (tous les statuts)
+    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
+    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
+    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
+    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
     engagements_tous = engagements.all()
-
-    # Onglet "Essais"
-    engs_essais = engagements.filter(type_engagement=EngagementType.ESSAI)
 
     # 3. Abonnement & Favoris
     abonnement = request.user.abonnements.first()
@@ -1146,16 +1109,16 @@ def apprenant_dashboard(request):
     context = {
         "apprenant": apprenant,
         "recommandations": recommandations,
-        "engagements_en_cours": engs_en_cours,
-        "engagements_actifs": engs_actifs,
+        "engagements_essais_programmes": engs_essais_programmes,
+        "engagements_essais_confirmes": engs_essais_confirmes,
+        "engagements_finalises": engs_finalises,
         "engagements_termines": engs_termines,
-        "engagements_essais": engs_essais,
         "engagements_tous": engagements_tous,
         "abonnement": abonnement,
         "favoris": favoris,
         "show_welcome_popup": not profile.a_vu_popup_bienvenue,
-        "badge_en_cours": engs_en_cours.count(),
-        "badge_essais": engs_essais.filter(statut_general__in=['EN_ATTENTE', 'CONFIRME', 'EN_COURS']).count(),
+        "badge_essais_programmes": engs_essais_programmes.count(),
+        "badge_essais_confirmes": engs_essais_confirmes.count(),
     }
 
     # Annonce (Parents/Apprenants)

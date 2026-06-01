@@ -105,58 +105,72 @@
             <!-- Engagement Management Tabs -->
             <div class="tabs-container">
                 <div class="tabs-header">
-                    <button class="tab-btn active" onclick="switchTab(event, 'tab-pending')">
-                        En cours
-                        {% if badge_en_cours > 0 %}
-                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_en_cours }}</span>
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab-programmes')">
+                        Essai programmé
+                        {% if badge_essais_programmes > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_programmes }}</span>
                         {% endif %}
                     </button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-active')">Finalisés/actifs</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-trials')">
-                        Essais
-                        {% if badge_essais > 0 %}
-                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais }}</span>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-confirmes')">
+                        Essai confirmé
+                        {% if badge_essais_confirmes > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_confirmes }}</span>
                         {% endif %}
                     </button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-finalises')">Finalisé</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-termines')">Terminé</button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
                 </div>
 
-                <!-- Tab: Demandes -->
-                <div id="tab-pending" class="tab-content active">
-                    {% if engs_en_cours %}
-                        {% for eng in engs_en_cours %}
-                            {% if not eng.masque_pour_professeur %}
-                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucune demande en cours.</p>
-                    {% endif %}
-                </div>
-
-                <!-- Tab: Actifs -->
-                <div id="tab-active" class="tab-content">
-                    {% if engs_actifs %}
-                        {% for eng in engs_actifs %}
-                            {% if not eng.masque_pour_professeur %}
-                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun contrat actif.</p>
-                    {% endif %}
-                </div>
-
-                <!-- Tab: Essais -->
-                <div id="tab-trials" class="tab-content">
-                    {% if engs_essais %}
-                        {% for eng in engs_essais %}
+                <!-- Tab: Programmes -->
+                <div id="tab-programmes" class="tab-content active">
+                    {% if engs_essais_programmes %}
+                        {% for eng in engs_essais_programmes %}
                             {% if not eng.masque_pour_professeur %}
                                 {% include "core/components/engagement_card_teacher.html" with eng=eng %}
                             {% endif %}
                         {% endfor %}
                     {% else %}
                         <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Confirmes -->
+                <div id="tab-confirmes" class="tab-content">
+                    {% if engs_essais_confirmes %}
+                        {% for eng in engs_essais_confirmes %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai confirmé.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Finalises -->
+                <div id="tab-finalises" class="tab-content">
+                    {% if engs_finalises %}
+                        {% for eng in engs_finalises %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun engagement finalisé.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tab: Termines -->
+                <div id="tab-termines" class="tab-content">
+                    {% if engs_termines %}
+                        {% for eng in engs_termines %}
+                            {% if not eng.masque_pour_professeur %}
+                                {% include "core/components/engagement_card_teacher.html" with eng=eng %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun engagement terminé.</p>
                     {% endif %}
                 </div>
 

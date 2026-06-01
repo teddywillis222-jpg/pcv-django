@@ -551,35 +551,42 @@
             <section style="margin-top: 1.5rem;">
                 <h2 class="section-title" style="margin-bottom: 0.6rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements</h2>
                 <div class="glass-tabs">
-                    <button class="tab-pill active" onclick="switchTab(event, 'encours')">
-                        En cours
-                        {% if badge_en_cours > 0 %}
-                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_en_cours }}</span>
+                    <button class="tab-pill active" onclick="switchTab(event, 'programmes')">
+                        Essai programmé
+                        {% if badge_essais_programmes > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_programmes }}</span>
                         {% endif %}
                     </button>
-                    <button class="tab-pill" onclick="switchTab(event, 'actifs')">Actifs</button>
-                    <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminés</button>
-                    <button class="tab-pill" onclick="switchTab(event, 'essais')">
-                        Essais
-                        {% if badge_essais > 0 %}
-                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais }}</span>
+                    <button class="tab-pill" onclick="switchTab(event, 'confirmes')">
+                        Essai confirmé
+                        {% if badge_essais_confirmes > 0 %}
+                        <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_confirmes }}</span>
                         {% endif %}
                     </button>
+                    <button class="tab-pill" onclick="switchTab(event, 'finalises')">Finalisé</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminé</button>
                 </div>
 
                 <div id="tab-content">
-                    <div class="tab-pane" id="encours">
-                        {% for eng in engagements_en_cours %}
+                    <div class="tab-pane" id="programmes">
+                        {% for eng in engagements_essais_programmes %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucune demande en cours.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun essai programmé.</p>
                         {% endfor %}
                     </div>
-                    <div class="tab-pane" id="actifs" style="display: none;">
-                        {% for eng in engagements_actifs %}
+                    <div class="tab-pane" id="confirmes" style="display: none;">
+                        {% for eng in engagements_essais_confirmes %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" %}
+                        {% empty %}
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun essai confirmé.</p>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="finalises" style="display: none;">
+                        {% for eng in engagements_finalises %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" show_actions=True %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun engagement actif.</p>
+                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun engagement finalisé.</p>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="termines" style="display: none;">
@@ -587,13 +594,6 @@
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" %}
                         {% empty %}
                         <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Historique vide.</p>
-                        {% endfor %}
-                    </div>
-                    <div class="tab-pane" id="essais" style="display: none;">
-                        {% for eng in engagements_essais %}
-                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
-                        {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun cours d'essai.</p>
                         {% endfor %}
                     </div>
                 </div>

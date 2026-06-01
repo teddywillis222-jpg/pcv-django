@@ -1,63 +1,10 @@
-<div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
-    <!-- En-tête : Professeur et Statut -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-        <div>
-            <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--text-dark);">
-                {% if eng.professeur %}
-                    Prof. {{ eng.professeur.prenom }} {{ eng.professeur.nom }}
-                    {% if eng.professeur.statut_de_validation == 'APPROVED' or eng.professeur.est_certifie %}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#16a34a" style="margin-left: 5px; vertical-align: middle; flex-shrink: 0;">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    {% endif %}
-                {% else %}
-                    Affectation en cours...
-                {% endif %}
-            </h4>
-            <p style="margin: 2px 0 0; font-size: 0.85rem; color: var(--text-gray);">
-                {{ eng.matiere }} • {{ eng.get_classe_display }}
-            </p>
-        </div>
-        <span class="eng-status-badge {{ status_class }}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
-            {% if eng.type_engagement == 'ESSAI' %}
-                {{ eng.essai_status_label }}
-            {% else %}
-                {{ eng.get_statut_general_display }}
-            {% endif %}
-        </span>
-    </div>
+import re
 
-    <!-- Détails de l'engagement -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-gray);">
-        {% if eng.type_engagement == 'ESSAI' %}
-            <div>
-                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📅 Date & Heure</span>
-                <span style="color: var(--text-dark); font-weight: 600;">
-                    {{ eng.date_heure_essai|date:"d/m/Y" }} à {{ eng.date_heure_essai|time:"H:i" }}
-                </span>
-            </div>
-            <div>
-                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">💻 Mode</span>
-                <span style="color: var(--text-dark); font-weight: 600;">
-                    {{ eng.get_mode_de_cours_display }}
-                    {% if eng.mode_de_cours == 'ONLINE' and eng.plateforme_visio_preferee %}
-                        ({{ eng.plateforme_visio_preferee }})
-                    {% endif %}
-                </span>
-            </div>
-        {% else %}
-            <div>
-                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Quartier</span>
-                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
-            </div>
-            <div>
-                <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
-                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.get_type_engagement_display }}</span>
-            </div>
-        {% endif %}
-    </div>
+with open('templates/core/components/engagement_card_parent.html', 'r', encoding='utf-8') as f:
+    content = f.read()
 
-    <!-- Footer : Bouton principal et Options -->
+# Replace footer options
+new_footer = """<!-- Footer : Bouton principal et Options -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
         {% if eng.statut_general == 'ESSAI_REALISE' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
@@ -157,6 +104,10 @@
             </div>
 
         </div>
-    </div>
-    </div>
-</div>
+    </div>"""
+
+pattern = r'<!-- Footer : Bouton principal et Options -->.*?</div>\s*</div>'
+content = re.sub(pattern, new_footer, content, flags=re.DOTALL)
+
+with open('templates/core/components/engagement_card_parent.html', 'w', encoding='utf-8') as f:
+    f.write(content)
