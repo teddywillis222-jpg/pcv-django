@@ -1376,7 +1376,7 @@ def professeur_detail(request, teacher_slug):
         elif hasattr(request.user, 'profile'):
             from django.utils import timezone
             import datetime
-            limit_date = timezone.now() - datetime.timedelta(days=90)
+            limit_date = timezone.now() - datetime.timedelta(days=settings.TRIAL_WINDOW_DAYS)
             essais_recent = request.user.engagements_client.filter(
                 date_creation__gte=limit_date
             ).count()
@@ -1540,7 +1540,7 @@ def api_teacher_profile(request, teacher_slug):
                 elif hasattr(request.user, 'profile'):
                     from django.utils import timezone
                     import datetime
-                    limit_date = timezone.now() - datetime.timedelta(days=90)
+                    limit_date = timezone.now() - datetime.timedelta(days=settings.TRIAL_WINDOW_DAYS)
                     essais_recent = request.user.engagements_client.filter(
                         date_creation__gte=limit_date
                     ).count()
