@@ -105,6 +105,15 @@
                     <a href="{% url 'cgu' %}" target="_blank" style="color: var(--brand-600); font-weight: 700;">Conditions Générales d'Utilisation</a>.
                 </div>
 
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
+                        <input type="checkbox" name="accept_charte" required style="flex-shrink: 0; width: 1.25rem; height: 1.25rem; margin-top: 0.1rem; accent-color: var(--primary); cursor: pointer;">
+                        <span style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.5;">
+                            J'ai lu et j'accepte sans réserve la <a href="{% url 'charte_essai' %}" target="_blank" style="color: var(--brand-600); font-weight: 700; text-decoration: none;">Charte de l'Essai Gratuit</a> de Prof Chez Vous.
+                        </span>
+                    </label>
+                </div>
+
                 <button type="submit" class="btn-auth">
                     Valider mon inscription
                 </button>
@@ -148,8 +157,10 @@
         const signupForm = document.getElementById('signupForm');
         const signupBtn = signupForm.querySelector('.btn-auth');
         if (signupForm && signupBtn) {
-            signupForm.addEventListener('submit', function() {
-                // Only show loading if form is actually submitting (basic browser validation passed)
+            signupForm.addEventListener('submit', function(e) {
+                if (!this.checkValidity()) {
+                    return;
+                }
                 setTimeout(() => {
                     signupBtn.disabled = true;
                     signupBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 8px;"><svg class="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Création en cours...</span>';
