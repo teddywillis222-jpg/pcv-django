@@ -135,13 +135,7 @@
                     </div>
                 {% endif %}
                 
-                {% if msg.is_locked %}
-                    <div style="opacity: 0.9; font-style: italic;">
-                        Ce message est verrouillé. Veuillez <a href="{% url 'payer_engagement' conversation.engagement_actif.id %}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Procéder au paiement</a> ou <a href="{% url 'gestion_plan' %}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Gérer mon plan</a> pour débloquer la discussion.
-                    </div>
-                {% else %}
-                    {{ msg.contenu_texte|linebreaksbr }}
-                {% endif %}
+                {{ msg.contenu_texte|linebreaksbr }}
                 
                 <div class="msg-meta">
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
@@ -159,30 +153,10 @@
                 </div>
             </div>
         {% empty %}
-            {% if payment_required %}
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center;">
-                <div style="width: 64px; height: 64px; background: #fee2e2; color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Paiement requis</h3>
-                <p style="font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem; max-width: 400px;">
-                    Le professeur a accepté votre proposition ! Pour débloquer la conversation et commencer à échanger, veuillez régler les frais de mise en relation ou souscrire à un plan.
-                </p>
-                <div style="display: flex; gap: 1rem; width: 100%; max-width: 400px; flex-direction: column;">
-                    <a href="{% url 'payer_engagement' conversation.engagement_actif.id %}" style="display: block; width: 100%; padding: 0.875rem; background: var(--c-accent); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
-                        Procéder au paiement (2000 FCFA)
-                    </a>
-                    <a href="{% url 'gestion_plan' %}" style="display: block; width: 100%; padding: 0.875rem; background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center;">
-                        Gérer mon plan
-                    </a>
-                </div>
-            </div>
-            {% else %}
             <div id="empty-chat-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center; color: #94a3b8;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 1rem; opacity: 0.5;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 <p style="font-size: 0.95rem;">Aucun message pour le moment.<br>Commencez la discussion !</p>
             </div>
-            {% endif %}
         {% endfor %}
 
     </main>
@@ -288,19 +262,15 @@
                         <a href="{% url 'suivi_engagement' eng.id %}" class="c-eng-btn-suivi" style="flex: 1; min-width: 100%;">Ouvrir le suivi de l'engagement</a>
                         
                         {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
-                            {% if eng.statut_general == 'EN_ATTENTE' or eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
+                            {% if eng.statut_general == 'ESSAI_PROGRAMME' or eng.statut_general == 'EN_ATTENTE' %}
                                 <button type="button" class="c-eng-btn-outline" onclick="showEditForm('{{ eng.id }}')">Modifier</button>
                             {% endif %}
                             
                             {% if eng.statut_general != 'FINALISE' and eng.statut_general != 'REFUSE' %}
                                 {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
-                                    {% if is_premium or eng.paiement_effectue %}
-                                        <button type="button" class="c-eng-btn-primary" onclick="finalizeEng('{{ eng.id }}')">Finaliser l'engagement</button>
-                                    {% else %}
-                                        <button type="button" class="c-eng-btn-disabled" onclick="alertFinalizeDisabled('payment')">Finaliser l'engagement</button>
-                                    {% endif %}
+                                    <a href="{% url 'finalisation_engagement' eng.id %}" class="c-eng-btn-primary" style="display: block; text-align: center; text-decoration: none; width: 100%; box-sizing: border-box;">Finaliser l'engagement</a>
                                 {% else %}
-                                    <button type="button" class="c-eng-btn-disabled" onclick="alertFinalizeDisabled('status')">Finaliser l'engagement</button>
+                                    <button type="button" class="c-eng-btn-disabled" onclick="alert('La finalisation n\'est possible qu\'une fois l\'essai confirmé ou en cours.')">Finaliser l'engagement</button>
                                 {% endif %}
                             {% endif %}
                         {% endif %}
@@ -383,24 +353,7 @@
             {% endfor %}
         </div>
     </div>
-    <!-- Modal de confirmation de finalisation -->
-    <div class="c-overlay" id="finalizeModalOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000; justify-content: center; align-items: center; padding: 1rem; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s;">
-        <div class="c-modal-box" style="background: white; border-radius: 20px; padding: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transform: translateY(20px); transition: transform 0.3s;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-            </div>
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; font-family: var(--font);">Finaliser l'engagement</h3>
-            <p style="font-size: 0.95rem; color: #64748b; line-height: 1.5; margin-bottom: 1.5rem; font-family: var(--font);">
-                Êtes-vous sûr de vouloir finaliser cet engagement ? Cette action confirmera le début officiel de vos séances avec le professeur.
-            </p>
-            <div style="display: flex; gap: 0.75rem;">
-                <button type="button" onclick="closeFinalizeModal()" style="flex: 1; padding: 0.75rem; background: #f1f5f9; color: #475569; border: none; border-radius: 12px; font-weight: 600; font-family: var(--font); cursor: pointer;">Annuler</button>
-                <button type="button" id="confirmFinalizeBtn" style="flex: 1; padding: 0.75rem; background: #16a34a; color: white; border: none; border-radius: 12px; font-weight: 600; font-family: var(--font); cursor: pointer;">Oui, finaliser</button>
-            </div>
-        </div>
-    </div>
+
 
 </div>
 {% endblock %}
@@ -548,74 +501,7 @@
         }
     }
 
-    // -- Finalisation --
-    function alertFinalizeDisabled(reason) {
-        if (reason === 'status') {
-            alert("Vous ne pouvez pas finaliser cet engagement pour le moment. L'engagement doit être 'en cours' (confirmé par le professeur).");
-        } else if (reason === 'payment') {
-            alert("Vous devez vous acquitter des frais de mise en relation ou souscrire à un abonnement Access+ pour finaliser cet engagement.");
-        }
-    }
 
-    let engIdToFinalize = null;
-
-    function finalizeEng(engId) {
-        engIdToFinalize = engId;
-        const modal = document.getElementById('finalizeModalOverlay');
-        modal.style.display = 'flex';
-        modal.style.pointerEvents = 'auto';
-        requestAnimationFrame(() => {
-            modal.style.opacity = '1';
-            modal.querySelector('.c-modal-box').style.transform = 'translateY(0)';
-        });
-    }
-
-    function closeFinalizeModal() {
-        const modal = document.getElementById('finalizeModalOverlay');
-        modal.style.opacity = '0';
-        modal.style.pointerEvents = 'none';
-        modal.querySelector('.c-modal-box').style.transform = 'translateY(20px)';
-        setTimeout(() => {
-            modal.style.display = 'none';
-            engIdToFinalize = null;
-        }, 300);
-    }
-
-    // Fermeture du modal au clic sur l'arrière-plan
-    document.getElementById('finalizeModalOverlay').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeFinalizeModal();
-        }
-    });
-
-    document.getElementById('confirmFinalizeBtn').addEventListener('click', async function() {
-        if (!engIdToFinalize) return;
-        const btn = this;
-        btn.disabled = true;
-        btn.textContent = 'Traitement...';
-
-        try {
-            const csrf = getCookieCSRF('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value;
-            const response = await fetch(`/api/engagement/${engIdToFinalize}/finalize/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrf
-                }
-            });
-            const result = await response.json();
-            if (response.ok && result.success) {
-                location.reload();
-            } else {
-                alert(result.error || "Erreur lors de la finalisation.");
-                btn.disabled = false;
-                btn.textContent = 'Oui, finaliser';
-            }
-        } catch(e) {
-            alert("Erreur de connexion.");
-            btn.disabled = false;
-            btn.textContent = 'Oui, finaliser';
-        }
-    });
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.c-options-menu') && !e.target.closest('.c-icon-btn')) {

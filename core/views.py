@@ -279,51 +279,23 @@ def messagerie(request):
                     pass
 
         # Badge Statut & Couleur
-        statut_label = "Discussion"
+        statut_label = ""
         statut_class = "statut-default"
         
         if eng:
-            from .choices import TypeAbonnement, EngagementType
-            # DÃ©terminer si le paiement est exigible :
-            # NON exigible si l'utilisateur est Premium OU si c'est un essai
-            is_trial = (eng.type_engagement == EngagementType.ESSAI)
-            is_user_premium = (
-                hasattr(request.user, 'profile')
-                and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
-            )
-            needs_payment = (
-                eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]
-                and not eng.paiement_effectue
-                and not is_trial
-                and not is_user_premium
-                and user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]
-            )
-
+            from .choices import StatutGeneral
             if eng.statut_general == StatutGeneral.FINALISE:
                 statut_label = "Actif"
                 statut_class = "statut-active"
             elif eng.statut_general == StatutGeneral.TERMINE:
-                statut_label = "TerminÃ©"
+                statut_label = "Terminé"
                 statut_class = "statut-finished"
-            elif needs_payment:
-                statut_label = "Paiement requis"
-                statut_class = "statut-blocked"
             elif eng.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.CONFIRME, StatutGeneral.EN_COURS]:
                 statut_label = "En cours"
                 statut_class = "statut-pending"
 
-        # Blocage Messagerie
+        # Blocage Messagerie (SUPPRIMÉ)
         is_blocked = False
-        if eng and eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS] and not eng.paiement_effectue:
-            if user_profile.role in [Role.ROLE_PARENT, Role.ROLE_APPRENANT]:
-                from .choices import TypeAbonnement, EngagementType
-                is_trial = (eng.type_engagement == EngagementType.ESSAI)
-                is_user_premium = request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
-                if not is_user_premium and not is_trial:
-                    is_blocked = True
-            else:
-                # Le professeur n'est jamais bloquÃ©
-                is_blocked = False
 
         # Non-lus (utilise le compteur annotÃ© pour performance)
         has_unread = conv.unread_count > 0
@@ -1897,18 +1869,9 @@ def conversation_detail(request, conversation_id):
     is_trial = eng and eng.type_engagement == EngagementType.ESSAI
     
     for msg in raw_messages:
-        # Masquage Paywall (Backend Security)
-        # Pas de masquage pour les Premium ni pour les essais
+        # Masquage Paywall supprimé (La messagerie est désormais normale, fluide et accessible à tous)
         msg.is_locked = False
-        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
-            if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
-                # VÃ©rifier si le message vient aprÃ¨s la confirmation/crÃ©ation de l'engagement
-                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
-                if msg.date_envoi >= ref_date:
-                    msg.is_locked = True
-                    msg.contenu_texte = ""
-                    msg.contenu_media = None
-
+        
         msg_date = msg.date_envoi.date()
         msg.changed_date = (msg_date != last_date)
         
@@ -1952,12 +1915,7 @@ def conversation_detail(request, conversation_id):
             is_blocked = True
             hide_input = True
             blocking_message = "En attente de la confirmation du professeur." if eng.statut_general == 'EN_ATTENTE' else "Cet engagement a Ã©tÃ© refusÃ©."
-        # 2. BloquÃ© si confirmÃ©/en cours mais non payÃ© (sauf Access+ Premium ou essai)
-        elif eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue:
-            if not is_premium and not is_trial:
-                is_blocked = True
-                hide_input = True
-                blocking_message = "Paiement requis pour continuer les Ã©changes."
+        # Plus de blocage lié au paiement.
                 
     is_eligible_to_finalize = True  # On autorise par dÃ©faut
 
@@ -2078,11 +2036,7 @@ def api_send_message(request, conversation_id):
         if active_eng:
             if active_eng.statut_general in ['EN_ATTENTE', 'REFUSE']:
                 return JsonResponse({'error': 'En attente de la confirmation du professeur.' if active_eng.statut_general == 'EN_ATTENTE' else 'Cet engagement a Ã©tÃ© refusÃ©.'}, status=403)
-                
-            is_premium = request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
-            is_trial = active_eng.type_engagement == EngagementType.ESSAI
-            if active_eng.statut_general in ['CONFIRME', 'EN_COURS'] and not active_eng.paiement_effectue and not is_premium and not is_trial:
-                return JsonResponse({'error': 'Paiement requis pour continuer les Ã©changes'}, status=402)
+            # Plus de blocage lié au paiement.
 
     try:
         texte = request.POST.get('texte', '').strip()
@@ -2198,15 +2152,8 @@ def api_fetch_new_messages(request, conversation_id):
         file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
         is_locked = False
         
-        # Masquage Paywall (Backend Security) â€” exempt Premium et essais
-        if eng and eng.statut_general in ['CONFIRME', 'EN_COURS'] and not eng.paiement_effectue and not is_premium and not is_trial:
-            if user_role in ['PARENT', 'APPRENANT'] and msg.auteur != request.user:
-                ref_date = eng.date_confirmation if eng.date_confirmation else eng.date_creation
-                if msg.date_envoi >= ref_date:
-                    is_locked = True
-                    texte = ""
-                    file_url = None
-                    file_name = None
+        # Masquage Paywall supprimé (La messagerie est désormais accessible à tous)
+        is_locked = False
         
         messages_data.append({
             'id': msg.id,

@@ -260,22 +260,7 @@
     </div>
 </div>
 
-<!-- Modal Confirmation Acceptation -->
-<div class="modal-overlay" id="acceptConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 6000; align-items: center; justify-content: center; padding: 1rem;">
-    <div class="modal-content" style="background: white; border-radius: 20px; width: 100%; max-width: 400px; padding: 2rem; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-        <div style="width: 60px; height: 60px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        </div>
-        <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Accepter la proposition ?</h3>
-        <p style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-            Vous serez redirigé vers la conversation privée avec ce parent pour finaliser les détails de cet engagement.
-        </p>
-        <div style="display: flex; gap: 0.75rem;">
-            <button onclick="closeAcceptModal()" style="flex: 1; padding: 0.875rem; border-radius: 12px; background: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s;">Annuler</button>
-            <button id="confirmAcceptBtn" style="flex: 1; padding: 0.875rem; border-radius: 12px; background: #16a34a; color: white; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22,163,74,0.2);">Confirmer</button>
-        </div>
-    </div>
-</div>
+
 
 <!-- Modal Confirmation Refus -->
 <div class="modal-overlay" id="refuseConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 6000; align-items: center; justify-content: center; padding: 1rem;">
@@ -422,7 +407,7 @@
                 if (eng.status === 'EN_ATTENTE') {
                     actionsHtml = `
                         <div style="display:flex; gap:0.75rem; margin-top: 1.5rem;">
-                            <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter', ${isTrial}, '${eng.client_role || 'PARENT'}')">Accepter</button>
+                            <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter', ${isTrial}, '${eng.client_role || 'PARENT'}', this)">Accepter</button>
                             <button class="btn-dash btn-dash-outline" style="flex:1; color:#ef4444; border-color:#ef4444;" onclick="handleEngAction(${id}, 'refuser')">Refuser</button>
                         </div>
                     `;
@@ -559,41 +544,7 @@
         if (menu) menu.classList.toggle('active');
     }
 
-    let pendingAcceptId = null;
 
-    function openAcceptModal(id, isTrial = false, clientRole = 'PARENT') {
-        pendingAcceptId = id;
-        
-        // Update popup text dynamically
-        const pDesc = document.querySelector('#acceptConfirmModal p');
-        if (pDesc) {
-            if (isTrial) {
-                const roleTxt = (clientRole === 'APPRENANT') ? 'cet apprenant' : 'ce parent';
-                pDesc.textContent = `Vous confirmez ainsi la programmation de la séance d'essai avec ${roleTxt}.`;
-            } else {
-                pDesc.textContent = "Vous serez redirigé vers la conversation privée avec ce parent pour finaliser les détails de cet engagement.";
-            }
-        }
-        
-        document.getElementById('acceptConfirmModal').style.display = 'flex';
-        
-        // Configuration du bouton de confirmation
-        const confirmBtn = document.getElementById('confirmAcceptBtn');
-        confirmBtn.onclick = async function() {
-            confirmBtn.disabled = true;
-            confirmBtn.innerHTML = '<span class="loader" style="width:16px;height:16px;border:2px solid #fff;border-bottom-color:transparent;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>';
-            await processEngAction(pendingAcceptId, 'accepter');
-            closeAcceptModal();
-        };
-    }
-
-    function closeAcceptModal() {
-        pendingAcceptId = null;
-        document.getElementById('acceptConfirmModal').style.display = 'none';
-        const confirmBtn = document.getElementById('confirmAcceptBtn');
-        confirmBtn.disabled = false;
-        confirmBtn.innerHTML = 'Confirmer';
-    }
 
     let pendingRefuseId = null;
 
@@ -625,10 +576,14 @@
         confirmBtn.innerHTML = 'Confirmer le refus';
     }
 
-    async function handleEngAction(id, action, isTrial = false, clientRole = 'PARENT') {
+    async function handleEngAction(id, action, isTrial = false, clientRole = 'PARENT', btnContext = null) {
         if (action === 'accepter') {
-            closeEngModal(); // Fermer le modal de détails s'il est ouvert
-            openAcceptModal(id, isTrial, clientRole);
+            if (btnContext) {
+                btnContext.disabled = true;
+                btnContext.innerHTML = '<span class="loader" style="width:16px;height:16px;border:2px solid currentColor;border-bottom-color:transparent;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span> Traitement...';
+            }
+            await processEngAction(id, 'accepter');
+            closeEngModal();
             return;
         } else if (action === 'refuser') {
             closeEngModal();
