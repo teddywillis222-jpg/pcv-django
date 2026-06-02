@@ -542,18 +542,31 @@
     <!-- Block 1: Plan Actuel -->
     <div class="plan-card {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}premium{% endif %}">
         <div class="plan-badge {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}badge-premium{% else %}badge-standard{% endif %}">
-            Plan {{ abonnement.get_type_abonnement_display }}
+            {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+                ACCESS+ PREMIUM
+            {% else %}
+                PLAN STANDARD
+            {% endif %}
         </div>
         
         <div class="plan-header">
-            <h2>{{ abonnement.get_type_abonnement_display }}</h2>
+            <h2>{% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}Access+ Premium{% else %}Standard{% endif %}</h2>
             <p class="plan-desc">
                 {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                    Vous bénéficiez d’un accès prioritaire et d’échanges illimités dans la limite mensuelle.
+                    Votre abonnement est actif. Vous bénéficiez de la programmation d'essais gratuits illimitée. Testez autant de professeurs que nécessaire, sans aucun délai d'attente.
                 {% else %}
-                    Vous payez uniquement lorsque vous souhaitez débloquer une discussion confirmée.
+                    Vous bénéficiez d'un essai physique gratuit de 45 minutes tous les 3 mois. Utilisez-le pour tester et choisir sereinement votre premier professeur sur le terrain.
                 {% endif %}
             </p>
+            {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
+            <div style="margin-top:0.75rem; font-size:0.95rem; color:var(--text-gray);">
+                {% if abonnement.date_fin %}
+                    <strong>Date d'expiration :</strong> {{ abonnement.date_fin|date:"d M Y" }}
+                {% else %}
+                    <strong>Renouvellement :</strong> automatique mensuel
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
 
         <!-- Block 3: Suivi Consommation (Visible si Premium) -->
@@ -585,43 +598,39 @@
     <div class="compare-grid">
         <!-- Standard -->
         <div class="compare-card {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
-            <div class="compare-header">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <span class="compare-name">Standard</span>
-                    {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
-                    {% endif %}
+                <div class="compare-header">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span class="compare-name">Standard</span>
+                        {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
+                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
+                        {% endif %}
+                    </div>
+                    <span class="compare-price">Gratuit</span>
                 </div>
-                <span class="compare-price">Gratuit</span>
-            </div>
-            <ul class="compare-features">
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Accès aux profils des professeurs vérifiés
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Création et envoi gratuit de propositions d’engagement
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Suivi de vos engagements (historique, statuts, accords)
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Accès à la messagerie et au journal de séance après activation
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> uniquement après confirmation du professeur (déblocage de l’engagement)</span>
-                </li>
-            </ul>
-            <p style="font-size: 0.8rem; color: var(--text-gray); font-style: italic; margin-top: 0.5rem; line-height: 1.4;">
-                ℹ️ En Plan Standard, ce frais d’activation de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }} après confirmation permet également de garantir un cadre sérieux et respectueux : il évite les engagements non suivis et protège le temps des professeurs, tout en assurant des échanges de qualité sur la plateforme.
-            </p>
-            {% if abonnement.type_abonnement != 'STANDARD' and abonnement.type_abonnement != TypeAbonnement.STANDARD %}
-                <a href="#" class="btn-action btn-outline" onclick="openDowngradeModal()">Revenir au Standard</a>
-            {% endif %}
+                <ul class="compare-features">
+                    <li class="feature-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <strong>Accès complet</strong> aux profils des professeurs certifiés et vérifiés.
+                    </li>
+                    <li class="feature-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <strong>1 essai physique gratuit (45 min)</strong> tous les 3 mois pour valider un professeur.
+                    </li>
+                    <li class="feature-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <strong>Suivi complet</strong> de vos engagements (historique, statuts, accords passés).
+                    </li>
+                    <li class="feature-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <strong>Accès aux outils de suivi :</strong> messagerie intégrée et journal de séance pour suivre l'évolution de l'apprenant.
+                    </li>
+                </ul>
+                <p style="font-size: 0.9rem; color: var(--text-gray); margin-top: 0.5rem; line-height: 1.4;">
+                    <em>Le Plan Standard vous permet de tester gratuitement un premier professeur. Si le profil ne convient pas, vous pouvez patienter jusqu'au prochain cycle ou débloquer les essais immédiats avec le plan Access+.</em>
+                </p>
+                {% if abonnement.type_abonnement != 'STANDARD' and abonnement.type_abonnement != TypeAbonnement.STANDARD %}
+                    <a href="#" class="btn-action btn-outline" onclick="openDowngradeModal()">Revenir au Standard</a>
+                {% endif %}
         </div>
 
         <!-- Premium -->
@@ -630,31 +639,27 @@
                 <div style="display: flex; flex-direction: column; gap: 4px;">
                     <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
                     {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
+                    <span style="font-size: 0.7rem; font-weight: 800; color: white; background: var(--premium); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
                     {% endif %}
                 </div>
-                <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }}{{ DEFAULT_CURRENCY|lower }}<small>/mois</small></span>
+                <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }} {{ DEFAULT_CURRENCY }}<small>/mois</small></span>
             </div>
             <ul class="compare-features">
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <strong>Tous les avantages du Plan Standard</strong>
+                    <strong>Tous les avantages</strong> du Plan Standard inclus.
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span>Jusqu’à <strong>{{ PREMIUM_ENGAGEMENT_QUOTA }} engagements confirmés</strong> par mois activés sans frais supplémentaires</span>
+                    <strong>Programmation d'essais gratuits (45 min) ILLIMITÉE :</strong> l'idéal pour tester plusieurs profs avant de faire votre choix définitif.
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span><strong>Aucun frais de {{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> après confirmation du professeur (dans la limite du plan)</span>
+                    <strong>Zéro délai d'attente :</strong> si un essai ne donne pas le résultat espéré, programmez un nouveau test instantanément.
                 </li>
                 <li class="feature-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Propositions prioritaires (relance automatique du professeur après 30 minutes)
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Accès aux essais gratuits proposés par certains professeurs
+                    <strong>Multi-matières &amp; Multi-enfants :</strong> couvrez tous les besoins de la famille en initiant plusieurs essais en parallèle.
                 </li>
             </ul>
             {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
