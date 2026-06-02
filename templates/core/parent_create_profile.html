@@ -36,10 +36,10 @@
     .onboarding-page-wrapper {
         min-height: 100vh;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         background: #f8fafc;
-        padding: 1rem 0;
+        padding: 2rem 0;
         font-family: 'Plus Jakarta Sans', sans-serif;
         margin: -2rem -1rem; /* compensate base padding */
     }
@@ -245,7 +245,18 @@
 
     .btn-primary:not(:disabled):hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(22, 163, 74, 0.35);
+        box-shadow: 0 12px 20px -5px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-action.btn-secondary {
+        background: white;
+        color: #475569;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-action.btn-secondary:hover:not(:disabled) {
+        border-color: #cbd5e1;
+        background: #f8fafc;
     }
 
     .btn-primary:disabled {
@@ -256,15 +267,6 @@
         transform: none;
     }
 
-    .btn-secondary {
-        background: #f1f5f9;
-        color: #475569;
-        border: 1px solid #cbd5e1;
-    }
-
-    .btn-secondary:hover {
-        background: #e2e8f0;
-    }
 
     .django-help {
         font-size: 0.8rem;
@@ -381,7 +383,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Matières nécessitant un appui <span style="color: #ef4444;">*</span></label>
+                    <label>Matières à renforcer <span style="color: #ef4444;">*</span></label>
                     <div style="margin-bottom: 0.75rem;">
                         {{ enfant_form.matieres_predefinies }}
                     </div>
@@ -468,7 +470,11 @@
         btnNext.addEventListener('click', function () {
             // Copier le quartier du parent vers le quartier de l'enfant par défaut
             if (pQuartierQuery.value && eQuartierQuery.value === '') {
-                eQuartierQuery.value = pQuartierQuery.value;
+                if (eQuartierQuery.tomselect) {
+                    eQuartierQuery.tomselect.setValue(pQuartierQuery.value);
+                } else {
+                    eQuartierQuery.value = pQuartierQuery.value;
+                }
                 checkStep2();
             }
 

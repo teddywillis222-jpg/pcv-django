@@ -119,7 +119,7 @@
     .form-group select,
     .form-group textarea {
         width: 100% !important;
-        height: 58px !important;
+        height: 52px !important;
         padding: 0 1.25rem;
         background: var(--input-bg);
         border: 1px solid var(--border-color);
@@ -208,10 +208,11 @@
         border: 1px solid var(--border-color) !important;
         border-radius: 14px !important;
         padding: 0 1.25rem !important;
-        min-height: 58px !important;
-        height: 58px !important;
+        min-height: 52px !important;
+        height: auto !important;
         display: flex !important;
         align-items: center !important;
+        flex-wrap: wrap !important;
         width: 100% !important;
         box-sizing: border-box !important;
     }
@@ -607,12 +608,27 @@
                 </label>
             </div>
 
-            <div class="consent-box" style="margin-top: 1rem;">
+            <div class="consent-box" style="margin-top: 1rem; opacity: 0.8; pointer-events: none;">
                 {{ form.essai_gratuit_actif }}
                 <label for="{{ form.essai_gratuit_actif.id_for_label }}">
-                    Je souhaite activer l'essai gratuit. (Vous pouvez l'activer ou le désactiver n'importe quand dans les paramètres de votre espace).
+                    L'essai gratuit physique de 45 minutes est obligatoire pour tous les professeurs de la plateforme (Nouvelle disposition).
                 </label>
             </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const essaiCheckbox = document.getElementById('{{ form.essai_gratuit_actif.id_for_label }}');
+                    if (essaiCheckbox) {
+                        essaiCheckbox.checked = true;
+                        // On le met en hidden pour le forcer dans le post même si disabled
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = essaiCheckbox.name;
+                        hiddenInput.value = 'on';
+                        essaiCheckbox.parentNode.appendChild(hiddenInput);
+                    }
+                });
+            </script>
 
             <button type="submit" class="submit-btn" id="mainSubmitBtn" style="margin-top: 2rem;">
                 Soumettre pour validation ➔

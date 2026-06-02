@@ -674,7 +674,7 @@
                 </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
-                <button style="display: block; width: 100%; border: none; padding: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onclick="closeWelcomePricingModal(); window.location.href='{% url 'gestion_plan' %}';" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(16, 185, 129, 0.3)'">Découvrir mon plan et commencer</button>
+                <button style="display: block; width: 100%; border: none; padding: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onclick="closeWelcomePricingModal().then(() => { window.location.href='{% url 'gestion_plan' %}'; });" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(16, 185, 129, 0.3)'">Découvrir mon plan et commencer</button>
                 <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; padding: 0.75rem; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">Je comprends, continuer</button>
             </div>
         </div>
@@ -930,7 +930,7 @@
     function closeWelcomePricingModal() {
         document.getElementById('welcomePricingModal').style.display = 'none';
         // Enregistrer en DB que le parent a vu le popup
-        fetch('/api/mark-welcome-seen/', {
+        return fetch('/api/mark-welcome-seen/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),

@@ -2317,19 +2317,19 @@ def admin_api_prof_action(request, prof_id):
         prof.save()
         # TODO: Envoi d'email de confirmation (simulation pour le test)
         print(f"[SIMULATION EMAIL] Profil validé envoyé à {prof.email}")
-        return JsonResponse({'success': True, 'message': 'Professeur valid\u00e9 avec succ\u00e8s.'})
+        return JsonResponse({'success': True, 'message': 'Professeur validé avec succès.'})
         
     elif action == 'incomplet':
         raison = request.POST.get('raison', 'Informations incomplètes.')
         prof.statut_de_validation = ValidationStatus.INCOMPLET
         prof.save()
         print(f"[SIMULATION EMAIL] Profil incomplet envoyé à {prof.email}. Raison: {raison}")
-        return JsonResponse({'success': True, 'message': 'Statut mis \u00e0 jour et email envoy\u00e9.'})
+        return JsonResponse({'success': True, 'message': 'Statut mis à jour et email envoyé.'})
         
     elif action == 'valider_note':
         note = request.POST.get('note', '')
         print(f"[SIMULATION EMAIL] Email envoyé à {prof.email} avec la note d'évaluation: {note}")
-        return JsonResponse({'success': True, 'message': 'Note enregistr\u00e9e et email envoy\u00e9.'})
+        return JsonResponse({'success': True, 'message': 'Note enregistrée et email envoyé.'})
         
     return JsonResponse({'error': 'Action non reconnue.'}, status=400)
 

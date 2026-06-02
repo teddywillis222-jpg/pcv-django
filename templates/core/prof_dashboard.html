@@ -212,16 +212,16 @@
                     <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Consultez votre profil tel qu'il est vu par les parents et apprenants.</p>
                 </a>
 
-                <!-- Option: Toggle Trial -->
-                <div id="btnToggleEssaiContainer" onclick="toggleEssai()" 
-                     style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
+                <!-- Option: Toggle Trial (Bloqué) -->
+                <div id="btnToggleEssaiContainer" 
+                     style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; border: 1px solid #e2e8f0; opacity: 0.6; cursor: not-allowed;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
-                        <span id="txtToggleEssai" style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">
-                            {% if teacher.essai_gratuit_actif %}Désactiver l'essai gratuit{% else %}Activer l'essai gratuit{% endif %}
+                        <span style="font-weight: 900; color: var(--dash-text-muted); font-size: 1.1rem;">❯</span>
+                        <span id="txtToggleEssai" style="font-weight: 800; color: var(--dash-text-muted); font-size: 1.05rem;">
+                            Essai gratuit activé (Obligatoire)
                         </span>
                     </div>
-                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Autoriser ou non les parents à solliciter une séance d'essai gratuite.</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">L'essai gratuit de 45 minutes est désormais obligatoire pour tous les professeurs selon nos nouvelles conditions.</p>
                 </div>
 
             </div>
