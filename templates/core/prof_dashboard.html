@@ -404,7 +404,7 @@
                 const isTrial = eng.type === 'ESSAI';
                 let actionsHtml = '';
                 
-                if (eng.status === 'EN_ATTENTE') {
+                if (eng.status === 'EN_ATTENTE' || eng.status === 'ESSAI_PROGRAMME') {
                     actionsHtml = `
                         <div style="display:flex; gap:0.75rem; margin-top: 1.5rem;">
                             <button class="btn-dash btn-dash-primary" style="flex:1" onclick="handleEngAction(${id}, 'accepter', ${isTrial}, '${eng.client_role || 'PARENT'}', this)">Accepter</button>
