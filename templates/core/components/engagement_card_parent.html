@@ -61,16 +61,12 @@
     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
         {% if eng.statut_general == 'ESSAI_REALISE' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
-                ✨ Finaliser l'engagement
+                ✨ Engager ce professeur
             </a>
         {% elif eng.statut_general != 'REFUSE' and eng.statut_general != 'ESSAI_PROGRAMME' and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'ESSAI_REALISE' and eng.type_engagement != 'ESSAI' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none;">
                 Accéder à l'espace de l'engagement
             </a>
-        {% elif eng.statut_general == 'ESSAI_CONFIRME' %}
-             <button onclick="convertirEnEngagement({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
-                ✨ Engager ce professeur
-             </button>
         {% else %}
              <button onclick="openDetailModal({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-dark); padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer;">
                 {% if eng.type_engagement == 'ESSAI' %}Voir l'essai{% else %}Voir les détails{% endif %}

@@ -115,7 +115,7 @@
                 </div>
                 <!-- Ligne 2 : Aperçu + Meta (Heure + Dot) -->
                 <div class="card-row-bottom">
-                    <div class="preview-text">
+                    <div class="preview-text" {% if conv.has_unread %}style="font-weight: 700; color: #1e293b;"{% endif %}>
                         {% if "📷 Photo" in conv.obj.dernier_message_texte %}<span>📷</span> Photo
                         {% elif "📄 Fichier" in conv.obj.dernier_message_texte %}<span>📄</span> Fichier
                         {% elif "Fichier joint" in conv.obj.dernier_message_texte %}<span>📎</span> Fichier

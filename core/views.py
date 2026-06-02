@@ -1787,12 +1787,17 @@ def api_engagement_action(request, engagement_id):
             
             # Message automatique pour essai
             if engagement.type_engagement == EngagementType.ESSAI:
-                Message.objects.create(
+                msg_texte = "J'ai bien confirmé notre séance d'essai. Préparez-vous pour notre rencontre !"
+                msg = Message.objects.create(
                     conversation=conversation,
                     auteur=engagement.professeur.user,
                     destinataire=engagement.parent_apprenant,
-                    contenu_texte="J'ai bien confirmé notre séance d'essai. Préparez-vous pour notre rencontre !"
+                    contenu_texte=msg_texte
                 )
+                conversation.dernier_message_texte = msg_texte
+                conversation.dernier_message_date = msg.date_envoi
+                conversation.dernier_message_auteur = engagement.professeur.user
+                conversation.save()
             
             # Mise à jour du temps de réponse moyen
             responses = Engagement.objects.filter(professeur=teacher, temps_reponse_prof__isnull=False).values_list('temps_reponse_prof', flat=True)

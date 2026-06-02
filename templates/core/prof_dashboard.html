@@ -618,7 +618,19 @@
             const data = await response.json();
             if (data.success) {
                 if (action === 'accepter' && data.conversation_id) {
-                    window.location.href = `/messagerie/${data.conversation_id}/`;
+                    document.body.insertAdjacentHTML('beforeend', `
+                        <div id="ephemeral-success-alert" style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; font-weight: 500; opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 0.75rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <div>
+                                <strong style="display:block; font-size:1.05rem; margin-bottom:0.1rem;">Confirmation réussie !</strong>
+                                <span style="font-size: 0.85rem; opacity:0.9;">Vous allez être redirigé vers la messagerie avec ce parent/apprenant...</span>
+                            </div>
+                        </div>
+                    `);
+                    setTimeout(() => document.getElementById('ephemeral-success-alert').style.opacity = '1', 10);
+                    setTimeout(() => {
+                        window.location.href = `/messagerie/${data.conversation_id}/`;
+                    }, 2500);
                 } else {
                     window.location.reload();
                 }
