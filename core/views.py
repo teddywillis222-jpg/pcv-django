@@ -297,6 +297,23 @@ def messagerie(request):
         # Blocage Messagerie (SUPPRIMÉ)
         is_blocked = False
 
+        # Backfill du dernier message si le champ est vide (conversations créées avant la correction)
+        if not conv.dernier_message_texte:
+            last_msg = conv.messages.order_by('-date_envoi').first()
+            if last_msg:
+                if last_msg.contenu_media:
+                    try:
+                        is_img = 'image' in last_msg.contenu_media.url
+                    except Exception:
+                        is_img = False
+                    prefix = "📷 Photo" if is_img else "📄 Fichier"
+                    conv.dernier_message_texte = f"{prefix} {last_msg.contenu_texte}" if last_msg.contenu_texte else prefix
+                else:
+                    conv.dernier_message_texte = last_msg.contenu_texte
+                conv.dernier_message_date = last_msg.date_envoi
+                conv.dernier_message_auteur = last_msg.auteur
+                conv.save(update_fields=['dernier_message_texte', 'dernier_message_date', 'dernier_message_auteur'])
+
         # Non-lus (utilise le compteur annoté pour performance)
         has_unread = conv.unread_count > 0
 

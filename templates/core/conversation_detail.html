@@ -259,7 +259,11 @@
                     
                     <!-- Boutons Actions -->
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                        <a href="{% url 'suivi_engagement' eng.id %}" class="c-eng-btn-suivi" style="flex: 1; min-width: 100%;">Ouvrir le suivi de l'engagement</a>
+                        {% if eng.statut_general == 'FINALISE' or eng.statut_general == 'ENGAGEMENT_FINALISE' %}
+                            <a href="{% url 'suivi_engagement' eng.id %}" class="c-eng-btn-suivi" style="flex: 1; min-width: 100%;">Ouvrir le suivi de l'engagement</a>
+                        {% else %}
+                            <button type="button" class="c-eng-btn-suivi" disabled style="flex: 1; min-width: 100%; opacity: 0.5; cursor: not-allowed; background: #94a3b8; border: none; color: white; padding: 0.65rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-align: center;">Finalisez l'engagement pour accéder au suivi</button>
+                        {% endif %}
                         
                         {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
                             {% if eng.statut_general == 'ESSAI_PROGRAMME' or eng.statut_general == 'EN_ATTENTE' %}
