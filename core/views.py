@@ -1741,11 +1741,14 @@ def api_engagement_action(request, engagement_id):
         action = data.get('action') # 'accepter' ou 'refuser'
         
         # Sécurité: Ne pas agir sur un engagement déjà traité
-        if engagement.statut_general != StatutGeneral.EN_ATTENTE:
+        if engagement.statut_general not in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
             return JsonResponse({'error': 'Cet engagement a déjà été traité.'}, status=400)
 
         if action == 'accepter':
-            engagement.statut_general = StatutGeneral.CONFIRME # Sera "En cours" via les labels
+            if engagement.type_engagement == EngagementType.ESSAI:
+                engagement.statut_general = StatutGeneral.ESSAI_CONFIRME
+            else:
+                engagement.statut_general = StatutGeneral.CONFIRME
             engagement.date_confirmation = timezone.now()
             
             # Calcul du temps de réponse (en minutes)
