@@ -416,17 +416,17 @@ function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPrem
         const bannerBtn = document.getElementById('essai_banner_btn');
         const submitBtn = document.getElementById('essai_submit_btn');
 
-        // Bannière informative (non bloquante)
-        if (essaiActif) {
+        // Bannière informative (upsell Access+)
+        if (!isPremium) {
             banner.style.display = 'block';
-            bannerText.textContent = isPremium
-                ? "Ce professeur propose un essai gratuit. R\u00e9servez ci-dessous."
-                : "Ce professeur propose un essai gratuit aux membres Access+.";
-            bannerBtn.style.display = isPremium ? 'none' : 'inline-block';
+            bannerText.textContent = "Le plan Standard vous donne droit \u00e0 1 essai tous les 3 mois. Passez en Access+ pour des essais illimit\u00e9s !";
+            bannerBtn.style.display = 'inline-block';
+            bannerBtn.textContent = "D\u00e9couvrir Access+";
             bannerBtn.href = "{% url 'gestion_plan' %}";
         } else {
             banner.style.display = 'none';
         }
+        
         // Le bouton est toujours actif : le quota est d\u00e9j\u00e0 g\u00e9r\u00e9 par can_schedule_trial c\u00f4t\u00e9 template
         submitBtn.disabled = false;
         submitBtn.style.opacity = '1';

@@ -721,6 +721,9 @@ def prof_dashboard(request):
         'enfants_concernes', 'conversation'
     ).order_by("-date_creation")
     
+    for eng in engagements:
+        eng.check_and_update_essai_status()
+    
     engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
     engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
     engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
@@ -906,6 +909,8 @@ def parent_dashboard(request):
     engagements = engagements_base.filter(
         Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
     ).distinct().order_by("-date_creation")
+    for eng in engagements:
+        eng.check_and_update_essai_status()
 
     engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
     engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
@@ -1063,6 +1068,8 @@ def apprenant_dashboard(request):
 
     # 2. Engagements filtrés pour l'apprenant (parent_apprenant=request.user)
     engagements = request.user.engagements_client.all().order_by("-date_creation")
+    for eng in engagements:
+        eng.check_and_update_essai_status()
 
     engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
     engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
@@ -3323,10 +3330,54 @@ def finalisation_engagement(request, engagement_id):
     # Vérification des droits d'accès
     if engagement.parent_apprenant != request.user:
         return redirect('home')
+        
+    if engagement.statut_general in [StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]:
+        return redirect('parent_dashboard')
+        
+    if request.method == "POST":
+        engagement.matiere = request.POST.get('matiere', engagement.matiere)
+        engagement.classe = request.POST.get('classe', engagement.classe)
+        engagement.mode_de_cours = request.POST.get('mode_de_cours', engagement.mode_de_cours)
+        
+        if engagement.mode_de_cours == 'en_ligne':
+            engagement.plateforme_visio_preferee = request.POST.get('localisation_plateforme', engagement.plateforme_visio_preferee)
+        else:
+            engagement.localisation_option = request.POST.get('localisation_plateforme', engagement.localisation_option)
+            
+        engagement.frequence_hebdomadaire = request.POST.get('frequence_hebdomadaire', engagement.frequence_hebdomadaire)
+        engagement.duree_seance = request.POST.get('duree_seance', engagement.duree_seance)
+        
+        duree_mois = request.POST.get('duree_mois')
+        if duree_mois and duree_mois.isdigit():
+            engagement.duree_mois = int(duree_mois)
+            
+        date_debut_str = request.POST.get('date_debut')
+        if date_debut_str:
+            from django.utils.dateparse import parse_date
+            parsed = parse_date(date_debut_str)
+            if parsed:
+                engagement.date_debut = parsed
+                
+        enfant_id = request.POST.get('enfant_id')
+        if enfant_id and str(enfant_id).isdigit():
+            from .models import Enfant
+            try:
+                enfant = Enfant.objects.get(id=int(enfant_id))
+                if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
+                    engagement.enfants_concernes.clear()
+                    engagement.enfants_concernes.add(enfant)
+            except Enfant.DoesNotExist:
+                pass
+                
+        engagement.statut_general = StatutGeneral.FINALISE
+        engagement.type_engagement = EngagementType.NORMAL
+        engagement.save()
+        return redirect('parent_dashboard')
 
     context = {
         'engagement': engagement,
-        'professeur': engagement.professeur
+        'professeur': engagement.professeur,
+        'enfants': request.user.parent.enfants.all() if hasattr(request.user, 'parent') else []
     }
     return render(request, 'core/finalisation_engagement.html', context)
 

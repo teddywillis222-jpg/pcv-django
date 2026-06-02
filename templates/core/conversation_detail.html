@@ -266,7 +266,7 @@
                                 <button type="button" class="c-eng-btn-outline" onclick="showEditForm('{{ eng.id }}')">Modifier</button>
                             {% endif %}
                             
-                            {% if eng.statut_general != 'FINALISE' and eng.statut_general != 'REFUSE' %}
+                            {% if eng.statut_general != 'FINALISE' and eng.statut_general != 'ENGAGEMENT_FINALISE' and eng.statut_general != 'REFUSE' %}
                                 {% if eng.statut_general == 'CONFIRME' or eng.statut_general == 'EN_COURS' %}
                                     <a href="{% url 'finalisation_engagement' eng.id %}" class="c-eng-btn-primary" style="display: block; text-align: center; text-decoration: none; width: 100%; box-sizing: border-box;">Finaliser l'engagement</a>
                                 {% else %}

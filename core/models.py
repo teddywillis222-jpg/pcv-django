@@ -912,8 +912,23 @@ class Engagement(models.Model):
             
         super().save(*args, **kwargs)
 
+    def check_and_update_essai_status(self):
+        """Met à jour le statut de l'essai à ESSAI_REALISE si la date de début + 45 min est dépassée."""
+        from django.utils import timezone
+        import datetime
+        from core.choices import StatutGeneral, EngagementType
+        
+        if self.type_engagement == EngagementType.ESSAI and self.statut_general in [StatutGeneral.ESSAI_PROGRAMME, StatutGeneral.ESSAI_CONFIRME]:
+            if self.date_heure_essai:
+                dt_fin = self.date_heure_essai + datetime.timedelta(minutes=45)
+                if timezone.now() >= dt_fin:
+                    self.statut_general = StatutGeneral.ESSAI_REALISE
+                    self.save(update_fields=['statut_general'])
+                    return True
+        return False
+
     def __str__(self):
-        return f"Engagement #{self.id} (conv {self.conversation_id})"
+        return f"Engagement #{self.id} - {self.professeur} / {self.parent_apprenant} - {self.statut_general}"
 
 
 class Seance(models.Model):
