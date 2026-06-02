@@ -415,26 +415,17 @@ function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPrem
         const bannerBtn = document.getElementById('essai_banner_btn');
         const submitBtn = document.getElementById('essai_submit_btn');
 
-        if (essaiActif) {
-            banner.style.display = 'block';
-            if (isPremium) {
-                bannerText.textContent = "Ce professeur propose un essai gratuit. Vous pouvez réserver votre essai ci-dessous.";
-                bannerBtn.style.display = 'none';
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.title = "";
-            } else {
-                bannerText.textContent = "Ce professeur propose un essai gratuit aux membres Access+ Premium.";
-                bannerBtn.style.display = 'inline-block';
-                bannerBtn.href = "{% url 'gestion_plan' %}"; 
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-                submitBtn.title = "Access+ Premium requis";
-            }
-        } else {
+        // Hide the informational banner to free space in the form
+        try {
             banner.style.display = 'none';
-            // L'utilisateur a passé le filtre can_schedule_trial côté template,
-            // donc il a le droit de programmer un essai. On active le bouton.
+            bannerBtn.style.display = 'none';
+        } catch(e) {}
+        // Keep button enabled/disabled logic but without showing the banner
+        if (essaiActif && !isPremium) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.title = 'Access+ Premium requis';
+        } else {
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
             submitBtn.title = '';
