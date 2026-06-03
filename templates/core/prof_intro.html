@@ -35,6 +35,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
 <style>
     /* Styles personnalisés pour compléter Tailwind */
+    .prof-intro-page a, .prof-intro-page a:hover {
+        text-decoration: none !important;
+    }
     .hero-pattern {
         background-color: #f8fafc;
         background-image: radial-gradient(#22c55e 0.5px, transparent 0.5px), radial-gradient(#22c55e 0.5px, #f8fafc 0.5px);
@@ -50,11 +53,22 @@
 </style>
 {% endblock %}
 
-{% block content %}
+{% block main_wrapper %}
+<main class="w-full prof-intro-page">
+    {% if messages %}
+    <div class="messages-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+        {% for message in messages %}
+        <div class="alert-toast alert-{{ message.tags }}" style="padding: 1rem; border-radius: 12px; font-weight: 600; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 <div class="bg-slate-50 font-sans text-slate-800 overflow-hidden">
     
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-32 md:pt-48 md:pb-48 overflow-hidden">
+    <section class="relative pt-16 pb-32 md:pt-24 md:pb-48 overflow-hidden">
         <!-- Image de fond avec overlay -->
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2000&auto=format&fit=crop" alt="Professeur inspirant" class="w-full h-full object-cover">
@@ -64,10 +78,6 @@
         </div>
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-left md:text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pcv-500/20 border border-pcv-400/30 text-pcv-300 text-sm font-semibold mb-6">
-                <span class="w-2 h-2 rounded-full bg-pcv-400 animate-pulse"></span>
-                Rejoignez l'élite des professeurs
-            </div>
             
             <h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight mb-6">
                 Devenez plus qu'un simple profil. <br>
@@ -278,4 +288,5 @@
     </section>
 
 </div>
+</main>
 {% endblock %}
