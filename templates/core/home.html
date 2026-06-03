@@ -219,13 +219,14 @@ p {
     white-space: nowrap;
     font-weight: 600;
     font-size: 0.9rem;
-    text-decoration: none;
+    text-decoration: none !important;
     transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 .chip:hover {
     background: var(--slate-100);
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    text-decoration: none !important;
 }
 .chip:active {
     background: var(--slate-200);
@@ -233,6 +234,13 @@ p {
 }
 .chip:focus { outline: none; }
 .chip:focus-visible { outline: 3px solid rgba(22,163,74,0.12); outline-offset: 2px; }
+
+/* Ensure CTA search button and chips never show underlines on hover/active */
+.btn-search,
+.btn-search:hover,
+.btn-search:active {
+    text-decoration: none !important;
+}
 
 /* --- LA DIFFERENCE (CAROUSEL) --- */
 .diff-card-mobile {
