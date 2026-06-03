@@ -244,7 +244,7 @@
 .msg-bubble .msg-tick { stroke: #9ca3af; }
 .msg-bubble .msg-tick.read { stroke: #3b82f6; }
 .msg-bubble.sent .msg-tick { stroke: rgba(255, 255, 255, 0.6); }
-.msg-bubble.sent .msg-tick.read { stroke: #60a5fa; } /* Bleu clair bien visible sur le fond de la bulle envoyée */
+.msg-bubble.sent .msg-tick.read { stroke: #ffffff; } /* Changé en blanc pour un meilleur contraste sur fond vert */
 
 /* Groupement des messages (Espacement) */
 .msg-bubble.sent + .msg-bubble.received { margin-top: 1rem; }
@@ -316,6 +316,12 @@
     max-height: 100px;
     padding: 0;
     line-height: 1.4;
+}
+
+.c-input-field:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
 }
 
 .c-input-field::placeholder {
