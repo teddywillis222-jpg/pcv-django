@@ -509,9 +509,27 @@ function validateStep1() {
     required.forEach(field => {
         const el = document.getElementById(`id_${field}`);
         const err = document.getElementById(`error_${field}`);
+        
+        if (field === 'telephone' && el && el.value.trim()) {
+            const telVal = el.value.trim().replace(/\s|-/g, '');
+            if (!/^01\d{8}$/.test(telVal)) {
+                if(el) el.classList.add('input-error');
+                if(err) {
+                    err.textContent = "Le numéro doit commencer par 01 et compter 10 chiffres.";
+                    err.style.color = '#dc2626';
+                    err.style.display = 'block';
+                }
+                isValid = false;
+                return;
+            }
+        }
+        
         if (!el || !el.value.trim()) {
             if(el) el.classList.add('input-error');
-            if(err) err.style.display = 'block';
+            if(err) {
+                if (field === 'telephone') err.textContent = "Veuillez renseigner un numéro valide.";
+                err.style.display = 'block';
+            }
             isValid = false;
         } else {
             el.classList.remove('input-error');

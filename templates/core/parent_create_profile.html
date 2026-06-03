@@ -435,8 +435,31 @@
 
         // Vérification Étape 1
         function checkStep1() {
+            let telValid = false;
+            if (pWhatsapp) {
+                const telVal = pWhatsapp.value.trim().replace(/\s|-/g, '');
+                telValid = /^01\d{8}$/.test(telVal);
+                
+                let errEl = document.getElementById('error_numero_whatsapp');
+                if (!errEl) {
+                    errEl = document.createElement('div');
+                    errEl.id = 'error_numero_whatsapp';
+                    errEl.style.color = '#ef4444';
+                    errEl.style.fontSize = '0.85em';
+                    errEl.style.marginTop = '0.25rem';
+                    pWhatsapp.parentNode.appendChild(errEl);
+                }
+                
+                if (pWhatsapp.value.trim() && !telValid) {
+                    errEl.textContent = "Le numéro doit commencer par 01 et compter 10 chiffres.";
+                    errEl.style.display = 'block';
+                } else {
+                    errEl.style.display = 'none';
+                }
+            }
+
             const isValid = pNom.value.trim() !== '' &&
-                pWhatsapp.value.trim().length >= 8 &&
+                telValid &&
                 pQuartierQuery.value !== '';
             btnNext.disabled = !isValid;
         }

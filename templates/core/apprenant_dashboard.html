@@ -268,16 +268,17 @@
 
     .tab-pill {
         flex: 1;
-        padding: 0.6rem 0.5rem;
+        padding: 0.75rem 1.25rem;
         border: none;
         background: transparent;
         color: var(--text-gray);
         font-weight: 700;
         border-radius: 10px;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         cursor: pointer;
         white-space: nowrap; /* Empêche le texte de se casser sur deux lignes */
         min-width: max-content;
+        transition: all 0.2s;
     }
 
     .tab-pill.active {
@@ -572,28 +573,52 @@
                         {% for eng in engagements_essais_programmes %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-attente" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun essai programmé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai programmé</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Trouvez le professeur idéal et réservez votre première séance pour booster vos résultats !</p>
+                            <a href="{% url 'recherche' %}" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">Découvrir nos profils</a>
+                        </div>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="confirmes" style="display: none;">
                         {% for eng in engagements_essais_confirmes %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun essai confirmé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai confirmé</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Vous n'avez pas encore de cours d'essai validé. Explorez nos professeurs !</p>
+                            <a href="{% url 'recherche' %}" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">Découvrir nos profils</a>
+                        </div>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="finalises" style="display: none;">
                         {% for eng in engagements_finalises %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-actif" show_actions=True %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Aucun engagement finalisé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement finalisé</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Vous n'avez pas de contrat actif pour le moment. Trouvez le prof idéal et commencez !</p>
+                            <a href="{% url 'recherche' %}" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">Découvrir nos profils</a>
+                        </div>
                         {% endfor %}
                     </div>
                     <div class="tab-pane" id="termines" style="display: none;">
                         {% for eng in engagements_termines %}
                         {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" %}
                         {% empty %}
-                        <p style="text-align: center; padding: 1.5rem; color: var(--text-gray); font-size: 0.8rem;">Historique vide.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
+                            <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Historique vide</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.5;">Aucun engagement n'a été terminé jusqu'à présent.</p>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -661,24 +686,25 @@
             <!-- Rempli par JS -->
         </div>
     </div>
-    <!-- Welcome Pricing Modal -->
-    <div id="welcomePricingModal" class="modal-overlay" style="z-index: 5000; align-items: center; padding: 1rem; backdrop-filter: blur(8px); background: rgba(15, 23, 42, 0.6);">
-        <div class="modal-content" style="text-align: center; padding: 2.5rem 2rem; max-width: 480px; overflow: visible; height: auto; display: flex; flex-direction: column; gap: 1.25rem; background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 28px;">
-            <div style="font-size: 3.5rem; margin-bottom: 0.25rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">🎯</div>
-            <h3 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2; letter-spacing: -0.02em;">Avant de commencer</h3>
-            <div style="color: #475569; line-height: 1.6; margin: 0; font-size: 0.95rem; text-align: left;">
-                <p style="margin-bottom: 1rem;">Sur <strong>Prof Chez Vous</strong>, vous êtes entièrement maître de votre choix. Pour vous garantir une collaboration parfaite et en toute confiance, la mise en relation commence toujours par un <strong>essai physique gratuit de 45 minutes</strong>.</p>
-                <p style="margin-bottom: 0;">Trouvez le professeur idéal, programmez votre essai directement sur son profil, découvrez-le sur le terrain, puis décidez en toute liberté de valider ou non l'engagement.</p>
-                <div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 1.25rem; border-radius: 16px; margin-top: 1.5rem;">
-                    <p style="color: #9f1239; margin: 0; font-size: 0.88rem; line-height: 1.5;"><strong>🛑 Rappel important :</strong> Pour éviter les abus et protéger le temps des enseignants, l'accès aux essais gratuits est sectorisé selon votre formule (Standard ou Access+).</p>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
-                <button style="display: block; width: 100%; border: none; padding: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onclick="closeWelcomePricingModal().then(() => { window.location.href='{% url 'gestion_plan' %}'; });" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(16, 185, 129, 0.3)'">Découvrir mon plan et commencer</button>
-                <button onclick="closeWelcomePricingModal()" style="background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; padding: 0.75rem; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">Je comprends, continuer</button>
+</div>
+
+<!-- Welcome Pricing Modal -->
+<div id="welcomePricingModal" class="modal-overlay" style="z-index: 5000; align-items: center; padding: 1rem; backdrop-filter: blur(8px); background: rgba(15, 23, 42, 0.6);">
+    <div class="modal-content" style="text-align: center; padding: 2.5rem 2rem; max-width: 480px; overflow: visible; height: auto; display: flex; flex-direction: column; gap: 1.25rem; background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 28px;">
+        <div style="font-size: 3.5rem; margin-bottom: 0.25rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">🎯</div>
+        <h3 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2; letter-spacing: -0.02em;">Avant de commencer</h3>
+        <div style="color: #475569; line-height: 1.6; margin: 0; font-size: 0.95rem; text-align: left;">
+            <p style="margin-bottom: 1rem;">Sur <strong>Prof Chez Vous</strong>, vous êtes entièrement maître de votre choix. Pour vous garantir une collaboration parfaite et en toute confiance, la mise en relation commence toujours par un <strong>essai physique gratuit de 45 minutes</strong>.</p>
+            <p style="margin-bottom: 0;">Trouvez le professeur idéal, programmez votre essai directement sur son profil, découvrez-le sur le terrain, puis décidez en toute liberté de valider ou non l'engagement.</p>
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; padding: 1.25rem; border-radius: 16px; margin-top: 1.5rem;">
+                <p style="color: #9f1239; margin: 0; font-size: 0.88rem; line-height: 1.5;"><strong>🛑 Rappel important :</strong> Pour éviter les abus et protéger le temps des enseignants, l'accès aux essais gratuits est sectorisé selon votre formule (Standard ou Access+).</p>
             </div>
         </div>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
+            <button style="display: block; width: 100%; border: none; padding: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onclick="closeWelcomePricingModal().then(() => { window.location.href='{% url \'gestion_plan\' %}'; });" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(16, 185, 129, 0.3)'">Découvrir mon plan et commencer</button>
+        </div>
     </div>
+</div>
     {% include "core/components/engagement_modal.html" %}
 {% endblock %}
 
@@ -820,17 +846,17 @@
                             <span style="color: #64748b;">Heures</span>
                             <span style="font-weight: 700;">${eng.heure_debut}${eng.heure_fin ? ' - ' + eng.heure_fin : ''}</span>
                         </div>
-                        ${eng.plateforme ? `
+                        ${eng.mode_raw === 'ONLINE' && eng.plateforme ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Plateforme</span>
                             <span style="font-weight: 700;">${eng.plateforme}</span>
                         </div>` : ''}
-                        ${eng.lieu ? `
+                        ${eng.mode_raw !== 'ONLINE' && eng.lieu ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Quartier</span>
                             <span style="font-weight: 700;">${eng.lieu}</span>
                         </div>` : ''}
-                        ${eng.indications_geographiques ? `
+                        ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem;">
                             <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications géographiques</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b; max-height: 100px; overflow-y: auto;">${eng.indications_geographiques}</div>
@@ -862,16 +888,17 @@
                             <span style="color: #64748b;">Mode</span>
                             <span style="font-weight: 700;">${eng.mode}</span>
                         </div>
-                        ${eng.plateforme ? `
+                        ${eng.mode_raw === 'ONLINE' && eng.plateforme ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Plateforme</span>
                             <span style="font-weight: 700;">${eng.plateforme}</span>
                         </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Lieu</span>
                             <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
-                        </div>
-                        ${eng.indications_geographiques ? `
+                        </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem;">
                             <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications géographiques</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b;">${eng.indications_geographiques}</div>
@@ -963,7 +990,7 @@
         setTimeout(() => {
             const modal = document.getElementById('welcomePricingModal');
             if (modal) modal.style.display = 'flex';
-        }, 1200);
+        }, 100);
         {% endif %}
     });
     

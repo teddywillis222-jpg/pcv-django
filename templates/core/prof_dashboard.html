@@ -131,7 +131,13 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai programmé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai programmé</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les demandes d'essai de vos futurs élèves apparaîtront ici. Partagez votre profil pour attirer plus de clients !</p>
+                        </div>
                     {% endif %}
                 </div>
 
@@ -144,7 +150,13 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun essai confirmé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai confirmé</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les essais que vous avez acceptés apparaîtront ici.</p>
+                        </div>
                     {% endif %}
                 </div>
 
@@ -157,7 +169,13 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun engagement finalisé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            </div>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement finalisé</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Vos contrats actifs avec vos élèves s'afficheront ici une fois finalisés.</p>
+                        </div>
                     {% endif %}
                 </div>
 
@@ -170,7 +188,10 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Aucun engagement terminé.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement terminé</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les engagements clôturés apparaîtront dans cette section.</p>
+                        </div>
                     {% endif %}
                 </div>
 
@@ -183,7 +204,10 @@
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        <p style="text-align: center; color: var(--dash-text-muted); padding: 2rem; font-size: 0.875rem;">Historique vide.</p>
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Historique vide</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Votre historique d'engagements apparaîtra ici au fil du temps.</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -440,16 +464,17 @@
                             <span style="color: #64748b;">Mode</span>
                             <span style="font-weight: 700;">${eng.mode}</span>
                         </div>
-                        ${eng.plateforme ? `
+                        ${eng.mode_raw === 'ONLINE' && eng.plateforme ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Plateforme</span>
                             <span style="font-weight: 700;">${eng.plateforme}</span>
                         </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Lieu</span>
                             <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
-                        </div>
-                        ${eng.indications_geographiques ? `
+                        </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem;">
                             <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications pour trouver la maison</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b; max-height: 100px; overflow-y: auto;">
@@ -497,16 +522,17 @@
                             <span style="color: #64748b;">Mode</span>
                             <span style="font-weight: 700;">${eng.mode}</span>
                         </div>
-                        ${eng.plateforme ? `
+                        ${eng.mode_raw === 'ONLINE' && eng.plateforme ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Plateforme</span>
                             <span style="font-weight: 700;">${eng.plateforme}</span>
                         </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Lieu</span>
                             <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
-                        </div>
-                        ${eng.indications_geographiques ? `
+                        </div>` : ''}
+                        ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem;">
                             <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications pour trouver la maison</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b;">${eng.indications_geographiques}</div>
