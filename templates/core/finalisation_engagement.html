@@ -89,7 +89,6 @@
                         <option value="1_heure" {% if engagement.duree_seance == '1_heure' %}selected{% endif %}>1 heure</option>
                         <option value="1_heure_30" {% if engagement.duree_seance == '1_heure_30' %}selected{% endif %}>1 heure 30 min</option>
                         <option value="2_heures" {% if engagement.duree_seance == '2_heures' %}selected{% endif %}>2 heures</option>
-                        <option value="{{ engagement.duree_seance }}" selected>{{ engagement.duree_seance|default:'2 heures'|replace:'_':' ' }}</option>
                     </select>
                 </div>
 
