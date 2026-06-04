@@ -32,7 +32,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-qsis4-wx7&s6c&6l0@arlw&44-
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # Allowed hosts pour Render et développement local
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com,profchezvousapp.com,www.profchezvousapp.com').split(',')
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://profchezvousapp.com',
+    'https://www.profchezvousapp.com',
+]
 
 
 # Application definition
