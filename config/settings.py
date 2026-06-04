@@ -260,7 +260,7 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))  # Timeout SMTP en secondes
 # IMPORTANT : Cette adresse DOIT être vérifiée dans votre compte Brevo
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Prof Chez Vous <contact@profchezvousapp.com>')
 
 # --- Logging (visible dans les logs Render) ---
 LOGGING = {
