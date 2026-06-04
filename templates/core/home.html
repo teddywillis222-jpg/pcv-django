@@ -198,13 +198,15 @@ p {
 
 /* --- CHIPS (RECHERCHES POPULAIRES) --- */
 .chips-container {
-    display: flex;
+    display: grid;
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
     overflow-x: auto;
-    flex-wrap: wrap; /* Allow wrapping to fill space */
-    gap: 0.5rem;
-    padding: 0.25rem 1rem 0.75rem 1rem; /* Tightened vertical padding */
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 1rem 1rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    align-items: center;
 }
 .chips-container::-webkit-scrollbar { display: none; }
 .chip {
@@ -230,7 +232,7 @@ p {
 }
 .chip:active {
     background: var(--slate-200);
-    transform: translateY(0);
+    transform: scale(0.98);
 }
 .chip:focus { outline: none; }
 .chip:focus-visible { outline: 3px solid rgba(22,163,74,0.12); outline-offset: 2px; }
@@ -379,6 +381,7 @@ p {
         width: 320px;
     }
     .chips-container {
+        display: flex;
         flex-wrap: wrap;
         justify-content: center;
     }
@@ -447,17 +450,27 @@ p {
     </div>
     
     <div class="chips-container">
+        <!-- Classes -->
+        <a href="{% url 'recherche' %}?classe=Terminale" class="chip">🎓 Terminale</a>
+        <a href="{% url 'recherche' %}?classe=Première" class="chip">🎓 Première</a>
+        <a href="{% url 'recherche' %}?classe=Seconde" class="chip">🎓 Seconde</a>
+        <a href="{% url 'recherche' %}?classe=Troisième" class="chip">📚 3ème / Troisième</a>
+        <a href="{% url 'recherche' %}?classe=Quatrième" class="chip">📚 4ème / Quatrième</a>
+        <a href="{% url 'recherche' %}?classe=CM2" class="chip">🎒 CM2</a>
+
+        <!-- Matières -->
         <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
-        <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
-        <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
         <a href="{% url 'recherche' %}?matiere=Physique-Chimie" class="chip">🔬 Physique-Chimie</a>
+        <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
+        <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
+        <a href="{% url 'recherche' %}?matiere=SVT" class="chip">🧬 SVT</a>
+        <a href="{% url 'recherche' %}?matiere=Philosophie" class="chip">🧠 Philosophie</a>
+        <a href="{% url 'recherche' %}?matiere=Histoire-Géographie" class="chip">🌍 Histoire-Géo</a>
+        
+        <!-- Localisations -->
         <a href="{% url 'recherche' %}?localisation=Cotonou" class="chip">📍 Cotonou</a>
         <a href="{% url 'recherche' %}?localisation=Abomey-Calavi" class="chip">📍 Calavi</a>
         <a href="{% url 'recherche' %}?localisation=Porto-Novo" class="chip">📍 Porto-Novo</a>
-        <a href="{% url 'recherche' %}?classe=Primaire" class="chip">🎒 Primaire</a>
-        <a href="{% url 'recherche' %}?classe=Collège" class="chip">📚 Collège</a>
-        <a href="{% url 'recherche' %}?classe=Lycée" class="chip">🎓 Lycée</a>
-        <a href="{% url 'recherche' %}?classe=Université" class="chip">🏛️ Université</a>
     </div>
 </section>
 

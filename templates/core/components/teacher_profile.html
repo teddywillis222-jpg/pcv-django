@@ -65,9 +65,9 @@
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
                 {% if existing_engagement.statut_general == 'ESSAI_PROGRAMME' or existing_engagement.statut_general == 'EN_ATTENTE' %}
-                    <button style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai" style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
-                                   box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s;"
+                                   box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onclick="openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
                         ✏️ Modifier l'essai programmé
                     </button>
@@ -102,9 +102,9 @@
                 {% endif %}
             {% else %}
                 {% if can_schedule_trial %}
-                    <button style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai" style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
-                                   box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s;"
+                                   box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onclick="openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
                         🤝 Réserver mon essai
                     </button>
@@ -427,6 +427,16 @@
 
 <style>
 /* Ajustements spécifiques pour le profil professeur */
+.btn-reserver-essai:hover {
+    transform: scale(1.02);
+    background: #d97706 !important;
+    box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3) !important;
+}
+.btn-reserver-essai:active {
+    transform: scale(0.98);
+    background: #b45309 !important;
+}
+
 @media (max-width: 768px) {
     .info-grid {
         grid-template-columns: 1fr !important;
