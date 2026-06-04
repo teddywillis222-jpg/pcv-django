@@ -45,6 +45,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.profchezvousapp.com',
 ]
 
+# Ensure request.scheme is 'https' when behind Render proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
