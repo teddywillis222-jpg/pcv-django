@@ -62,6 +62,11 @@
 
     <!-- ===== Boutons d'action ===== -->
     <div style="margin-bottom: 1.25rem;">
+        <!-- Charte d'essai reassurance banner: shown only on teacher profile / side panel -->
+        <div class="charte-banner" role="note" aria-label="Charte d'essai">
+            <span class="charte-icon">🛡️</span>
+            <span class="charte-text">Adhère à la Charte d'essai garantie</span>
+        </div>
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
                 {% if existing_engagement.statut_general == 'ESSAI_PROGRAMME' or existing_engagement.statut_general == 'EN_ATTENTE' %}
@@ -84,11 +89,6 @@
                         </a>
                     {% endif %}
                 {% elif existing_engagement.statut_general == 'ESSAI_REALISE' %}
-                    <!-- Charte d'essai reassurance banner (mobile) -->
-                    <div class="charte-banner" role="note" aria-label="Charte d'essai">
-                        <span class="charte-icon">🛡️</span>
-                        <span class="charte-text">Adhère à la Charte d'essai garantie</span>
-                    </div>
                     <a href="{% url 'finalisation_engagement' existing_engagement.id %}"
                        style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                               background: #16a34a; color: white; font-weight: 700; cursor: pointer;
@@ -470,7 +470,6 @@
 
 /* Charte d'essai reassurance banner */
 .charte-banner {
-    display: none; /* shown on mobile only */
     width: 100%;
     box-sizing: border-box;
     background: #fffbeb; /* very light warm yellow */
@@ -488,9 +487,7 @@
 .charte-banner .charte-icon { font-size: 1.05rem; line-height: 1; }
 .charte-banner .charte-text { flex: 1; text-align: left; }
 
-@media (max-width: 768px) {
-    .charte-banner { display: flex; }
-}
+/* Banner is displayed wherever inserted above finalisation buttons */
 
 @media (max-width: 768px) {
     .info-grid {
