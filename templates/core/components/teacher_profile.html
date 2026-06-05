@@ -65,11 +65,13 @@
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
                 {% if existing_engagement.statut_general == 'ESSAI_PROGRAMME' or existing_engagement.statut_general == 'EN_ATTENTE' %}
-                    <button class="btn-reserver-essai" style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
-                        onclick="openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
-                        ✏️ Modifier l'essai programmé
+                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
+                        <span class="btn-default-text">✏️ Modifier l'essai programmé</span>
+                        <span class="btn-hover-text" style="display: none;">Mettre à jour l'essai</span>
+                        <span class="btn-active-text" style="display: none;">⏳ Modification...</span>
                     </button>
                 {% elif existing_engagement.statut_general == 'ESSAI_CONFIRME' or existing_engagement.statut_general == 'CONFIRME' or existing_engagement.statut_general == 'EN_COURS' %}
                     {% if existing_conversation_id %}
@@ -102,11 +104,13 @@
                 {% endif %}
             {% else %}
                 {% if can_schedule_trial %}
-                    <button class="btn-reserver-essai" style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
-                        onclick="openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
-                        🤝 Réserver mon essai
+                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
+                        <span class="btn-default-text">🤝 Réserver mon essai</span>
+                        <span class="btn-hover-text" style="display: none;">🚀 Débloquer son potentiel !</span>
+                        <span class="btn-active-text" style="display: none;">⏳ Ouverture...</span>
                     </button>
                 {% else %}
                     <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 12px; text-align: center;">
@@ -427,6 +431,11 @@
 
 <style>
 /* Ajustements spécifiques pour le profil professeur */
+.btn-reserver-essai {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
 .btn-reserver-essai:hover {
     transform: scale(1.02);
     background: #d97706 !important;
@@ -435,6 +444,23 @@
 .btn-reserver-essai:active {
     transform: scale(0.98);
     background: #b45309 !important;
+}
+.btn-reserver-essai .btn-hover-text,
+.btn-reserver-essai .btn-active-text {
+    display: none;
+}
+.btn-reserver-essai:hover:not(.loading) .btn-default-text {
+    display: none;
+}
+.btn-reserver-essai:hover:not(.loading) .btn-hover-text {
+    display: inline;
+}
+.btn-reserver-essai.loading .btn-default-text,
+.btn-reserver-essai.loading .btn-hover-text {
+    display: none !important;
+}
+.btn-reserver-essai.loading .btn-active-text {
+    display: inline !important;
 }
 
 @media (max-width: 768px) {

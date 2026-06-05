@@ -3,6 +3,10 @@
 
 {% block title %}Professeurs d'exception | Prof Chez Vous{% endblock %}
 
+{% block extra_head %}
+<link rel="preload" as="image" href="{% static 'core/images/hero_prof_benin.webp' %}" fetchpriority="high">
+{% endblock %}
+
 {% block extra_css %}
 <!-- Chargement de Tailwind CSS via CDN pour cette landing page spécifique -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -71,7 +75,7 @@
     <section class="relative pt-16 pb-32 md:pt-24 md:pb-48 overflow-hidden">
         <!-- Image de fond avec overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="{% static 'core/images/hero_prof_benin.png' %}" alt="Professeur inspirant" class="w-full h-full object-cover">
+            <img src="{% static 'core/images/hero_prof_benin.webp' %}" alt="Professeur inspirant" class="w-full h-full object-cover" fetchpriority="high" loading="eager">
             <!-- Overlay très stylé pour la lisibilité -->
             <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40"></div>
             <div class="absolute inset-0 bg-pcv-900/20 mix-blend-multiply"></div>
