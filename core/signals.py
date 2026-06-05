@@ -17,15 +17,22 @@ def create_user_profile_and_abonnement(sender, instance, created, **kwargs):
             prix="2000f par engagement"
         )
 
+import threading
+
 @receiver(post_save, sender=Profile)
 def send_welcome_email_on_profile_creation(sender, instance, created, **kwargs):
     if created:
-        try:
-            send_welcome_email(instance.user, instance)
-        except Exception as e:
-            # Fail-safe : ne jamais bloquer la création du profil
-            logger.error(
-                "Signal email bienvenue - échec critique pour user_id=%s : %s",
-                instance.user_id, e,
-                exc_info=True,
-            )
+        def send_email_async():
+            try:
+                send_welcome_email(instance.user, instance)
+            except Exception as e:
+                # Fail-safe : ne jamais bloquer la création du profil
+                logger.error(
+                    "Signal email bienvenue - échec critique pour user_id=%s : %s",
+                    instance.user_id, e,
+                    exc_info=True,
+                )
+        
+        # Envoi de l'email en arrière-plan pour ne pas ralentir l'inscription
+        email_thread = threading.Thread(target=send_email_async)
+        email_thread.start()

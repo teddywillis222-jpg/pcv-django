@@ -423,22 +423,23 @@ select.pcv-multi-select,
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: rgba(15,23,42,0.9); /* plus neutre que le vert violent */
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 12px; /* forme plus moderne et moins agressive */
+    background: #000000; /* Noir profond */
+    color: #ffffff;      /* Flèche blanche */
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;  /* Totalement circulaire */
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 8px 18px rgba(2,6,23,0.25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
-    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .scroll-to-top.visible {
@@ -448,17 +449,22 @@ select.pcv-multi-select,
 }
 
 .scroll-to-top:hover {
-    background: rgba(255,255,255,0.06);
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 10px 26px rgba(2,6,23,0.28);
+    background: #222222; /* Légèrement plus clair au survol, reste noir */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.scroll-to-top:active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
     .scroll-to-top {
         bottom: 1.5rem;
         right: 1.5rem;
-        width: 45px;
-        height: 45px;
+        width: 50px;
+        height: 50px;
     }
 }
 </style>
