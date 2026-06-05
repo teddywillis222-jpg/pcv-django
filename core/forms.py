@@ -134,6 +134,26 @@ class SignUpForm(forms.ModelForm):
         self.fields["username"].label = "Nom d'utilisateur (caché)"
         self.fields["username"].required = False
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if not username:
+            email = self.data.get("email", "")
+            if email:
+                base = email.split('@')[0][:20]
+                base = re.sub(r'[^a-zA-Z0-9_]', '', base)
+            else:
+                base = "user"
+            
+            if not base:
+                base = "user"
+
+            username = base
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base}{counter}"
+                counter += 1
+        return username
+
     def clean_telephone(self):
         numero = self.cleaned_data.get('telephone')
         return formater_telephone_benin(numero)
