@@ -84,6 +84,11 @@
                         </a>
                     {% endif %}
                 {% elif existing_engagement.statut_general == 'ESSAI_REALISE' %}
+                    <!-- Charte d'essai reassurance banner (mobile) -->
+                    <div class="charte-banner" role="note" aria-label="Charte d'essai">
+                        <span class="charte-icon">🛡️</span>
+                        <span class="charte-text">Adhère à la Charte d'essai garantie</span>
+                    </div>
                     <a href="{% url 'finalisation_engagement' existing_engagement.id %}"
                        style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                               background: #16a34a; color: white; font-weight: 700; cursor: pointer;
@@ -461,6 +466,30 @@
 }
 .btn-reserver-essai.loading .btn-active-text {
     display: inline !important;
+}
+
+/* Charte d'essai reassurance banner */
+.charte-banner {
+    display: none; /* shown on mobile only */
+    width: 100%;
+    box-sizing: border-box;
+    background: #fffbeb; /* very light warm yellow */
+    border: 1px solid rgba(250, 204, 21, 0.12);
+    color: #92400e;
+    padding: 0.55rem 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem; /* space from the action button */
+}
+.charte-banner .charte-icon { font-size: 1.05rem; line-height: 1; }
+.charte-banner .charte-text { flex: 1; text-align: left; }
+
+@media (max-width: 768px) {
+    .charte-banner { display: flex; }
 }
 
 @media (max-width: 768px) {
