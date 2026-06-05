@@ -420,51 +420,54 @@ select.pcv-multi-select,
 
 /* Scroll to Top Button */
 .scroll-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: #000000; /* Noir profond */
-    color: #ffffff;      /* Flèche blanche */
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;  /* Totalement circulaire */
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    position: fixed !important;
+    bottom: 2rem !important;
+    right: 2rem !important;
+    background: #000000 !important; /* Noir profond */
+    color: #ffffff !important;      /* Flèche blanche */
+    width: 55px !important;
+    height: 55px !important;
+    border-radius: 50% !important;  /* Totalement circulaire */
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1000 !important;
     -webkit-tap-highlight-color: transparent;
 }
 
 .scroll-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
 }
 
 .scroll-to-top:hover {
-    background: #222222; /* Légèrement plus clair au survol, reste noir */
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    background: #222222 !important; /* Légèrement plus clair au survol, reste noir */
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
 }
 
 .scroll-to-top:active {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: #000000 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
 }
 
 @media (max-width: 768px) {
     .scroll-to-top {
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 50px;
-        height: 50px;
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        width: 50px !important;
+        height: 50px !important;
     }
 }
 </style>
