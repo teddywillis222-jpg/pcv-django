@@ -528,10 +528,6 @@
                 {{ form.email }}
             </div>
 
-            <div class="form-group">
-                <label>{{ form.telephone_whatsapp.label }} *</label>
-                {{ form.telephone_whatsapp }}
-            </div>
 
             <div class="form-group">
                 <label>{{ form.ville_quartier.label }} *</label>
@@ -692,29 +688,6 @@
         mainForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Validation du numéro de téléphone
-            const telEl = document.getElementById('id_telephone_whatsapp');
-            if (telEl) {
-                const telVal = telEl.value.trim().replace(/\s|-/g, '');
-                if (telVal && !/^01\d{8}$/.test(telVal)) {
-                    let errEl = document.getElementById('error_telephone_whatsapp');
-                    if (!errEl) {
-                        errEl = document.createElement('div');
-                        errEl.id = 'error_telephone_whatsapp';
-                        errEl.style.color = '#dc2626';
-                        errEl.style.fontSize = '0.85rem';
-                        errEl.style.marginTop = '0.25rem';
-                        telEl.parentNode.appendChild(errEl);
-                    }
-                    errEl.textContent = "Le numéro doit commencer par 01 et compter 10 chiffres.";
-                    telEl.style.borderColor = '#dc2626';
-                    return; // Stop submission
-                } else {
-                    const errEl = document.getElementById('error_telephone_whatsapp');
-                    if (errEl) errEl.remove();
-                    telEl.style.borderColor = '';
-                }
-            }
             
             // UI Updates
             submitBtn.disabled = true;

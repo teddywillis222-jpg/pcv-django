@@ -390,11 +390,6 @@ body {
                 <div class="error-msg" id="error_nom">Veuillez renseigner votre nom.</div>
             </div>
 
-            <div class="form-group">
-                <label for="{{ form.telephone.id_for_label }}">Numéro WhatsApp *</label>
-                {{ form.telephone }}
-                <div class="error-msg" id="error_telephone">Veuillez renseigner un numéro valide.</div>
-            </div>
 
             <div class="form-group">
                 <label for="{{ form.classe.id_for_label }}">Classe actuelle *</label>
@@ -504,7 +499,7 @@ document.getElementById('id_photo_de_profil').addEventListener('change', functio
 // Navigation entre les étapes
 function validateStep1() {
     let isValid = true;
-    const required = ['nom', 'telephone', 'classe', 'quartier_ville'];
+    const required = ['nom', 'classe', 'quartier_ville'];
     
     required.forEach(field => {
         const el = document.getElementById(`id_${field}`);

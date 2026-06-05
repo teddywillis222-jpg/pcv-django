@@ -91,6 +91,7 @@ class Profile(models.Model):
         max_length=20,
         choices=ROLE_CHOICES,
     )
+    telephone = models.CharField(max_length=50, blank=True)
     a_vu_popup_bienvenue = models.BooleanField(
         default=False,
         help_text="Détermine si le popup de bienvenue (Apprenant/Parent) a déjà été fermé."

@@ -78,8 +78,8 @@ class DynamicChoiceField(forms.ChoiceField):
         super().__init__(**kwargs)
 
 
-class SignUpForm(UserCreationForm):
-    """Inscription : Nom complet et Rôle obligatoires."""
+class SignUpForm(forms.ModelForm):
+    """Inscription : Nom complet, Rôle et Téléphone obligatoires."""
     
     email = forms.EmailField(
         label="Email",
@@ -90,6 +90,17 @@ class SignUpForm(UserCreationForm):
         })
     )
 
+    telephone = forms.CharField(
+        label="Numéro de téléphone",
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "01XXXXXXXX",
+            "class": "phone-input",
+            "required": True,
+            "type": "tel"
+        })
+    )
+
     role = forms.ChoiceField(
         label="Rôle",
         choices=Profile.ROLE_CHOICES,
@@ -97,9 +108,19 @@ class SignUpForm(UserCreationForm):
         widget=forms.RadioSelect(attrs={"class": "role-radio-input"})
     )
 
-    class Meta(UserCreationForm.Meta):
+    password = forms.CharField(
+        label="Mot de passe",
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Min 6 caractères (lettre, chiffre et spécial)",
+            "minlength": "6",
+            "required": True
+        })
+    )
+
+    class Meta:
         model = User
-        fields = ("username", "email", "first_name", "role")
+        fields = ("username", "email", "first_name")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -110,20 +131,12 @@ class SignUpForm(UserCreationForm):
             "required": True,
             "minlength": "2"
         })
-        # Username will be hidden in the template, we just need it minimally required.
         self.fields["username"].label = "Nom d'utilisateur (caché)"
         self.fields["username"].required = False
-        
-        # Make sure password fields have good labels and security requirements
-        if "password1" in self.fields:
-            self.fields["password1"].label = "Mot de passe"
-            self.fields["password1"].widget.attrs.update({
-                "placeholder": "Min 6 caractères (lettre, chiffre et spécial)",
-                "minlength": "6"
-            })
-        if "password2" in self.fields:
-            self.fields["password2"].label = "Confirmer le mot de passe"
-            self.fields["password2"].widget.attrs.update({"placeholder": "Répétez le mot de passe"})
+
+    def clean_telephone(self):
+        numero = self.cleaned_data.get('telephone')
+        return formater_telephone_benin(numero)
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -131,8 +144,8 @@ class SignUpForm(UserCreationForm):
             raise ValidationError("Cet email est déjà utilisé. Veuillez vous connecter.")
         return email
 
-    def clean_password1(self):
-        password = self.cleaned_data.get('password1')
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
         if len(password) < 6:
             raise ValidationError("Le mot de passe doit contenir au moins 6 caractères.")
         
@@ -150,6 +163,7 @@ class SignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
+        user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
@@ -223,18 +237,12 @@ class ParentForm(forms.ModelForm):
 
     class Meta:
         model = Parent
-        fields = ["nom", "numero_whatsapp", "quartier_ville"]
+        fields = ["nom", "quartier_ville"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
-        self.fields['numero_whatsapp'].required = True
-        self.fields['numero_whatsapp'].widget.attrs.update({"placeholder": "01XXXXXXXX", "class": "phone-input"})
-
-    def clean_numero_whatsapp(self):
-        numero = self.cleaned_data.get('numero_whatsapp')
-        return formater_telephone_benin(numero)
 
 
 class EnfantForm(forms.ModelForm):
@@ -365,7 +373,6 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         model = Apprenant
         fields = [
             "nom",
-            "telephone",
             "photo_de_profil",
             "classe",
             "matieres_recherchees",
@@ -390,7 +397,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         mode_choices = [("", "Ex : A domicile")] + list(self.fields["preference_de_cours"].choices)[1:]
         self.fields["preference_de_cours"].choices = mode_choices
 
-        required_fields = ["nom", "telephone", "classe", "quartier_ville", "preference_de_cours"]
+        required_fields = ["nom", "classe", "quartier_ville", "preference_de_cours"]
         for field_name in required_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = True
@@ -399,13 +406,6 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         for field_name in optional_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = False
-        
-        if "telephone" in self.fields:
-            self.fields["telephone"].widget.attrs.update({"class": "phone-input", "placeholder": "01XXXXXXXX", "style": "height: 52px;"})
-
-    def clean_telephone(self):
-        numero = self.cleaned_data.get('telephone')
-        return formater_telephone_benin(numero)
 
 
 from .models import TeacherProfile
@@ -455,7 +455,6 @@ class TeacherProfileForm(forms.ModelForm):
         fields = [
             "email",
             "nom",
-            "telephone_whatsapp",
             "ville_quartier",
             "matiere_enseignee",
             "classes_enseignees",
@@ -483,8 +482,6 @@ class TeacherProfileForm(forms.ModelForm):
             
         self.fields["nom"].label = "Nom Complet"
         
-        self.fields["telephone_whatsapp"].widget.attrs.update({"placeholder": "01XXXXXXXX"})
-        
         if "annees_d_experience" in self.fields:
             self.fields["annees_d_experience"].required = False
 
@@ -492,14 +489,12 @@ class TeacherProfileForm(forms.ModelForm):
             if isinstance(self.instance.matiere_enseignee, str):
                 self.initial['matiere_enseignee'] = [m.strip() for m in self.instance.matiere_enseignee.split(',')]
         
-        for field_name in ["email", "nom", "telephone_whatsapp", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
+        for field_name in ["email", "nom", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
                 if field_name == "photo_de_profil" and self.instance and self.instance.photo_de_profil:
                     self.fields[field_name].required = False
                 else:
                     self.fields[field_name].required = True
-                if field_name == "telephone_whatsapp":
-                    self.fields[field_name].widget.attrs.update({"class": "phone-input"})
 
     def clean_nom(self):
         if self.instance and self.instance.pk:
@@ -525,10 +520,6 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(categories, list) and len(categories) > 4:
             raise forms.ValidationError("Vous ne pouvez sélectionner que 4 catégories maximum.")
         return categories
-
-    def clean_telephone_whatsapp(self):
-        numero = self.cleaned_data.get('telephone_whatsapp')
-        return formater_telephone_benin(numero)
 
 
 from .models import ProfessorAnnouncement

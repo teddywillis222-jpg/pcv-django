@@ -446,7 +446,8 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             role = form.cleaned_data["role"]
-            Profile.objects.create(user=user, role=role)
+            telephone = form.cleaned_data["telephone"]
+            Profile.objects.create(user=user, role=role, telephone=telephone)
             # Création automatique d'abonnement (Standard, 2000f)
             Abonnement.objects.create(
                 user=user,
@@ -604,6 +605,7 @@ def prof_create_profile(request):
         if form.is_valid():
             teacher = form.save(commit=False)
             teacher.user = request.user
+            teacher.telephone_whatsapp = request.user.profile.telephone
             
             # Gestion intelligente du nom (Allauth split ou Nom complet)
             full_name = request.user.get_full_name() or request.user.first_name or request.user.username
@@ -806,6 +808,7 @@ def parent_create_profile(request):
             if not parent_instance:
                 parent_instance = parent_form.save(commit=False)
                 parent_instance.user = request.user
+                parent_instance.numero_whatsapp = request.user.profile.telephone
                 parent_instance.save()
             else:
                 parent_form.save()
@@ -990,6 +993,7 @@ def apprenant_create_profile(request):
         if form.is_valid():
             apprenant = form.save(commit=False)
             apprenant.user = request.user
+            apprenant.telephone = request.user.profile.telephone
             apprenant.nom = apprenant.nom or request.user.first_name
             
             apprenant.save()
