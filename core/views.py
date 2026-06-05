@@ -1489,6 +1489,8 @@ def api_teacher_profile(request, teacher_slug):
         parent_children = []
         existing_engagement = None
         existing_conversation_id = None
+        existing_engagement_obj = None
+        existing_engagement_dict = None
         
         if request.user.is_authenticated:
             # Vérifier conversation existante
