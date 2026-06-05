@@ -91,7 +91,7 @@ class SignUpForm(forms.ModelForm):
     )
 
     telephone = forms.CharField(
-        label="Numéro de téléphone",
+        label="Numéro whatsapp (à vérifier)",
         required=True,
         widget=forms.TextInput(attrs={
             "placeholder": "01XXXXXXXX",

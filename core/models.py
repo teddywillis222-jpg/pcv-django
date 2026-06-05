@@ -97,6 +97,27 @@ class Profile(models.Model):
         help_text="Détermine si le popup de bienvenue (Apprenant/Parent) a déjà été fermé."
     )
 
+import random
+
+def generate_otp():
+    """Génère un code OTP aléatoire à 6 chiffres."""
+    return str(random.randint(100000, 999999))
+
+class PhoneVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='phone_verification')
+    phone_number = models.CharField(max_length=50)
+    otp_code = models.CharField(max_length=6)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        """Renvoie True si le code a plus de 10 minutes ou a expiré."""
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"OTP pour {self.phone_number} (Vérifié: {self.is_verified})"
+
     @property
     def current_plan(self):
         """Retourne le code du plan d'abonnement actuel."""
