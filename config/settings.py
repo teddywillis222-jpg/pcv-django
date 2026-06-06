@@ -71,7 +71,8 @@ SITE_ID = 1
 # Authentication configuration in the end of file
 
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 LOGIN_REDIRECT_URL = 'post_signup_redirect'
 ACCOUNT_SIGNUP_FORM_CLASS = 'core.allauth_forms.CustomSignupForm'
 

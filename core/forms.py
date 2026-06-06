@@ -156,7 +156,10 @@ class SignUpForm(forms.ModelForm):
 
     def clean_telephone(self):
         numero = self.cleaned_data.get('telephone')
-        return formater_telephone_benin(numero)
+        formatted = formater_telephone_benin(numero)
+        if Profile.objects.filter(telephone=formatted).exists():
+            raise forms.ValidationError("Ce numéro WhatsApp est déjà lié à un compte. Veuillez vous connecter.")
+        return formatted
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -241,11 +244,28 @@ class FinalisationCompteForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={"placeholder": "Votre nom complet"}),
     )
+    telephone = forms.CharField(
+        label="Numéro WhatsApp",
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "01XXXXXXXX",
+            "class": "phone-input",
+            "required": True,
+            "type": "tel"
+        })
+    )
     role = forms.ChoiceField(
         label="Rôle",
         choices=Profile.ROLE_CHOICES,
         required=True,
     )
+
+    def clean_telephone(self):
+        numero = self.cleaned_data.get('telephone')
+        formatted = formater_telephone_benin(numero)
+        if Profile.objects.filter(telephone=formatted).exists():
+            raise forms.ValidationError("Ce numéro WhatsApp est déjà lié à un compte. Veuillez utiliser un autre numéro.")
+        return formatted
 
 
 class ParentForm(forms.ModelForm):

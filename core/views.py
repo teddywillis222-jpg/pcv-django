@@ -511,9 +511,11 @@ def finalisation_compte(request):
             request.user.first_name = form.cleaned_data["nom_complet"].strip()
             request.user.save()
             role = form.cleaned_data["role"]
-            profile, _ = Profile.objects.get_or_create(user=request.user, defaults={"role": role})
-            if profile.role != role:
+            telephone = form.cleaned_data["telephone"]
+            profile, _ = Profile.objects.get_or_create(user=request.user, defaults={"role": role, "telephone": telephone})
+            if profile.role != role or profile.telephone != telephone:
                 profile.role = role
+                profile.telephone = telephone
                 profile.save()
             if not request.user.abonnements.exists():
                 Abonnement.objects.create(
