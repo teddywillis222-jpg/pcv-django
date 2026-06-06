@@ -77,10 +77,6 @@
                     {{ form.telephone }}
                 </div>
 
-                <!-- Hidden Username field, generated locally/backend -->
-                <div style="display: none;">
-                    {{ form.username }}
-                </div>
 
                 <div class="form-group">
                     <label for="{{ form.password.id_for_label }}">Mot de passe</label>
@@ -123,26 +119,6 @@
 
 <script>
     (function() {
-        // Autofill username from email to satisfy Django's requirements
-        const form = document.getElementById('signupForm');
-        if (form) {
-            form.addEventListener('submit', function () {
-                const emailInput = document.getElementById('id_email');
-                const usernameInput = document.getElementById('id_username');
-                if (emailInput && usernameInput && !usernameInput.value) {
-                    const baseName = emailInput.value.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
-                    const rand = Math.floor(Math.random() * 9000) + 1000;
-                    usernameInput.value = baseName + rand;
-                }
-            });
-        }
-
-        // Clean up hidden field attributes
-        const usernameInput = document.getElementById('id_username');
-        if (usernameInput) {
-            usernameInput.removeAttribute('required');
-        }
-
         // Add class to radio inputs for styling
         document.querySelectorAll('.role-options-container input[type="radio"]').forEach(radio => {
             radio.classList.add('role-radio-input');

@@ -469,11 +469,19 @@ def signup(request):
             from allauth.account.utils import send_email_confirmation
             from django.contrib import messages
             
-            # Créer l'adresse email dans allauth et envoyer la confirmation
+            # Créer l'adresse email dans allauth
             EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=False)
-            send_email_confirmation(request, user, signup=True)
-
-            messages.success(request, f"Bienvenue {user.first_name} ! Un lien d'activation a été envoyé à {user.email}. Veuillez vérifier votre boîte mail.")
+            
+            try:
+                # Tente d'envoyer l'email
+                send_email_confirmation(request, user, signup=True)
+                messages.success(request, f"Bienvenue {user.first_name} ! Un lien d'activation a été envoyé à {user.email}. Veuillez vérifier votre boîte mail.")
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Erreur d'envoi d'email lors de l'inscription pour {user.email}: {e}")
+                messages.warning(request, f"Votre compte a été créé avec succès, mais nous n'avons pas pu envoyer l'email de confirmation. Veuillez contacter le support ou réessayer de vous connecter plus tard pour renvoyer le lien.")
+            
             return redirect("login")
     else:
         form = SignUpForm()

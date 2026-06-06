@@ -120,7 +120,7 @@ class SignUpForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", "first_name")
+        fields = ("email", "first_name")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -131,28 +131,38 @@ class SignUpForm(forms.ModelForm):
             "required": True,
             "minlength": "2"
         })
-        self.fields["username"].label = "Nom d'utilisateur (caché)"
-        self.fields["username"].required = False
 
-    def clean_username(self):
-        username = self.cleaned_data.get("username")
-        if not username:
-            email = self.data.get("email", "")
-            if email:
-                base = email.split('@')[0][:20]
-                base = re.sub(r'[^a-zA-Z0-9_]', '', base)
-            else:
-                base = "user"
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email", "")
+        
+        # Generate username automatically
+        if email:
+            base = email.split('@')[0][:20]
+            base = re.sub(r'[^a-zA-Z0-9_]', '', base)
+        else:
+            base = "user"
             
-            if not base:
-                base = "user"
+        if not base:
+            base = "user"
 
-            username = base
-            counter = 1
-            while User.objects.filter(username=username).exists():
-                username = f"{base}{counter}"
-                counter += 1
-        return username
+        username = base
+        counter = 1
+        while User.objects.filter(username=username).exists():
+            username = f"{base}{counter}"
+            counter += 1
+            
+        # We inject it into the instance later in save(), but we can also store it in cleaned_data
+        cleaned_data["username"] = username
+        return cleaned_data
+        
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data.get("username")
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
 
     def clean_telephone(self):
         numero = self.cleaned_data.get('telephone')
@@ -193,13 +203,6 @@ class SignUpForm(forms.ModelForm):
         
         return password
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-        return user
 
     def clean_first_name(self):
         nom = self.cleaned_data.get("first_name", "").strip()
@@ -215,15 +218,6 @@ class SignUpForm(forms.ModelForm):
             raise forms.ValidationError("Veuillez sélectionner un rôle.")
         return role
 
-    def clean(self):
-        cleaned_data = super().clean()
-        email = cleaned_data.get("email")
-        if email and not cleaned_data.get("username"):
-            # Auto generate username from email
-            base_username = email.split('@')[0]
-            import random
-            cleaned_data["username"] = f"{base_username}{random.randint(1000, 9999)}"
-        return cleaned_data
 
 
 class LoginForm(AuthenticationForm):
