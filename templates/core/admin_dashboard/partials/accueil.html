@@ -37,7 +37,7 @@
 <div class="grid grid-cols-4 gap-6" style="margin-bottom: 2rem;">
     <!-- Recherche Parent -->
     <div class="card">
-        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Activité Parents</h3>
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Activité Élèves & Parents</h3>
         <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem;">
             <div style="margin-bottom: 0.4rem;">Recherches effectuées : <strong>{{ total_recherches }}</strong></div>
             <div>Profils consultés : <strong>{{ total_profils_consultes }}</strong></div>
@@ -71,6 +71,27 @@
         </div>
         <div style="font-size: 0.75rem; color: #15803d; font-weight: 600;">
             (Finalisés / Réalisés)
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-6" style="margin-bottom: 2rem;">
+    <!-- Intention d'achat et Connexions -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Engagement & Intention d'Achat</h3>
+        <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div>Connexions globales : <strong>{{ total_connexions }}</strong></div>
+            <div>Visites sur la page "Mon Plan" : <strong>{{ total_vues_plan }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Suivi et Messagerie -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Suivi Pédagogique & Communication</h3>
+        <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <div>Bilans de séance ajoutés : <strong>{{ total_seances }}</strong></div>
+            <div>Visites sur les pages de suivi : <strong>{{ total_vues_suivi }}</strong></div>
+            <div>Messages échangés : <strong>{{ total_messages }}</strong></div>
         </div>
     </div>
 </div>

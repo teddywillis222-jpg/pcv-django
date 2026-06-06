@@ -346,9 +346,13 @@ def messagerie(request):
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
     
-    if request.user.is_authenticated and hasattr(request.user, 'parent_profile'):
-        request.user.parent_profile.nb_recherches += 1
-        request.user.parent_profile.save(update_fields=['nb_recherches'])
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'parent_profile'):
+            request.user.parent_profile.nb_recherches += 1
+            request.user.parent_profile.save(update_fields=['nb_recherches'])
+        elif hasattr(request.user, 'apprenant'):
+            request.user.apprenant.nb_recherches += 1
+            request.user.apprenant.save(update_fields=['nb_recherches'])
 
     from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
     professeurs = TeacherProfile.objects.filter(
@@ -1142,6 +1146,9 @@ def gestion_plan(request):
     # Sécurité Rôle
     try:
         user_profile = request.user.profile
+        # Incrémenter les vues pour les statistiques de lancement
+        user_profile.nb_vues_page_plan += 1
+        user_profile.save(update_fields=['nb_vues_page_plan'])
     except Profile.DoesNotExist:
         return redirect("finalisation_compte")
 
@@ -1226,9 +1233,13 @@ def professeur_detail(request, teacher_slug):
     teacher.nb_vues_profil += 1
     teacher.save(update_fields=['nb_vues_profil'])
     
-    if request.user.is_authenticated and hasattr(request.user, 'parent_profile'):
-        request.user.parent_profile.nb_profils_consultes += 1
-        request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'parent_profile'):
+            request.user.parent_profile.nb_profils_consultes += 1
+            request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
+        elif hasattr(request.user, 'apprenant'):
+            request.user.apprenant.nb_profils_consultes += 1
+            request.user.apprenant.save(update_fields=['nb_profils_consultes'])
     
     # Calcul des stats sécurisé
     from django.db.models import Avg, Count
@@ -2253,12 +2264,24 @@ def admin_api_accueil(request):
 
     # Nouvelles statistiques de lancement
     from django.db.models import Sum
-    from .models import Parent, TeacherProfile
+    from .models import Parent, TeacherProfile, Apprenant, Seance, Message
     from .choices import EngagementType
 
-    total_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
-    total_profils_consultes = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+    parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+    apprenant_recherches = Apprenant.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+    total_recherches = parent_recherches + apprenant_recherches
+    
+    parent_profils = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+    apprenant_profils = Apprenant.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+    total_profils_consultes = parent_profils + apprenant_profils
+    
     total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
+    total_vues_plan = Profile.objects.aggregate(total=Sum('nb_vues_page_plan'))['total'] or 0
+    total_vues_suivi = Profile.objects.aggregate(total=Sum('nb_vues_suivi'))['total'] or 0
+    total_connexions = Profile.objects.aggregate(total=Sum('nb_connexions'))['total'] or 0
+    
+    total_seances = Seance.objects.count()
+    total_messages = Message.objects.count()
     
     essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
     essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
@@ -2297,6 +2320,11 @@ def admin_api_accueil(request):
         'essais_realises': essais_realises,
         'engagements_finalises': engagements_finalises,
         'taux_conversion': taux_conversion,
+        'total_vues_plan': total_vues_plan,
+        'total_vues_suivi': total_vues_suivi,
+        'total_connexions': total_connexions,
+        'total_seances': total_seances,
+        'total_messages': total_messages,
     }
     return render(request, "core/admin_dashboard/partials/accueil.html", context)
 
@@ -2467,6 +2495,11 @@ def suivi_engagement(request, engagement_id):
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
     if not (is_parent_apprenant or is_prof):
         raise Http404("Accès refusé.")
+        
+    # Incrémenter le compteur de consultation pour la collecte de données
+    if is_parent_apprenant and hasattr(request.user, 'profile'):
+        request.user.profile.nb_vues_suivi += 1
+        request.user.profile.save(update_fields=['nb_vues_suivi'])
         
     seances = engagement.seances.all().order_by('-date_seance')[:5]
     

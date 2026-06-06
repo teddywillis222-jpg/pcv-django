@@ -36,3 +36,11 @@ def send_welcome_email_on_profile_creation(sender, instance, created, **kwargs):
         # Envoi de l'email en arrière-plan pour ne pas ralentir l'inscription
         email_thread = threading.Thread(target=send_email_async)
         email_thread.start()
+
+from django.contrib.auth.signals import user_logged_in
+
+@receiver(user_logged_in)
+def track_user_login(sender, request, user, **kwargs):
+    if hasattr(user, 'profile'):
+        user.profile.nb_connexions += 1
+        user.profile.save(update_fields=['nb_connexions'])

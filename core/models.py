@@ -96,6 +96,11 @@ class Profile(models.Model):
         default=False,
         help_text="Détermine si le popup de bienvenue (Apprenant/Parent) a déjà été fermé."
     )
+    
+    # Statistiques avancées (Lancement)
+    nb_vues_page_plan = models.IntegerField(default=0, help_text="Intention d'achat : Vues de la page Gérer mon plan")
+    nb_vues_suivi = models.IntegerField(default=0, help_text="Intérêt suivi : Vues de la page de suivi pédagogique")
+    nb_connexions = models.IntegerField(default=0, help_text="Récurrence d'utilisation")
 
     @property
     def current_plan(self):
@@ -343,6 +348,10 @@ class Apprenant(models.Model):
         related_name="apprenants",
     )
     derniere_mise_a_jour = models.DateTimeField(auto_now=True)
+    
+    # Statistiques avancées (Lancement)
+    nb_recherches = models.IntegerField(default=0, help_text="Nombre de recherches effectuées")
+    nb_profils_consultes = models.IntegerField(default=0, help_text="Nombre de profils professeurs consultés")
 
     # 2. Parcours et besoins académiques
     niveau = models.CharField(
