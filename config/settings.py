@@ -72,9 +72,11 @@ SITE_ID = 1
 
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
 LOGIN_REDIRECT_URL = 'post_signup_redirect'
 ACCOUNT_SIGNUP_FORM_CLASS = 'core.allauth_forms.CustomSignupForm'
+SILENCED_SYSTEM_CHECKS = ['account.W001', 'account.W002']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
