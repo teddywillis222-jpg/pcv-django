@@ -165,6 +165,16 @@ class SignUpForm(forms.ModelForm):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise ValidationError("Cet email est déjà utilisé. Veuillez vous connecter.")
+            
+        if email:
+            disposable_domains = [
+                'yopmail.com', '10minutemail.com', 'tempmail.com', 'mailinator.com',
+                'guerrillamail.com', 'temp-mail.org', 'throwawaymail.com'
+            ]
+            domain = email.split('@')[-1].lower()
+            if domain in disposable_domains:
+                raise ValidationError("Les adresses email temporaires ne sont pas autorisées pour garantir la qualité de la plateforme.")
+                
         return email
 
     def clean_password(self):

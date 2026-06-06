@@ -464,10 +464,17 @@ def signup(request):
                 prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
                 date_debut=date.today(),
             )
+            # Allauth integration
+            from allauth.account.models import EmailAddress
+            from allauth.account.utils import send_email_confirmation
             from django.contrib import messages
-            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect("post_signup_redirect")
+            
+            # Créer l'adresse email dans allauth et envoyer la confirmation
+            EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=False)
+            send_email_confirmation(request, user, signup=True)
+
+            messages.success(request, f"Bienvenue {user.first_name} ! Un lien d'activation a été envoyé à {user.email}. Veuillez vérifier votre boîte mail.")
+            return redirect("login")
     else:
         form = SignUpForm()
 
@@ -482,10 +489,17 @@ def login_view(request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            from django.contrib import messages
-            messages.success(request, f"Heureux de vous revoir, {user.first_name} !")
-            login(request, user)
-            return redirect("post_signup_redirect")
+            
+            # Utilisation de perform_login de allauth pour appliquer la vérification email
+            from allauth.account.utils import perform_login
+            from allauth.account import app_settings as allauth_settings
+            
+            return perform_login(
+                request, 
+                user, 
+                email_verification=allauth_settings.EMAIL_VERIFICATION,
+                redirect_url="post_signup_redirect"
+            )
     else:
         form = LoginForm()
 
