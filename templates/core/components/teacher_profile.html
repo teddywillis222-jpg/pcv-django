@@ -113,15 +113,14 @@
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
-                        <span class="btn-default-text">🤝 Réserver mon essai</span>
+                        <span class="btn-default-text">🤝 Programmer mon essai</span>
                         <span class="btn-hover-text" style="display: none;">🚀 Débloquer son potentiel !</span>
                         <span class="btn-active-text" style="display: none;">⏳ Ouverture...</span>
                     </button>
                 {% else %}
                     <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Quota d'essais atteint (1/3 mois)</p>
-                        <p style="color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0.75rem;">Programmez plus d'essais en illimité avec Access+.</p>
-                        <a href="{% url 'gestion_plan' %}" style="display: inline-block; padding: 0.5rem 1rem; background: #dc2626; color: white; font-weight: 600; font-size: 0.85rem; border-radius: 6px; text-decoration: none; transition: background 0.2s;">Gérer votre plan</a>
+                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Vous avez déjà utilisé votre essai gratuit</p>
+                        <p style="color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0;">Chaque compte bénéficie d'un seul essai gratuit à vie.</p>
                     </div>
                 {% endif %}
             {% endif %}

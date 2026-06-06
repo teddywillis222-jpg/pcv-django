@@ -250,9 +250,6 @@ MATIERES_FILE = os.path.join(BASE_DIR, 'core', 'matieres.json')
 PREMIUM_MONTHLY_PRICE = os.getenv('PREMIUM_MONTHLY_PRICE', '5000')
 PREMIUM_ENGAGEMENT_QUOTA = int(os.getenv('PREMIUM_ENGAGEMENT_QUOTA', '5'))
 
-# Fenêtre glissante (jours) pour le quota d'essai gratuit (Plan Standard)
-TRIAL_WINDOW_DAYS = int(os.getenv('TRIAL_WINDOW_DAYS', '90'))
-
 # --- Email Configuration (Brevo/SMTP) ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp-relay.brevo.com')

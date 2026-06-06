@@ -12,849 +12,155 @@
         --text-gray: #64748b;
         --primary: #16a34a;
         --primary-soft: #dcfce7;
-        --primary-dark: #15803d;
-        --accent: #1e293b;
-        --premium: #7c3aed;
-        --premium-soft: #f5f3ff;
         --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
         --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-
-    *, *::before, *::after {
-        box-sizing: border-box;
     }
 
     body {
         background-color: var(--dash-bg);
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
     }
 
     .plan-container {
         width: 100%;
-        max-width: 900px;
-        margin: 1.5rem auto;
+        max-width: 800px;
+        margin: 2rem auto;
         padding: 0 1rem;
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 1.5rem;
     }
 
-    @media (max-width: 640px) {
-        .plan-container {
-            margin: 1rem auto;
-            padding: 0 0.75rem;
-            gap: 1rem;
-        }
-    }
-
-    /* Info Link */
-    .info-link-wrapper {
-        text-align: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .info-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--primary-dark);
-        font-weight: 700;
-        text-decoration: none;
-        padding: 0.75rem 1rem;
-        background: var(--primary-soft);
-        border-radius: 50px;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-        line-height: 1.3;
-        text-align: left;
-    }
-
-    @media (min-width: 768px) {
-        .info-link {
-            padding: 0.75rem 1.25rem;
-            font-size: 0.95rem;
-        }
-    }
-
-    .info-link:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-
-    /* Plan Cards */
     .plan-card {
         background: var(--card-bg);
-        border-radius: 20px;
-        padding: 1.5rem;
+        border-radius: 24px;
+        padding: 2.5rem;
         box-shadow: var(--shadow-sm);
         position: relative;
         overflow: hidden;
-        width: 100%;
-    }
-
-    @media (min-width: 768px) {
-        .plan-card {
-            border-radius: 24px;
-            padding: 2rem;
-        }
-    }
-
-    .plan-card.premium {
-        border: 2px solid var(--premium);
-        background: linear-gradient(135deg, #ffffff 0%, #faf9ff 100%);
+        border: 2px solid var(--primary);
     }
 
     .plan-badge {
         position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.4rem 0.75rem;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 0.5rem 1rem;
         border-radius: 50px;
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        background: var(--primary-soft);
+        color: var(--primary);
     }
-
-    @media (min-width: 768px) {
-        .plan-badge {
-            top: 1.5rem;
-            right: 1.5rem;
-            font-size: 0.85rem;
-        }
-    }
-
-    .badge-standard { background: #f1f5f9; color: #475569; }
-    .badge-premium { background: var(--premium-soft); color: var(--premium); }
 
     .plan-header h2 {
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-weight: 900;
         color: var(--text-dark);
         margin-bottom: 0.5rem;
     }
 
-    @media (min-width: 768px) {
-        .plan-header h2 {
-            font-size: 1.75rem;
-        }
-    }
-
     .plan-desc {
         color: var(--text-gray);
-        font-size: 0.95rem;
-        max-width: 100%;
-        line-height: 1.5;
+        font-size: 1.1rem;
+        max-width: 600px;
+        line-height: 1.6;
+        margin-bottom: 2rem;
     }
 
-    @media (min-width: 768px) {
-        .plan-desc {
-            font-size: 1.05rem;
-            max-width: 500px;
-        }
-    }
-
-    /* Consumption Block */
-    .usage-section {
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #f1f5f9;
-    }
-
-    .usage-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .usage-title {
-        font-weight: 700;
-        color: var(--text-dark);
-    }
-
-    .usage-stats {
-        font-weight: 800;
-        color: var(--premium);
-    }
-
-    .progress-bar {
-        height: 12px;
-        background: #f1f5f9;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: var(--premium);
-        border-radius: 10px;
-        transition: width 0.5s ease-out;
-    }
-
-    .usage-limit-msg {
-        margin-top: 0.75rem;
-        font-size: 0.9rem;
-        color: #ef4444;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    /* Comparison Grid */
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 1rem;
-        margin-top: 1rem;
-    }
-
-    .compare-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        width: 100%;
-    }
-
-    @media (min-width: 768px) {
-        .compare-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-    }
-
-    .compare-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1.25rem;
-        box-shadow: var(--shadow-sm);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        width: 100%;
-    }
-
-    @media (min-width: 768px) {
-        .compare-card {
-            padding: 1.5rem;
-            gap: 1.25rem;
-        }
-    }
-
-    .compare-card.active {
-        border: 2px solid var(--primary);
-    }
-
-    .compare-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .compare-name {
-        font-weight: 800;
-        font-size: 1.15rem;
-    }
-
-    .compare-price {
-        font-weight: 900;
-        font-size: 1.25rem;
-        color: var(--text-dark);
-    }
-
-    .compare-features {
+    .feature-list {
         list-style: none;
         padding: 0;
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
     .feature-item {
         display: flex;
         align-items: flex-start;
-        gap: 0.65rem;
-        font-size: 0.88rem;
-        color: var(--text-gray);
-        line-height: 1.4;
-        overflow-wrap: break-word;
-        word-break: break-word;
+        gap: 0.75rem;
+        font-size: 1.05rem;
+        color: var(--text-dark);
+        line-height: 1.5;
     }
-
-    /* Ensure the entire sentence (including inline bold) is a single flex child
-       to avoid browsers creating anonymous flex items for adjacent text nodes. */
-    .feature-text {
-        display: block;
-        flex: 1 1 auto;
-        min-width: 0; /* allow proper wrapping inside flex */
-    }
-
-    .feature-text strong { font-weight: 800; display: inline; }
 
     .feature-item svg {
         flex-shrink: 0;
         color: var(--primary);
-        margin-top: 3px;
-        width: 16px;
-        height: 16px;
+        width: 24px;
+        height: 24px;
     }
-
-    @media (min-width: 768px) {
-        .feature-item {
-            font-size: 0.9rem;
-            gap: 0.75rem;
-        }
-        .feature-item svg {
-            width: 18px;
-            height: 18px;
-        }
-    }
-
-    /* History Block */
-    .history-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .history-list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        border-bottom: 1px solid #f1f5f9;
-        gap: 0.5rem;
-    }
-
-    .history-item:last-child {
-        border-bottom: none;
-    }
-
-    .hist-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-
-    .hist-type {
-        font-weight: 700;
-        font-size: 0.88rem;
-        color: var(--text-dark);
-        line-height: 1.3;
-    }
-
-    @media (min-width: 768px) {
-        .hist-type {
-            font-size: 0.95rem;
-        }
-    }
-
-    .hist-meta {
-        font-size: 0.85rem;
-        color: var(--text-gray);
-    }
-
-    .hist-amount {
+    
+    .feature-item strong {
         font-weight: 800;
-        color: var(--text-dark);
     }
 
-    /* Actions */
-    .actions-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    @media (min-width: 640px) {
-        .actions-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        }
-    }
-
-    .btn-action {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 1rem;
-        border-radius: 12px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-action:hover, .btn-action:focus, .btn-action:active {
-        text-decoration: none !important;
-        transform: scale(0.98);
-    }
-
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-outline { background: white; border: 2px solid #e2e8f0; color: var(--text-gray); }
-    .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
-    .btn-premium-cta { background: var(--premium); color: white; }
-    .btn-premium-cta:hover { background: #6d28d9; }
-
-    /* Modal Styles */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
+    .launch-message {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e3a8a;
         padding: 1.5rem;
-    }
-
-    .modal-content {
-        background: white;
-        width: 100%;
-        max-width: 600px;
-        max-height: 85vh;
-        border-radius: 24px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: var(--shadow-md);
-        animation: modalIn 0.3s ease-out;
-    }
-
-    @keyframes modalIn {
-        from { transform: translateY(20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Side Panel Styles */
-    .side-panel {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 100%;
-        max-width: 400px;
-        height: 100vh;
-        background: white;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-        z-index: 2001;
-        display: none;
-        flex-direction: column;
-        animation: slideInRight 0.3s ease-out forwards;
-    }
-
-    @keyframes slideInRight {
-        from { transform: translateX(100%); }
-        to { transform: translateX(0); }
-    }
-
-    .side-panel-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #f1f5f9;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .side-panel-body {
-        padding: 1.5rem;
-        overflow-y: auto;
-        flex-grow: 1;
-    }
-
-    .modal-overlay-panel {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        z-index: 2000;
-    }
-
-
-    .modal-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #f1f5f9;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-header h3 {
-        font-size: 1.25rem;
-        font-weight: 900;
-        color: var(--text-dark);
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-        overflow-y: auto;
+        border-radius: 16px;
+        margin-top: 2rem;
         font-size: 1rem;
-        line-height: 1.6;
-        color: #334155;
-    }
-
-    .modal-body strong { color: var(--text-dark); }
-
-    .modal-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #f1f5f9;
+        line-height: 1.5;
         display: flex;
-        justify-content: flex-end;
-    }
-
-    .btn-close {
-        padding: 0.75rem 1.5rem;
-        background: #f1f5f9;
-        border: none;
-        border-radius: 12px;
-        font-weight: 700;
-        color: var(--text-gray);
-        cursor: pointer;
-    }
-
-    .faq-note {
-        font-size: 0.85rem;
-        color: var(--text-gray);
-        text-align: center;
-        margin-top: 1rem;
+        gap: 1rem;
+        align-items: flex-start;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="plan-container">
-    
-    <!-- Header Info Link -->
-    <div class="info-link-wrapper">
-        <a href="#" class="info-link" onclick="openModal('engagementInfoModal')">
-            📌 En savoir plus sur la proposition d’un engagement
-        </a>
-    </div>
-
-    <!-- Block 1: Plan Actuel -->
-    <div class="plan-card {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}premium{% endif %}">
-        <div class="plan-badge {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}badge-premium{% else %}badge-standard{% endif %}">
-            {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                ACCESS+ PREMIUM
-            {% else %}
-                PLAN STANDARD
-            {% endif %}
-        </div>
+    <div class="plan-card">
+        <div class="plan-badge">Offre de lancement</div>
         
         <div class="plan-header">
-            <h2>{% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}Access+ Premium{% else %}Standard{% endif %}</h2>
+            <h2>Plan Découverte</h2>
             <p class="plan-desc">
-                {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                    Votre abonnement est actif. Vous bénéficiez de la programmation d'essais gratuits illimitée. Testez autant de professeurs que nécessaire, sans aucun délai d'attente.
-                {% else %}
-                    Vous bénéficiez d'un essai physique gratuit de 45 minutes tous les 3 mois. Utilisez-le pour tester et choisir sereinement votre premier professeur sur le terrain.
-                {% endif %}
+                Profitez d'un accès complet à notre plateforme pour trouver le professeur idéal pour votre enfant.
             </p>
-            {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-            <div style="margin-top:0.75rem; font-size:0.95rem; color:var(--text-gray);">
-                {% if abonnement.date_fin %}
-                    <strong>Date d'expiration :</strong> {{ abonnement.date_fin|date:"d M Y" }}
-                {% else %}
-                    <strong>Renouvellement :</strong> automatique mensuel
-                {% endif %}
-            </div>
-            {% endif %}
         </div>
 
-        <!-- Block 3: Suivi Consommation (Visible si Premium) -->
-        {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-        <div class="usage-section">
-            <div class="usage-header">
-                <span class="usage-title">Quota mensuel (Engagements confirmés)</span>
-                <span class="usage-stats">{{ confirmations_ce_mois }} / {{ PREMIUM_ENGAGEMENT_QUOTA }}</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: {% widthratio confirmations_ce_mois PREMIUM_ENGAGEMENT_QUOTA 100 %}%"></div>
-            </div>
-            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-gray); display: flex; align-items: center; gap: 0.4rem;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                Date d'expiration de l'abonnement : <strong style="color: var(--text-dark);">{{ abonnement.date_fin|date:"d M Y"|default:"Renouvellement automatique" }}</strong>
-            </div>
-            {% if confirmations_ce_mois >= PREMIUM_ENGAGEMENT_QUOTA %}
-            <div class="usage-limit-msg">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                Limite atteinte. Renouvelez votre abonnement ou patientez jusqu'au mois prochain.
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-    </div>
+        <ul class="feature-list">
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Recherche complète</strong> des professeurs certifiés et vérifiés.</span>
+            </li>
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>1 essai gratuit</strong> de 45 minutes pour valider un professeur.</span>
+            </li>
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Finalisation des engagements</strong> sans aucun frais d'activation.</span>
+            </li>
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Journal de séance</strong> pour chaque cours réalisé.</span>
+            </li>
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Suivi pédagogique complet</strong> et messagerie intégrée.</span>
+            </li>
+            <li class="feature-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span><strong>Progression de l'apprenant</strong> suivie en temps réel.</span>
+            </li>
+        </ul>
 
-    <!-- Block 4: Comparaison des offres -->
-    <h3 class="section-title">Comparer les plans</h3>
-    <div class="compare-grid">
-        <!-- Standard -->
-        <div class="compare-card {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}active{% endif %}">
-                <div class="compare-header">
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span class="compare-name">Standard</span>
-                        {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
-                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--primary); background: var(--primary-soft); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
-                        {% endif %}
-                    </div>
-                    <span class="compare-price">Gratuit</span>
-                </div>
-                <ul class="compare-features">
-                    <li class="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="feature-text"><strong>Accès complet</strong> aux profils des professeurs certifiés et vérifiés.</span>
-                    </li>
-                    <li class="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="feature-text"><strong>1 essai physique gratuit (45 min)</strong> tous les 3 mois pour valider un professeur.</span>
-                    </li>
-                    <li class="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="feature-text"><strong>Suivi complet</strong> de vos engagements (historique, statuts, accords passés).</span>
-                    </li>
-                    <li class="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        <span class="feature-text"><strong>Accès aux outils de suivi :</strong> messagerie intégrée et journal de séance pour suivre l'évolution de l'apprenant.</span>
-                    </li>
-                </ul>
-                <p style="font-size: 0.9rem; color: var(--text-gray); margin-top: 0.5rem; line-height: 1.4;">
-                    <em>Le Plan Standard vous permet de tester gratuitement un premier professeur. Si le profil ne convient pas, vous pouvez patienter jusqu'au prochain cycle ou débloquer les essais immédiats avec le plan Access+.</em>
-                </p>
-                {% if abonnement.type_abonnement != 'STANDARD' and abonnement.type_abonnement != TypeAbonnement.STANDARD %}
-                    <a href="#" class="btn-action btn-outline" onclick="openDowngradeModal()">Revenir au Standard</a>
-                {% endif %}
-        </div>
-
-        <!-- Premium -->
-        <div class="compare-card {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}active{% endif %}" style="background: var(--premium-soft);">
-            <div class="compare-header">
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <span class="compare-name" style="color: var(--premium);">Access+ Premium</span>
-                    {% if abonnement.type_abonnement == 'ACCESS_PREMIUM' or abonnement.type_abonnement == TypeAbonnement.ACCESS_PREMIUM %}
-                    <span style="font-size: 0.7rem; font-weight: 800; color: white; background: var(--premium); padding: 2px 8px; border-radius: 50px; width: fit-content;">Plan actuel</span>
-                    {% endif %}
-                </div>
-                <span class="compare-price">{{ PREMIUM_MONTHLY_PRICE }} {{ DEFAULT_CURRENCY }}<small>/mois</small></span>
+        <div class="launch-message">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <div>
+                <strong>Phase de lancement</strong><br>
+                Nous sommes actuellement en phase de lancement. Toutes les fonctionnalités essentielles sont accessibles gratuitement afin de permettre à chacun de découvrir Prof Chez Vous.
             </div>
-            <ul class="compare-features">
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Accès complet</strong> aux profils des professeurs certifiés et vérifiés.</span>
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Programmation d'essais physiques gratuits (45 min) illimitée.</strong></span>
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Traitement prioritaire :</strong> relance automatique du professeur par le système après 30 minutes sans réponse.</span>
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Gestion multi-profils :</strong> planification d'essais en simultané pour plusieurs matières ou enfants de la même famille.</span>
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Suivi complet</strong> de vos engagements (historique, statuts, accords passés).</span>
-                </li>
-                <li class="feature-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    <span class="feature-text"><strong>Accès aux outils de suivi :</strong> messagerie intégrée et journal de séance pour suivre l'évolution de l'apprenant.</span>
-                </li>
-            </ul>
-            {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
-                <a href="{% url 'payer_premium' %}" class="btn-action btn-premium-cta">Passer à Premium</a>
-            {% else %}
-                <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium);">Gérer mon abonnement</a>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Block 5: Historique -->
-    <h3 class="section-title">Historique & Transparence</h3>
-    <div class="history-card">
-        <div class="history-list">
-            {% for item in history %}
-            <div class="history-item">
-                <div class="hist-info">
-                    <span class="hist-type">{{ item.type }}</span>
-                    <span class="hist-meta">{{ item.libelle }} — {{ item.date|date:"d M Y" }}</span>
-                </div>
-                <div class="hist-amount">{{ item.montant }}</div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; color: var(--text-gray); padding: 1rem;">Aucun historique de paiement disponible.</p>
-            {% endfor %}
-        </div>
-        {% if history %}
-        <div style="text-align: center; margin-top: 1rem;">
-            <a href="#" class="nav-link" style="font-size: 0.9rem; color: var(--primary);" onclick="openSidePanel('historySidePanel')">Voir tout l'historique</a>
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="faq-note">
-        Besoin d'aide ? <a href="{% url 'support' %}" style="color: var(--primary);">Contactez le support PCV</a>
-    </div>
-
-</div>
-
-<!-- Modal: Engagement Info -->
-<div class="modal-overlay" id="engagementInfoModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>L'engagement sur Prof Chez Vous</h3>
-            <button class="btn-close" onclick="closeModal('engagementInfoModal')">×</button>
-        </div>
-        <div class="modal-body">
-            <p><strong>Qu’est-ce qu’un engagement sur Prof Chez Vous ?</strong></p>
-            <p>Un engagement est la manière officielle de collaborer avec un professeur sur Prof Chez Vous. Il permet de formaliser clairement les attentes entre le parent ou l’apprenant et le professeur avant le début des cours.</p>
-            
-            {% if abonnement.type_abonnement == 'STANDARD' or abonnement.type_abonnement == TypeAbonnement.STANDARD %}
-                <p><strong>La proposition d’un engagement</strong></p>
-                <p>La première étape consiste à choisir un professeur. Vous pouvez effectuer cette recherche directement sur la page de recherche, où sont listés les professeurs vérifiés correspondant à vos besoins.</p>
-                
-                <p>Vous pouvez également sélectionner un professeur depuis votre espace personnel. En cliquant sur « Voir le profil », vous accédez à son profil public, puis vous pouvez initier la collaboration via le bouton « Contacter ce professeur ».</p>
-                
-                <p>Vous remplissez alors un formulaire structuré précisant notamment :<br>
-                – la matière<br>
-                – le niveau<br>
-                – les disponibilités<br>
-                – les objectifs attendus</p>
-                
-                <p>👉 <strong>Selon votre plan, la proposition d’un engagement est toujours gratuite.</strong><br>
-                Aucun paiement n’est demandé au moment de l’envoi.</p>
-                
-                <p>– <strong>En Plan Standard</strong>, un frais unique de <strong>{{ DEFAULT_ENGAGEMENT_PRICE }} {{ DEFAULT_CURRENCY }}</strong> est demandé uniquement après confirmation du professeur, pour activer l’engagement et débloquer l’accès complet à la collaboration :<br>
-                * messagerie sécurisée<br>
-                * planification des séances<br>
-                * journal de suivi pédagogique (pour les parents)</p>
-            {% else %}
-                <p><strong>Conditions du Plan Access+ Premium</strong></p>
-                <p>Avec votre plan actuel, vous bénéficiez de :</p>
-                <ul style="margin-left: 20px; margin-bottom: 15px;">
-                    <li>Engagements gratuits après confirmation du professeur</li>
-                    <li>Accès prioritaire aux professeurs les mieux notés</li>
-                    <li>Assistance dédiée en cas de besoin</li>
-                </ul>
-                <div style="background: #f1f5f9; padding: 15px; border-radius: 12px; margin-top: 15px;">
-                    <p style="margin-bottom: 8px;"><strong>Statistique d'utilisation :</strong> {{ confirmations_ce_mois }} / {{ PREMIUM_ENGAGEMENT_QUOTA }} engagements consommés ce mois.</p>
-                    {% if abonnement.date_fin %}
-                    <p style="margin-bottom: 12px;"><strong>Date de validité :</strong> Expire le : {{ abonnement.date_fin|date:"d/m/Y" }}</p>
-                    {% else %}
-                    <p style="margin-bottom: 12px;"><strong>Date de validité :</strong> Renouvellement mensuel automatique</p>
-                    {% endif %}
-                    <a href="#" class="btn-action btn-outline" style="border-color: var(--premium); color: var(--premium); text-decoration: none; display: block; text-align: center;">Gérer mon plan</a>
-                </div>
-            {% endif %}
-            
-            <p>Une fois la proposition envoyée, le professeur est notifié et peut l’accepter ou la refuser.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-close" onclick="closeModal('engagementInfoModal')">Fermer</button>
         </div>
     </div>
 </div>
-
-<!-- Downgrade Modal -->
-<div class="modal-overlay" id="downgradeModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Revenir au Plan Standard</h3>
-            <button class="btn-close" onclick="closeModal('downgradeModal')">×</button>
-        </div>
-        <div class="modal-body">
-            <p><strong>Êtes-vous sûr de vouloir revenir au Plan Standard ?</strong></p>
-            <p style="margin-top:1rem; color:#dc2626; font-weight:bold;">⚠️ Conséquences immédiates :</p>
-            <ul style="margin-left: 20px; margin-top:10px; color: var(--text-dark); line-height:1.5;">
-                <li>Vos quotas mensuels gratuits seront annulés.</li>
-                <li>Le tarif standard de <strong>2000f par engagement confirmé</strong> s'appliquera de nouveau.</li>
-                <li>Si vous avez un engagement avec le statut "en attente" ou "en cours", vous devrez payer 2000f pour débloquer la messagerie correspondante.</li>
-            </ul>
-        </div>
-        <div class="modal-footer" style="gap:1rem;">
-            <button class="btn-close" onclick="closeModal('downgradeModal')">Annuler</button>
-            <form method="POST" action="{% url 'downgrade_to_standard' %}" style="margin:0;">
-                {% csrf_token %}
-                <button type="submit" class="btn-action btn-primary" style="background:#dc2626; padding:0.75rem 1.5rem; font-size:1rem;">Confirmer le retour</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- History Side Panel -->
-<div class="modal-overlay-panel" id="historySidePanelOverlay" onclick="closeSidePanel('historySidePanel')"></div>
-<div class="side-panel" id="historySidePanel">
-    <div class="side-panel-header">
-        <h3 style="font-weight:900; margin:0;">Historique complet</h3>
-        <button class="btn-close" onclick="closeSidePanel('historySidePanel')" style="padding:0.5rem 1rem;">×</button>
-    </div>
-    <div class="side-panel-body">
-        <div class="history-list">
-            {% for item in history %}
-            <div class="history-item">
-                <div class="hist-info">
-                    <span class="hist-type">{{ item.type }}</span>
-                    <span class="hist-meta">{{ item.libelle }} — {{ item.date|date:"d M Y" }}</span>
-                </div>
-                <div class="hist-amount">{{ item.montant }}</div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; color: var(--text-gray); padding: 1rem;">Aucun historique de paiement disponible.</p>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<script>
-    function openModal(id) {
-        document.getElementById(id).style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-    
-    function openDowngradeModal() {
-        event.preventDefault();
-        openModal('downgradeModal');
-    }
-
-    function openSidePanel(id) {
-        event.preventDefault();
-        document.getElementById(id).style.display = 'flex';
-        document.getElementById(id + 'Overlay').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSidePanel(id) {
-        document.getElementById(id).style.display = 'none';
-        document.getElementById(id + 'Overlay').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    // Close modal on overlay click
-    window.onclick = function(event) {
-        if (event.target.className === 'modal-overlay') {
-            event.target.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    }
-</script>
 {% endblock %}

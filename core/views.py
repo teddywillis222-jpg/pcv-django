@@ -345,6 +345,11 @@ def messagerie(request):
 
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
+    
+    if request.user.is_authenticated and hasattr(request.user, 'parent_profile'):
+        request.user.parent_profile.nb_recherches += 1
+        request.user.parent_profile.save(update_fields=['nb_recherches'])
+
     from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
     professeurs = TeacherProfile.objects.filter(
         statut_de_validation=ValidationStatus.VALIDE
@@ -776,7 +781,7 @@ def prof_dashboard(request):
         "nb_termines": nb_termines,
         "badge_essais_programmes": engs_essais_programmes.count(),
         "badge_essais_confirmes": engs_essais_confirmes.count(),
-        "show_welcome_popup": not request.session.get('a_vu_popup_bienvenue', False),
+        "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
     }
 
     # Annonce
@@ -963,7 +968,7 @@ def parent_dashboard(request):
         "abonnement": abonnement,
         "favoris": favoris,
         "enfant_form": enfant_form,
-        "show_welcome_popup": not request.session.get('a_vu_popup_bienvenue', False),
+        "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
         "badge_essais_programmes": engs_essais_programmes.count(),
         "badge_essais_confirmes": engs_essais_confirmes.count(),
     }
@@ -1117,7 +1122,7 @@ def apprenant_dashboard(request):
         "engagements_tous": engagements_tous,
         "abonnement": abonnement,
         "favoris": favoris,
-        "show_welcome_popup": not request.session.get('a_vu_popup_bienvenue', False),
+        "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
         "badge_essais_programmes": engs_essais_programmes.count(),
         "badge_essais_confirmes": engs_essais_confirmes.count(),
     }
@@ -1132,8 +1137,6 @@ def apprenant_dashboard(request):
 
 @login_required
 def gestion_plan(request):
-    from django.utils import timezone
-    from datetime import datetime
     from .models import Profile
     
     # Sécurité Rôle
@@ -1141,69 +1144,8 @@ def gestion_plan(request):
         user_profile = request.user.profile
     except Profile.DoesNotExist:
         return redirect("finalisation_compte")
-    
-    # Plan actuel
-    abonnement = request.user.abonnements.order_by('-id').first()
-    if not abonnement:
-        # Créer un abonnement standard par défaut
-        abonnement = Abonnement.objects.create(
-            user=request.user,
-            type_abonnement=TypeAbonnement.STANDARD,
-            prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement"
-        )
 
-    # Consommation mensuelle (confirmations ce mois-ci)
-    now = timezone.now()
-    first_day_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    
-    confirmations_ce_mois = Engagement.objects.filter(
-        parent_apprenant=request.user,
-        date_confirmation__gte=first_day_of_month
-    ).count()
-    
-    # Historique de paiements (synthétique)
-    history = []
-    
-    # 1. Engagements payés
-    engagements_payes = Engagement.objects.filter(
-        parent_apprenant=request.user,
-        paiement_effectue=True
-    ).order_by('-date_confirmation')[:10]
-    
-    for eng in engagements_payes:
-        history.append({
-            'type': 'Déblocage conversation',
-            'libelle': f"Prof. {eng.professeur.nom}" if eng.professeur else "Professeur PCV",
-            'montant': f"{settings.DEFAULT_ENGAGEMENT_PRICE} {settings.DEFAULT_CURRENCY}",
-            'date': eng.date_confirmation
-        })
-    
-    # 2. Abonnements Premium (si existants)
-    abonnements_premium = request.user.abonnements.filter(
-        type_abonnement=TypeAbonnement.ACCESS_PREMIUM
-    ).order_by('-id')[:5]
-    
-    for ab in abonnements_premium:
-        history.append({
-            'type': 'Abonnement Premium',
-            'libelle': 'Plan Access+ Premium',
-            'montant': f"{settings.PREMIUM_MONTHLY_PRICE} {settings.DEFAULT_CURRENCY}",
-            'date': ab.date_debut
-        })
-    
-    # Trier l'historique par date
-    history.sort(key=lambda x: x['date'] if x['date'] else datetime.min.replace(tzinfo=timezone.utc), reverse=True)
-
-    context = {
-        'abonnement': abonnement,
-        'confirmations_ce_mois': confirmations_ce_mois,
-        'history': history,
-        'TypeAbonnement': TypeAbonnement,
-        'DEFAULT_ENGAGEMENT_PRICE': settings.DEFAULT_ENGAGEMENT_PRICE,
-        'PREMIUM_MONTHLY_PRICE': settings.PREMIUM_MONTHLY_PRICE,
-        'PREMIUM_ENGAGEMENT_QUOTA': settings.PREMIUM_ENGAGEMENT_QUOTA,
-        'DEFAULT_CURRENCY': settings.DEFAULT_CURRENCY,
-    }
+    context = {}
     return render(request, "core/gestion_plan.html", context)
 
 
@@ -1280,6 +1222,14 @@ def professeur_detail(request, teacher_slug):
     
     track_teacher_view(request, teacher)
     
+    # Statistiques de lancement
+    teacher.nb_vues_profil += 1
+    teacher.save(update_fields=['nb_vues_profil'])
+    
+    if request.user.is_authenticated and hasattr(request.user, 'parent_profile'):
+        request.user.parent_profile.nb_profils_consultes += 1
+        request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
+    
     # Calcul des stats sécurisé
     from django.db.models import Avg, Count
     engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
@@ -1338,13 +1288,10 @@ def professeur_detail(request, teacher_slug):
         if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
             is_premium = True
         elif hasattr(request.user, 'profile'):
-            from django.utils import timezone
-            import datetime
-            limit_date = timezone.now() - datetime.timedelta(days=settings.TRIAL_WINDOW_DAYS)
-            essais_recent = request.user.engagements_client.filter(
-                date_creation__gte=limit_date
+            essais_utilises = request.user.engagements_client.filter(
+                type_engagement=EngagementType.ESSAI
             ).count()
-            if essais_recent >= 1:
+            if essais_utilises >= 1:
                 can_schedule_trial = False
 
         # Vérifier conversation existante
@@ -1504,13 +1451,10 @@ def api_teacher_profile(request, teacher_slug):
                 if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
                     is_premium = True
                 elif hasattr(request.user, 'profile'):
-                    from django.utils import timezone
-                    import datetime
-                    limit_date = timezone.now() - datetime.timedelta(days=settings.TRIAL_WINDOW_DAYS)
-                    essais_recent = request.user.engagements_client.filter(
-                        date_creation__gte=limit_date
+                    essais_utilises = request.user.engagements_client.filter(
+                        type_engagement=EngagementType.ESSAI
                     ).count()
-                    if essais_recent >= 1:
+                    if essais_utilises >= 1:
                         can_schedule_trial = False
 
                 if hasattr(request.user, 'profile') and request.user.profile.role == Profile.ROLE_PARENT:
@@ -2307,6 +2251,24 @@ def admin_api_accueil(request):
     total_evaluations = evaluations.count()
     moyenne_generale = evaluations.aggregate(Avg('note'))['note__avg'] or 0
 
+    # Nouvelles statistiques de lancement
+    from django.db.models import Sum
+    from .models import Parent, TeacherProfile
+    from .choices import EngagementType
+
+    total_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+    total_profils_consultes = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+    total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
+    
+    essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
+    essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
+    essais_realises = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_REALISE).count()
+    engagements_finalises = engagements.filter(statut_general__in=[StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).count()
+    
+    taux_conversion = 0
+    if essais_realises > 0:
+        taux_conversion = round((engagements_finalises / essais_realises) * 100, 1)
+
     # 2. Engagements Prioritaires
     # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + Délai >= 30 min
     limite_temps = timezone.now() - timedelta(minutes=30)
@@ -2327,6 +2289,14 @@ def admin_api_accueil(request):
         'total_evaluations': total_evaluations,
         'moyenne_generale': round(moyenne_generale, 1),
         'engagements_prioritaires': engagements_prioritaires,
+        'total_recherches': total_recherches,
+        'total_profils_consultes': total_profils_consultes,
+        'total_vues_profil': total_vues_profil,
+        'essais_programmes': essais_programmes,
+        'essais_confirmes': essais_confirmes,
+        'essais_realises': essais_realises,
+        'engagements_finalises': engagements_finalises,
+        'taux_conversion': taux_conversion,
     }
     return render(request, "core/admin_dashboard/partials/accueil.html", context)
 
@@ -2915,7 +2885,8 @@ def api_toggle_essai(request):
 @require_http_methods(["POST"])
 def api_mark_welcome_seen(request):
     try:
-        request.session['a_vu_popup_bienvenue'] = True
+        request.user.profile.a_vu_popup_bienvenue = True
+        request.user.profile.save(update_fields=['a_vu_popup_bienvenue'])
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})

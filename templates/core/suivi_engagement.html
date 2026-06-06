@@ -420,9 +420,9 @@
         </div>
     </div>
     
-    {% if engagement.statut_general != 'FINALISE' and engagement.statut_general != 'TERMINE' %}
+    {% if engagement.statut_general != 'FINALISE' and engagement.statut_general != 'ENGAGEMENT_FINALISE' and engagement.statut_general != 'TERMINE' %}
     <div class="warning-box">
-        ⚠️ Finalisez l'engagement pour consulter et ajouter des séances pédagogiques.
+        ⚠️ Le suivi pédagogique est disponible uniquement pour les collaborations officiellement enregistrées sur Prof Chez Vous.
     </div>
     {% endif %}
 
@@ -501,7 +501,7 @@
         
         <div class="action-buttons">
             <a href="{% url 'toutes_seances' engagement.id %}" class="btn-secondary">Voir tout</a>
-            {% if is_prof and engagement.statut_general == 'FINALISE' %}
+            {% if is_prof and engagement.statut_general in 'FINALISE,ENGAGEMENT_FINALISE' %}
             <button onclick="openAddSeance()" class="btn-primary">Ajouter</button>
             {% endif %}
         </div>

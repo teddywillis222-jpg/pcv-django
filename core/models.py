@@ -200,6 +200,10 @@ class Parent(models.Model):
     # E. Champs optionnels
     email = models.EmailField(blank=True)
     est_verifie = models.BooleanField(default=False)
+    
+    # F. Statistiques de lancement
+    nb_recherches = models.PositiveIntegerField(default=0)
+    nb_profils_consultes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"Parent {self.nom}"
@@ -546,6 +550,9 @@ class TeacherProfile(models.Model):
         null=True,
     )
     liste_certifications_texte = models.TextField(blank=True)
+    
+    # 5. Statistiques de lancement
+    nb_vues_profil = models.PositiveIntegerField(default=0)
     statut_de_validation = models.CharField(
         max_length=20,
         choices=ValidationStatus.CHOICES,
@@ -942,7 +949,7 @@ class Engagement(models.Model):
         import datetime
         from core.choices import StatutGeneral, EngagementType
         
-        if self.type_engagement == EngagementType.ESSAI and self.statut_general in [StatutGeneral.ESSAI_PROGRAMME, StatutGeneral.ESSAI_CONFIRME]:
+        if self.type_engagement == EngagementType.ESSAI and self.statut_general == StatutGeneral.ESSAI_CONFIRME:
             if self.date_heure_essai:
                 dt_fin = self.date_heure_essai + datetime.timedelta(minutes=45)
                 if timezone.now() >= dt_fin:

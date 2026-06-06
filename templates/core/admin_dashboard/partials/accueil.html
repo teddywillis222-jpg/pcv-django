@@ -31,6 +31,50 @@
     </div>
 </div>
 
+<h2 style="font-size: 1.25rem; margin: 2rem 0 1rem; border-left: 4px solid var(--primary-blue); padding-left: 0.5rem;">
+    Statistiques d'Activité et Conversions
+</h2>
+<div class="grid grid-cols-4 gap-6" style="margin-bottom: 2rem;">
+    <!-- Recherche Parent -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Activité Parents</h3>
+        <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem;">
+            <div style="margin-bottom: 0.4rem;">Recherches effectuées : <strong>{{ total_recherches }}</strong></div>
+            <div>Profils consultés : <strong>{{ total_profils_consultes }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Vues Profil Prof -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Activité Professeurs</h3>
+        <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem;">
+            <div>Vues de profils globales : <strong>{{ total_vues_profil }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Entonnoir Essais -->
+    <div class="card">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Entonnoir Essais</h3>
+        <div style="font-size: 0.875rem; color: var(--text-dark); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem;">
+            <div>Essais programmés : <strong>{{ essais_programmes }}</strong></div>
+            <div>Essais confirmés : <strong>{{ essais_confirmes }}</strong></div>
+            <div>Essais réalisés : <strong>{{ essais_realises }}</strong></div>
+            <div>Engagements finalisés : <strong>{{ engagements_finalises }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Taux de conversion -->
+    <div class="card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0;">
+        <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Taux de Conversion</h3>
+        <div style="font-size: 2rem; font-weight: 800; margin: 0.5rem 0; color: #166534;">
+            {{ taux_conversion }}%
+        </div>
+        <div style="font-size: 0.75rem; color: #15803d; font-weight: 600;">
+            (Finalisés / Réalisés)
+        </div>
+    </div>
+</div>
+
 <h2 style="font-size: 1.25rem; margin-bottom: 1rem; border-left: 4px solid var(--primary-green); padding-left: 0.5rem;">
     Engagements Prioritaires (En attente, Délai > 30min, Premium)
 </h2>
