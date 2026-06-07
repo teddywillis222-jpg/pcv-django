@@ -510,7 +510,6 @@ class TeacherProfileForm(forms.ModelForm):
             "annees_d_experience",
             "photo_de_profil",
             "fichier_cni",
-            "autorisation_publicitaire",
             "essai_gratuit_actif",
         ]
 

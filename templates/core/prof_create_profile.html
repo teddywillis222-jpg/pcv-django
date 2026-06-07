@@ -511,7 +511,7 @@
     </div>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data">
+    <form id="profileCreationForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <!-- 1. IDENTITE -->
@@ -596,13 +596,6 @@
 
         <!-- 4. CONSENTEMENT & SUBMIT -->
         <div class="form-section" style="border: none;">
-            <div class="consent-box">
-                {{ form.autorisation_publicitaire }}
-                <label for="{{ form.autorisation_publicitaire.id_for_label }}">
-                    J'autorise ProfChezVous à valoriser mon profil (anonymisé) dans ses campagnes publiques pour attirer
-                    plus de parents intéressés par mes compétences. (Optionnel).
-                </label>
-            </div>
 
             <div class="consent-box" style="margin-top: 1rem; opacity: 0.8; pointer-events: none;">
                 {{ form.essai_gratuit_actif }}
@@ -637,7 +630,7 @@
 
 <script>
     // Soumission asynchrone avec compression et barre de progression
-    const mainForm = document.querySelector('form');
+    const mainForm = document.getElementById('profileCreationForm');
     const submitBtn = document.getElementById('mainSubmitBtn');
 
     // UI Progress Bar elements
