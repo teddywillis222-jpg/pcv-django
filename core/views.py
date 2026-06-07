@@ -464,25 +464,11 @@ def signup(request):
                 prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
                 date_debut=date.today(),
             )
-            # Allauth integration
-            from allauth.account.models import EmailAddress
-            from allauth.account.utils import send_email_confirmation
             from django.contrib import messages
-            
-            # Créer l'adresse email dans allauth
-            EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=False)
-            
-            try:
-                # Tente d'envoyer l'email
-                send_email_confirmation(request, user, signup=True)
-                messages.success(request, f"Bienvenue {user.first_name} ! Un lien d'activation a été envoyé à {user.email}. Veuillez vérifier votre boîte mail.")
-            except Exception as e:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.error(f"Erreur d'envoi d'email lors de l'inscription pour {user.email}: {e}")
-                messages.warning(request, f"Votre compte a été créé avec succès, mais nous n'avons pas pu envoyer l'email de confirmation. Veuillez contacter le support ou réessayer de vous connecter plus tard pour renvoyer le lien.")
-            
-            return redirect("login")
+            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
+            from django.contrib.auth import login
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect("post_signup_redirect")
     else:
         form = SignUpForm()
 
@@ -497,17 +483,11 @@ def login_view(request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            
-            # Utilisation de perform_login de allauth pour appliquer la vérification email
-            from allauth.account.utils import perform_login
-            from allauth.account import app_settings as allauth_settings
-            
-            return perform_login(
-                request, 
-                user, 
-                email_verification=allauth_settings.EMAIL_VERIFICATION,
-                redirect_url="post_signup_redirect"
-            )
+            from django.contrib import messages
+            messages.success(request, f"Heureux de vous revoir, {user.first_name} !")
+            from django.contrib.auth import login
+            login(request, user)
+            return redirect("post_signup_redirect")
     else:
         form = LoginForm()
 
