@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
-    'anymail',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -254,15 +253,14 @@ MATIERES_FILE = os.path.join(BASE_DIR, 'core', 'matieres.json')
 PREMIUM_MONTHLY_PRICE = os.getenv('PREMIUM_MONTHLY_PRICE', '5000')
 PREMIUM_ENGAGEMENT_QUOTA = int(os.getenv('PREMIUM_ENGAGEMENT_QUOTA', '5'))
 
-# --- Email Configuration (Brevo API via Anymail) ---
-ANYMAIL = {
-    "SENDINBLUE_API_KEY": os.environ.get("BREVO_API_KEY"),
-}
-# Laissons le timeout SMTP au cas où vous basculeriez sur le backend par défaut
-EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))  
-
-# On change le backend pour utiliser l'API Brevo via Anymail
-EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+# --- Email Configuration (Brevo/SMTP) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp-relay.brevo.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))  # Timeout SMTP en secondes
 
 # IMPORTANT : Cette adresse DOIT être vérifiée dans votre compte Brevo
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Prof Chez Vous <contact@profchezvousapp.com>')
