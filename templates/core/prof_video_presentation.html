@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vidéo de présentation - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+<style>
+    .video-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--dash-shadow);
+        border: 1px solid var(--dash-border);
+    }
+    
+    @media (max-width: 640px) {
+        .video-container {
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            padding: 1.5rem 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            width: calc(100% + 2rem);
+        }
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-left: 4px solid var(--dash-accent);
+        padding: 1.25rem;
+        border-radius: 0 12px 12px 0;
+        margin-bottom: 2rem;
+    }
+
+    .info-card h3 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-card ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: #334155;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .info-card li {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--dash-text);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--dash-border);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--dash-accent);
+        box-shadow: 0 0 0 3px var(--dash-accent-soft);
+    }
+
+    .video-preview {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .iframe-wrapper {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #000;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-main" style="padding-top: 1.5rem;">
+    <div class="video-container">
+        <!-- Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+            <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">Ma vidéo de présentation</h1>
+                <p style="font-size: 0.875rem; color: #64748b;">Mettez toutes les chances de votre côté.</p>
+            </div>
+        </div>
+
+        <!-- Consignes -->
+        <div class="info-card">
+            <h3><span>🎥</span> Conseils pour une vidéo réussie</h3>
+            <ul>
+                <li><strong>Format idéal :</strong> Entre 30 et 45 secondes, filmé au format paysage (horizontal) de préférence.</li>
+                <li><strong>Hébergement :</strong> Publiez votre vidéo sur YouTube (en "Non répertorié" si vous préférez) ou sur TikTok, puis copiez le lien ici.</li>
+                <li><strong>Le script suggéré :</strong> 
+                    <br>1. <em>"Bonjour, je m'appelle [Prénom], je suis professeur de [Matière]."</em>
+                    <br>2. <em>"J'ai [X] années d'expérience et j'accompagne des élèves du niveau [Classes]."</em>
+                    <br>3. <em>"Ma méthode est basée sur [Exemple de méthode]. Au plaisir de vous aider !"</em>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Formulaire -->
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Lien de la vidéo (YouTube ou TikTok)</label>
+                {{ form.video_presentation }}
+                {% if form.video_presentation.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem;">
+                    {{ form.video_presentation.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
+                <button type="submit" class="btn-dash btn-dash-primary" style="flex: 2; height: 56px; font-size: 1.1rem; border-radius: 16px;">
+                    Enregistrer la vidéo
+                </button>
+                <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 56px; font-size: 1.1rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Annuler
+                </a>
+            </div>
+        </form>
+
+        <!-- Aperçu conditionnel -->
+        {% if teacher.video_embed_url %}
+        <div class="video-preview">
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">Aperçu de votre vidéo</h3>
+            <div class="iframe-wrapper">
+                <iframe src="{{ teacher.video_embed_url }}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

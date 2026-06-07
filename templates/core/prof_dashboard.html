@@ -78,6 +78,24 @@
         </div>
 
         <div id="section-main" class="dash-section">
+            
+            {% if not teacher.video_presentation %}
+            <div style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border: 1px solid #99f6e4; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(20, 184, 166, 0.1);">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="color: #0f766e; font-size: 1.05rem; font-weight: 800; margin: 0 0 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">🚀</span>
+                        Boostez votre visibilité !
+                    </h3>
+                    <p style="color: #115e59; font-size: 0.85rem; margin: 0; line-height: 1.4; font-weight: 500;">
+                        Les profils avec une vidéo de présentation retiennent 3 fois plus l'attention des parents.
+                    </p>
+                </div>
+                <a href="{% url 'prof_video_presentation' %}" style="background: #0d9488; color: white; padding: 0.6rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-block; white-space: nowrap; transition: all 0.2s; box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2);" onmouseover="this.style.background='#0f766e'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#0d9488'; this.style.transform='none';">
+                    Ajoutez la vôtre dès maintenant
+                </a>
+            </div>
+            {% endif %}
+
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card" style="grid-column: span 2; display: flex; flex-direction: row; align-items: center; justify-content: space-around; padding: 1.25rem; gap: 1rem;">

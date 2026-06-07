@@ -518,6 +518,7 @@ class TeacherProfile(models.Model):
     )
     presentation = models.TextField(blank=True)
     methodologie = models.TextField(blank=True)
+    video_presentation = models.URLField(blank=True, null=True, help_text="Lien YouTube ou TikTok de présentation")
     annees_d_experience = models.PositiveIntegerField(default=0)
     categories_de_soutien = models.JSONField(
         default=list,
@@ -610,6 +611,27 @@ class TeacherProfile(models.Model):
         related_name="professeurs_favoris",
         help_text="Liste des parents marqués comme favoris par ce professeur"
     )
+
+    @property
+    def video_embed_url(self):
+        """Retourne l'URL d'intégration (embed) pour la vidéo de présentation (YouTube ou TikTok)."""
+        import re
+        if not self.video_presentation:
+            return None
+        url = self.video_presentation
+        # YouTube
+        if 'youtube.com' in url or 'youtu.be' in url:
+            match = re.search(r'(?:v=|/v/|/embed/|youtu\.be/)([^&?/]+)', url)
+            if match:
+                video_id = match.group(1)
+                return f"https://www.youtube.com/embed/{video_id}"
+        # TikTok
+        elif 'tiktok.com' in url:
+            match = re.search(r'/video/(\d+)', url)
+            if match:
+                video_id = match.group(1)
+                return f"https://www.tiktok.com/embed/v2/{video_id}"
+        return None
 
     @property
     def completion_percentage(self):

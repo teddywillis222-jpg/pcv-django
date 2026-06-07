@@ -493,6 +493,7 @@ class TeacherProfileForm(forms.ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'pcv-checkbox'})
     )
+
     
     class Meta:
         model = TeacherProfile
@@ -596,4 +597,15 @@ class AnnouncementForm(forms.ModelForm):
             'target_audience': 'Définissez qui pourra voir cette annonce sur son tableau de bord.',
             'message': 'Le contenu détaillé de votre annonce.',
             'is_active': 'Cochez pour rendre cette annonce visible aux utilisateurs cibles immédiatement.'
+        }
+
+class TeacherVideoPresentationForm(forms.ModelForm):
+    class Meta:
+        model = TeacherProfile
+        fields = ['video_presentation']
+        widgets = {
+            'video_presentation': forms.URLInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Ex: https://www.youtube.com/watch?v=... ou https://vm.tiktok.com/...',
+            })
         }

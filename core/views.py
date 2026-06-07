@@ -590,7 +590,7 @@ def post_signup_redirect(request):
     return redirect("home")
 
 
-from .forms import TeacherProfileForm
+from .forms import TeacherProfileForm, TeacherVideoPresentationForm
 
 def prof_intro(request):
     return render(request, "core/prof_intro.html")
@@ -728,6 +728,34 @@ def prof_edit_profile(request):
         "teacher": teacher,
         "jours": jours,
         "localisation_choices": Localisation.CHOICES
+    })
+
+
+@login_required
+def prof_video_presentation(request):
+    """Page dédiée pour ajouter/modifier la vidéo de présentation (Workflow complet)"""
+    try:
+        profile = request.user.profile
+        teacher = request.user.teacher_profile
+    except (Profile.DoesNotExist, TeacherProfile.DoesNotExist):
+        return redirect("home")
+
+    if profile.role != Profile.ROLE_PROF:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = TeacherVideoPresentationForm(request.POST, instance=teacher)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, "Votre vidéo de présentation a été enregistrée avec succès !")
+            return redirect("prof_dashboard")
+    else:
+        form = TeacherVideoPresentationForm(instance=teacher)
+
+    return render(request, "core/prof_video_presentation.html", {
+        "form": form,
+        "teacher": teacher,
     })
 
 
