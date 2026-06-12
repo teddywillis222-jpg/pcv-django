@@ -3461,19 +3461,41 @@ from django.http import FileResponse, Http404
 def download_ressource_prof(request, res_id):
     """
     Vue publique pour télécharger dynamiquement un fichier de ressource.
-    Contourne les restrictions 401 de Cloudinary en gérant le fichier via Django.
+    Contourne les restrictions 401 de Cloudinary en générant une URL signée sécurisée.
     """
     from .models import RessourceProfesseur
-    from django.shortcuts import get_object_or_404
+    from django.shortcuts import get_object_or_404, redirect
     
     res = get_object_or_404(RessourceProfesseur, id=res_id)
     if not res.fichier_pdf:
         raise Http404("Fichier non disponible.")
     
     try:
-        # Ouvre le fichier via le backend de stockage (Cloudinary ou local)
-        file_handle = res.fichier_pdf.open('rb')
-        filename = res.fichier_pdf.name.split('/')[-1]
-        return FileResponse(file_handle, as_attachment=True, filename=filename)
+        url = res.fichier_pdf.url
+        
+        # Si c'est une URL Cloudinary, on génère une URL signée
+        if 'cloudinary.com' in url or 'res.cloudinary' in url:
+            import cloudinary.utils
+            
+            # Déduction du resource_type à partir de l'URL existante
+            res_type = "image"
+            if "/raw/upload/" in url:
+                res_type = "raw"
+            elif "/video/upload/" in url:
+                res_type = "video"
+                
+            public_id = res.fichier_pdf.name
+            
+            # Générer l'URL signée avec l'option attachment
+            signed_url, options = cloudinary.utils.cloudinary_url(
+                public_id,
+                resource_type=res_type,
+                sign_url=True,
+                flags="attachment"
+            )
+            return redirect(signed_url)
+            
+        # Si local ou autre backend, on redirige vers l'URL
+        return redirect(url)
     except Exception as e:
-        raise Http404(f"Le fichier n'a pas pu être lu. Erreur: {str(e)}")
+        raise Http404(f"Erreur lors de la génération du lien : {str(e)}")
