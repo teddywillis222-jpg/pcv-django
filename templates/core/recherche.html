@@ -137,6 +137,41 @@ select.pcv-multi-select,
 }
 
 
+/* Catégories de soutien (Badges) */
+.soutien-badges-container {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.soutien-badges-container::-webkit-scrollbar {
+    display: none;
+}
+.soutien-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    user-select: none;
+    display: inline-block;
+}
+.soutien-badge:hover {
+    background: #e2e8f0;
+}
+.soutien-badge.active {
+    background: #dcfce7; /* green-100 */
+    color: #15803d; /* green-700 */
+    border-color: #bbf7d0; /* green-200 */
+}
+
 /* Filtres Avancés */
 .advanced-filters {
     background: white;
@@ -495,6 +530,22 @@ select.pcv-multi-select,
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
                 <!-- Filtres Principaux -->
                 <div class="main-filters">
+                    <!-- Badges Catégorie de Soutien -->
+                    <div class="soutien-badges-container">
+                        <div style="display: inline-flex; gap: 0.5rem;">
+                            <label class="soutien-badge {% if not soutien %}active{% endif %}">
+                                <input type="radio" name="soutien" value="" onchange="this.form.submit()" {% if not soutien %}checked{% endif %} style="display: none;">
+                                Tout
+                            </label>
+                            {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
+                            <label class="soutien-badge {% if soutien == s_val %}active{% endif %}">
+                                <input type="radio" name="soutien" value="{{ s_val }}" onchange="this.form.submit()" {% if soutien == s_val %}checked{% endif %} style="display: none;">
+                                {{ s_label }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
                     <div class="search-inputs-row">
                         <div class="filter-group">
                             <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)">
@@ -523,7 +574,7 @@ select.pcv-multi-select,
                         <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
                             🧹 Réinitialiser
                         </a>
-                        <div style="margin-left: auto;">
+                        <div style="margin-left: auto; display: none;">
                             <select id="sort" name="sort" class="reset-filters-btn" style="background: white; border: 1px solid #e2e8f0; font-weight: 500;" onchange="this.form.submit()">
                                 <option value="" {% if sort_by != 'recent_active' %}selected{% endif %}>Trier par : Pertinence</option>
                                 <option value="recent_active" {% if sort_by == 'recent_active' %}selected{% endif %}>Trier par : Actifs récemment</option>
@@ -565,14 +616,6 @@ select.pcv-multi-select,
                             </select>
                         </div>
                         
-                        <div class="filter-group">
-                            <label class="filter-label" for="soutien">Type de soutien</label>
-                            <select id="soutien" name="soutien" class="filter-input">
-                                <option value="">Tous les types</option>
-                                {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
-                                <option value="{{ s_val }}" {% if soutien == s_val %}selected{% endif %}>{{ s_label }}</option>
-                                {% endfor %}
-                            </select>
                         </div>
                     </div>
                 </div>

@@ -127,26 +127,50 @@
             </div>
         </div>
 
-        <!-- Consignes -->
-        <div class="info-card">
-            <h3><span>🎥</span> Conseils pour une vidéo réussie</h3>
-            <ul>
-                <li><strong>Format idéal :</strong> Entre 30 et 45 secondes, filmé au format paysage (horizontal) de préférence.</li>
-                <li><strong>Hébergement :</strong> Publiez votre vidéo sur YouTube (en "Non répertorié" si vous préférez) ou sur TikTok, puis copiez le lien ici.</li>
-                <li><strong>Le script suggéré :</strong> 
-                    <br>1. <em>"Bonjour, je m'appelle [Prénom], je suis professeur de [Matière]."</em>
-                    <br>2. <em>"J'ai [X] années d'expérience et j'accompagne des élèves du niveau [Classes]."</em>
-                    <br>3. <em>"Ma méthode est basée sur [Exemple de méthode]. Au plaisir de vous aider !"</em>
-                </li>
+        {% if not video_upload_enabled %}
+        <!-- Teasing Banner -->
+        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 16px; padding: 1.25rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);">
+            <div style="font-size: 1.5rem; margin-top: 0.1rem;">🔒</div>
+            <div>
+                <h3 style="color: #1e40af; font-size: 1.05rem; font-weight: 800; margin: 0 0 0.25rem;">Mode Préparation</h3>
+                <p style="color: #1e3a8a; font-size: 0.9rem; margin: 0; line-height: 1.5; font-weight: 500;">
+                    L'espace de mise en valeur de votre profil ouvrira très bientôt. Profitez de ce temps pour concevoir votre vidéo !
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Consignes (Guide de Création) -->
+        <div class="info-card" style="margin-bottom: 1.5rem;">
+            <h3><span>💡</span> Guide de Création : Liberté & Innovation</h3>
+            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 1rem;">Vous avez une liberté totale pour captiver les parents en moins de 60 secondes. Voici quelques idées inspirantes :</p>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>Face caméra :</strong> Se présenter, partager sa passion pour l'enseignement et sa méthode pour redonner confiance aux élèves.</li>
+                <li style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>En action :</strong> Se filmer en train d'expliquer un concept clé au tableau, ou partager un extrait dynamique d'une séance de travail avec un apprenant.</li>
+                <li style="display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>Créatif :</strong> Montrer les supports pédagogiques innovants ou les outils que vous utilisez pour rendre les cours captivants.</li>
             </ul>
         </div>
 
-        <!-- Formulaire -->
-        <form method="POST">
+        <!-- Rappels techniques -->
+        <div style="background: #fff3cd; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 1.25rem; margin-bottom: 2.5rem; color: #b45309; font-size: 0.9rem; line-height: 1.6;">
+            <h4 style="margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 800; color: #92400e; display: flex; align-items: center; gap: 0.4rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                Rappels techniques immuables
+            </h4>
+            <ul style="margin: 0; padding-left: 1.25rem;">
+                <li><strong>Durée maximale :</strong> 1 minute chrono (le système refusera les fichiers plus longs dès l'ouverture).</li>
+                <li><strong>Résolution :</strong> Format paysage (horizontal), en 480p ou 720p maximum.</li>
+                <li><strong>Poids limite :</strong> 25 Mo maximum.</li>
+            </ul>
+        </div>
+
+        {% if video_upload_enabled %}
+        <!-- Formulaire Actif -->
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="form-group">
-                <label class="form-label">Lien de la vidéo (YouTube ou TikTok)</label>
+                <label class="form-label">Sélectionnez votre fichier vidéo</label>
                 {{ form.video_presentation }}
                 {% if form.video_presentation.errors %}
                 <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem;">
@@ -166,14 +190,35 @@
         </form>
 
         <!-- Aperçu conditionnel -->
-        {% if teacher.video_embed_url %}
+        {% if teacher.video_presentation %}
         <div class="video-preview">
             <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">Aperçu de votre vidéo</h3>
-            <div class="iframe-wrapper">
-                <iframe src="{{ teacher.video_embed_url }}" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen></iframe>
+            <div style="text-align: center;">
+                <video controls style="width: 100%; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    <source src="{{ teacher.video_presentation.url }}" type="video/mp4">
+                    Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
             </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <!-- Zone de Formulaire Verrouillée -->
+        <div style="border: 2px dashed #cbd5e1; border-radius: 16px; padding: 2.5rem 1.5rem; text-align: center; background: #f8fafc; opacity: 0.8;">
+            <div style="width: 56px; height: 56px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: #64748b;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">Espace d'upload verrouillé</h4>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Préparez votre vidéo. L'upload sera activé prochainement.
+            </p>
+            <button disabled style="background: #e2e8f0; color: #94a3b8; border: none; padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: not-allowed; width: 100%; max-width: 350px;">
+                Outil d'optimisation de profil bientôt disponible
+            </button>
+        </div>
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="display: inline-block; padding: 0.85rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none;">
+                Retour au tableau de bord
+            </a>
         </div>
         {% endif %}
 

@@ -604,8 +604,8 @@ class TeacherVideoPresentationForm(forms.ModelForm):
         model = TeacherProfile
         fields = ['video_presentation']
         widgets = {
-            'video_presentation': forms.URLInput(attrs={
+            'video_presentation': forms.FileInput(attrs={
                 'class': 'form-input',
-                'placeholder': 'Ex: https://www.youtube.com/watch?v=... ou https://vm.tiktok.com/...',
+                'accept': 'video/*',
             })
         }

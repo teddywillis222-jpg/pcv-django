@@ -384,7 +384,7 @@ def recherche(request):
     if mode:
         professeurs = professeurs.filter(modes_de_cours__icontains=mode)
     if soutien:
-        professeurs = professeurs.filter(categorie_de_soutien=soutien)
+        professeurs = professeurs.filter(categories_de_soutien__icontains=soutien)
         
     if prix:
         thresholds = [int(t) for t in settings.PRICE_THRESHOLDS]
@@ -770,8 +770,16 @@ def prof_video_presentation(request):
     if profile.role != Profile.ROLE_PROF:
         return redirect("home")
 
+    from django.conf import settings
+    video_upload_enabled = getattr(settings, 'VIDEO_UPLOAD_ENABLED', False)
+
     if request.method == "POST":
-        form = TeacherVideoPresentationForm(request.POST, instance=teacher)
+        if not video_upload_enabled:
+            from django.contrib import messages
+            messages.error(request, "L'outil de vidéo n'est pas encore ouvert. Préparez-vous en attendant !")
+            return redirect("prof_video_presentation")
+
+        form = TeacherVideoPresentationForm(request.POST, request.FILES, instance=teacher)
         if form.is_valid():
             form.save()
             from django.contrib import messages
@@ -783,6 +791,7 @@ def prof_video_presentation(request):
     return render(request, "core/prof_video_presentation.html", {
         "form": form,
         "teacher": teacher,
+        "video_upload_enabled": video_upload_enabled,
     })
 
 

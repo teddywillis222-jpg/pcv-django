@@ -290,3 +290,6 @@ LOGGING = {
     },
 }
 
+
+# Bascule manuelle pour activer/désactiver l'upload de la vidéo de présentation
+VIDEO_UPLOAD_ENABLED = False

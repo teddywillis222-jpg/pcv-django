@@ -820,6 +820,7 @@
     {% endblock %}
 
     {% block footer %}
+    {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'prof_intro' or request.resolver_match.url_name == 'cgu' or request.resolver_match.url_name == 'faq' or request.resolver_match.url_name == 'politique_confidentialite' %}
     <!-- Footer -->
     <footer style="background: #1e293b; color: white; padding: 2rem 1rem 1rem;">
         <div class="container" style="max-width: 1200px; margin: 0 auto;">
@@ -924,6 +925,7 @@
             </div>
         </div>
     </footer>
+    {% endif %}
     {% endblock %}
 
     <script>
