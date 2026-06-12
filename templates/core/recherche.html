@@ -531,19 +531,29 @@ select.pcv-multi-select,
                 <!-- Filtres Principaux -->
                 <div class="main-filters">
                     <!-- Badges Catégorie de Soutien -->
-                    <div class="soutien-badges-container">
-                        <div style="display: inline-flex; gap: 0.5rem;">
-                            <label class="soutien-badge {% if not soutien %}active{% endif %}">
-                                <input type="radio" name="soutien" value="" onchange="this.form.submit()" {% if not soutien %}checked{% endif %} style="display: none;">
-                                Tout
-                            </label>
-                            {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
-                            <label class="soutien-badge {% if soutien == s_val %}active{% endif %}">
-                                <input type="radio" name="soutien" value="{{ s_val }}" onchange="this.form.submit()" {% if soutien == s_val %}checked{% endif %} style="display: none;">
-                                {{ s_label }}
-                            </label>
-                            {% endfor %}
+                    <div style="position: relative; display: flex; align-items: center; margin-bottom: 1rem;">
+                        <button type="button" class="scroll-badge-left" onclick="document.getElementById('badgesContainer').scrollBy({left: -250, behavior: 'smooth'})" style="position: absolute; left: 0; z-index: 5; background: linear-gradient(to right, #f8fafc 70%, transparent); border: none; height: 100%; padding: 0 1rem 0 0; cursor: pointer; color: #64748b; display: none; align-items: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                        </button>
+
+                        <div class="soutien-badges-container" id="badgesContainer" style="flex: 1; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-behavior: smooth; margin-bottom: 0; padding: 0 1.5rem;">
+                            <div style="display: inline-flex; gap: 0.5rem;">
+                                <label class="soutien-badge {% if not soutien %}active{% endif %}">
+                                    <input type="radio" name="soutien" value="" onchange="this.form.submit()" {% if not soutien %}checked{% endif %} style="display: none;">
+                                    Tout
+                                </label>
+                                {% for s_val, s_label in SUPPORT_CATEGORY_CHOICES %}
+                                <label class="soutien-badge {% if soutien == s_val %}active{% endif %}">
+                                    <input type="radio" name="soutien" value="{{ s_val }}" onchange="this.form.submit()" {% if soutien == s_val %}checked{% endif %} style="display: none;">
+                                    {{ s_label }}
+                                </label>
+                                {% endfor %}
+                            </div>
                         </div>
+
+                        <button type="button" class="scroll-badge-right" onclick="document.getElementById('badgesContainer').scrollBy({left: 250, behavior: 'smooth'})" style="position: absolute; right: 0; z-index: 5; background: linear-gradient(to left, #f8fafc 70%, transparent); border: none; height: 100%; padding: 0 0 0 1rem; cursor: pointer; color: #64748b; display: none; align-items: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                        </button>
                     </div>
 
                     <div class="search-inputs-row">
@@ -584,7 +594,7 @@ select.pcv-multi-select,
                 </div>
                 
                 <!-- Filtres Avancés -->
-                <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode or soutien %}style="display:block;"{% endif %}>
+                <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode %}style="display:block;"{% endif %}>
                     <div class="advanced-filters-grid">
                         <div class="filter-group">
                             <label class="filter-label" for="classe">Classe</label>
@@ -683,14 +693,55 @@ function toggleAdvancedFilters() {
     const filters = document.getElementById('advancedFilters');
     const btn = document.querySelector('.more-filters-btn');
     
-    if (filters.classList.contains('active')) {
+    // Si l'élément est affiché (via le inline style mis par Django ou via la classe active)
+    if (filters.style.display === 'block' || filters.classList.contains('active')) {
         filters.classList.remove('active');
-        btn.textContent = 'Plus de filtres';
+        filters.style.display = ''; // Retire le style inline pour laisser le CSS (display: none) agir
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg> Plus de filtres';
     } else {
         filters.classList.add('active');
-        btn.textContent = 'Moins de filtres';
+        filters.style.display = ''; // S'assure que le inline style est nettoyé
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg> Moins de filtres';
     }
 }
+
+// Gestion des boutons de défilement des badges
+function updateBadgeScrollButtons() {
+    const container = document.getElementById('badgesContainer');
+    const leftBtn = document.querySelector('.scroll-badge-left');
+    const rightBtn = document.querySelector('.scroll-badge-right');
+    
+    if (!container || !leftBtn || !rightBtn) return;
+    
+    // Si le conteneur déborde
+    if (container.scrollWidth > container.clientWidth) {
+        if (container.scrollLeft > 0) {
+            leftBtn.style.display = 'flex';
+        } else {
+            leftBtn.style.display = 'none';
+        }
+        
+        // Tolérance de 5px pour l'arrondi du navigateur
+        if (container.scrollLeft + container.clientWidth < container.scrollWidth - 5) {
+            rightBtn.style.display = 'flex';
+        } else {
+            rightBtn.style.display = 'none';
+        }
+    } else {
+        leftBtn.style.display = 'none';
+        rightBtn.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const badgeContainer = document.getElementById('badgesContainer');
+    if (badgeContainer) {
+        badgeContainer.addEventListener('scroll', updateBadgeScrollButtons);
+        window.addEventListener('resize', updateBadgeScrollButtons);
+        // Timeout pour s'assurer que le layout est calculé
+        setTimeout(updateBadgeScrollButtons, 100);
+    }
+});
 
 // Variables globales pour le modal d'engagement
 window.currentChildren = {{ parent_children_json|safe }};
