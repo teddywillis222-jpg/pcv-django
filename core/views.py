@@ -112,6 +112,14 @@ def annotate_teachers_with_ratings(queryset):
 
 
 def home(request):
+    from django.utils import timezone
+    import datetime
+    
+    # Date d'ouverture officielle : 15 Juin 2026
+    ouverture_date = timezone.make_aware(datetime.datetime(2026, 6, 15, 0, 0, 0))
+    if timezone.now() < ouverture_date:
+        return render(request, "core/waiting.html")
+
     from .choices import ValidationStatus
     from django.db.models import F
     

@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Professeurs d'exception | Prof Chez Vous{% endblock %}
+{% block title %}Donner des cours particuliers | Devenez prof sur Prof Chez Vous{% endblock %}
+
+{% block meta_seo %}
+<meta name="description" content="Vous êtes enseignant ? Trouvez des élèves pour du soutien scolaire à domicile. Rejoignez une plateforme sécurisée qui valorise votre pédagogie et votre expertise.">
+{% endblock %}
 
 {% block extra_head %}
 <link rel="preload" as="image" href="{% static 'core/images/hero_prof_benin.webp' %}" fetchpriority="high">
@@ -36,12 +40,16 @@
         }
     }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap"
+    rel="stylesheet">
 <style>
     /* Styles personnalisés pour compléter Tailwind */
-    .prof-intro-page a, .prof-intro-page a:hover {
+    .prof-intro-page a,
+    .prof-intro-page a:hover {
         text-decoration: none !important;
     }
+
     .hero-pattern {
         background-color: #f8fafc;
         background-image: radial-gradient(#22c55e 0.5px, transparent 0.5px), radial-gradient(#22c55e 0.5px, #f8fafc 0.5px);
@@ -49,6 +57,7 @@
         background-position: 0 0, 10px 10px;
         background-attachment: fixed;
     }
+
     .glass-card {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(12px);
@@ -60,238 +69,329 @@
 {% block main_wrapper %}
 <main class="w-full prof-intro-page">
     {% if messages %}
-    <div class="messages-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+    <div class="messages-container"
+        style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
         {% for message in messages %}
-        <div class="alert-toast alert-{{ message.tags }}" style="padding: 1rem; border-radius: 12px; font-weight: 600; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div class="alert-toast alert-{{ message.tags }}"
+            style="padding: 1rem; border-radius: 12px; font-weight: 600; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
             {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-<div class="bg-slate-50 font-sans text-slate-800 overflow-hidden">
-    
-    <!-- Hero Section -->
-    <section class="relative pt-16 pb-32 md:pt-24 md:pb-48 overflow-hidden">
-        <!-- Image de fond avec overlay -->
-        <div class="absolute inset-0 z-0">
-            <img src="{% static 'core/images/hero_prof_benin.webp' %}" alt="Professeur inspirant" class="w-full h-full object-cover" fetchpriority="high" loading="eager">
-            <!-- Overlay très stylé pour la lisibilité -->
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40"></div>
-            <div class="absolute inset-0 bg-pcv-900/20 mix-blend-multiply"></div>
-        </div>
+    <div class="bg-slate-50 font-sans text-slate-800 overflow-hidden">
 
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-left md:text-center">
-            
-            <h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight mb-6">
-                Devenez plus qu'un simple profil. <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pcv-400 to-pcv-200">Soyez le guide qu'ils recherchent.</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-3xl md:mx-auto">
-                Nous avons conçu un espace dédié aux enseignants qui transmettent avec rigueur et passion. Créez un profil qui met en valeur votre véritable expertise et connectez-vous avec des familles exigeantes.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row justify-start md:justify-center gap-4">
-                <a href="{% if user.is_authenticated %}{% url 'prof_create_profile' %}{% else %}{% url 'login' %}?next={% url 'prof_create_profile' %}{% endif %}" class="inline-flex justify-center items-center gap-2 bg-pcv-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-pcv-500 hover:shadow-xl hover:shadow-pcv-500/40 hover:-translate-y-1 transition-all duration-300">
-                    Rejoindre la danse - Créer mon profil
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </a>
-            </div>
-        </div>
-
-        <!-- Floating Badge -->
-        <div class="absolute bottom-6 right-4 sm:bottom-10 sm:right-10 z-20 glass-card p-3 sm:p-4 rounded-2xl shadow-xl flex items-center gap-3 sm:gap-4 hidden sm:flex animate-bounce" style="animation-duration: 3s;">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center text-xl sm:text-2xl shadow-sm">🎓</div>
-            <div class="text-left">
-                <p class="text-[10px] sm:text-xs text-slate-600 font-medium uppercase tracking-wider">Satisfaction</p>
-                <p class="text-sm sm:text-lg font-bold text-slate-900">98% Familles ravies</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Proposition de Valeur -->
-    <section class="py-24 bg-white relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="font-display text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Pourquoi enseigner avec nous ?</h2>
-                <p class="text-lg text-slate-600">Un environnement premium pensé pour valoriser votre travail et simplifier votre quotidien de professeur indépendant.</p>
+        <!-- Hero Section -->
+        <section class="relative pt-16 pb-32 md:pt-24 md:pb-48 overflow-hidden">
+            <!-- Image de fond avec overlay -->
+            <div class="absolute inset-0 z-0">
+                <img src="{% static 'core/images/hero_prof_benin.webp' %}" alt="Professeur inspirant"
+                    class="w-full h-full object-cover" fetchpriority="high" loading="eager">
+                <!-- Overlay très stylé pour la lisibilité -->
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40"></div>
+                <div class="absolute inset-0 bg-pcv-900/20 mix-blend-multiply"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Confiance & Qualité</h3>
-                    <p class="text-slate-600 leading-relaxed">Les familles qui vous contactent partagent le même respect pour votre profession. Chaque demande est ciblée et sérieuse.</p>
-                </div>
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-left md:text-center">
 
-                <!-- Card 2 -->
-                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Pédagogie Libre</h3>
-                    <p class="text-slate-600 leading-relaxed">Ici, vos choix pédagogiques sont respectés. Vous construisez le savoir avec du sens, en adaptant votre approche à chaque élève.</p>
-                </div>
+                <h1
+                    class="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight mb-6">
+                    Donnez des cours particuliers autrement. <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pcv-400 to-pcv-200">Devenez le
+                        guide qu'ils recherchent.</span>
+                </h1>
 
-                <!-- Card 3 -->
-                <div class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
-                    <div class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Relations Durables</h3>
-                    <p class="text-slate-600 leading-relaxed">Votre travail ne se résume pas à un compteur d'heures. Vous construisez une relation de confiance et observez l'évolution de vos apprenants.</p>
+                <p class="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-3xl md:mx-auto">
+                    Nous avons conçu un espace dédié aux enseignants qui transmettent avec rigueur et passion. Créez un
+                    profil qui met en valeur votre véritable expertise, trouvez des élèves motivés et connectez-vous
+                    avec des familles exigeantes pour du soutien scolaire sur-mesure .
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-start md:justify-center gap-4">
+                    <a href="{% if user.is_authenticated %}{% url 'prof_create_profile' %}{% else %}{% url 'login' %}?next={% url 'prof_create_profile' %}{% endif %}"
+                        class="inline-flex justify-center items-center gap-2 bg-pcv-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-pcv-500 hover:shadow-xl hover:shadow-pcv-500/40 hover:-translate-y-1 transition-all duration-300">
+                        Rejoindre la danse - Créer mon profil
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Charte et Suivi Moderne (Tiers de Confiance) -->
-    <section class="py-24 bg-slate-900 text-white overflow-hidden relative">
-        <!-- Abstract Bg -->
-        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-pcv-900 rounded-full opacity-20 filter blur-[100px] transform translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div class="order-2 lg:order-1 relative">
-                    <!-- Dashboard Mockup -->
-                    <div class="bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                        <!-- Mac window header -->
-                        <div class="bg-slate-900 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h4 class="font-display font-bold text-xl">Mon Cahier de Texte</h4>
-                                <span class="bg-pcv-500/20 text-pcv-400 text-xs px-3 py-1 rounded-full font-semibold">Tiers de Confiance</span>
-                            </div>
-                            <div class="space-y-4">
-                                <div class="bg-slate-700/50 p-4 rounded-xl">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <p class="font-semibold text-sm">Séance de Mathématiques - Paul</p>
-                                        <span class="text-xs text-slate-400">Aujourd'hui, 16h00</span>
-                                    </div>
-                                    <p class="text-sm text-slate-300">Révision des équations différentielles. Très bonne participation.</p>
-                                </div>
-                                <div class="bg-slate-700/50 p-4 rounded-xl opacity-70">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <p class="font-semibold text-sm">Physique - Inès</p>
-                                        <span class="text-xs text-slate-400">Hier, 18h30</span>
-                                    </div>
-                                    <p class="text-sm text-slate-300">Introduction à la mécanique quantique. À consolider.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Decorative element -->
-                    <div class="absolute -bottom-8 -right-8 bg-pcv-600 p-6 rounded-2xl shadow-xl transform -rotate-6">
-                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    </div>
-                </div>
-
-                <div class="order-1 lg:order-2">
-                    <h2 class="font-display text-3xl md:text-5xl font-extrabold mb-6">Le concept de <span class="text-pcv-400">Tiers de Confiance</span></h2>
-                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">
-                        Chez Prof Chez Vous, vous n'êtes pas livrés à vous-mêmes. Nous offrons un cadre protecteur, garantissant le respect de vos conditions et la fluidité de vos échanges avec les parents.
+            <!-- Floating Badge -->
+            <div class="absolute bottom-6 right-4 sm:bottom-10 sm:right-10 z-20 glass-card p-3 sm:p-4 rounded-2xl shadow-xl flex items-center gap-3 sm:gap-4 hidden sm:flex animate-bounce"
+                style="animation-duration: 3s;">
+                <div
+                    class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center text-xl sm:text-2xl shadow-sm">
+                    🎓</div>
+                <div class="text-left">
+                    <p class="text-[10px] sm:text-xs text-slate-600 font-medium uppercase tracking-wider">Satisfaction
                     </p>
-                    <ul class="space-y-6">
-                        <li class="flex items-start gap-4">
-                            <div class="mt-1 bg-pcv-500/20 p-2 rounded-lg text-pcv-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <p class="text-sm sm:text-lg font-bold text-slate-900">98% Familles ravies</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proposition de Valeur -->
+        <section class="py-24 bg-white relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="font-display text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Pourquoi donner des
+                        cours à domicile avec nous ?</h2>
+                    <p class="text-lg text-slate-600">Un environnement premium pensé pour valoriser votre travail et
+                        simplifier votre quotidien de professeur particulier indépendant.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div
+                        class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
+                        <div
+                            class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Confiance & Qualité</h3>
+                        <p class="text-slate-600 leading-relaxed">Les familles qui vous contactent partagent le même
+                            respect pour votre profession. Chaque demande de cours de soutien est ciblée et sérieuse.
+                        </p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div
+                        class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
+                        <div
+                            class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Pédagogie Libre</h3>
+                        <p class="text-slate-600 leading-relaxed">Ici, vos choix pédagogiques sont respectés. Vous
+                            construisez le savoir avec du sens, en adaptant votre approche à chaque élève.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div
+                        class="group p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-pcv-500/10 hover:-translate-y-2 transition-all duration-300">
+                        <div
+                            class="w-16 h-16 bg-pcv-100 rounded-2xl flex items-center justify-center text-pcv-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Relations Durables</h3>
+                        <p class="text-slate-600 leading-relaxed">Votre travail ne se résume pas à un compteur d'heures.
+                            Vous construisez une relation de confiance et observez l'évolution de vos élèves à domicile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charte et Suivi Moderne (Tiers de Confiance) -->
+        <section class="py-24 bg-slate-900 text-white overflow-hidden relative">
+            <!-- Abstract Bg -->
+            <div
+                class="absolute top-0 right-0 w-[800px] h-[800px] bg-pcv-900 rounded-full opacity-20 filter blur-[100px] transform translate-x-1/3 -translate-y-1/4 pointer-events-none">
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 lg:order-1 relative">
+                        <!-- Dashboard Mockup -->
+                        <div
+                            class="bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                            <!-- Mac window header -->
+                            <div class="bg-slate-900 px-4 py-3 flex items-center gap-2 border-b border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h4 class="font-display font-bold text-xl">Mon Cahier de Texte</h4>
+                                    <span
+                                        class="bg-pcv-500/20 text-pcv-400 text-xs px-3 py-1 rounded-full font-semibold">Tiers
+                                        de Confiance</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="bg-slate-700/50 p-4 rounded-xl">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <p class="font-semibold text-sm">Séance de Mathématiques - Paul</p>
+                                            <span class="text-xs text-slate-400">Aujourd'hui, 16h00</span>
+                                        </div>
+                                        <p class="text-sm text-slate-300">Révision des équations différentielles. Très
+                                            bonne participation.</p>
+                                    </div>
+                                    <div class="bg-slate-700/50 p-4 rounded-xl opacity-70">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <p class="font-semibold text-sm">Physique - Inès</p>
+                                            <span class="text-xs text-slate-400">Hier, 18h30</span>
+                                        </div>
+                                        <p class="text-sm text-slate-300">Introduction à la mécanique quantique. À
+                                            consolider.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decorative element -->
+                        <div
+                            class="absolute -bottom-8 -right-8 bg-pcv-600 p-6 rounded-2xl shadow-xl transform -rotate-6">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="order-1 lg:order-2">
+                        <h2 class="font-display text-3xl md:text-5xl font-extrabold mb-6">Le concept de <span
+                                class="text-pcv-400">Tiers de Confiance</span></h2>
+                        <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                            Chez Prof Chez Vous, plateforme de soutien scolaire , vous n'êtes pas livrés à vous-mêmes.
+                            Nous offrons un cadre protecteur, garantissant le respect de vos conditions et la fluidité
+                            de vos échanges avec les parents.
+                        </p>
+                        <ul class="space-y-6">
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-pcv-500/20 p-2 rounded-lg text-pcv-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold mb-1">Cahier de Texte Numérique</h4>
+                                    <p class="text-slate-400">Tracez vos interventions, partagez les progrès et
+                                        professionnalisez votre suivi pédagogique d'un simple clic.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 bg-pcv-500/20 p-2 rounded-lg text-pcv-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold mb-1">Espace Sécurisé</h4>
+                                    <p class="text-slate-400">Une messagerie privée intégrée pour communiquer en toute
+                                        sécurité avec les familles, sans compromettre votre vie privée.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof / Témoignages -->
+        <section class="py-24 bg-pcv-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="font-display text-3xl md:text-4xl font-extrabold text-slate-900">Ils ont choisi
+                        l'excellence</h2>
+                    <p class="text-lg text-slate-600 mt-4">Des enseignants passionnés qui s'épanouissent au quotidien
+                        avec nous.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative">
+                        <svg class="absolute top-6 left-6 w-10 h-10 text-pcv-100" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                        </svg>
+                        <p class="text-lg text-slate-700 italic relative z-10 pl-4 pt-4 mb-6 leading-relaxed">
+                            "La plateforme a complètement transformé ma façon d'enseigner. Les familles sont
+                            respectueuses, engagées, et l'outil de suivi me permet de montrer concrètement la valeur de
+                            mon travail."
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 overflow-hidden">
+                                <img src="{% static 'core/images/review_prof_1.png' %}" alt="Avatar Julien"
+                                    class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <h4 class="text-xl font-bold mb-1">Cahier de Texte Numérique</h4>
-                                <p class="text-slate-400">Tracez vos interventions, partagez les progrès et professionnalisez votre suivi pédagogique d'un simple clic.</p>
+                                <h4 class="font-bold text-slate-900">Julien M.</h4>
+                                <p class="text-sm text-pcv-600 font-medium">Professeur de Mathématiques</p>
                             </div>
-                        </li>
-                        <li class="flex items-start gap-4">
-                            <div class="mt-1 bg-pcv-500/20 p-2 rounded-lg text-pcv-400">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative">
+                        <svg class="absolute top-6 left-6 w-10 h-10 text-pcv-100" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                        </svg>
+                        <p class="text-lg text-slate-700 italic relative z-10 pl-4 pt-4 mb-6 leading-relaxed">
+                            "Enfin une plateforme qui comprend la valeur de notre métier. J'ai une liberté totale sur ma
+                            pédagogie, tout en bénéficiant de la sécurité du Tiers de Confiance. Je recommande à 100%."
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 overflow-hidden">
+                                <img src="{% static 'core/images/review_prof_2.png' %}" alt="Avatar Sophie"
+                                    class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <h4 class="text-xl font-bold mb-1">Espace Sécurisé</h4>
-                                <p class="text-slate-400">Une messagerie privée intégrée pour communiquer en toute sécurité avec les familles, sans compromettre votre vie privée.</p>
+                                <h4 class="font-bold text-slate-900">Sophie D.</h4>
+                                <p class="text-sm text-pcv-600 font-medium">Professeur de Physique-Chimie</p>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Proof / Témoignages -->
-    <section class="py-24 bg-pcv-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="font-display text-3xl md:text-4xl font-extrabold text-slate-900">Ils ont choisi l'excellence</h2>
-                <p class="text-lg text-slate-600 mt-4">Des enseignants passionnés qui s'épanouissent au quotidien avec nous.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative">
-                    <svg class="absolute top-6 left-6 w-10 h-10 text-pcv-100" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                    <p class="text-lg text-slate-700 italic relative z-10 pl-4 pt-4 mb-6 leading-relaxed">
-                        "La plateforme a complètement transformé ma façon d'enseigner. Les familles sont respectueuses, engagées, et l'outil de suivi me permet de montrer concrètement la valeur de mon travail."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 overflow-hidden">
-                            <img src="{% static 'core/images/review_prof_1.png' %}" alt="Avatar Julien" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Julien M.</h4>
-                            <p class="text-sm text-pcv-600 font-medium">Professeur de Mathématiques</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative">
-                    <svg class="absolute top-6 left-6 w-10 h-10 text-pcv-100" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                    <p class="text-lg text-slate-700 italic relative z-10 pl-4 pt-4 mb-6 leading-relaxed">
-                        "Enfin une plateforme qui comprend la valeur de notre métier. J'ai une liberté totale sur ma pédagogie, tout en bénéficiant de la sécurité du Tiers de Confiance. Je recommande à 100%."
-                    </p>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 overflow-hidden">
-                            <img src="{% static 'core/images/review_prof_2.png' %}" alt="Avatar Sophie" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-900">Sophie D.</h4>
-                            <p class="text-sm text-pcv-600 font-medium">Professeur de Physique-Chimie</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Final CTA -->
-    <section class="py-24 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-pcv-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-pcv-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 class="font-display text-3xl md:text-5xl font-extrabold text-white mb-6">
-                Prêt à impacter des vies ?
-            </h2>
-            <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
-                Faites partie des enseignants fondateurs qui choisissent l’exigence, la profondeur et la dignité de leur métier. Votre savoir a de la valeur, mettons-le en lumière.
-            </p>
-            <div>
-                <a href="{% if user.is_authenticated %}{% url 'prof_create_profile' %}{% else %}{% url 'login' %}?next={% url 'prof_create_profile' %}{% endif %}" class="inline-flex justify-center items-center gap-2 bg-pcv-500 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-pcv-400 hover:shadow-xl hover:shadow-pcv-500/40 hover:-translate-y-1 transition-all duration-300">
-                    Commencer maintenant
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                </a>
+        <!-- Final CTA -->
+        <section class="py-24 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+            <div
+                class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-pcv-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20">
             </div>
-        </div>
-    </section>
+            <div
+                class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-pcv-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20">
+            </div>
 
-</div>
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h2 class="font-display text-3xl md:text-5xl font-extrabold text-white mb-6">
+                    Prêt à donner des cours et impacter des vies ?
+                </h2>
+                <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                    Faites partie des enseignants fondateurs qui choisissent l'exigence, la profondeur et la dignité de
+                    leur métier. Votre savoir à la valeur, mettez-le en lumière auprès des familles qui le recherchent.
+                </p>
+                <div>
+                    <a href="{% if user.is_authenticated %}{% url 'prof_create_profile' %}{% else %}{% url 'login' %}?next={% url 'prof_create_profile' %}{% endif %}"
+                        class="inline-flex justify-center items-center gap-2 bg-pcv-500 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-pcv-400 hover:shadow-xl hover:shadow-pcv-500/40 hover:-translate-y-1 transition-all duration-300">
+                        Commencer maintenant
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </div>
 </main>
 {% endblock %}
