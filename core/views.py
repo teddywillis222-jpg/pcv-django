@@ -3456,12 +3456,12 @@ def admin_api_faqs_action(request):
     return JsonResponse({'error': 'Méthode non autorisée'}, status=400)
 
 
-from django.http import FileResponse, Http404
+from django.http import Http404
 
 def download_ressource_prof(request, res_id):
     """
     Vue publique pour télécharger dynamiquement un fichier de ressource.
-    Contourne les restrictions 401 de Cloudinary en générant une URL signée sécurisée.
+    Redirige vers l'URL du fichier avec forçage du téléchargement (fl_attachment).
     """
     from .models import RessourceProfesseur
     from django.shortcuts import get_object_or_404, redirect
@@ -3470,32 +3470,9 @@ def download_ressource_prof(request, res_id):
     if not res.fichier_pdf:
         raise Http404("Fichier non disponible.")
     
-    try:
-        url = res.fichier_pdf.url
+    url = res.fichier_pdf.url
+    # Pour forcer le téléchargement (cross-origin) via Cloudinary, on injecte fl_attachment
+    if 'cloudinary' in url and '/upload/' in url and 'fl_attachment' not in url:
+        url = url.replace('/upload/', '/upload/fl_attachment/', 1)
         
-        # Si c'est une URL Cloudinary, on génère une URL signée
-        if 'cloudinary.com' in url or 'res.cloudinary' in url:
-            import cloudinary.utils
-            
-            # Déduction du resource_type à partir de l'URL existante
-            res_type = "image"
-            if "/raw/upload/" in url:
-                res_type = "raw"
-            elif "/video/upload/" in url:
-                res_type = "video"
-                
-            public_id = res.fichier_pdf.name
-            
-            # Générer l'URL signée avec l'option attachment
-            signed_url, options = cloudinary.utils.cloudinary_url(
-                public_id,
-                resource_type=res_type,
-                sign_url=True,
-                flags="attachment"
-            )
-            return redirect(signed_url)
-            
-        # Si local ou autre backend, on redirige vers l'URL
-        return redirect(url)
-    except Exception as e:
-        raise Http404(f"Erreur lors de la génération du lien : {str(e)}")
+    return redirect(url)
