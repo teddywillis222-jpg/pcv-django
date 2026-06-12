@@ -1208,3 +1208,15 @@ class FAQProfesseur(models.Model):
     def __str__(self):
         return self.question
 
+
+
+class PageAnalytics(models.Model):
+    page_name = models.CharField(max_length=100, unique=True, verbose_name="Nom de la page")
+    view_count = models.PositiveIntegerField(default=0, verbose_name="Nombre de vues")
+
+    class Meta:
+        verbose_name = "Analytique de page"
+        verbose_name_plural = "Analytiques de pages"
+
+    def __str__(self):
+        return f"{self.page_name} - {self.view_count} vues"

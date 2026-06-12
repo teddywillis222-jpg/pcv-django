@@ -2304,7 +2304,7 @@ def admin_api_accueil(request):
 
     # Nouvelles statistiques de lancement
     from django.db.models import Sum
-    from .models import Parent, TeacherProfile, Apprenant, Seance, Message
+    from .models import Parent, TeacherProfile, Apprenant, Seance, Message, PageAnalytics
     from .choices import EngagementType
 
     parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
@@ -2365,6 +2365,7 @@ def admin_api_accueil(request):
         'total_connexions': total_connexions,
         'total_seances': total_seances,
         'total_messages': total_messages,
+        'vues_page_ressources': PageAnalytics.objects.filter(page_name='Centre de Ressources').values_list('view_count', flat=True).first() or 0,
     }
     return render(request, "core/admin_dashboard/partials/accueil.html", context)
 
@@ -3312,7 +3313,13 @@ def charte_essai_gratuit(request):
 
 
 def ressources_professeurs_view(request):
-    from .models import RessourceProfesseur, FAQProfesseur
+    from .models import RessourceProfesseur, FAQProfesseur, PageAnalytics
+    from django.db.models import F
+
+    # Analytics increment
+    analytics, created = PageAnalytics.objects.get_or_create(page_name="Centre de Ressources")
+    PageAnalytics.objects.filter(pk=analytics.pk).update(view_count=F('view_count') + 1)
+
     ressources = RessourceProfesseur.objects.filter(actif=True)
     faqs = FAQProfesseur.objects.filter(actif=True)
     guide_officiel = ressources.filter(est_guide_officiel=True).first()
