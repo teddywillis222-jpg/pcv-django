@@ -177,7 +177,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "core" / "static"]
 
 LOGIN_URL = 'login'
@@ -214,19 +214,19 @@ CLOUDINARY_STORAGE = {
 
 # Configuration des Stockages (Django 5.1+)
 # default: Cloudinary pour les fichiers uploadés (Persistance sur Render)
-# staticfiles: WhiteNoise pour les fichiers CSS/JS (Performance via Middleware)
+# staticfiles: Django standard pour éviter les plantages collectstatic
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 # Paramètres de compatibilité pour les librairies tierces (Cloudinary, WhiteNoise)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # --- Configuration Business (Déploiement) ---
 DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
