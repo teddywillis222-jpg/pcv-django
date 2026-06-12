@@ -41,3 +41,20 @@ admin.site.register(Conversation)
 admin.site.register(Message)
 admin.site.register(Abonnement)
 admin.site.register(Evaluation)
+
+from .models import RessourceProfesseur, FAQProfesseur
+
+@admin.register(RessourceProfesseur)
+class RessourceProfesseurAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'est_guide_officiel', 'ordre_affichage', 'actif', 'date_creation')
+    list_editable = ('est_guide_officiel', 'ordre_affichage', 'actif')
+    list_filter = ('actif', 'est_guide_officiel')
+    search_fields = ('titre', 'description')
+
+@admin.register(FAQProfesseur)
+class FAQProfesseurAdmin(admin.ModelAdmin):
+    list_display = ('question', 'ordre_affichage', 'actif')
+    list_editable = ('ordre_affichage', 'actif')
+    list_filter = ('actif',)
+    search_fields = ('question', 'reponse')
+

@@ -1,0 +1,139 @@
+<div class="card">
+    <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; color: var(--primary-green);">❓ FAQ Professeurs</h2>
+        <button class="btn btn-primary" onclick="openFaqModal()">+ Nouvelle Question</button>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+                <th style="padding: 1rem 0;">Question / Réponse</th>
+                <th style="padding: 1rem 0; text-align: center; width: 80px;">Ordre</th>
+                <th style="padding: 1rem 0; text-align: center; width: 100px;">Statut</th>
+                <th style="padding: 1rem 0; text-align: right; width: 220px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for faq in faqs %}
+            <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 1rem 0;">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ faq.question }}</div>
+                    <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4;">{{ faq.reponse|linebreaksbr|truncatewords_html:20 }}</div>
+                </td>
+                <td style="padding: 1rem 0; text-align: center;">{{ faq.ordre_affichage }}</td>
+                <td style="padding: 1rem 0; text-align: center;">
+                    <button class="btn" onclick="toggleFaqActif({{ faq.id }})" style="background: {% if faq.actif %}#dcfce7; color: #15803d;{% else %}#fee2e2; color: #b91c1c;{% endif %} border-radius: 100px; padding: 0.25rem 0.75rem; font-size: 0.85rem;">
+                        {% if faq.actif %}Actif{% else %}Inactif{% endif %}
+                    </button>
+                </td>
+                <td style="padding: 1rem 0; text-align: right;">
+                    <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; margin-right: 0.5rem;" onclick="editFaq({{ faq.id }}, '{{ faq.question|escapejs }}', '{{ faq.reponse|escapejs }}', {{ faq.ordre_affichage }})">✏️ Éditer</button>
+                    <button class="btn btn-danger" style="padding: 0.4rem 0.8rem;" onclick="deleteFaq({{ faq.id }})">🗑️ Supprimer</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" style="padding: 2rem; text-align: center; color: var(--text-muted);">Aucune FAQ disponible.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Ajout/Modif -->
+<div id="faqModal" class="overlay" style="display: none; align-items: center; justify-content: center;">
+    <div class="card" style="width: 500px; max-width: 90%; margin: 0;">
+        <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+            <h3 style="margin:0;" id="faqModalTitle">Nouvelle Question</h3>
+            <button class="btn" onclick="closeModal('faqModal')" style="font-size: 1.25rem;">✕</button>
+        </div>
+        
+        <form id="faqForm" onsubmit="saveFaq(event)">
+            <input type="hidden" id="faq_id" name="id">
+            <input type="hidden" name="action" value="save">
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Question</label>
+                <input type="text" id="faq_question" name="question" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-family: inherit;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Réponse</label>
+                <textarea id="faq_reponse" name="reponse" rows="5" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Ordre d'affichage</label>
+                <input type="number" id="faq_ordre" name="ordre_affichage" value="0" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.375rem; font-family: inherit;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Enregistrer</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openFaqModal() {
+        document.getElementById('faqForm').reset();
+        document.getElementById('faq_id').value = '';
+        document.getElementById('faqModalTitle').innerText = 'Nouvelle Question';
+        openModal('faqModal');
+    }
+
+    function editFaq(id, question, reponse, ordre) {
+        document.getElementById('faq_id').value = id;
+        document.getElementById('faq_question').value = question;
+        document.getElementById('faq_reponse').value = reponse;
+        document.getElementById('faq_ordre').value = ordre;
+        document.getElementById('faqModalTitle').innerText = 'Modifier la Question';
+        openModal('faqModal');
+    }
+
+    async function toggleFaqActif(id) {
+        try {
+            const formData = new FormData();
+            formData.append('action', 'toggle_actif');
+            formData.append('id', id);
+            const response = await fetch('/debug-admin-pcv/api/faqs/action/', { method: 'POST', body: formData });
+            if (response.ok) {
+                showToast("Statut mis à jour", "success");
+                loadSection('faqs');
+            }
+        } catch (e) {
+            showToast("Erreur", "error");
+        }
+    }
+
+    async function deleteFaq(id) {
+        if (!confirm('Voulez-vous vraiment supprimer cette question ?')) return;
+        try {
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', id);
+            const response = await fetch('/debug-admin-pcv/api/faqs/action/', { method: 'POST', body: formData });
+            if (response.ok) {
+                showToast("FAQ supprimée", "success");
+                loadSection('faqs');
+            }
+        } catch (e) {
+            showToast("Erreur", "error");
+        }
+    }
+
+    async function saveFaq(e) {
+        e.preventDefault();
+        const form = document.getElementById('faqForm');
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch('/debug-admin-pcv/api/faqs/action/', { method: 'POST', body: formData });
+            if (response.ok) {
+                showToast("FAQ enregistrée", "success");
+                closeModal('faqModal');
+                loadSection('faqs');
+            } else {
+                showToast("Erreur", "error");
+            }
+        } catch (e) {
+            showToast("Erreur réseau", "error");
+        }
+    }
+</script>

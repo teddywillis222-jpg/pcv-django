@@ -249,6 +249,8 @@
                 <button class="nav-btn" data-target="parent">Parent/Apprenant</button>
                 <button class="nav-btn" data-target="engagement">Engagement</button>
                 <button class="nav-btn" data-target="evaluation">Évaluation</button>
+                <button class="nav-btn" data-target="ressources">Ressources</button>
+                <button class="nav-btn" data-target="faqs">FAQ</button>
                 <a href="{% url 'create_announcement' %}" class="nav-btn" style="color: var(--primary-green); border: 1px solid var(--primary-green); text-decoration: none; padding: 0.4rem 0.8rem; margin-left: 0.5rem;">Créer Annonce</a>
             </nav>
             <button class="mobile-menu-btn" onclick="toggleDrawer()">☰</button>
@@ -264,6 +266,8 @@
             <button class="nav-btn mobile-nav-btn" data-target="parent">Parent/Apprenant</button>
             <button class="nav-btn mobile-nav-btn" data-target="engagement">Engagement</button>
             <button class="nav-btn mobile-nav-btn" data-target="evaluation">Évaluation</button>
+            <button class="nav-btn mobile-nav-btn" data-target="ressources">Ressources</button>
+            <button class="nav-btn mobile-nav-btn" data-target="faqs">FAQ</button>
             <a href="{% url 'create_announcement' %}" class="nav-btn mobile-nav-btn" style="color: var(--primary-green); border: 1px solid var(--primary-green); text-decoration: none; text-align: center; margin-top: 1rem;">Créer Annonce</a>
         </nav>
     </div>
@@ -312,7 +316,7 @@
         navButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const target = e.currentTarget.dataset.target;
-                if (['accueil', 'professeurs'].includes(target)) {
+                if (['accueil', 'professeurs', 'ressources', 'faqs'].includes(target)) {
                     loadSection(target);
                 } else {
                     contentDiv.innerHTML = `<div class="card"><h2 style="margin:0">Section ${target} en cours de développement...</h2></div>`;

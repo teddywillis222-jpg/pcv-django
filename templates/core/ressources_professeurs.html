@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Centre de Ressources Professeurs | Prof Chez Vous</title>
+    <meta name="description" content="Guides, documents et ressources officielles pour les professeurs souhaitant rejoindre Prof Chez Vous.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #16a34a;
+            --primary-light: #dcfce7;
+            --primary-dark: #15803d;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            background: var(--bg-body);
+            min-height: 100vh;
+        }
+
+        /* --- HEADER / HERO --- */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-surface) 0%, var(--primary-light) 100%);
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px rgba(22, 163, 74, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* --- SECTIONS --- */
+        .section {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title svg {
+            color: var(--primary);
+        }
+
+        /* --- CARTES DOCUMENTS --- */
+        .doc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .doc-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .doc-header {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .doc-icon {
+            width: 48px;
+            height: 48px;
+            background: #fef2f2;
+            color: #ef4444;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .doc-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .doc-content p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            text-decoration: none;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn-outline:active {
+            background: var(--primary-light);
+        }
+
+        /* --- FAQ ACCORDEON --- */
+        details {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 1.25rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: "+";
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 400;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+        details[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-content {
+            padding: 0 1.25rem 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- REASSURANCE --- */
+        .trust-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 1.5rem;
+        }
+        .trust-box svg {
+            color: #3b82f6;
+            width: 32px;
+            height: 32px;
+            margin-bottom: 0.5rem;
+        }
+        .trust-box h4 {
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .trust-box p {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--border-color);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- HERO SECTION -->
+        <header class="hero">
+            <div class="hero-logo">
+                <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+            </div>
+            <h1>Centre de Ressources Professeurs</h1>
+            <p>Retrouvez ici tous les guides, documents et ressources nécessaires pour préparer votre inscription et développer votre activité de soutien scolaire.</p>
+            
+            {% if guide_officiel and guide_officiel.lien_externe %}
+                <a href="{{ guide_officiel.lien_externe }}" class="btn-primary" target="_blank" rel="noopener noreferrer">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Consulter le guide officiel
+                </a>
+            {% elif guide_officiel and guide_officiel.fichier_pdf %}
+                <a href="{{ guide_officiel.fichier_pdf.url }}" class="btn-primary" download>
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Télécharger le guide officiel
+                </a>
+            {% else %}
+                <button class="btn-primary" style="opacity: 0.5; cursor: not-allowed;">
+                    Guide en préparation
+                </button>
+            {% endif %}
+        </header>
+
+        <!-- DOCUMENTS DISPONIBLES -->
+        <section class="section">
+            <h2 class="section-title">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Documents disponibles
+            </h2>
+
+            <div class="doc-list">
+                {% for ressource in ressources %}
+                <div class="doc-card">
+                    <div class="doc-header">
+                        <div class="doc-icon">
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="doc-content">
+                            <h3>{{ ressource.titre }}</h3>
+                            <p>{{ ressource.description|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+                    {% if ressource.lien_externe %}
+                    <a href="{{ ressource.lien_externe }}" class="btn-outline" target="_blank" rel="noopener noreferrer">
+                        Consulter
+                    </a>
+                    {% elif ressource.fichier_pdf %}
+                    <a href="{{ ressource.fichier_pdf.url }}" class="btn-outline" download>
+                        Télécharger
+                    </a>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    Les documents seront bientôt disponibles.
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section" style="padding-top: 0;">
+            <h2 class="section-title">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Questions fréquentes
+            </h2>
+
+            <div>
+                {% for faq in faqs %}
+                <details>
+                    <summary>{{ faq.question }}</summary>
+                    <div class="faq-content">
+                        {{ faq.reponse|linebreaksbr }}
+                    </div>
+                </details>
+                {% empty %}
+                <div class="empty-state">
+                    Aucune question pour le moment.
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- TRUST SECTION -->
+        <div class="trust-box">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <h4>Vos données restent sous votre contrôle</h4>
+            <p>Les documents transmis à Prof Chez Vous servent exclusivement à la vérification des profils et à la sécurisation de la plateforme. Vous restez propriétaire de vos données personnelles conformément à notre politique de confidentialité.</p>
+        </div>
+
+    </div>
+</body>
+</html>

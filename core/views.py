@@ -3301,3 +3301,122 @@ def charte_essai_gratuit(request):
     Affiche la page de la charte de l'essai gratuit.
     """
     return render(request, 'core/charte_essai.html')
+
+
+def ressources_professeurs_view(request):
+    from .models import RessourceProfesseur, FAQProfesseur
+    ressources = RessourceProfesseur.objects.filter(actif=True)
+    faqs = FAQProfesseur.objects.filter(actif=True)
+    guide_officiel = ressources.filter(est_guide_officiel=True).first()
+    
+    context = {
+        'ressources': ressources,
+        'faqs': faqs,
+        'guide_officiel': guide_officiel,
+    }
+    return render(request, 'core/ressources_professeurs.html', context)
+
+
+# --- ADMIN DASHBOARD RESSOURCES ET FAQ ---
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
+from .models import RessourceProfesseur, FAQProfesseur
+
+def admin_api_ressources(request):
+    ressources = RessourceProfesseur.objects.all().order_by('ordre_affichage', '-date_creation')
+    return render(request, 'core/admin_dashboard/partials/ressources.html', {'ressources': ressources})
+
+def admin_api_faqs(request):
+    faqs = FAQProfesseur.objects.all().order_by('ordre_affichage')
+    return render(request, 'core/admin_dashboard/partials/faqs.html', {'faqs': faqs})
+
+@csrf_exempt
+def admin_api_ressources_action(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        res_id = request.POST.get('id')
+        
+        if action == 'delete':
+            RessourceProfesseur.objects.filter(id=res_id).delete()
+            return JsonResponse({'success': True, 'message': 'Ressource supprimée.'})
+            
+        elif action == 'toggle_actif':
+            res = get_object_or_404(RessourceProfesseur, id=res_id)
+            res.actif = not res.actif
+            res.save()
+            return JsonResponse({'success': True, 'message': 'Statut modifié.'})
+            
+        elif action == 'save':
+            titre = request.POST.get('titre', '')
+            description = request.POST.get('description', '')
+            lien_externe = request.POST.get('lien_externe', '')
+            ordre = request.POST.get('ordre_affichage', 0)
+            est_guide = request.POST.get('est_guide_officiel') == 'on'
+            fichier = request.FILES.get('fichier_pdf')
+            
+            # Si est_guide_officiel est coché, décocher les autres
+            if est_guide:
+                RessourceProfesseur.objects.all().update(est_guide_officiel=False)
+                
+            if res_id:  # Edit
+                res = get_object_or_404(RessourceProfesseur, id=res_id)
+                res.titre = titre
+                res.description = description
+                res.lien_externe = lien_externe
+                res.ordre_affichage = ordre
+                res.est_guide_officiel = est_guide
+                if fichier:
+                    res.fichier_pdf = fichier
+                res.save()
+                return JsonResponse({'success': True, 'message': 'Ressource modifiée.'})
+            else:  # Create
+                RessourceProfesseur.objects.create(
+                    titre=titre,
+                    description=description,
+                    lien_externe=lien_externe,
+                    ordre_affichage=ordre,
+                    est_guide_officiel=est_guide,
+                    fichier_pdf=fichier
+                )
+                return JsonResponse({'success': True, 'message': 'Ressource créée.'})
+                
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=400)
+
+@csrf_exempt
+def admin_api_faqs_action(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        faq_id = request.POST.get('id')
+        
+        if action == 'delete':
+            FAQProfesseur.objects.filter(id=faq_id).delete()
+            return JsonResponse({'success': True, 'message': 'FAQ supprimée.'})
+            
+        elif action == 'toggle_actif':
+            faq = get_object_or_404(FAQProfesseur, id=faq_id)
+            faq.actif = not faq.actif
+            faq.save()
+            return JsonResponse({'success': True, 'message': 'Statut modifié.'})
+            
+        elif action == 'save':
+            question = request.POST.get('question', '')
+            reponse = request.POST.get('reponse', '')
+            ordre = request.POST.get('ordre_affichage', 0)
+            
+            if faq_id:
+                faq = get_object_or_404(FAQProfesseur, id=faq_id)
+                faq.question = question
+                faq.reponse = reponse
+                faq.ordre_affichage = ordre
+                faq.save()
+                return JsonResponse({'success': True, 'message': 'FAQ modifiée.'})
+            else:
+                FAQProfesseur.objects.create(
+                    question=question,
+                    reponse=reponse,
+                    ordre_affichage=ordre
+                )
+                return JsonResponse({'success': True, 'message': 'FAQ créée.'})
+                
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=400)

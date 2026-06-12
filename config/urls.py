@@ -58,6 +58,7 @@ urlpatterns = [
     # Nouvelles URLs pour la navigation principale
     path("faq/", core_views.faq, name="faq"),
     path("support/", core_views.support, name="support"),
+    path("ressources-professeurs/", core_views.ressources_professeurs_view, name="ressources_professeurs"),
     path("messagerie/", core_views.messagerie, name="messagerie"),
     path("messagerie/<int:conversation_id>/", core_views.conversation_detail, name="conversation_detail"),
     path("messagerie/<int:conversation_id>/send/", core_views.api_send_message, name="api_send_message"),
@@ -110,6 +111,12 @@ urlpatterns = [
     path("debug-admin-pcv/api/accueil/", core_views.admin_api_accueil, name="admin_api_accueil"),
     path("debug-admin-pcv/api/professeurs/", core_views.admin_api_professeurs, name="admin_api_professeurs"),
     path("debug-admin-pcv/api/professeurs/<int:prof_id>/action/", core_views.admin_api_prof_action, name="admin_api_prof_action"),
+    
+    # Nouvelles API pour l'admin custom (Ressources & FAQ)
+    path("debug-admin-pcv/api/ressources/", core_views.admin_api_ressources, name="admin_api_ressources"),
+    path("debug-admin-pcv/api/faqs/", core_views.admin_api_faqs, name="admin_api_faqs"),
+    path("debug-admin-pcv/api/ressources/action/", core_views.admin_api_ressources_action, name="admin_api_ressources_action"),
+    path("debug-admin-pcv/api/faqs/action/", core_views.admin_api_faqs_action, name="admin_api_faqs_action"),
     
     # Temps Réel et Popup
     path("api/ping/", core_views.api_ping, name="api_ping"),
