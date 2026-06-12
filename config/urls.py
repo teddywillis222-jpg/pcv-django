@@ -59,6 +59,7 @@ urlpatterns = [
     path("faq/", core_views.faq, name="faq"),
     path("support/", core_views.support, name="support"),
     path("ressources-professeurs/", core_views.ressources_professeurs_view, name="ressources_professeurs"),
+    path("ressources-professeurs/<int:res_id>/download/", core_views.download_ressource_prof, name="download_ressource_prof"),
     path("messagerie/", core_views.messagerie, name="messagerie"),
     path("messagerie/<int:conversation_id>/", core_views.conversation_detail, name="conversation_detail"),
     path("messagerie/<int:conversation_id>/send/", core_views.api_send_message, name="api_send_message"),

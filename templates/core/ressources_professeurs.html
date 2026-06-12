@@ -290,7 +290,7 @@
                     Consulter le guide officiel
                 </a>
             {% elif guide_officiel and guide_officiel.fichier_pdf %}
-                <a href="{{ guide_officiel.fichier_pdf.url }}" class="btn-primary" download>
+                <a href="{% url 'download_ressource_prof' guide_officiel.id %}" class="btn-primary" download>
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
@@ -331,7 +331,7 @@
                         Consulter
                     </a>
                     {% elif ressource.fichier_pdf %}
-                    <a href="{{ ressource.fichier_pdf.url }}" class="btn-outline" download>
+                    <a href="{% url 'download_ressource_prof' ressource.id %}" class="btn-outline" download>
                         Télécharger
                     </a>
                     {% endif %}

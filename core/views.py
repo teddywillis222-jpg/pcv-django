@@ -476,15 +476,27 @@ def signup(request):
             messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
             from django.contrib.auth import login
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            next_url = request.POST.get('next') or request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
             return redirect("post_signup_redirect")
     else:
         form = SignUpForm()
 
-    return render(request, "core/signup.html", {"form": form})
+    return render(request, "core/signup.html", {
+        "form": form,
+        "redirect_field_name": "next",
+        "redirect_field_value": next_url
+    })
 
 
 def login_view(request):
+    next_url = request.POST.get('next') or request.GET.get('next')
+    
     if request.user.is_authenticated:
+        if next_url:
+            return redirect(next_url)
         return redirect("post_signup_redirect")
 
     if request.method == "POST":
@@ -495,11 +507,18 @@ def login_view(request):
             messages.success(request, f"Heureux de vous revoir, {user.first_name} !")
             from django.contrib.auth import login
             login(request, user)
+            
+            if next_url:
+                return redirect(next_url)
             return redirect("post_signup_redirect")
     else:
         form = LoginForm()
 
-    return render(request, "core/login.html", {"form": form})
+    return render(request, "core/login.html", {
+        "form": form,
+        "redirect_field_name": "next",
+        "redirect_field_value": next_url
+    })
 
 
 def finalisation_compte(request):
@@ -3435,3 +3454,26 @@ def admin_api_faqs_action(request):
                 return JsonResponse({'success': True, 'message': 'FAQ créée.'})
                 
     return JsonResponse({'error': 'Méthode non autorisée'}, status=400)
+
+
+from django.http import FileResponse, Http404
+
+def download_ressource_prof(request, res_id):
+    """
+    Vue publique pour télécharger dynamiquement un fichier de ressource.
+    Contourne les restrictions 401 de Cloudinary en gérant le fichier via Django.
+    """
+    from .models import RessourceProfesseur
+    from django.shortcuts import get_object_or_404
+    
+    res = get_object_or_404(RessourceProfesseur, id=res_id)
+    if not res.fichier_pdf:
+        raise Http404("Fichier non disponible.")
+    
+    try:
+        # Ouvre le fichier via le backend de stockage (Cloudinary ou local)
+        file_handle = res.fichier_pdf.open('rb')
+        filename = res.fichier_pdf.name.split('/')[-1]
+        return FileResponse(file_handle, as_attachment=True, filename=filename)
+    except Exception as e:
+        raise Http404(f"Le fichier n'a pas pu être lu. Erreur: {str(e)}")
