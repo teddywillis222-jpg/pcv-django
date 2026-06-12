@@ -38,6 +38,9 @@
 
             <form method="post" class="auth-form" novalidate>
                 {% csrf_token %}
+                {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
                 
                 <div class="form-group">
                     <label for="{{ form.username.id_for_label }}">Identifiant (Email ou Username)</label>
@@ -63,7 +66,7 @@
             </form>
 
             <footer class="auth-footer">
-                Pas encore de compte ? <a href="{% url 'signup' %}">S'inscrire gratuitement</a>
+                Pas encore de compte ? <a href="{% url 'signup' %}{% if redirect_field_value %}?{{ redirect_field_name }}={{ redirect_field_value }}{% endif %}">S'inscrire gratuitement</a>
             </footer>
         </div>
     </div>
