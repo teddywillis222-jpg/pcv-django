@@ -715,7 +715,7 @@ def prof_create_profile(request):
                 teacher.nom = request.user.last_name or " "
 
             teacher.statut_de_validation = ValidationStatus.EN_ATTENTE
-            teacher.raison_incomplet = ""
+            teacher.message_admin = ""
             teacher.save()
             
             from .models import Diplome

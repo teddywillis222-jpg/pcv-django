@@ -1389,7 +1389,7 @@ class TeacherProfile(models.Model):
                 if old_profile.statut_de_validation != ValidationStatus.INCOMPLET and self.statut_de_validation == ValidationStatus.INCOMPLET:
                     import threading
                     from core.utils_emails import send_teacher_incomplete_email
-                    threading.Thread(target=send_teacher_incomplete_email, args=(self.user, self, self.raison_incomplet)).start()
+                    threading.Thread(target=send_teacher_incomplete_email, args=(self.user, self, self.message_admin)).start()
             except TeacherProfile.DoesNotExist:
                 pass
 
