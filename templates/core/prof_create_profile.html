@@ -584,7 +584,7 @@
                     <label>{{ form.photo_de_profil.label }} *</label>
                     <div class="file-upload-wrapper">
                         <span class="file-upload-icon">📷</span>
-                        <span class="file-upload-text">Importer (Headshot)</span>
+                        <span class="file-upload-text">{% if teacher_instance and teacher_instance.photo_de_profil %}Fichier Actuel : {{ teacher_instance.photo_de_profil.name|truncatechars:15 }} (Cliquer pour changer){% else %}Importer (Headshot){% endif %}</span>
                         <div class="file-name-display"></div>
                         {{ form.photo_de_profil }}
                     </div>
@@ -593,7 +593,7 @@
                     <label>{{ form.fichier_cni.label }} *</label>
                     <div class="file-upload-wrapper">
                         <span class="file-upload-icon">💳</span>
-                        <span class="file-upload-text">Passeport, CNI, CIP...</span>
+                        <span class="file-upload-text">{% if teacher_instance and teacher_instance.fichier_cni %}Fichier Actuel : {{ teacher_instance.fichier_cni.name|truncatechars:15 }} (Cliquer pour changer){% else %}Passeport, CNI, CIP...{% endif %}</span>
                         <div class="file-name-display"></div>
                         {{ form.fichier_cni }}
                     </div>
@@ -643,6 +643,24 @@
             <h3 class="section-title">🎓 Preuves & Diplômes</h3>
             <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 1.5rem;">Attestez de votre niveau pour
                 rassurer les parents (Bac, Licence, Master ou Attestations).</p>
+
+            {% if teacher_instance and teacher_instance.diplomes.all %}
+            <div style="margin-bottom: 1.5rem;">
+                <h4 style="font-size: 1rem; color: var(--text-dark); margin-bottom: 0.5rem;">Diplômes déjà enregistrés :</h4>
+                <ul style="list-style-type: none; padding: 0;">
+                {% for diplome in teacher_instance.diplomes.all %}
+                    <li style="background: #f1f5f9; padding: 0.8rem; border-radius: 8px; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">📄</span>
+                        <span style="font-weight: 600; color: var(--text-dark);">{{ diplome.nom_diplome }}</span>
+                        {% if diplome.fichier_preuve %}
+                            <a href="{{ diplome.fichier_preuve.url }}" target="_blank" style="margin-left: auto; color: var(--primary); font-size: 0.85rem; text-decoration: none;">Voir le fichier</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+                <p style="font-size: 0.85rem; color: var(--text-gray);">Ajoutez de nouveaux diplômes ci-dessous si nécessaire (les anciens sont conservés).</p>
+            </div>
+            {% endif %}
 
             <div id="diplomes-wrapper"></div>
 

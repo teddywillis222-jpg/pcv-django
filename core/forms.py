@@ -513,6 +513,10 @@ class TeacherProfileForm(forms.ModelForm):
             "fichier_cni",
             "essai_gratuit_actif",
         ]
+        widgets = {
+            'photo_de_profil': forms.FileInput(),
+            'fichier_cni': forms.FileInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -521,8 +525,6 @@ class TeacherProfileForm(forms.ModelForm):
 
         if self.instance and self.instance.pk:
             self.initial['nom'] = f"{self.instance.prenom} {self.instance.nom}".strip()
-            if "fichier_cni" in self.fields:
-                del self.fields["fichier_cni"]
             
         self.fields["nom"].label = "Nom Complet"
         
@@ -535,7 +537,9 @@ class TeacherProfileForm(forms.ModelForm):
         
         for field_name in ["email", "nom", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
-                if field_name == "photo_de_profil" and self.instance and self.instance.photo_de_profil:
+                if field_name == "photo_de_profil" and self.instance and getattr(self.instance, "photo_de_profil", None):
+                    self.fields[field_name].required = False
+                elif field_name == "fichier_cni" and self.instance and getattr(self.instance, "fichier_cni", None):
                     self.fields[field_name].required = False
                 else:
                     self.fields[field_name].required = True
