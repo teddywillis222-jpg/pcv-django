@@ -458,10 +458,15 @@ def signup(request):
     if request.user.is_authenticated:
         return redirect("post_signup_redirect")
 
+    next_url = request.POST.get('next') or request.GET.get('next')
+
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.is_active = False  # Désactivation jusqu'à validation de l'email
+            user.save()
+            
             role = form.cleaned_data["role"]
             telephone = form.cleaned_data["telephone"]
             Profile.objects.create(user=user, role=role, telephone=telephone)
@@ -472,15 +477,42 @@ def signup(request):
                 prix=f"{settings.DEFAULT_ENGAGEMENT_PRICE}{settings.DEFAULT_CURRENCY} par engagement",
                 date_debut=date.today(),
             )
-            from django.contrib import messages
-            messages.success(request, f"Bienvenue {user.first_name} ! Votre compte a été créé avec succès.")
-            from django.contrib.auth import login
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             
-            next_url = request.POST.get('next') or request.GET.get('next')
+            # --- Génération et envoi du token ---
+            from django.contrib.auth.tokens import default_token_generator
+            from django.utils.http import urlsafe_base64_encode
+            from django.utils.encoding import force_bytes
+            from django.urls import reverse
+            from django.core.mail import send_mail
+            from django.conf import settings
+            
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            link = request.build_absolute_uri(
+                reverse('activate_account', kwargs={'uidb64': uid, 'token': token})
+            )
+            
+            sujet = "Activation de votre compte Prof Chez Vous"
+            message = f"Bonjour {user.first_name},\n\nMerci de vous être inscrit(e) sur Prof Chez Vous.\n\nVeuillez cliquer sur le lien suivant pour activer votre compte :\n{link}\n\nÀ très vite,\nL'équipe Prof Chez Vous."
+            
+            try:
+                send_mail(
+                    subject=sujet,
+                    message=message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Erreur d'envoi d'email à {user.email}: {e}")
+            
+            from django.contrib import messages
+            messages.success(request, f"Votre compte a été créé avec succès. Un lien d'activation a été envoyé à {user.email}.")
+            
             if next_url:
                 return redirect(next_url)
-            return redirect("post_signup_redirect")
+            return redirect("login")
     else:
         form = SignUpForm()
 
@@ -489,6 +521,31 @@ def signup(request):
         "redirect_field_name": "next",
         "redirect_field_value": next_url
     })
+
+
+def activate_account(request, uidb64, token):
+    from django.contrib.auth.models import User
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.http import urlsafe_base64_decode
+    from django.utils.encoding import force_str
+    from django.contrib import messages
+    from django.contrib.auth import login
+    
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Votre compte a été activé avec succès. Bienvenue !")
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect("post_signup_redirect")
+    else:
+        messages.error(request, "Le lien d'activation est invalide ou a expiré.")
+        return redirect("home")
 
 
 def login_view(request):

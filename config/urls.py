@@ -35,6 +35,7 @@ urlpatterns = [
     path("accounts/", include("allauth.account.urls")),
     path("", core_views.home, name="home"),
     path("signup/", core_views.signup, name="signup"),
+    path("activate/<uidb64>/<token>/", core_views.activate_account, name="activate_account"),
     path("login/", core_views.login_view, name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("post-signup/", core_views.post_signup_redirect, name="post_signup_redirect"),
