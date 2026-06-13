@@ -696,7 +696,8 @@ def prof_create_profile(request):
     if teacher_instance:
         if teacher_instance.statut_de_validation == ValidationStatus.VALIDE:
             return redirect("prof_dashboard")
-        return redirect("prof_attente_dashboard")
+        elif teacher_instance.statut_de_validation != ValidationStatus.INCOMPLET:
+            return redirect("prof_attente_dashboard")
 
     if request.method == "POST":
         form = TeacherProfileForm(request.POST, request.FILES, instance=teacher_instance)
@@ -714,6 +715,7 @@ def prof_create_profile(request):
                 teacher.nom = request.user.last_name or " "
 
             teacher.statut_de_validation = ValidationStatus.EN_ATTENTE
+            teacher.raison_incomplet = ""
             teacher.save()
             
             from .models import Diplome

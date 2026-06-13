@@ -1,6 +1,8 @@
 import logging
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.sites.models import Site
+from django.urls import reverse
 from .models import Profile
 
 logger = logging.getLogger(__name__)
@@ -112,4 +114,91 @@ L'équipe Prof Chez Vous."""
             user.email, user.pk, profile.role, e,
             exc_info=True,
         )
+        return False
+
+def get_full_url(path):
+    try:
+        domain = Site.objects.get_current().domain
+    except Exception:
+        domain = "profchezvous.com"
+    protocol = "https" if not settings.DEBUG else "http"
+    return f"{protocol}://{domain}{path}"
+
+def send_teacher_approved_email(user, teacher_profile):
+    if not user.email:
+        return False
+    
+    name = teacher_profile.nom or user.first_name or user.username
+    dashboard_url = get_full_url(reverse("prof_dashboard"))
+
+    sujet = 'Félicitations ! Votre profil est désormais "Certifié"'
+    message = f"""Cher(e) {name},
+
+Après étude de votre dossier, notre équipe a le plaisir de vous annoncer que votre profil a été approuvé.
+
+Votre expertise est désormais visible par les familles et apprenants sur la plateforme Prof Chez Vous. Vous bénéficiez dès à présent du badge "Certifié", gage de confiance et d'excellence.
+
+Conseil de réussite : Veillez à répondre rapidement aux demandes d'engagement pour maintenir un excellent score de réactivité sur votre profil.
+
+Accédez à votre tableau de bord dès maintenant :
+{dashboard_url}
+
+Bonne chance pour vos futures séances !
+
+L'équipe Prof Chez Vous"""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de validation envoyé avec succès à %s.", user.email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de validation à %s : %s", user.email, e, exc_info=True)
+        return False
+
+def send_teacher_incomplete_email(user, teacher_profile, reason):
+    if not user.email:
+        return False
+    
+    name = teacher_profile.nom or user.first_name or user.username
+    edit_url = get_full_url(reverse("prof_create_profile"))
+
+    sujet = "Action requise : Optimisation de votre dossier Prof Chez Vous"
+    message = f"""Cher(e) {name},
+
+Nous avons bien reçu vos documents. Pour garantir le standard d'excellence de la plateforme, une mise à jour de votre profil est nécessaire avant sa publication.
+
+Motif(s) de la mise en attente :
+
+{reason}
+
+Ce que vous devez faire :
+1. Connectez-vous à votre espace.
+2. Rectifiez les éléments mentionnés ci-dessus.
+3. Soumettez à nouveau votre profil.
+
+Vous pouvez mettre à jour votre profil via ce lien :
+{edit_url}
+
+Nous vous rappelons que vous pouvez resoumettre votre dossier à tout moment pour étude.
+
+L'équipe Prof Chez Vous"""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de dossier incomplet envoyé avec succès à %s.", user.email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de dossier incomplet à %s : %s", user.email, e, exc_info=True)
         return False

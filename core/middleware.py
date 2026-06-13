@@ -66,6 +66,18 @@ class ProfileCompletionMiddleware:
                 if not parent.enfants.exists() and url_name not in ("parent_create_profile",):
                     return redirect("parent_create_profile")
 
+        elif profile.role == Profile.ROLE_PROF:
+            from .models import TeacherProfile
+            from .choices import ValidationStatus
+            try:
+                teacher = request.user.teacher_profile
+                if getattr(teacher, 'statut_de_validation', None) == ValidationStatus.INCOMPLET:
+                    if url_name not in ("prof_create_profile", "logout", "finalisation_compte", "post_signup_redirect", "prof_intro"):
+                        return redirect("prof_create_profile")
+            except TeacherProfile.DoesNotExist:
+                if url_name not in ("prof_create_profile",) + tuple(EXEMPT_URLS):
+                    return redirect("prof_create_profile")
+
         elif profile.role == Profile.ROLE_APPRENANT:
             try:
                 request.user.apprenant

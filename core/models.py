@@ -1152,6 +1152,14 @@ class TeacherProfile(models.Model):
 
     )
 
+    raison_incomplet = models.TextField(
+
+        blank=True,
+
+        help_text="Raison de la mise en attente (visible par le professeur)"
+
+    )
+
     est_certifie = models.BooleanField(default=False)
 
     profil_complet = models.BooleanField(default=False, help_text="Vrai si le profil est complÃ©tÃ© Ã  100%")
@@ -1369,6 +1377,21 @@ class TeacherProfile(models.Model):
 
 
     def save(self, *args, **kwargs):
+
+        if self.pk:
+            try:
+                old_profile = TeacherProfile.objects.get(pk=self.pk)
+                if old_profile.statut_de_validation != ValidationStatus.VALIDE and self.statut_de_validation == ValidationStatus.VALIDE:
+                    import threading
+                    from core.utils_emails import send_teacher_approved_email
+                    threading.Thread(target=send_teacher_approved_email, args=(self.user, self)).start()
+                
+                if old_profile.statut_de_validation != ValidationStatus.INCOMPLET and self.statut_de_validation == ValidationStatus.INCOMPLET:
+                    import threading
+                    from core.utils_emails import send_teacher_incomplete_email
+                    threading.Thread(target=send_teacher_incomplete_email, args=(self.user, self, self.raison_incomplet)).start()
+            except TeacherProfile.DoesNotExist:
+                pass
 
         if not self.slug:
 
