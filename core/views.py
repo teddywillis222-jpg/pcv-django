@@ -506,8 +506,7 @@ def signup(request):
                 import logging
                 logging.getLogger(__name__).error(f"Erreur d'envoi d'email à {user.email}: {e}")
             
-            from django.contrib import messages
-            messages.success(request, f"Votre compte a été créé avec succès. Un lien d'activation a été envoyé à {user.email}.")
+            request.session['verification_email_sent'] = user.email
             
             if next_url:
                 return redirect(next_url)
@@ -570,10 +569,13 @@ def login_view(request):
     else:
         form = LoginForm()
 
+    verification_email_sent = request.session.pop('verification_email_sent', None)
+
     return render(request, "core/login.html", {
         "form": form,
         "redirect_field_name": "next",
-        "redirect_field_value": next_url
+        "redirect_field_value": next_url,
+        "verification_email_sent": verification_email_sent
     })
 
 
