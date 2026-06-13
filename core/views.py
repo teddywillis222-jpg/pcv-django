@@ -509,7 +509,8 @@ def signup(request):
             request.session['verification_email_sent'] = user.email
             
             if next_url:
-                return redirect(next_url)
+                request.session['post_activation_redirect'] = next_url
+                
             return redirect("login")
     else:
         form = SignUpForm()
@@ -540,6 +541,11 @@ def activate_account(request, uidb64, token):
         user.save()
         messages.success(request, "Votre compte a été activé avec succès. Bienvenue !")
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        post_activation_redirect = request.session.pop('post_activation_redirect', None)
+        if post_activation_redirect:
+            return redirect(post_activation_redirect)
+            
         return redirect("post_signup_redirect")
     else:
         messages.error(request, "Le lien d'activation est invalide ou a expiré.")

@@ -1106,6 +1106,11 @@
 
         // Global delegated handler for teacher card clicks and arrow actions
         document.addEventListener('click', function(e) {
+            // Ignore clicks on favorite buttons
+            if (e.target.closest('.favorite-btn-glass')) {
+                return;
+            }
+            
             const arrow = e.target.closest('.arrow-action');
             if (arrow) {
                 const card = arrow.closest('.teacher-card, .teacher-card-compact');
