@@ -73,9 +73,9 @@
                     <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
+                        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
                         onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
                         <span class="btn-default-text">✏️ Modifier l'essai programmé</span>
-                        <span class="btn-hover-text" style="display: none;">Mettre à jour l'essai</span>
                         <span class="btn-active-text" style="display: none;">⏳ Modification...</span>
                     </button>
                 {% elif existing_engagement.statut_general == 'ESSAI_CONFIRME' or existing_engagement.statut_general == 'CONFIRME' or existing_engagement.statut_general == 'EN_COURS' %}
@@ -114,7 +114,6 @@
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
                         <span class="btn-default-text">🤝 Programmer mon essai</span>
-                        <span class="btn-hover-text" style="display: none;">🚀 Débloquer son potentiel !</span>
                         <span class="btn-active-text" style="display: none;">⏳ Ouverture...</span>
                     </button>
                 {% else %}
@@ -456,26 +455,18 @@
     justify-content: center;
 }
 .btn-reserver-essai:hover {
-    transform: scale(1.02);
+    transform: translateY(-2px);
     background: #d97706 !important;
     box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3) !important;
 }
 .btn-reserver-essai:active {
-    transform: scale(0.98);
+    transform: translateY(0);
     background: #b45309 !important;
 }
-.btn-reserver-essai .btn-hover-text,
 .btn-reserver-essai .btn-active-text {
     display: none;
 }
-.btn-reserver-essai:hover:not(.loading) .btn-default-text {
-    display: none;
-}
-.btn-reserver-essai:hover:not(.loading) .btn-hover-text {
-    display: inline;
-}
-.btn-reserver-essai.loading .btn-default-text,
-.btn-reserver-essai.loading .btn-hover-text {
+.btn-reserver-essai.loading .btn-default-text {
     display: none !important;
 }
 .btn-reserver-essai.loading .btn-active-text {

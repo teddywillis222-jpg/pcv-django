@@ -1315,13 +1315,15 @@
                 const sheetDetails = document.getElementById('sheetDetails');
                 const sheetAdd = document.getElementById('sheetAdd');
                 const engModal = document.getElementById('engagementModal');
+                const essaiModal = document.getElementById('essaiModal');
                 const successModal = document.getElementById('engagementSuccessModal');
                 
                 if (
                     (sheetDetails && sheetDetails.classList.contains('active')) ||
                     (sheetAdd && sheetAdd.classList.contains('active')) ||
-                    (engModal && engModal.style.display !== 'none') || 
-                    (successModal && successModal.style.display !== 'none') ||
+                    (engModal && engModal.style.display !== 'none' && engModal.style.display !== '') || 
+                    (essaiModal && essaiModal.style.display !== 'none' && essaiModal.style.display !== '') ||
+                    (successModal && successModal.style.display !== 'none' && successModal.style.display !== '') ||
                     window.location.pathname.includes('/toutes-seances/')
                 ) {
                     return;
