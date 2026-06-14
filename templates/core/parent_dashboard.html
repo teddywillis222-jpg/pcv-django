@@ -43,6 +43,7 @@
         border-radius: 12px !important;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
         z-index: 9999 !important; /* Ensure visibility over sheets/modals */
+        position: absolute !important;
     }
     .ts-dropdown .option {
         padding: 10px 16px !important;
@@ -829,7 +830,12 @@
                         <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_confirmes }}</span>
                         {% endif %}
                     </button>
-                    <button class="tab-pill" onclick="switchTab(event, 'finalises')">Finalisé</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'finalises')">
+                        Finalisé
+                        {% if engagements_finalises|length > 0 %}
+                        <span style="background: #3b82f6; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);">{{ engagements_finalises|length }}</span>
+                        {% endif %}
+                    </button>
                     <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminé</button>
                 </div>
 
@@ -996,6 +1002,14 @@
                 <label>Matières <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.matieres_predefinies }}
             </div>
+            <div class="form-group">
+                <label>Objectifs <span style="color: #ef4444;">*</span></label>
+                {{ enfant_form.objectifs_motivations }}
+            </div>
+            <div class="form-group">
+                <label>Difficultés (optionnel)</label>
+                {{ enfant_form.difficultes_predefinies }}
+            </div>
             <button type="submit"
                 style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
                 Enregistrer l'enfant
@@ -1104,21 +1118,6 @@
                             <span style="color: #64748b;">Heures</span>
                             <span style="font-weight: 700;">${eng.heure_debut}${eng.heure_fin ? ' - ' + eng.heure_fin : ''}</span>
                         </div>
-                        ${eng.mode_raw === 'ONLINE' && eng.plateforme ? `
-                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Plateforme</span>
-                            <span style="font-weight: 700;">${eng.plateforme}</span>
-                        </div>` : ''}
-                        ${eng.mode_raw !== 'ONLINE' && eng.lieu ? `
-                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Quartier</span>
-                            <span style="font-weight: 700;">${eng.lieu}</span>
-                        </div>` : ''}
-                        ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
-                        <div style="margin-bottom: 0.5rem;">
-                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications géographiques</span>
-                            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b; max-height: 100px; overflow-y: auto;">${eng.indications_geographiques}</div>
-                        </div>` : ''}
                     `;
                     if (eng.description_essai) {
                         trialInfoHtml += `

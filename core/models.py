@@ -1936,28 +1936,17 @@ class Engagement(models.Model):
             
 
         if self.statut_general in [StatutGeneral.REFUSE, StatutGeneral.ANNULE]:
-
             return self.get_statut_general_display()
-
             
-
         if self.statut_general in [StatutGeneral.EN_ATTENTE, StatutGeneral.ESSAI_PROGRAMME]:
-
-            return "ProgrammÃ©"
-
+            return "Programmé"
             
-
         if self.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.EN_COURS, StatutGeneral.FINALISE, StatutGeneral.TERMINE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE, StatutGeneral.ENGAGEMENT_FINALISE]:
-
             if (self.date_heure_fin_essai and self.date_heure_fin_essai < timezone.now()) or self.statut_general in [StatutGeneral.ESSAI_REALISE, StatutGeneral.ENGAGEMENT_FINALISE]:
-
-                return "ComplÃ©tÃ©e"
-
-            return "ConfirmÃ©"
-
+                return "Complétée"
+            return "Confirmé"
             
-
-        return "ProgrammÃ©"
+        return "Programmé"
 
 
 

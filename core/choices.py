@@ -269,10 +269,10 @@ class StatutGeneral:
     
     CHOICES = [
         # Anciens
-        (EN_ATTENTE, "En attente (Ancien)"),
-        (CONFIRME, "En cours (Ancien)"),
-        (EN_COURS, "En cours (Ancien)"),
-        (FINALISE, "Finalisé (Ancien)"),
+        (EN_ATTENTE, "En attente"),
+        (CONFIRME, "En cours"),
+        (EN_COURS, "En cours"),
+        (FINALISE, "Finalisé"),
         
         # Nouveaux
         (ESSAI_PROGRAMME, "Essai programmé"),

@@ -112,7 +112,7 @@ class SignUpForm(forms.ModelForm):
         label="Mot de passe",
         required=True,
         widget=forms.PasswordInput(attrs={
-            "placeholder": "Min 6 caractères (lettre, chiffre et spécial)",
+            "placeholder": "Min 6 caractères",
             "minlength": "6",
             "required": True
         })
@@ -355,6 +355,7 @@ class EnfantForm(forms.ModelForm):
             
         self.fields["quartier_ville"].widget = forms.Select(choices=Localisation.CHOICES, attrs={'class': 'pcv-multi-select'})
         self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select'})
+        self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select'})
 
     def clean(self):
         cleaned_data = super().clean()
