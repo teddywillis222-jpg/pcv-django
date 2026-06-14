@@ -120,7 +120,7 @@ def get_full_url(path):
     try:
         domain = Site.objects.get_current().domain
     except Exception:
-        domain = "profchezvous.com"
+        domain = "profchezvousapp.com"
     protocol = "https" if not settings.DEBUG else "http"
     return f"{protocol}://{domain}{path}"
 

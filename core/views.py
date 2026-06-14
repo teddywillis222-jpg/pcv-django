@@ -2486,15 +2486,15 @@ def admin_api_prof_action(request, prof_id):
     if action == 'valider':
         prof.statut_de_validation = ValidationStatus.VALIDE
         prof.save()
-        # TODO: Envoi d'email de confirmation (simulation pour le test)
-        print(f"[SIMULATION EMAIL] Profil validé envoyé à {prof.email}")
+        # L'email de félicitations est envoyé automatiquement par le model save()
         return JsonResponse({'success': True, 'message': 'Professeur valid\u00e9 avec succ\u00e8s.'})
         
     elif action == 'incomplet':
         raison = request.POST.get('raison', 'Informations incomplètes.')
+        prof.message_admin = raison
         prof.statut_de_validation = ValidationStatus.INCOMPLET
         prof.save()
-        print(f"[SIMULATION EMAIL] Profil incomplet envoyé à {prof.email}. Raison: {raison}")
+        # L'email de dossier incomplet est envoyé automatiquement par le model save()
         return JsonResponse({'success': True, 'message': 'Statut mis \u00e0 jour et email envoy\u00e9.'})
         
     elif action == 'valider_note':
