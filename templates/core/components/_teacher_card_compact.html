@@ -1,57 +1,49 @@
-<div class="teacher-card-compact" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}" style="display: flex; flex-direction: column; gap: 0.6rem; padding: 0.75rem; background: white; border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
-    
-    <!-- Ligne du haut : Photo + Infos Principales -->
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-        <!-- Photo à gauche (max 60px) -->
-        <div class="profile-image-container" style="width: 55px; height: 55px; border-radius: 50%; overflow: hidden; flex-shrink: 0;">
+<div class="teacher-card-compact" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}">
+
+    <!-- En-tête : Photo + Nom + Classes -->
+    <div class="compact-header">
+        <!-- Avatar -->
+        <div class="compact-avatar">
             {% if teacher.photo_de_profil %}
-                <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }}">
             {% else %}
-                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #94a3b8; font-weight: 800; font-size: 1.1rem;">
+                <div class="avatar-placeholder">
                     {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
                 </div>
             {% endif %}
         </div>
-        
-        <!-- Nom + Niveau à droite -->
-        <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
-            <div style="display: flex; align-items: center;">
-                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ teacher.prenom }} {{ teacher.nom }}</h3>
+
+        <!-- Identité -->
+        <div class="compact-identity">
+            <div class="compact-name-row">
+                <h3 class="compact-name">{{ teacher.prenom }} {{ teacher.nom }}</h3>
                 {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="#16a34a" style="flex-shrink: 0; margin-left: 4px;">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                 {% endif %}
             </div>
-            <!-- Niveau d'études / Profession -->
-            <span style="font-size: 0.75rem; color: #64748b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                {{ teacher.profession|default:"Niveau non précisé" }}
-            </span>
+            <span class="compact-subtitle">🎓 {{ teacher.classes_labels|default:"Toutes classes" }}</span>
         </div>
     </div>
 
-    <!-- Rating + Disponibilité sur la même ligne -->
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-size: 0.8rem; font-weight: 700; color: #f59e0b; display: flex; align-items: center; gap: 3px;">
-            <span>★</span> {{ teacher.moyenne_avis|floatformat:1 }} <span style="color: #94a3b8; font-weight: 500; font-size: 0.75rem;">({{ teacher.nombre_avis }})</span>
-        </div>
-        <div style="display: flex; gap: 0.35rem;">
-            {% if teacher.est_disponible != False %}
-                <span style="font-size: 0.65rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 0.2rem 0.5rem; border-radius: 12px; text-transform: uppercase;">Disponible</span>
-            {% endif %}
-            {% if teacher.essai_gratuit_actif %}
-                <span style="font-size: 0.65rem; font-weight: 700; color: #8b5cf6; background: #ede9fe; padding: 0.2rem 0.5rem; border-radius: 12px; text-transform: uppercase;">Essai</span>
-            {% endif %}
-        </div>
+    <!-- Matière -->
+    <p class="compact-matiere">📘 {{ teacher.matiere_enseignee }}</p>
+
+    <!-- Badges scrollables -->
+    <div class="compact-badges-row">
+        <span class="compact-badge badge-rating">★ {{ teacher.moyenne_avis|floatformat:1 }} ({{ teacher.nombre_avis }})</span>
+        {% if teacher.est_disponible != False %}
+            <span class="compact-badge badge-available">Disponible</span>
+        {% endif %}
+        {% if teacher.essai_gratuit_actif %}
+            <span class="compact-badge badge-trial">Essai</span>
+        {% endif %}
+        {% if teacher.annees_d_experience %}
+            <span class="compact-badge badge-exp">{{ teacher.annees_d_experience }} ans exp.</span>
+        {% endif %}
     </div>
 
-    <!-- Matières (Ligne concise avec ellipsis) -->
-    <p style="margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-        📘 {{ teacher.matiere_enseignee }}
-    </p>
-
-    <!-- Bouton d'action allégé -->
-    <button class="btn-view" type="button" aria-label="Voir le profil" style="margin: 0; padding: 0.45rem 0; width: 100%; border-radius: 10px; background: #f8fafc; color: var(--primary); font-weight: 700; font-size: 0.85rem; border: 1px solid #e2e8f0; transition: all 0.2s; text-align: center;">
-        Voir le profil
-    </button>
+    <!-- Bouton -->
+    <button class="btn-view" type="button" aria-label="Voir le profil">Voir le profil</button>
 </div>

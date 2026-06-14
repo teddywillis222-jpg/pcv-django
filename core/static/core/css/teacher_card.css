@@ -278,92 +278,172 @@
 
 /* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 16px;
-    padding: 1rem;
-    width: 200px; /* Fixed width for carousel */
+    padding: 0.85rem 0.9rem;
+    width: 260px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: stretch;
+    text-align: left;
     gap: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(226, 232, 240, 0.6);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .teacher-card-compact:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.teacher-card-compact .compact-photo {
-    width: 60px;
-    height: 60px;
+/* Header row: photo + name block */
+.teacher-card-compact .compact-header {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    min-width: 0;
+}
+
+.teacher-card-compact .compact-avatar {
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid #f1f5f9;
+}
+
+.teacher-card-compact .compact-avatar img,
+.teacher-card-compact .compact-avatar .avatar-placeholder {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.teacher-card-compact .avatar-placeholder {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    color: #64748b;
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.teacher-card-compact .compact-identity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
 }
 
 .teacher-card-compact .compact-name-row {
-    width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 4px;
+    min-width: 0;
 }
 
 .teacher-card-compact .compact-name {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: #0f172a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+    line-height: 1.3;
 }
 
-.teacher-card-compact .compact-info {
-    font-size: 0.75rem;
+.teacher-card-compact .compact-subtitle {
+    font-size: 0.73rem;
     color: #64748b;
-    width: 100%;
+    margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin: 0;
 }
 
+/* Matière line */
 .teacher-card-compact .compact-matiere {
-    color: #0f172a;
+    margin: 0;
+    font-size: 0.78rem;
     font-weight: 600;
+    color: var(--primary, #16a34a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.teacher-card-compact .compact-rating {
-    font-size: 0.75rem;
+/* Badges scrollable row */
+.teacher-card-compact .compact-badges-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.teacher-card-compact .compact-badges-row::-webkit-scrollbar {
+    display: none;
+}
+
+.teacher-card-compact .compact-badge {
+    flex-shrink: 0;
+    font-size: 0.65rem;
     font-weight: 700;
-    color: #d97706;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
+.teacher-card-compact .badge-rating {
+    color: #d97706;
+    background: #fef3c7;
+}
+
+.teacher-card-compact .badge-available {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+.teacher-card-compact .badge-trial {
+    color: #8b5cf6;
+    background: #ede9fe;
+}
+
+.teacher-card-compact .badge-exp {
+    color: #475569;
+    background: #f1f5f9;
+}
+
+/* Button */
 .teacher-card-compact .btn-view {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.4rem 0;
     background: rgba(22, 163, 74, 0.08);
-    color: var(--success-600);
+    color: var(--success-600, #16a34a);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 700;
     font-size: 0.8rem;
     cursor: pointer;
-    margin-top: 0.25rem;
     transition: all 0.18s;
+    text-align: center;
 }
 
 .teacher-card-compact .btn-view:hover {
-    background: var(--success-600);
+    background: var(--success-600, #16a34a);
     color: white;
 }
