@@ -207,31 +207,6 @@ if not DEBUG:
 
 # Configuration Cloudinary
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
-
-# Configuration des Stockages (Django 5.1+)
-# default: Cloudinary pour les fichiers uploadÃ©s (Persistance sur Render)
-# staticfiles: Django standard pour Ã©viter les plantages collectstatic
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
-# ParamÃ¨tres de compatibilitÃ© pour les librairies tierces (Cloudinary, WhiteNoise)
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-# --- Configuration Business (DÃ©ploiement) ---
-DEFAULT_ENGAGEMENT_PRICE = os.getenv('ENGAGEMENT_PRICE', '2000')
-DEFAULT_CURRENCY = os.getenv('CURRENCY', 'FCFA')
-
 # ParamÃ¨tres de notation par dÃ©faut
 RATING_DEFAULT_CERTIFIED = float(os.getenv('RATING_DEFAULT_CERTIFIED', '4.8'))
 RATING_DEFAULT_STANDARD = float(os.getenv('RATING_DEFAULT_STANDARD', '4.5'))
