@@ -64,6 +64,19 @@
             font-size: 14px;
         }
 
+        /* Remove ugly square focus border from TomSelect text input */
+        .ts-control input {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+        .ts-control input:focus {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
         /* Fix Tom Select duplication */
         .ts-wrapper + select,
         .ts-control + select {
@@ -88,6 +101,7 @@
         .ts-wrapper.focus .ts-control {
             border-color: var(--success-600) !important;
             box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+            outline: none !important;
         }
 
         .ts-control .item {
@@ -124,6 +138,13 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
             border: 1px solid #e2e8f0 !important;
             z-index: 9999 !important; /* Ensure it floats above sheets and modals */
+            animation: tsFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: top;
+        }
+
+        @keyframes tsFadeIn {
+            from { opacity: 0; transform: scaleY(0.95) translateY(-5px); }
+            to { opacity: 1; transform: scaleY(1) translateY(0); }
         }
 
         /* Harmonisation Tom Select avec le design premium */
@@ -1231,9 +1252,6 @@
                 const maxItemsAttr = select.getAttribute('data-max-items');
                 
                 const plugins = ['remove_button'];
-                if (!isMultiple) {
-                    plugins.push('dropdown_input');
-                }
                 
                 const finalMaxItems = maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1);
 
@@ -1242,11 +1260,15 @@
                     create: true,
                     persist: false,
                     closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
-                    dropdownParent: 'body', // Fixes clipping/z-index issues inside modals/sheets
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
                     maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1),
                     maxOptions: 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                    openOnFocus: true,
+                    onInitialize: function() {
+                        // Ensure dropdown starts closed
+                        this.close();
+                    },
                     onItemAdd: function() {
                         this.setTextboxValue('');
                         this.refreshOptions();
@@ -1257,7 +1279,7 @@
                     },
                     render: {
                         no_results: function(data, escape) {
-                            return '<div class="no-results">Aucun résultat trouvé pour "' + escape(data.input) + '"</div>';
+                            return '<div class="no-results">Aucun r\u00e9sultat trouv\u00e9 pour "' + escape(data.input) + '"</div>';
                         },
                         option_create: function(data, escape) {
                             return '<div class="create">Ajouter <strong>' + escape(data.input) + '</strong>...</div>';

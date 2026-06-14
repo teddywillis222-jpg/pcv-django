@@ -43,7 +43,13 @@
         border-radius: 12px !important;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
         z-index: 9999 !important; /* Ensure visibility over sheets/modals */
-        position: absolute !important;
+    }
+    /* Remove ugly square focus border inside TomSelect inputs */
+    .ts-control input,
+    .ts-control input:focus {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
     }
     .ts-dropdown .option {
         padding: 10px 16px !important;
@@ -1002,14 +1008,6 @@
                 <label>Matières <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.matieres_predefinies }}
             </div>
-            <div class="form-group">
-                <label>Objectifs <span style="color: #ef4444;">*</span></label>
-                {{ enfant_form.objectifs_motivations }}
-            </div>
-            <div class="form-group">
-                <label>Difficultés (optionnel)</label>
-                {{ enfant_form.difficultes_predefinies }}
-            </div>
             <button type="submit"
                 style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
                 Enregistrer l'enfant
@@ -1374,11 +1372,23 @@
     }
 
     function openChildSheet() {
-        document.getElementById('childSheet').classList.add('active');
-        document.getElementById('sheetOverlay').classList.add('active');
-        if (typeof initGlobalTomSelects === 'function') {
-            initGlobalTomSelects();
-        }
+        const sheet = document.getElementById('childSheet');
+        const overlay = document.getElementById('sheetOverlay');
+        sheet.classList.add('active');
+        overlay.classList.add('active');
+        // Wait for sheet to be visible, then init TomSelect on its fields
+        setTimeout(function() {
+            if (typeof initGlobalTomSelects === 'function') {
+                initGlobalTomSelects();
+            }
+            // Ensure all dropdowns are closed after init (prevent auto-open)
+            sheet.querySelectorAll('.pcv-multi-select, .multi-select').forEach(function(el) {
+                if (el.tomselect) {
+                    el.tomselect.close();
+                    el.tomselect.blur();
+                }
+            });
+        }, 100);
     }
     
     function openTeacherProfile(slug) {
@@ -1396,5 +1406,4 @@
 
 {% include 'core/components/engagement_modals.html' %}
 
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 {% endblock %}

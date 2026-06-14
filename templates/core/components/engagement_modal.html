@@ -38,7 +38,7 @@
                 </div>
             </div>
             
-            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
                     <select id="eng_mode" name="course_mode" onchange="toggleModeFields('eng')" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
@@ -192,7 +192,7 @@
                 </div>
             </div>
             
-            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="eng-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Mode de cours <span style="color:#ef4444">*</span></label>
                     <select id="essai_mode" name="course_mode" onchange="toggleModeFields('essai')" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
@@ -403,6 +403,12 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
         toggleModeFields('eng');
         document.getElementById('engagementModal').style.display = 'flex';
         try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
+        // Close any auto-opened TomSelect dropdowns
+        setTimeout(function() {
+            document.querySelectorAll('#engagementModal .pcv-multi-select').forEach(function(el) {
+                if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
+            });
+        }, 50);
     });
 }
 
@@ -455,6 +461,12 @@ function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPrem
         toggleModeFields('essai');
         document.getElementById('essaiModal').style.display = 'flex';
         try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
+        // Close any auto-opened TomSelect dropdowns
+        setTimeout(function() {
+            document.querySelectorAll('#essaiModal .pcv-multi-select').forEach(function(el) {
+                if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
+            });
+        }, 50);
     });
 }
 
