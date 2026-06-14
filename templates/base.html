@@ -1125,6 +1125,37 @@
             }
         }
 
+        async function shareProfile() {
+            const url = window.location.href;
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        url: url
+                    });
+                } catch (err) {
+                    console.log("Partage annulé ou erreur:", err);
+                }
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    const messagesContainer = document.querySelector('.messages-container') || document.createElement('div');
+                    if (!messagesContainer.classList.contains('messages-container')) {
+                        messagesContainer.className = 'messages-container';
+                        document.body.appendChild(messagesContainer);
+                    }
+                    const toast = document.createElement('div');
+                    toast.className = 'alert-toast alert-success';
+                    toast.style.background = '#f0fdf4';
+                    toast.style.border = '1px solid #bbf7d0';
+                    toast.style.color = '#15803d';
+                    toast.innerHTML = '✓ Lien du profil copié !';
+                    messagesContainer.appendChild(toast);
+                    setTimeout(() => toast.remove(), 4000);
+                }).catch(err => {
+                    console.error('Erreur lors de la copie du lien:', err);
+                });
+            }
+        }
+
         // Global delegated handler for teacher card clicks and arrow actions
         document.addEventListener('click', function(e) {
             // Ignore clicks on favorite buttons

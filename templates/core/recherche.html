@@ -656,11 +656,20 @@ select.pcv-multi-select,
 <div class="side-panel" id="sidePanel">
     <div class="side-panel-header">
         <h2>Profil du professeur</h2>
-        <button class="side-panel-close" onclick="closeSidePanel()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-        </button>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="share-profile-btn" onclick="shareProfile()" style="background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: all 0.2s ease;" title="Partager ce profil" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569';">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16 6 12 2 8 6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                </svg>
+            </button>
+            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
     </div>
     <div class="side-panel-content" id="sidePanelContent">
         <!-- Le contenu du profil sera chargé dynamiquement ici -->

@@ -6,9 +6,9 @@
 <meta name="description" content="Découvrez le profil de {{ teacher.prenom }} {{ teacher.nom }}, professeur de {{ teacher.matiere_enseignee }} sur Prof Chez Vous. {{ teacher.presentation|truncatewords:25 }}">
 <meta name="keywords" content="professeur {{ teacher.matiere_enseignee }}, cours à domicile {{ teacher.ville_quartier }}, {{ teacher.prenom }} {{ teacher.nom }}, Prof Chez Vous">
 <meta property="og:type" content="profile">
-<meta property="og:title" content="{{ teacher.prenom }} {{ teacher.nom }} - Professeur sur Prof Chez Vous">
-<meta property="og:description" content="Très fier de faire partie des tuteurs vérifiés sur Prof Chez Vous ! 🎓 Si vous cherchez un répétiteur qualifié pour vos enfants, n'hésitez pas à consulter mon profil pour réserver un essai.">
-{% if teacher.photo_de_profil %}<meta property="og:image" content="{{ teacher.photo_de_profil.url }}">{% endif %}
+<meta property="og:title" content="{{ teacher.prenom }} {{ teacher.nom }} - Prof Chez Vous">
+<meta property="og:description" content="Professeur de {{ teacher.matiere_enseignee }} pour le(s) niveau(x) : {% for c in readable_classes %}{{ c }}{% if not forloop.last %}, {% endif %}{% empty %}Tous niveaux{% endfor %}.">
+{% if teacher.photo_de_profil %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ teacher.photo_de_profil.url }}">{% endif %}
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
 <meta property="og:site_name" content="Prof Chez Vous">
 {% endblock %}
