@@ -34,6 +34,7 @@ body {
     color: var(--dash-text);
     overflow-x: hidden;
     line-height: 1.5;
+    overscroll-behavior-y: none;
 }
 
 .dashboard-wrapper {
