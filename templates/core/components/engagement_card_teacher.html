@@ -1,8 +1,8 @@
 <div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
     <!-- En-tête : Client et Statut -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-        <div>
-            <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--dash-text-dark);">
+        <div style="flex: 1; min-width: 0;">
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--dash-text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 21ch; display: inline-block; vertical-align: middle;">
                 {% if eng.parent_apprenant.profile.role == 'PARENT' %}
                     Parent de 
                     {% with first_child=eng.enfants_concernes.first %}
