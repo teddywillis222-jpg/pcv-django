@@ -521,8 +521,12 @@
                         </div>
 
                         <!-- Infos -->
-                        <div>
-                            <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em;">Bonjour, {{ apprenant.nom }} 👋</h2>
+                        <div style="min-width: 0; flex: 1;">
+                            <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 0.25rem;">
+                                <span>Bonjour,</span>
+                                <span style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ apprenant.nom }}">{{ apprenant.nom }}</span>
+                                <span>👋</span>
+                            </h2>
                             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                 <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 0.25rem 0.6rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
