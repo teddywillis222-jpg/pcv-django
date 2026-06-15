@@ -1319,18 +1319,22 @@ def track_teacher_view(request, teacher_profile):
     VueProfil.objects.filter(professeur_vise=teacher_profile, date_consultation__lt=limit_date).delete()
 
     if not request.user.is_authenticated:
-        return
+        session_key = f'viewed_prof_{teacher_profile.id}_{timezone.now().date()}'
+        if not request.session.get(session_key):
+            request.session[session_key] = True
+            return True
+        return False
         
     try:
         # Ne pas compter si le visiteur est un prof
         if request.user.profile.role == Profile.ROLE_PROF:
-            return
+            return False
     except Profile.DoesNotExist:
         pass
         
     # Ne pas compter si c'est le professeur lui-même
     if request.user.id == teacher_profile.user.id:
-        return
+        return False
         
     start_of_day = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
     
@@ -1340,11 +1344,13 @@ def track_teacher_view(request, teacher_profile):
         date_consultation__gte=start_of_day
     ).exists()
     
+    is_new_view = False
     if not vue_exists:
         VueProfil.objects.create(
             professeur_vise=teacher_profile,
             visiteur_utilisateur=request.user
         )
+        is_new_view = True
         # Recalcul de nb_vues_total basé sur les vues conservées (max 60 jours)
         teacher_profile.nb_vues_total = VueProfil.objects.filter(professeur_vise=teacher_profile).count()
         
@@ -1356,28 +1362,32 @@ def track_teacher_view(request, teacher_profile):
         ).count()
         
         teacher_profile.save(update_fields=['nb_vues_total', 'nb_vues_mois'])
+        
+    return is_new_view
 
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
     teacher = get_object_or_404(TeacherProfile, slug=teacher_slug)
     
-    track_teacher_view(request, teacher)
+    is_new_view = track_teacher_view(request, teacher)
     
-    # Statistiques de lancement
-    teacher.nb_vues_profil += 1
-    teacher.save(update_fields=['nb_vues_profil'])
-    
-    if request.user.is_authenticated:
-        if hasattr(request.user, 'parent_profile'):
-            request.user.parent_profile.nb_profils_consultes += 1
-            request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
-        elif hasattr(request.user, 'apprenant'):
-            request.user.apprenant.nb_profils_consultes += 1
-            request.user.apprenant.save(update_fields=['nb_profils_consultes'])
+    if is_new_view:
+        # Statistiques de lancement
+        teacher.nb_vues_profil += 1
+        teacher.save(update_fields=['nb_vues_profil'])
+        
+        if request.user.is_authenticated:
+            if hasattr(request.user, 'parent_profile'):
+                request.user.parent_profile.nb_profils_consultes += 1
+                request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
+            elif hasattr(request.user, 'apprenant'):
+                request.user.apprenant.nb_profils_consultes += 1
+                request.user.apprenant.save(update_fields=['nb_profils_consultes'])
     
     # Calcul des stats sécurisé
     from django.db.models import Avg, Count
-    engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
+    from .choices import EngagementType
+    engs_stats = teacher.engagements.filter(type_engagement=EngagementType.ESSAI).exclude(temps_reponse_prof__isnull=True)
     temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
     
     engagements_actifs = teacher.engagements.filter(
@@ -1911,10 +1921,23 @@ def api_engagement_action(request, engagement_id):
                 conversation.dernier_message_auteur = engagement.professeur.user
                 conversation.save()
             
-            # Mise à jour du temps de réponse moyen
-            responses = Engagement.objects.filter(professeur=teacher, temps_reponse_prof__isnull=False).values_list('temps_reponse_prof', flat=True)
-            total_time = sum(responses) + engagement.temps_reponse_prof
-            teacher.temps_moyen_reponse = total_time / (len(responses) + 1)
+            # Mise à jour du temps de réponse moyen (basé uniquement sur les essais)
+            from .choices import EngagementType
+            responses = Engagement.objects.filter(
+                professeur=teacher, 
+                temps_reponse_prof__isnull=False,
+                type_engagement=EngagementType.ESSAI
+            ).values_list('temps_reponse_prof', flat=True)
+            
+            if responses:
+                total_time = sum(responses)
+                if engagement.type_engagement == EngagementType.ESSAI:
+                    total_time += engagement.temps_reponse_prof
+                    teacher.temps_moyen_reponse = total_time / (len(responses) + 1)
+                else:
+                    teacher.temps_moyen_reponse = total_time / len(responses)
+            elif engagement.type_engagement == EngagementType.ESSAI:
+                teacher.temps_moyen_reponse = engagement.temps_reponse_prof
             
             teacher.save()
             engagement.save()
