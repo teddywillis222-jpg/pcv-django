@@ -954,6 +954,39 @@
 
             xhr.onload = function() {
                 if (xhr.status >= 200 && xhr.status < 300) {
+                    const contentType = xhr.getResponseHeader("Content-Type");
+                    if (contentType && contentType.includes("text/html")) {
+                        const responseText = xhr.responseText;
+                        if (responseText.includes('alert-error') || responseText.includes('invalid-field') || responseText.includes('errorlist')) {
+                            // La validation a échoué côté serveur
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(responseText, 'text/html');
+                            const errorAlert = doc.querySelector('.alert-error');
+                            
+                            if (errorAlert) {
+                                const existingAlert = document.querySelector('.alert-error');
+                                if (existingAlert) existingAlert.remove();
+                                
+                                const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
+                                if (formHeader) {
+                                    formHeader.insertAdjacentElement('afterend', errorAlert);
+                                }
+                                
+                                progressText.textContent = "Veuillez corriger les erreurs indiquées.";
+                                progressText.style.color = '#ef4444';
+                                progressBar.style.background = '#ef4444';
+                                
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = 'Soumettre le dossier ➔';
+                                submitBtn.style.opacity = '1';
+                                submitBtn.style.cursor = 'pointer';
+                                
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                return; // On stoppe l'exécution, pas de redirection
+                            }
+                        }
+                    }
+
                     progressText.textContent = "Dossier soumis avec succès ! Redirection...";
                     progressBar.style.background = '#10b981'; // green
                     // Either redirect given by response or fallback
