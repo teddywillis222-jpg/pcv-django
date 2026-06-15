@@ -524,7 +524,9 @@
                         <div style="min-width: 0; flex: 1;">
                             <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 0.25rem;">
                                 <span style="flex-shrink: 0;">Bonjour,</span>
-                                <span style="display: block; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ apprenant.nom }}">{{ apprenant.nom }}</span>
+                                <span style="display: block; max-width: 140px; white-space: normal; overflow-wrap: break-word; word-break: break-word;" title="{{ apprenant.nom }}">
+                                    {% if apprenant.nom|length > 7 %}{{ apprenant.nom|slice:":7" }}…{% else %}{{ apprenant.nom }}{% endif %}
+                                </span>
                                 <span style="flex-shrink: 0;">👋</span>
                             </h2>
                             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
