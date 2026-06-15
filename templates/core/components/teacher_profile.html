@@ -401,56 +401,10 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Ils enseignent aussi
         </h3>
-        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem;">
             {% for related in related_teachers %}
-            <div onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}"
-                 style="display: flex; align-items: center; gap: 1rem; padding: 1rem;
-                        background: #f8fafc; border-radius: 14px; border: 1px solid #e9eef5;
-                        cursor: pointer; transition: all 0.25s ease;"
-                 onmouseover="this.style.borderColor='#16a34a'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)';"
-                 onmouseout="this.style.borderColor='#e9eef5'; this.style.transform='none'; this.style.boxShadow='none';">
-
-                <!-- Avatar -->
-                {% if related.photo_de_profil %}
-                    <img src="{{ related.photo_de_profil.url }}" alt="{{ related.prenom }}"
-                         style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid white;">
-                {% else %}
-                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #e2e8f0;
-                                display: flex; align-items: center; justify-content: center;
-                                font-weight: 800; color: #94a3b8; font-size: 1.1rem; flex-shrink: 0;
-                                border: 2px solid white;">
-                        {{ related.prenom|first }}{{ related.nom|first }}
-                    </div>
-                {% endif %}
-
-                <!-- Info -->
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-weight: 750; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px;
-                                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        {{ related.prenom }} {{ related.nom }}
-                        {% if related.est_certifie %}
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#16a34a" style="vertical-align: middle; margin-left: 2px;">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                        {% endif %}
-                    </div>
-                    <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">
-                        {{ related.matiere_enseignee }}
-                        {% if related.ville_quartier %} · {{ related.ville_quartier }}{% endif %}
-                    </div>
-                </div>
-
-                <!-- Note + Tarif -->
-                <div style="text-align: right; flex-shrink: 0;">
-                    <div style="font-size: 0.85rem; font-weight: 800; color: #f59e0b;">
-                        ★ {{ related.moyenne_avis|floatformat:1 }}
-                    </div>
-                    {% if related.tarif_horaire %}
-                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600; margin-top: 1px;">
-                        {{ related.tarif_horaire|floatformat:0 }} F/h
-                    </div>
-                    {% endif %}
-                </div>
+            <div onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}" style="cursor: pointer;">
+                {% include "core/components/_teacher_card.html" with teacher=related %}
             </div>
             {% endfor %}
         </div>

@@ -94,16 +94,11 @@
                     </small>
                 </div>
 
-                <div style="margin: 1.5rem 0; font-size: 0.8125rem; color: var(--text-muted); text-align: center; line-height: 1.4;">
-                    En cliquant sur le bouton ci-dessous, vous acceptez nos 
-                    <a href="{% url 'cgu' %}" style="color: var(--brand-600); font-weight: 700;">Conditions Générales d'Utilisation</a>.
-                </div>
-
-                <div class="form-group" style="margin-bottom: 1.5rem;">
+                <div class="form-group" style="margin: 1.5rem 0;">
                     <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
                         <input type="checkbox" name="accept_charte" required style="flex-shrink: 0; width: 1.35rem; height: 1.35rem; margin-top: 0.1rem; accent-color: var(--primary); cursor: pointer;">
                         <span style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.5;">
-                            J'accepte la <a href="{% url 'charte_essai' %}" style="color: var(--brand-600); font-weight: 700; text-decoration: underline;" onclick="event.stopPropagation();">Charte de l'Essai</a>.
+                            J'accepte les <a href="{% url 'cgu' %}" style="color: var(--brand-600); font-weight: 700; text-decoration: underline;" onclick="event.stopPropagation();">Conditions Générales d'Utilisation</a> et la <a href="{% url 'charte_essai' %}" style="color: var(--brand-600); font-weight: 700; text-decoration: underline;" onclick="event.stopPropagation();">Charte de l'Essai</a>.
                         </span>
                     </label>
                 </div>
