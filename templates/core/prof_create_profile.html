@@ -387,7 +387,13 @@
     .step-item.active .step-circle { border-color: var(--primary); background: var(--primary); color: white; }
     .step-item.active .step-title { color: var(--primary); }
     .step-item.completed .step-circle { border-color: var(--primary); background: var(--primary); color: white; }
-    .form-step { display: none; animation: fadeIn 0.4s ease; }
+    .form-step { 
+        display: none; 
+        animation: fadeIn 0.4s ease; 
+        /* Correctif Scroll Mobile / Navigateurs intégrés (WhatsApp) */
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
     .form-step.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .form-actions { display: flex; justify-content: space-between; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); gap: 1rem; }
@@ -426,24 +432,91 @@
         const elMatiereCustom = document.getElementById('matiere_custom_select');
         if (elMatiereCustom) { new Choices(elMatiereCustom, { ...selectConfigs, removeItemButton: false }); }
 
-        // Révélation de noms de fichiers UI moderne
+        // Révélation de noms de fichiers UI moderne & Compression asynchrone
+        const compressedFileMap = new WeakMap();
+        window.compressedFileMap = compressedFileMap; // Rendre accessible globalement
+
+        async function compressImageIfNeeded(file) {
+            if (!file || !file.type.startsWith('image/')) return file;
+            const options = {
+                maxSizeMB: 0.8,
+                maxWidthOrHeight: 1600,
+                useWebWorker: true
+            };
+            try {
+                return await imageCompression(file, options);
+            } catch (error) {
+                console.error('Erreur de compression pour', file.name, error);
+                return file;
+            }
+        }
+
         function initFileInputs() {
             document.querySelectorAll('input[type="file"]').forEach(input => {
                 input.removeEventListener('change', handleFileChange); // Prevent dupes
                 input.addEventListener('change', handleFileChange);
             });
         }
-        function handleFileChange(e) {
-            let fileName = e.target.files[0] ? e.target.files[0].name : "Aucun fichier choisi";
+        
+        async function handleFileChange(e) {
+            let file = e.target.files[0];
+            if (!file) return;
+
+            // Robustesse: alerte si un fichier non-image (ex: PDF) est trop lourd (>15Mo)
+            if (!file.type.startsWith('image/') && file.size > 15 * 1024 * 1024) {
+                alert("Attention : Ce document dépasse 15 Mo. L'envoi pourrait prendre du temps selon votre connexion.");
+            }
+
+            let fileName = file.name;
             let displayNode = e.target.parentElement.querySelector('.file-name-display');
             let textNode = e.target.parentElement.querySelector('.file-upload-text');
 
+            // Affichage UI: état de compression
             if (displayNode) {
-                displayNode.textContent = fileName;
+                displayNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
                 displayNode.style.display = 'block';
-                if (textNode) textNode.style.display = 'none'; // Cacher le label par défaut si un displayNode existe
+                displayNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--primary)';
+                if (textNode) textNode.style.display = 'none';
             } else if (textNode) {
-                textNode.textContent = fileName; // Direct substitution si diplome
+                textNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
+                textNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--text-dark)';
+            }
+
+            const submitBtn = document.getElementById('mainSubmitBtn');
+            if (file.type.startsWith('image/')) {
+                // Désactiver le bouton pendant la compression
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.dataset.compressing = (parseInt(submitBtn.dataset.compressing || '0')) + 1;
+                }
+
+                // Compression asynchrone
+                const compressed = await compressImageIfNeeded(file);
+                window.compressedFileMap.set(file, compressed);
+
+                // Réactiver le bouton si fini
+                if (submitBtn) {
+                    const count = parseInt(submitBtn.dataset.compressing || '1') - 1;
+                    submitBtn.dataset.compressing = count;
+                    if (count <= 0) {
+                        submitBtn.disabled = false;
+                    }
+                }
+
+                let finalSize = (compressed.size / (1024 * 1024)).toFixed(2) + " Mo";
+                if (displayNode) {
+                    displayNode.textContent = fileName + " (" + finalSize + ")";
+                    displayNode.style.color = 'var(--primary)';
+                } else if (textNode) {
+                    textNode.textContent = fileName + " (" + finalSize + ")";
+                    textNode.style.color = 'var(--text-dark)';
+                }
+            } else {
+                // Pas de compression pour les PDFs ou autres
+                window.compressedFileMap.set(file, file);
+                let finalSize = (file.size / (1024 * 1024)).toFixed(2) + " Mo";
+                if (displayNode) displayNode.textContent = fileName + " (" + finalSize + ")";
+                else if (textNode) textNode.textContent = fileName + " (" + finalSize + ")";
             }
         }
         initFileInputs();
@@ -834,45 +907,29 @@
         submitBtn.parentNode.insertBefore(progressText, progressContainer.nextSibling);
     }
 
-    async function compressImageIfNeeded(file) {
-        if (!file || !file.type.startsWith('image/')) return file;
-        const options = {
-            maxSizeMB: 0.8,
-            maxWidthOrHeight: 1600,
-            useWebWorker: true
-        };
-        try {
-            return await imageCompression(file, options);
-        } catch (error) {
-            console.error('Erreur de compression pour', file.name, error);
-            return file; // Retourne l'original en cas d'échec
-        }
-    }
-
     if (mainForm && submitBtn) {
         mainForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            
             // UI Updates
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Traitement et compression...</span>';
+            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Préparation du dossier...</span>';
             submitBtn.style.opacity = '0.7';
             submitBtn.style.cursor = 'not-allowed';
             
             progressContainer.style.display = 'block';
             progressText.style.display = 'block';
-            progressText.textContent = "Compression des fichiers...";
+            progressText.textContent = "Assemblage des fichiers...";
             progressBar.style.width = '5%';
 
             const formData = new FormData(mainForm);
             const compressedFormData = new FormData();
             
-            // Process fields and compress images
+            // Process fields using pre-compressed files from cache
             for (const [key, value] of formData.entries()) {
                 if (value instanceof File && value.size > 0) {
-                    const compressedFile = await compressImageIfNeeded(value);
-                    compressedFormData.append(key, compressedFile, compressedFile.name);
+                    const finalFile = (window.compressedFileMap && window.compressedFileMap.get(value)) || value;
+                    compressedFormData.append(key, finalFile, finalFile.name);
                 } else {
                     compressedFormData.append(key, value);
                 }
