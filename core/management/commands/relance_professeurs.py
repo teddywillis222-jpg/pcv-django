@@ -21,8 +21,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        # Sélectionne les utilisateurs ayant le rôle PROF
-        users_profs = User.objects.filter(profile__role=Profile.ROLE_PROF).select_related('profile')
+        # Sélectionne les utilisateurs ayant le rôle PROF (insensible à la casse pour compatibilité)
+        users_profs = User.objects.filter(profile__role__iexact=Profile.ROLE_PROF).select_related('profile')
         
         cibles = []
         for user in users_profs:
