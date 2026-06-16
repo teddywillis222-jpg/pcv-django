@@ -435,7 +435,7 @@
         // Révélation de noms de fichiers UI moderne & Compression asynchrone
         window.compressedFileMap = new Map();
         
-        function getFileSignature(file) {
+        window.getFileSignature = function(file) {
             return file.name + '_' + file.size + '_' + file.lastModified;
         }
 
@@ -483,15 +483,19 @@
                     previewContainer.style.gap = '15px';
                     previewContainer.style.width = '100%';
                     previewContainer.style.height = '100%';
-                    previewContainer.style.position = 'relative';
+                    previewContainer.style.position = 'absolute';
+                    previewContainer.style.top = '0';
+                    previewContainer.style.left = '0';
                     previewContainer.style.zIndex = '5';
                     previewContainer.style.pointerEvents = 'none';
+                    previewContainer.style.background = '#f8fafc';
+                    previewContainer.style.borderRadius = '12px';
 
                     previewContainer.innerHTML = `
-                        <img src="${e_read.target.result}" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #00A651; flex-shrink: 0;" />
-                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                            <span style="color: #10b981; font-weight: 600; font-size: 0.9rem;">✓ Photo sélectionnée</span>
-                            <span class="change-photo-link" style="color: #64748b; font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 2px; pointer-events: auto;">Changer la photo</span>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                            <img src="${e_read.target.result}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #00A651; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+                            <span style="color: #10b981; font-weight: 600; font-size: 0.95rem;">✓ Photo valide</span>
+                            <span class="change-photo-link" style="color: #64748b; font-size: 0.85rem; text-decoration: underline; cursor: pointer; pointer-events: auto;">Changer la photo</span>
                         </div>
                     `;
 
@@ -965,117 +969,132 @@
         mainForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // UI Updates
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Préparation du dossier...</span>';
-            submitBtn.style.opacity = '0.7';
-            submitBtn.style.cursor = 'not-allowed';
-            
-            progressContainer.style.display = 'block';
-            progressText.style.display = 'block';
-            progressText.textContent = "Assemblage des fichiers...";
-            progressBar.style.width = '5%';
+            try {
+                // UI Updates
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span style="display: flex; align-items: center; justify-content: center; gap: 10px;"><svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg> Préparation du dossier...</span>';
+                submitBtn.style.opacity = '0.7';
+                submitBtn.style.cursor = 'not-allowed';
+                
+                progressContainer.style.display = 'block';
+                progressText.style.display = 'block';
+                progressText.textContent = "Assemblage des fichiers...";
+                progressBar.style.width = '5%';
 
-            const formData = new FormData(mainForm);
-            const compressedFormData = new FormData();
-            
-            // Process fields using pre-compressed files from cache
-            for (const [key, value] of formData.entries()) {
-                if (value instanceof File && value.size > 0) {
-                    const sig = getFileSignature(value);
-                    const finalFile = (window.compressedFileMap && window.compressedFileMap.get(sig)) || value;
-                    compressedFormData.append(key, finalFile, finalFile.name || value.name);
-                } else {
-                    compressedFormData.append(key, value);
+                const formData = new FormData(mainForm);
+                const compressedFormData = new FormData();
+                
+                // Process fields using pre-compressed files from cache
+                for (const [key, value] of formData.entries()) {
+                    if (value instanceof File && value.size > 0) {
+                        const sig = getFileSignature(value);
+                        const finalFile = (window.compressedFileMap && window.compressedFileMap.get(sig)) || value;
+                        compressedFormData.append(key, finalFile, finalFile.name || value.name);
+                    } else {
+                        compressedFormData.append(key, value);
+                    }
                 }
-            }
 
-            progressText.textContent = "Envoi en cours... (0%)";
+                progressText.textContent = "Envoi en cours... (0%)";
 
-            // AJAX request with progress
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', mainForm.action || window.location.href, true);
-            // Django requires CSRF token header if not using the middleware properly with FormData, 
-            // but FormData already includes csrfmiddlewaretoken, so we just add the requested-with header.
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                // AJAX request with progress
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', mainForm.action || window.location.href, true);
+                // Django requires CSRF token header if not using the middleware properly with FormData, 
+                // but FormData already includes csrfmiddlewaretoken, so we just add the requested-with header.
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-            xhr.upload.onprogress = function(event) {
-                if (event.lengthComputable) {
-                    const percentComplete = Math.round((event.loaded / event.total) * 100);
-                    progressBar.style.width = percentComplete + '%';
-                    progressText.textContent = "Envoi en cours... (" + percentComplete + "%)";
-                }
-            };
+                xhr.upload.onprogress = function(event) {
+                    if (event.lengthComputable) {
+                        const percentComplete = Math.round((event.loaded / event.total) * 100);
+                        progressBar.style.width = percentComplete + '%';
+                        progressText.textContent = "Envoi en cours... (" + percentComplete + "%)";
+                    }
+                };
 
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    const contentType = xhr.getResponseHeader("Content-Type");
-                    if (contentType && contentType.includes("text/html")) {
-                        const responseText = xhr.responseText;
-                        if (responseText.includes('alert-error') || responseText.includes('invalid-field') || responseText.includes('errorlist')) {
-                            // La validation a échoué côté serveur
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(responseText, 'text/html');
-                            let errorAlert = doc.querySelector('.alert-error');
-                            
-                            // Fallback si Django renvoie des erreurs sans le bloc alert-error
-                            if (!errorAlert) {
-                                const errorList = doc.querySelector('.errorlist');
-                                if (errorList) {
-                                    errorAlert = document.createElement('div');
-                                    errorAlert.className = 'alert-error';
-                                    errorAlert.innerHTML = '<strong>Veuillez corriger les erreurs suivantes :</strong>' + errorList.outerHTML;
-                                }
-                            }
-                            
-                            if (errorAlert) {
-                                const existingAlert = document.querySelector('.alert-error');
-                                if (existingAlert) existingAlert.remove();
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        const contentType = xhr.getResponseHeader("Content-Type");
+                        if (contentType && contentType.includes("text/html")) {
+                            const responseText = xhr.responseText;
+                            // Check if there's actually an error rendered by django
+                            if (responseText.includes('alert-error') || responseText.includes('invalid-field') || responseText.includes('errorlist')) {
+                                // La validation a échoué côté serveur
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(responseText, 'text/html');
+                                let errorAlert = doc.querySelector('.alert-error');
                                 
-                                const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
-                                if (formHeader) {
-                                    formHeader.insertAdjacentElement('afterend', errorAlert);
+                                // Fallback si Django renvoie des erreurs sans le bloc alert-error
+                                if (!errorAlert) {
+                                    const errorList = doc.querySelector('.errorlist');
+                                    if (errorList) {
+                                        errorAlert = document.createElement('div');
+                                        errorAlert.className = 'alert-error';
+                                        errorAlert.innerHTML = '<strong>Veuillez corriger les erreurs suivantes :</strong>' + errorList.outerHTML;
+                                    }
                                 }
                                 
-                                // Mettre à jour le token CSRF pour les prochaines requêtes
-                                const newCsrf = doc.querySelector('input[name="csrfmiddlewaretoken"]');
-                                const oldCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
-                                if (newCsrf && oldCsrf) {
-                                    oldCsrf.value = newCsrf.value;
+                                if (errorAlert) {
+                                    const existingAlert = document.querySelector('.alert-error');
+                                    if (existingAlert) existingAlert.remove();
+                                    
+                                    const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
+                                    if (formHeader) {
+                                        // Use importNode to avoid WrongDocumentError
+                                        formHeader.insertAdjacentElement('afterend', document.importNode(errorAlert, true));
+                                    }
+                                    
+                                    // Mettre à jour le token CSRF pour les prochaines requêtes
+                                    const newCsrf = doc.querySelector('input[name="csrfmiddlewaretoken"]');
+                                    const oldCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                                    if (newCsrf && oldCsrf) {
+                                        oldCsrf.value = newCsrf.value;
+                                    }
+                                    
+                                    progressText.textContent = "Veuillez corriger les erreurs indiquées.";
+                                    progressText.style.color = '#ef4444';
+                                    progressBar.style.background = '#ef4444';
+                                    
+                                    submitBtn.disabled = false;
+                                    submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                                    submitBtn.style.opacity = '1';
+                                    submitBtn.style.cursor = 'pointer';
+                                    
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    return; // On stoppe l'exécution, pas de redirection
                                 }
-                                
-                                progressText.textContent = "Veuillez corriger les erreurs indiquées.";
-                                progressText.style.color = '#ef4444';
-                                progressBar.style.background = '#ef4444';
-                                
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML = 'Soumettre le dossier ➔';
-                                submitBtn.style.opacity = '1';
-                                submitBtn.style.cursor = 'pointer';
-                                
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                                return; // On stoppe l'exécution, pas de redirection
                             }
                         }
-                    }
 
-                    progressText.textContent = "Dossier soumis avec succès ! Redirection...";
-                    progressBar.style.background = '#10b981'; // green
-                    // Either redirect given by response or fallback
-                    if (xhr.responseURL && xhr.responseURL !== window.location.href) {
-                        window.location.href = xhr.responseURL;
+                        progressText.textContent = "Dossier soumis avec succès ! Redirection...";
+                        progressBar.style.background = '#10b981'; // green
+                        // Either redirect given by response or fallback
+                        if (xhr.responseURL && xhr.responseURL !== window.location.href) {
+                            window.location.href = xhr.responseURL;
+                        } else {
+                            window.location.href = "{% url 'prof_attente_dashboard' %}";
+                        }
                     } else {
-                        window.location.href = "{% url 'prof_attente_dashboard' %}";
+                        // Try to parse JSON error or display generic text
+                        let errorMsg = "Une erreur est survenue lors de l'envoi.";
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res.error) errorMsg = res.error;
+                        } catch(e) {}
+                        
+                        progressText.textContent = "Erreur : " + errorMsg;
+                        progressText.style.color = '#ef4444';
+                        progressBar.style.background = '#ef4444';
+                        
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                        submitBtn.style.opacity = '1';
+                        submitBtn.style.cursor = 'pointer';
                     }
-                } else {
-                    // Try to parse JSON error or display generic text
-                    let errorMsg = "Une erreur est survenue lors de l'envoi.";
-                    try {
-                        const res = JSON.parse(xhr.responseText);
-                        if (res.error) errorMsg = res.error;
-                    } catch(e) {}
-                    
-                    progressText.textContent = "Erreur : " + errorMsg;
+                };
+
+                xhr.onerror = function() {
+                    progressText.textContent = "Erreur de connexion lors de l'envoi.";
                     progressText.style.color = '#ef4444';
                     progressBar.style.background = '#ef4444';
                     
@@ -1083,11 +1102,12 @@
                     submitBtn.innerHTML = 'Soumettre pour validation ➔';
                     submitBtn.style.opacity = '1';
                     submitBtn.style.cursor = 'pointer';
-                }
-            };
+                };
 
-            xhr.onerror = function() {
-                progressText.textContent = "Erreur de connexion lors de l'envoi.";
+                xhr.send(compressedFormData);
+            } catch (err) {
+                console.error("Erreur inattendue:", err);
+                progressText.textContent = "Erreur locale: " + err.message;
                 progressText.style.color = '#ef4444';
                 progressBar.style.background = '#ef4444';
                 
@@ -1095,9 +1115,7 @@
                 submitBtn.innerHTML = 'Soumettre pour validation ➔';
                 submitBtn.style.opacity = '1';
                 submitBtn.style.cursor = 'pointer';
-            };
-
-            xhr.send(compressedFormData);
+            }
         });
     }
 
