@@ -458,10 +458,10 @@ from .choices import SupportCategory
 
 class TeacherProfileForm(forms.ModelForm):
     
-    modes_de_cours = DynamicMultipleChoiceField(
+    modes_de_cours = forms.MultipleChoiceField(
         choices=CourseMode.CHOICES, 
         required=False, 
-        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple'})
+        widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple', 'data-allow-create': 'false'})
     )
     classes_enseignees = DynamicMultipleChoiceField(
         choices=ClassLevel.CHOICES, 
@@ -472,13 +472,14 @@ class TeacherProfileForm(forms.ModelForm):
         })
     )
     ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
-    categories_de_soutien = DynamicMultipleChoiceField(
+    categories_de_soutien = forms.MultipleChoiceField(
         choices=SupportCategory.CHOICES,
         required=True,
         widget=forms.SelectMultiple(attrs={
             'class': 'pcv-multi-select allow-multiple', 
             'placeholder': 'Catégories (Max 4)',
-            'data-max-items': '4'
+            'data-max-items': '4',
+            'data-allow-create': 'false'
         })
     )
     matiere_enseignee = DynamicMultipleChoiceField(

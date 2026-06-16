@@ -1281,6 +1281,8 @@
                 
                 const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple');
                 const maxItemsAttr = select.getAttribute('data-max-items');
+                const allowCreateAttr = select.getAttribute('data-allow-create');
+                const allowCreate = allowCreateAttr !== 'false';
                 
                 const plugins = ['remove_button'];
                 
@@ -1288,7 +1290,7 @@
 
                 new TomSelect(select, {
                     plugins: plugins,
-                    create: true,
+                    create: allowCreate,
                     persist: false,
                     closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple

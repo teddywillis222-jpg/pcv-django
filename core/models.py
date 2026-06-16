@@ -1102,8 +1102,6 @@ class TeacherProfile(models.Model):
 
         max_length=150,
 
-        choices=Localisation.CHOICES,
-
         help_text="Format Â« Quartier - Ville Â»"
 
     )
