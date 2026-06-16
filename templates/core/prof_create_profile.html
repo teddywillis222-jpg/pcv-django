@@ -465,6 +465,49 @@
             let file = e.target.files[0];
             if (!file) return;
 
+            // --- DEBUT MODIFICATION UX PHOTO DE PROFIL ---
+            const isPhotoProfil = (e.target.name === 'photo_de_profil' && file.type.startsWith('image/'));
+            if (isPhotoProfil) {
+                const reader = new FileReader();
+                reader.onload = function(e_read) {
+                    const wrapper = e.target.parentElement;
+                    
+                    const oldPreview = wrapper.querySelector('.photo-preview-container');
+                    if (oldPreview) oldPreview.remove();
+
+                    const previewContainer = document.createElement('div');
+                    previewContainer.className = 'photo-preview-container';
+                    previewContainer.style.display = 'flex';
+                    previewContainer.style.alignItems = 'center';
+                    previewContainer.style.justifyContent = 'center';
+                    previewContainer.style.gap = '15px';
+                    previewContainer.style.width = '100%';
+                    previewContainer.style.height = '100%';
+                    previewContainer.style.position = 'relative';
+                    previewContainer.style.zIndex = '5';
+                    previewContainer.style.pointerEvents = 'none';
+
+                    previewContainer.innerHTML = `
+                        <img src="${e_read.target.result}" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #00A651; flex-shrink: 0;" />
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <span style="color: #10b981; font-weight: 600; font-size: 0.9rem;">✓ Photo sélectionnée</span>
+                            <span class="change-photo-link" style="color: #64748b; font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 2px; pointer-events: auto;">Changer la photo</span>
+                        </div>
+                    `;
+
+                    wrapper.appendChild(previewContainer);
+
+                    const changeLink = previewContainer.querySelector('.change-photo-link');
+                    changeLink.addEventListener('click', function(evt) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        e.target.click();
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+            // --- FIN MODIFICATION UX PHOTO DE PROFIL ---
+
             // Robustesse: alerte si un fichier non-image (ex: PDF) est trop lourd (>15Mo)
             if (!file.type.startsWith('image/') && file.size > 15 * 1024 * 1024) {
                 alert("Attention : Ce document dépasse 15 Mo. L'envoi pourrait prendre du temps selon votre connexion.");
@@ -473,16 +516,24 @@
             let fileName = file.name;
             let displayNode = e.target.parentElement.querySelector('.file-name-display');
             let textNode = e.target.parentElement.querySelector('.file-upload-text');
+            let iconNode = e.target.parentElement.querySelector('.file-upload-icon');
 
-            // Affichage UI: état de compression
-            if (displayNode) {
-                displayNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
-                displayNode.style.display = 'block';
-                displayNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--primary)';
+            if (isPhotoProfil) {
+                // On cache définitivement les éléments standards pour la photo de profil
+                if (displayNode) displayNode.style.display = 'none';
                 if (textNode) textNode.style.display = 'none';
-            } else if (textNode) {
-                textNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
-                textNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--text-dark)';
+                if (iconNode) iconNode.style.display = 'none';
+            } else {
+                // Affichage UI: état de compression
+                if (displayNode) {
+                    displayNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
+                    displayNode.style.display = 'block';
+                    displayNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--primary)';
+                    if (textNode) textNode.style.display = 'none';
+                } else if (textNode) {
+                    textNode.textContent = fileName + (file.type.startsWith('image/') ? " (Compression...)" : "");
+                    textNode.style.color = file.type.startsWith('image/') ? '#f59e0b' : 'var(--text-dark)';
+                }
             }
 
             const submitBtn = document.getElementById('mainSubmitBtn');
@@ -498,8 +549,10 @@
                 window.compressedFileMap.set(getFileSignature(file), compressed);
 
                 let finalSize = (compressed.size / (1024 * 1024)).toFixed(2) + " Mo";
-                if (displayNode) displayNode.innerHTML = `<span style="color:#10b981;">✓ ${fileName} (${finalSize})</span>`;
-                if (textNode) textNode.textContent = "Fichier prêt";
+                if (!isPhotoProfil) {
+                    if (displayNode) displayNode.innerHTML = `<span style="color:#10b981;">✓ ${fileName} (${finalSize})</span>`;
+                    if (textNode) textNode.textContent = "Fichier prêt";
+                }
 
                 // Réactiver le bouton si fini
                 if (submitBtn) {
