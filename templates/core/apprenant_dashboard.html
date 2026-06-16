@@ -428,6 +428,12 @@
         overflow: visible;
         box-sizing: border-box;
     }
+
+    @media (max-width: 768px) {
+        .premium-resume-card {
+            padding: 1rem !important; /* Libère un peu plus d'espace sur mobile */
+        }
+    }
 </style>
 {% endblock %}
 
@@ -524,7 +530,7 @@
                                 <img src="{{ apprenant.photo_de_profil.url }}" alt="{{ apprenant.nom }}" style="width: 64px; height: 64px; border-radius: 20px; object-fit: cover; border: 3px solid rgba(255,255,255,0.3); background: white;">
                             {% else %}
                                 <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(255,255,255,0.2); border: 3px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: white; backdrop-filter: blur(4px);">
-                                    {{ apprenant.nom|slice:":1"|upper }}
+                                    {{ apprenant.user.first_name|default:apprenant.nom|slice:":1"|upper }}
                                 </div>
                             {% endif %}
                             <div style="position: absolute; bottom: -4px; right: -4px; background: #fbbf24; width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;" title="Compte Apprenant">
@@ -536,13 +542,13 @@
                         <div style="min-width: 0; flex: 1;">
                             <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 0.25rem;">
                                 <span style="flex-shrink: 0;">Bonjour,</span>
-                                <!-- Affichage Mobile : tronqué à 7 caractères -->
+                                <!-- Affichage Mobile : prénom tronqué à 7 caractères -->
                                 <span class="name-mobile" title="{{ apprenant.nom }}">
-                                    {{ apprenant.nom|truncatechars:10 }}
+                                    {{ apprenant.user.first_name|default:apprenant.nom|truncatechars:10 }}
                                 </span>
-                                <!-- Affichage Desktop : nom complet -->
+                                <!-- Affichage Desktop : prénom seulement pour ne pas allonger la carte -->
                                 <span class="name-desktop" title="{{ apprenant.nom }}">
-                                    {{ apprenant.nom }}
+                                    {{ apprenant.user.first_name|default:apprenant.nom }}
                                 </span>
                                 <span style="flex-shrink: 0;">👋</span>
                             </h2>

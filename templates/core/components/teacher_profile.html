@@ -404,7 +404,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem;">
             {% for related in related_teachers %}
             <div onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}" style="cursor: pointer;">
-                {% include "core/components/_teacher_card.html" with teacher=related %}
+                {% include "core/components/_teacher_card_compact.html" with teacher=related %}
             </div>
             {% endfor %}
         </div>

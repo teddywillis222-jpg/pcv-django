@@ -433,8 +433,11 @@
         if (elMatiereCustom) { new Choices(elMatiereCustom, { ...selectConfigs, removeItemButton: false }); }
 
         // Révélation de noms de fichiers UI moderne & Compression asynchrone
-        const compressedFileMap = new WeakMap();
-        window.compressedFileMap = compressedFileMap; // Rendre accessible globalement
+        window.compressedFileMap = new Map();
+        
+        function getFileSignature(file) {
+            return file.name + '_' + file.size + '_' + file.lastModified;
+        }
 
         async function compressImageIfNeeded(file) {
             if (!file || !file.type.startsWith('image/')) return file;
@@ -492,7 +495,11 @@
 
                 // Compression asynchrone
                 const compressed = await compressImageIfNeeded(file);
-                window.compressedFileMap.set(file, compressed);
+                window.compressedFileMap.set(getFileSignature(file), compressed);
+
+                let finalSize = (compressed.size / (1024 * 1024)).toFixed(2) + " Mo";
+                if (displayNode) displayNode.innerHTML = `<span style="color:#10b981;">✓ ${fileName} (${finalSize})</span>`;
+                if (textNode) textNode.textContent = "Fichier prêt";
 
                 // Réactiver le bouton si fini
                 if (submitBtn) {
@@ -502,18 +509,9 @@
                         submitBtn.disabled = false;
                     }
                 }
-
-                let finalSize = (compressed.size / (1024 * 1024)).toFixed(2) + " Mo";
-                if (displayNode) {
-                    displayNode.textContent = fileName + " (" + finalSize + ")";
-                    displayNode.style.color = 'var(--primary)';
-                } else if (textNode) {
-                    textNode.textContent = fileName + " (" + finalSize + ")";
-                    textNode.style.color = 'var(--text-dark)';
-                }
             } else {
                 // Pas de compression pour les PDFs ou autres
-                window.compressedFileMap.set(file, file);
+                window.compressedFileMap.set(getFileSignature(file), file);
                 let finalSize = (file.size / (1024 * 1024)).toFixed(2) + " Mo";
                 if (displayNode) displayNode.textContent = fileName + " (" + finalSize + ")";
                 else if (textNode) textNode.textContent = fileName + " (" + finalSize + ")";
@@ -661,6 +659,9 @@
                         <div class="file-name-display"></div>
                         {{ form.photo_de_profil }}
                     </div>
+                    <small style="display: block; margin-top: 0.5rem; font-size: 0.75rem; color: #64748b; line-height: 1.4;">
+                        ⚠️ <strong>Important :</strong> Veuillez fournir une photo originale (JPG ou PNG). Ne modifiez jamais l'extension d'un fichier manuellement.
+                    </small>
                 </div>
                 <div class="form-group">
                     <label>{{ form.fichier_cni.label }} *</label>
@@ -928,8 +929,9 @@
             // Process fields using pre-compressed files from cache
             for (const [key, value] of formData.entries()) {
                 if (value instanceof File && value.size > 0) {
-                    const finalFile = (window.compressedFileMap && window.compressedFileMap.get(value)) || value;
-                    compressedFormData.append(key, finalFile, finalFile.name);
+                    const sig = getFileSignature(value);
+                    const finalFile = (window.compressedFileMap && window.compressedFileMap.get(sig)) || value;
+                    compressedFormData.append(key, finalFile, finalFile.name || value.name);
                 } else {
                     compressedFormData.append(key, value);
                 }
@@ -961,7 +963,17 @@
                             // La validation a échoué côté serveur
                             const parser = new DOMParser();
                             const doc = parser.parseFromString(responseText, 'text/html');
-                            const errorAlert = doc.querySelector('.alert-error');
+                            let errorAlert = doc.querySelector('.alert-error');
+                            
+                            // Fallback si Django renvoie des erreurs sans le bloc alert-error
+                            if (!errorAlert) {
+                                const errorList = doc.querySelector('.errorlist');
+                                if (errorList) {
+                                    errorAlert = document.createElement('div');
+                                    errorAlert.className = 'alert-error';
+                                    errorAlert.innerHTML = '<strong>Veuillez corriger les erreurs suivantes :</strong>' + errorList.outerHTML;
+                                }
+                            }
                             
                             if (errorAlert) {
                                 const existingAlert = document.querySelector('.alert-error');
@@ -970,6 +982,13 @@
                                 const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
                                 if (formHeader) {
                                     formHeader.insertAdjacentElement('afterend', errorAlert);
+                                }
+                                
+                                // Mettre à jour le token CSRF pour les prochaines requêtes
+                                const newCsrf = doc.querySelector('input[name="csrfmiddlewaretoken"]');
+                                const oldCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                                if (newCsrf && oldCsrf) {
+                                    oldCsrf.value = newCsrf.value;
                                 }
                                 
                                 progressText.textContent = "Veuillez corriger les erreurs indiquées.";

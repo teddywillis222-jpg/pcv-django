@@ -211,6 +211,8 @@ class Profile(models.Model):
 
     nb_connexions = models.IntegerField(default=0, help_text="RÃ©currence d'utilisation")
 
+    relance_incomplet_envoyee = models.BooleanField(default=False, help_text="Indique si l'email de relance pour profil incomplet a été envoyé")
+
 
 
     @property
