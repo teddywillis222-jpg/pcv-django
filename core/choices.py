@@ -40,7 +40,7 @@ class SupportCategory:
     LECTURE_ECRITURE = "LITERACY"
     CHOICES = [
         (SOUTIEN_SCOLAIRE, "Soutien scolaire académique"),
-        (EXAMENS_NATIONAUX, "Préparation aux examens nationaux"),
+        (EXAMENS_NATIONAUX, "Préparation aux examens"),
         (COURS_VACANCES, "Cours de vacances"),
         (SOUTIEN_LANGUES, "Soutien en langues"),
         (METHODOLOGIE_ORGANISATION, "Soutien en méthodologie et organisation"),
