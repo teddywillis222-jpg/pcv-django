@@ -390,9 +390,6 @@
     .form-step { 
         display: none; 
         animation: fadeIn 0.4s ease; 
-        /* Correctif Scroll Mobile / Navigateurs intégrés (WhatsApp) */
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
     }
     .form-step.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

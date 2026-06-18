@@ -33,7 +33,6 @@ html {
     width: 100%;
     margin: 0;
     -webkit-text-size-adjust: 100%; /* Empêche l'ajustement auto du texte sur iOS */
-    overscroll-behavior-y: none; /* Désactive le rebond élastique et l'espace vide sur Chrome/iOS */
 }
 
 body {
@@ -45,7 +44,6 @@ body {
     line-height: 1.5;
     color: var(--text);
     background: var(--bg);
-    overscroll-behavior-y: none;
 }
 
 a {
