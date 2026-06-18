@@ -39,9 +39,10 @@ def send_welcome_email_on_profile_creation(sender, instance, created, **kwargs):
         # NOTE: Désactivé temporairement pour éviter la redondance avec l'email de vérification obligatoire d'Allauth.
 
 from django.contrib.auth.signals import user_logged_in
+from django.conf import settings as app_settings
 
 @receiver(user_logged_in)
 def track_user_login(sender, request, user, **kwargs):
-    if hasattr(user, 'profile'):
+    if hasattr(user, 'profile') and user.email not in getattr(app_settings, 'TEST_ACCOUNT_EMAILS', []):
         user.profile.nb_connexions += 1
         user.profile.save(update_fields=['nb_connexions'])

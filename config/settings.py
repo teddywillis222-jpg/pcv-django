@@ -40,7 +40,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-qsis4-wx7&s6c&6l0@arlw&44-
 
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-# Allowed hosts pour Render et dÃ©veloppement local
+# Emails des comptes de test (pour ignorer leurs actions dans les statistiques)
+TEST_ACCOUNT_EMAILS = [email.strip() for email in os.getenv('TEST_ACCOUNT_EMAILS', '').split(',') if email.strip()]
+
+# Allowed hosts pour Render et développement local
 
 ALLOWED_HOSTS = [
 

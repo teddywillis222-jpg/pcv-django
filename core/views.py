@@ -354,7 +354,7 @@ def messagerie(request):
 def recherche(request):
     """Page de recherche des professeurs avec filtres"""
     
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
         if hasattr(request.user, 'parent_profile'):
             request.user.parent_profile.nb_recherches += 1
             request.user.parent_profile.save(update_fields=['nb_recherches'])
@@ -1280,9 +1280,10 @@ def gestion_plan(request):
     # Sécurité Rôle
     try:
         user_profile = request.user.profile
-        # Incrémenter les vues pour les statistiques de lancement
-        user_profile.nb_vues_page_plan += 1
-        user_profile.save(update_fields=['nb_vues_page_plan'])
+        # Incrémenter les vues pour les statistiques de lancement (sauf comptes de test)
+        if request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
+            user_profile.nb_vues_page_plan += 1
+            user_profile.save(update_fields=['nb_vues_page_plan'])
     except Profile.DoesNotExist:
         return redirect("finalisation_compte")
 
@@ -1336,6 +1337,10 @@ def track_teacher_view(request, teacher_profile):
     if request.user.id == teacher_profile.user.id:
         return False
         
+    # Ne pas compter pour les comptes de test
+    if getattr(settings, 'TEST_ACCOUNT_EMAILS', []) and request.user.email in settings.TEST_ACCOUNT_EMAILS:
+        return False
+        
     start_of_day = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
     
     vue_exists = VueProfil.objects.filter(
@@ -1376,7 +1381,7 @@ def professeur_detail(request, teacher_slug):
         teacher.nb_vues_profil += 1
         teacher.save(update_fields=['nb_vues_profil'])
         
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
             if hasattr(request.user, 'parent_profile'):
                 request.user.parent_profile.nb_profils_consultes += 1
                 request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
@@ -2654,8 +2659,8 @@ def suivi_engagement(request, engagement_id):
     if not (is_parent_apprenant or is_prof):
         raise Http404("Accès refusé.")
         
-    # Incrémenter le compteur de consultation pour la collecte de données
-    if is_parent_apprenant and hasattr(request.user, 'profile'):
+    # Incrémenter le compteur de consultation pour la collecte de données (sauf comptes de test)
+    if is_parent_apprenant and hasattr(request.user, 'profile') and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
         request.user.profile.nb_vues_suivi += 1
         request.user.profile.save(update_fields=['nb_vues_suivi'])
         
@@ -2809,6 +2814,10 @@ def api_track_teacher_views(request):
     """
     if request.method != "POST":
         return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+        
+    # Ignorer les comptes de test
+    if request.user.is_authenticated and getattr(settings, 'TEST_ACCOUNT_EMAILS', []) and request.user.email in settings.TEST_ACCOUNT_EMAILS:
+        return JsonResponse({"success": True, "tracked": 0, "ignored": True})
         
     try:
         data = json.loads(request.body)
