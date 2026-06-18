@@ -766,17 +766,45 @@ def prof_attente_dashboard(request):
     #     return redirect("prof_dashboard")
 
     if request.method == "POST":
-        teacher_instance.presentation = request.POST.get("presentation", teacher_instance.presentation)
-        teacher_instance.methodologie = request.POST.get("methodologie", teacher_instance.methodologie)
-        exp = request.POST.get("annees_d_experience")
-        if exp: teacher_instance.annees_d_experience = exp
-        tarif = request.POST.get("tarif_horaire")
-        if tarif: teacher_instance.tarif_horaire = tarif
+        from django.contrib import messages
+        presentation = request.POST.get("presentation", "").strip()
+        methodologie = request.POST.get("methodologie", "").strip()
+        exp_str = request.POST.get("annees_d_experience", "").strip()
+        tarif_str = request.POST.get("tarif_horaire", "").strip()
+        disponibilites = request.POST.getlist("disponibilites")
         
-        # Sauvegarde des disponibilités (Grille)
-        teacher_instance.grille_disponibilites = request.POST.getlist("disponibilites")
-        
-        teacher_instance.save()
+        errors = []
+        if len(presentation) < 800:
+            errors.append("La présentation doit contenir au moins 150 mots (env. 800 caractères).")
+        if len(methodologie) < 800:
+            errors.append("La méthodologie doit contenir au moins 150 mots (env. 800 caractères).")
+            
+        try:
+            exp_val = int(exp_str)
+            if exp_val < 0:
+                errors.append("L'expérience ne peut pas être négative.")
+        except ValueError:
+            errors.append("Les années d'expérience doivent être un nombre entier valide.")
+            
+        try:
+            tarif_val = float(tarif_str)
+            if tarif_val < 1000:
+                errors.append("Le tarif horaire doit être de 1000 FCFA minimum.")
+        except ValueError:
+            errors.append("Le tarif horaire doit être un nombre valide.")
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+        else:
+            teacher_instance.presentation = presentation
+            teacher_instance.methodologie = methodologie
+            teacher_instance.annees_d_experience = exp_val
+            teacher_instance.tarif_horaire = tarif_val
+            teacher_instance.grille_disponibilites = disponibilites
+            teacher_instance.save()
+            messages.success(request, "Votre vitrine a été mise à jour avec succès !")
+            
         return redirect("prof_attente_dashboard")
 
     # Calcul pourcentage complétion
@@ -803,7 +831,7 @@ def prof_edit_profile(request):
         return redirect("home")
 
     if request.method == "POST":
-        form = TeacherProfileForm(request.POST, request.FILES, instance=teacher)
+        form = TeacherProfileForm(request.POST, request.FILES, instance=teacher, is_editing=True)
         if form.is_valid():
             teacher = form.save(commit=False)
             teacher.grille_disponibilites = request.POST.getlist("disponibilites")
@@ -812,7 +840,7 @@ def prof_edit_profile(request):
             form.save_m2m()
             return redirect("prof_dashboard")
     else:
-        form = TeacherProfileForm(instance=teacher)
+        form = TeacherProfileForm(instance=teacher, is_editing=True)
 
     jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 

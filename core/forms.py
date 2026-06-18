@@ -521,6 +521,7 @@ class TeacherProfileForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        is_editing = kwargs.pop('is_editing', False)
         super().__init__(*args, **kwargs)
         self.fields["email"].widget.attrs["readonly"] = True
         self.fields["nom"].widget.attrs["readonly"] = True
@@ -531,7 +532,14 @@ class TeacherProfileForm(forms.ModelForm):
         self.fields["nom"].label = "Nom Complet"
         
         if "annees_d_experience" in self.fields:
-            self.fields["annees_d_experience"].required = False
+            self.fields["annees_d_experience"].required = is_editing
+
+        if is_editing:
+            for field_name in ["presentation", "methodologie", "tarif_horaire"]:
+                if field_name in self.fields:
+                    self.fields[field_name].required = True
+                    if field_name in ["presentation", "methodologie"]:
+                        self.fields[field_name].widget.attrs["minlength"] = "800"
 
         if self.instance and self.instance.pk and self.instance.matiere_enseignee:
             if isinstance(self.instance.matiere_enseignee, str):
