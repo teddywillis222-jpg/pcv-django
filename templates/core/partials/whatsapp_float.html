@@ -1,0 +1,91 @@
+<style>
+    .whatsapp-float {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background-color: #25D366;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 30px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
+    }
+    .whatsapp-float:hover {
+        transform: scale(1.1);
+        color: white;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    }
+    .whatsapp-bubble {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background-color: white;
+        color: #0f172a;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+        max-width: 250px;
+        border: 1px solid #e2e8f0;
+        line-height: 1.4;
+    }
+    .whatsapp-bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        right: 20px;
+        border-width: 8px 8px 0;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+    }
+    .whatsapp-bubble.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+</style>
+
+<div id="wa-bubble" class="whatsapp-bubble">
+    Besoin d'aide pour votre profil ? Écrivez-nous ici ! 🤝
+</div>
+
+<a href="https://wa.me/2290147528839?text=Bonjour%20Prof%20Chez%20Vous%2C%20je%20suis%20en%20train%20de%20cr%C3%A9er%20mon%20profil%20enseignant%20et%20j%27aimerais%20avoir%20de%20l%27aide." 
+   class="whatsapp-float" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   aria-label="Contacter le support sur WhatsApp">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-1.557-.594-2.614-1.532-.865-.768-1.442-1.716-1.612-2.003-.17-.288-.014-.444.128-.585.129-.127.288-.337.432-.507.144-.171.192-.288.288-.481.097-.193.048-.363-.024-.507-.072-.144-.648-1.564-.888-2.142-.233-.563-.47-.486-.648-.496l-.552-.01c-.192 0-.505.072-.769.362-.264.29-.624.604-.624 1.472 0 .868.625 1.712.72 1.833.097.12 1.229 1.878 2.977 2.632.416.18.74.288 1.002.37.417.133.796.115 1.096.07.334-.051 1.031-.421 1.175-.827.145-.406.145-.752.1-.826-.044-.074-.165-.118-.349-.209z"/>
+    </svg>
+</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const bubble = document.getElementById("wa-bubble");
+        if (bubble) {
+            // Afficher après 1.5 seconde
+            setTimeout(() => {
+                bubble.classList.add("show");
+                // Cacher après 5 secondes d'affichage
+                setTimeout(() => {
+                    bubble.classList.remove("show");
+                }, 5000);
+            }, 1500);
+        }
+    });
+</script>
