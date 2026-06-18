@@ -37,6 +37,7 @@ urlpatterns = [
     path("signup/", core_views.signup, name="signup"),
     path("activate/<uidb64>/<token>/", core_views.activate_account, name="activate_account"),
     path("login/", core_views.login_view, name="login"),
+    path("renvoyer-activation/", core_views.resend_activation_view, name="resend_activation"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     
     # Password Reset

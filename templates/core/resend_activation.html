@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Renvoyer le lien d'activation - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-bg-shapes"></div>
+    
+    <div class="auth-container">
+        <div class="auth-card">
+            <header class="auth-header">
+                <div style="width: 48px; height: 48px; background: var(--brand-50); color: var(--brand-500); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </div>
+                <h2>Lien d'activation expiré ?</h2>
+                <p>Pas de problème. Entrez l'adresse e-mail avec laquelle vous avez créé votre compte, et nous vous enverrons un tout nouveau lien pour l'activer.</p>
+            </header>
+
+            {% if messages %}
+            <div style="margin-bottom: 1.5rem;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="padding: 0.75rem; border-radius: 8px; font-size: 0.875rem; 
+                    {% if message.tags == 'success' %}background: var(--brand-50); color: var(--brand-700); border: 1px solid var(--brand-500);
+                    {% elif message.tags == 'error' %}background: var(--error-bg); color: var(--error); border: 1px solid #fecaca;
+                    {% else %}background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="auth-form" novalidate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_email">Adresse e-mail</label>
+                    <input type="email" name="email" id="id_email" placeholder="votre.email@exemple.com" required 
+                           style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; font-size: 1rem; color: var(--text-dark); transition: border-color 0.2s, box-shadow 0.2s;"
+                           onfocus="this.style.borderColor='var(--brand-500)'; this.style.boxShadow='0 0 0 3px var(--brand-50)'"
+                           onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'">
+                </div>
+
+                <button type="submit" class="btn-auth">
+                    Renvoyer le lien
+                </button>
+            </form>
+
+            <footer class="auth-footer">
+                Votre compte est déjà activé ? <a href="{% url 'login' %}">Connectez-vous ici</a>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock %}
