@@ -38,6 +38,26 @@ urlpatterns = [
     path("activate/<uidb64>/<token>/", core_views.activate_account, name="activate_account"),
     path("login/", core_views.login_view, name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    
+    # Password Reset
+    path('reset_password/', auth_views.PasswordResetView.as_view(
+        template_name="core/password_reset.html",
+        email_template_name="core/password_reset_email.html",
+        subject_template_name="core/password_reset_subject.txt",
+        success_url="/reset_password_sent/",
+        html_email_template_name="core/password_reset_email.html",
+        extra_email_context={'protocol': 'https', 'domain': 'profchezvousapp.com'}
+    ), name="password_reset"),
+    path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(
+        template_name="core/password_reset_done.html"
+    ), name="password_reset_done"),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name="core/password_reset_confirm.html",
+        success_url="/reset_password_complete/"
+    ), name="password_reset_confirm"),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name="core/password_reset_complete.html"
+    ), name="password_reset_complete"),
     path("post-signup/", core_views.post_signup_redirect, name="post_signup_redirect"),
     path("finalisation-compte/", core_views.finalisation_compte, name="finalisation_compte"),
     path("prof-intro/", core_views.prof_intro, name="prof_intro"),
