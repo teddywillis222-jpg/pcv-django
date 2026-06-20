@@ -117,6 +117,15 @@ select.pcv-multi-select,
     pointer-events: none !important;
 }
 
+/* Ombres subtiles pour les inputs de recherche principaux */
+.search-inputs-row .ts-control {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    transition: box-shadow 0.3s ease !important;
+}
+.search-inputs-row .ts-control.focus {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
 @media (max-width: 768px) {
     .advanced-filters-grid {
         grid-template-columns: 1fr !important;
@@ -308,9 +317,9 @@ select.pcv-multi-select,
 }
 
 .reset-filters-btn {
-    background: #f1f5f9;
+    background: white;
     color: #64748b;
-    border: none;
+    border: 1px solid #e2e8f0;
     height: auto;
     padding: 0.45rem 0.9rem;
     border-radius: 0.5rem;
@@ -324,14 +333,20 @@ select.pcv-multi-select,
     margin-top: 0;
     font-size: 0.9rem;
     text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.reset-filters-btn:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
 .more-filters-btn {
-    background: transparent;
+    background: white;
     color: #64748b;
-    border: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
     height: auto;
-    padding: 0.25rem 0.5rem;
+    padding: 0.45rem 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -341,10 +356,12 @@ select.pcv-multi-select,
     gap: 0.5rem;
     margin-top: 0;
     font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .more-filters-btn:hover {
     color: var(--success-600);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
 .more-filters-btn svg {
