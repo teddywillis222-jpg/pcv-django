@@ -19,12 +19,12 @@
         {% if teacher.photo_de_profil %}
             <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}"
                  onclick="openZoom('{{ teacher.photo_de_profil.url }}')"
-                 style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+                 style="width: 135px; height: 135px; border-radius: 50%; object-fit: cover;
                         border: 3px solid #e9eef5; margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto; cursor: zoom-in;">
         {% else %}
-            <div class="avatar-initials" style="width: 110px; height: 110px; border-radius: 50%; background: #e2e8f0;
+            <div class="avatar-initials" style="width: 135px; height: 135px; border-radius: 50%; background: #e2e8f0;
                         border: 3px solid #e9eef5; margin: 0 auto 1rem; display: flex;
-                        align-items: center; justify-content: center; font-size: 2rem;
+                        align-items: center; justify-content: center; font-size: 2.2rem;
                         color: #94a3b8; font-weight: 800; letter-spacing: -1px;">
                 {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
             </div>
