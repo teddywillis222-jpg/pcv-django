@@ -151,6 +151,18 @@ def clean_subjects(subjects):
 
 
 
+class CustomChoice(models.Model):
+    """Stocke les options personnalisées ajoutées par les utilisateurs (Matières, Localisations, Classes)."""
+    category = models.CharField(max_length=50, db_index=True)
+    value = models.CharField(max_length=150)
+
+    class Meta:
+        unique_together = ('category', 'value')
+
+    def __str__(self):
+        return f"{self.category}: {self.value}"
+
+
 class Profile(models.Model):
 
     ROLE_PARENT = "PARENT"

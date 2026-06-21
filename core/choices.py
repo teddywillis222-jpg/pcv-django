@@ -77,8 +77,17 @@ class Matiere:
     
     @classmethod
     def get_choices(cls):
-        """Retourne la liste triée par ordre alphabétique pour les Select."""
-        sorted_list = sorted(cls.load_liste())
+        """Retourne la liste triée par ordre alphabétique pour les Select, incluant les ajouts dynamiques."""
+        base_list = set(cls.load_liste())
+        try:
+            from django.apps import apps
+            CustomChoice = apps.get_model('core', 'CustomChoice')
+            customs = CustomChoice.objects.filter(category='matiere').values_list('value', flat=True)
+            for c in customs:
+                base_list.add(c)
+        except Exception:
+            pass
+        sorted_list = sorted(list(base_list))
         return [(m, m) for m in sorted_list]
 
 Matiere.LISTE = Matiere.load_liste()
@@ -142,6 +151,20 @@ class ClassLevel:
     ]
     VALUES = [c[0] for c in CHOICES]
 
+    @classmethod
+    def get_choices(cls):
+        base_choices = dict(cls.CHOICES)
+        try:
+            from django.apps import apps
+            CustomChoice = apps.get_model('core', 'CustomChoice')
+            customs = CustomChoice.objects.filter(category='classe').values_list('value', flat=True)
+            for c in customs:
+                if c not in base_choices:
+                    base_choices[c] = c
+        except Exception:
+            pass
+        return [(k, v) for k, v in base_choices.items()]
+
 
 # --- Mode de cours (partout : TeacherProfile, Engagement) ---
 class CourseMode:
@@ -189,6 +212,20 @@ class Localisation:
     def CHOICES(self):
         # Pour compatibilité avec l'accès instance.CHOICES si besoin (rare en Django)
         return self.load_choices()
+    
+    @classmethod
+    def get_choices(cls):
+        base_choices = dict(cls.load_choices())
+        try:
+            from django.apps import apps
+            CustomChoice = apps.get_model('core', 'CustomChoice')
+            customs = CustomChoice.objects.filter(category='localisation').values_list('value', flat=True)
+            for c in customs:
+                if c not in base_choices:
+                    base_choices[c] = c
+        except Exception:
+            pass
+        return [(k, v) for k, v in base_choices.items()]
     
     # Pour l'accès statique Localisation.CHOICES utilisé dans les modèles/forms
     # On utilise une ruse : redéfinir CHOICES comme une property de classe ou juste appeler load_choices

@@ -357,6 +357,27 @@ class EnfantForm(forms.ModelForm):
         self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select'})
         self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select'})
 
+    def clean_quartier_ville(self):
+        ville = self.cleaned_data.get('quartier_ville')
+        if ville:
+            from core.utils import process_custom_choices
+            return process_custom_choices('localisation', ville)
+        return ville
+
+    def clean_classe(self):
+        classe = self.cleaned_data.get('classe')
+        if classe:
+            from core.utils import process_custom_choices
+            return process_custom_choices('classe', classe)
+        return classe
+
+    def clean_matieres_predefinies(self):
+        matieres = self.cleaned_data.get('matieres_predefinies', [])
+        if matieres:
+            from core.utils import process_custom_choices
+            return process_custom_choices('matiere', matieres)
+        return matieres
+
     def clean(self):
         cleaned_data = super().clean()
         matieres = cleaned_data.get("matieres_predefinies", [])
@@ -451,6 +472,27 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         for field_name in optional_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = False
+
+    def clean_quartier_ville(self):
+        ville = self.cleaned_data.get('quartier_ville')
+        if ville:
+            from core.utils import process_custom_choices
+            return process_custom_choices('localisation', ville)
+        return ville
+
+    def clean_classe(self):
+        classe = self.cleaned_data.get('classe')
+        if classe:
+            from core.utils import process_custom_choices
+            return process_custom_choices('classe', classe)
+        return classe
+
+    def clean_matieres_recherchees(self):
+        matieres = self.cleaned_data.get('matieres_recherchees', [])
+        if matieres:
+            from core.utils import process_custom_choices
+            return process_custom_choices('matiere', matieres)
+        return matieres
 
 
 from .models import TeacherProfile
@@ -559,18 +601,30 @@ class TeacherProfileForm(forms.ModelForm):
             return self.instance.nom
         return self.cleaned_data.get('nom')
 
+    def clean_ville_quartier(self):
+        ville = self.cleaned_data.get('ville_quartier')
+        if ville:
+            from core.utils import process_custom_choices
+            return process_custom_choices('localisation', ville)
+        return ville
+
     def clean_matiere_enseignee(self):
         matieres = self.cleaned_data.get('matiere_enseignee')
         if isinstance(matieres, list):
             if len(matieres) > 3:
                 raise forms.ValidationError("Vous ne pouvez sélectionner que 3 matières maximum.")
-            return ", ".join(matieres)
+            from core.utils import process_custom_choices
+            processed = process_custom_choices('matiere', matieres)
+            return ", ".join(processed)
         return matieres
 
     def clean_classes_enseignees(self):
         classes = self.cleaned_data.get('classes_enseignees')
-        if isinstance(classes, list) and len(classes) > 3:
-            raise forms.ValidationError("Vous ne pouvez sélectionner que 3 classes maximum.")
+        if isinstance(classes, list):
+            if len(classes) > 3:
+                raise forms.ValidationError("Vous ne pouvez sélectionner que 3 classes maximum.")
+            from core.utils import process_custom_choices
+            return process_custom_choices('classe', classes)
         return classes
 
     def clean_categories_de_soutien(self):
