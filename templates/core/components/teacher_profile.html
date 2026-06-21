@@ -395,15 +395,15 @@
 
     <!-- ===== Professeurs Similaires — Design Premium ===== -->
     {% if related_teachers %}
-    <div class="info-card" style="margin-top: 1.5rem; padding: 1.5rem;">
+    <div class="info-card" style="margin-top: 1.5rem; padding: 1.5rem 0 1.5rem 1.5rem; overflow: hidden;">
         <h3 style="font-size: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase;
-                   letter-spacing: 0.05em; margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                   letter-spacing: 0.05em; margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.5rem; padding-right: 1.5rem;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Ils enseignent aussi
         </h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem;">
+        <div class="related-teachers-scroll">
             {% for related in related_teachers %}
-            <div onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}" style="cursor: pointer;">
+            <div class="related-teacher-item" onclick="{% if is_side_panel %}openTeacherProfile('{{ related.slug }}'){% else %}window.location.href='{% url 'professeur_detail' related.slug %}'{% endif %}" style="cursor: pointer;">
                 {% include "core/components/_teacher_card_compact.html" with teacher=related %}
             </div>
             {% endfor %}
@@ -472,7 +472,7 @@
 }
 @media (max-width: 576px) {
     .teacher-profile {
-        padding: 0.5rem !important;
+        padding: 0.25rem !important;
     }
     .teacher-profile > div:first-child {
         margin-bottom: 1rem !important;
@@ -553,6 +553,36 @@
     color: #475569;
     line-height: 1.7;
     font-size: 0.95rem;
+}
+
+/* --- Related Teachers Horizontal Scroll --- */
+.related-teachers-scroll {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-right: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+.related-teachers-scroll::-webkit-scrollbar {
+    display: none;
+}
+.related-teacher-item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 260px;
+}
+.related-teacher-item .teacher-card-compact {
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .related-teacher-item {
+        width: 240px;
+    }
 }
 </style>
 
