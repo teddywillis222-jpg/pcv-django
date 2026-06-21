@@ -374,6 +374,38 @@ p {
         overflow-x: visible;
         padding-right: 1rem;
     }
+    
+    #profScroll.swipe-container {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-left: 3rem;
+        padding-right: 3rem;
+        scroll-padding-left: 3rem;
+    }
+    
+    .scroll-arrow {
+        display: flex !important;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        background: white;
+        border: 1px solid var(--slate-200);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        color: var(--slate-800);
+        font-size: 1.5rem;
+        transition: background 0.2s;
+    }
+    .scroll-arrow:hover { background: var(--slate-50); }
+    .scroll-arrow.left { left: 0; }
+    .scroll-arrow.right { right: 0; }
     .diff-card-mobile {
         width: 30%;
         max-width: none;
@@ -531,16 +563,20 @@ p {
         <a href="{% url 'recherche' %}" style="color: var(--brand-success); font-weight: 700; text-decoration: none; font-size: 0.9rem;">Tout voir</a>
     </div>
     
-    <div class="swipe-container" id="profScroll">
-        {% for prof in top_professeurs %}
-            <div class="swipe-item prof-card-mobile">
-                {% include "core/components/_teacher_card.html" with teacher=prof %}
-            </div>
-        {% empty %}
-            <div style="padding: 2rem; text-align: center; color: var(--slate-500); width: 100%;">
-                Aucun professeur disponible.
-            </div>
-        {% endfor %}
+    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
+        <button class="scroll-arrow left" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: -320, behavior: 'smooth'})">❮</button>
+        <div class="swipe-container" id="profScroll">
+            {% for prof in top_professeurs %}
+                <div class="swipe-item prof-card-mobile">
+                    {% include "core/components/_teacher_card.html" with teacher=prof %}
+                </div>
+            {% empty %}
+                <div style="padding: 2rem; text-align: center; color: var(--slate-500); width: 100%;">
+                    Aucun professeur disponible.
+                </div>
+            {% endfor %}
+        </div>
+        <button class="scroll-arrow right" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: 320, behavior: 'smooth'})">❯</button>
     </div>
 </section>
 
