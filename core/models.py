@@ -1461,6 +1461,12 @@ class TeacherProfile(models.Model):
 
         return f"Professeur {self.prenom} {self.nom}"
 
+    @property
+    def matieres_list(self):
+        if not self.matiere_enseignee:
+            return []
+        return [m.strip() for m in self.matiere_enseignee.split(',') if m.strip()]
+
 
 
 

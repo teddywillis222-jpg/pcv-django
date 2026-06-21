@@ -216,8 +216,14 @@
             <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
 
                 <div>
-                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Matière</span>
-                    <span style="font-weight: 600; color: #0f172a;">{{ teacher.matiere_enseignee }}</span>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Matière(s)</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
+                        {% for matiere in teacher.matieres_list %}
+                            <span class="badge-matiere {% cycle 'badge-color-0' 'badge-color-1' 'badge-color-2' 'badge-color-3' 'badge-color-4' 'badge-color-5' %}">{{ matiere }}</span>
+                        {% empty %}
+                            <span style="font-weight: 600; color: #0f172a;">Non défini</span>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div>
                     <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Classes</span>
@@ -481,6 +487,24 @@
         font-size: 1.25rem !important;
     }
 }
+
+/* Badges dynamiques pour matières */
+.badge-matiere {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    white-space: nowrap;
+}
+.badge-color-0 { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; } /* Blue */
+.badge-color-1 { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; } /* Pink */
+.badge-color-2 { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; } /* Amber */
+.badge-color-3 { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; } /* Indigo */
+.badge-color-4 { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; } /* Green */
+.badge-color-5 { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; } /* Fuchsia */
 
 /* Modal CSS */
 .text-modal-overlay {
