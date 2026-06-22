@@ -524,6 +524,16 @@ class TeacherProfileForm(forms.ModelForm):
             'data-allow-create': 'false'
         })
     )
+    telephone_whatsapp = forms.CharField(
+        label="Numéro WhatsApp",
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Ex: 01XXXXXXXX",
+            "class": "form-input",
+            "required": True,
+            "type": "tel"
+        })
+    )
     matiere_enseignee = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
         required=True,
@@ -544,6 +554,7 @@ class TeacherProfileForm(forms.ModelForm):
         fields = [
             "email",
             "nom",
+            "telephone_whatsapp",
             "ville_quartier",
             "matiere_enseignee",
             "classes_enseignees",
@@ -587,7 +598,7 @@ class TeacherProfileForm(forms.ModelForm):
             if isinstance(self.instance.matiere_enseignee, str):
                 self.initial['matiere_enseignee'] = [m.strip() for m in self.instance.matiere_enseignee.split(',')]
         
-        for field_name in ["email", "nom", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
+        for field_name in ["email", "nom", "telephone_whatsapp", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
                 if field_name == "photo_de_profil" and self.instance and getattr(self.instance, "photo_de_profil", None):
                     self.fields[field_name].required = False
@@ -595,6 +606,12 @@ class TeacherProfileForm(forms.ModelForm):
                     self.fields[field_name].required = False
                 else:
                     self.fields[field_name].required = True
+
+    def clean_telephone_whatsapp(self):
+        numero = self.cleaned_data.get('telephone_whatsapp')
+        if numero:
+            return formater_telephone_benin(numero)
+        return numero
 
     def clean_nom(self):
         if self.instance and self.instance.pk:
