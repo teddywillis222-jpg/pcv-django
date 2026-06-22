@@ -390,6 +390,13 @@ body {
                 <div class="error-msg" id="error_nom">Veuillez renseigner votre nom.</div>
             </div>
 
+            <div class="form-group">
+                <label for="{{ form.telephone.id_for_label }}">Numéro WhatsApp *</label>
+                {{ form.telephone }}
+                <p class="help-text" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Format attendu: 01XXXXXXXX</p>
+                <div class="error-msg" id="error_telephone">Veuillez renseigner un numéro valide.</div>
+            </div>
+
 
             <div class="form-group">
                 <label for="{{ form.classe.id_for_label }}">Classe actuelle *</label>

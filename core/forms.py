@@ -411,6 +411,17 @@ class ApprenantCreateProfileForm(forms.ModelForm):
     """Formulaire en 2 étapes pour le profil apprenant."""
     from .choices import ObjectifApprenant
 
+    telephone = forms.CharField(
+        label="Numéro WhatsApp",
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Ex: 01XXXXXXXX",
+            "class": "form-input",
+            "required": True,
+            "type": "tel"
+        })
+    )
+
     matieres_recherchees = DynamicMultipleChoiceField(
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
@@ -439,6 +450,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         model = Apprenant
         fields = [
             "nom",
+            "telephone",
             "photo_de_profil",
             "classe",
             "matieres_recherchees",
@@ -473,6 +485,12 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             if field_name in self.fields:
                 self.fields[field_name].required = False
 
+    def clean_telephone(self):
+        numero = self.cleaned_data.get('telephone')
+        if numero:
+            return formater_telephone_benin(numero)
+        return numero
+
     def clean_quartier_ville(self):
         ville = self.cleaned_data.get('quartier_ville')
         if ville:
@@ -494,6 +512,23 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             return process_custom_choices('matiere', matieres)
         return matieres
 
+class EditEnfantForm(EnfantForm):
+    numero_whatsapp = forms.CharField(
+        label="Numéro WhatsApp du parent",
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Ex: 01XXXXXXXX",
+            "class": "form-input",
+            "required": True,
+            "type": "tel"
+        })
+    )
+
+    def clean_numero_whatsapp(self):
+        numero = self.cleaned_data.get('numero_whatsapp')
+        if numero:
+            return formater_telephone_benin(numero)
+        return numero
 
 from .models import TeacherProfile
 from .choices import SupportCategory

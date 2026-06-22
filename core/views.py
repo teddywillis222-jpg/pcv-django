@@ -2680,16 +2680,21 @@ def edit_enfant(request, id_enfant):
         from django.http import HttpResponseForbidden
         return HttpResponseForbidden("Vous n'avez pas l'autorisation de modifier ce profil.")
         
+    parent = request.user.parent
+        
     if request.method == "POST":
-        form = EnfantForm(request.POST, instance=enfant)
+        from .forms import EditEnfantForm
+        form = EditEnfantForm(request.POST, instance=enfant)
         if form.is_valid():
+            parent.numero_whatsapp = form.cleaned_data['numero_whatsapp']
+            parent.save()
             form.save()
             from django.contrib import messages
             messages.success(request, f"Le profil de {enfant.prenom} a été mis à jour.")
             return redirect("profil_eleve", type_eleve='enfant', id_eleve=enfant.id)
     else:
         # Pré-remplir les champs multiples si nécessaire
-        initial = {}
+        initial = {'numero_whatsapp': parent.numero_whatsapp}
         obj_text = enfant.objectif_principal
         if obj_text and "DIFFICULTÉS:" in obj_text:
             parts = obj_text.split("DIFFICULTÉS:")
@@ -2698,7 +2703,8 @@ def edit_enfant(request, id_enfant):
             initial['objectifs_motivations'] = [o.strip() for o in obj_str.split(',') if o.strip()]
             initial['difficultes_predefinies'] = [d.strip() for d in diff_str.split(',') if d.strip()]
         
-        form = EnfantForm(instance=enfant, initial=initial)
+        from .forms import EditEnfantForm
+        form = EditEnfantForm(instance=enfant, initial=initial)
         
     return render(request, "core/edit_enfant.html", {
         "form": form,
