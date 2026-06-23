@@ -1402,8 +1402,24 @@ class TeacherProfile(models.Model):
                     pass
             return min_tarif
         return self.tarif_horaire
+        
     @property
+    def a_des_tarifs_multiples(self):
+        """Retourne True si le professeur a des tarifs différents selon la classe."""
+        if not self.tarifs_par_classe:
+            return False
+        try:
+            tarifs_set = set()
+            for k, v in self.tarifs_par_classe.items():
+                if v:
+                    tarifs_set.add(float(v))
+            if self.tarif_horaire:
+                tarifs_set.add(float(self.tarif_horaire))
+            return len(tarifs_set) > 1
+        except (ValueError, TypeError, AttributeError):
+            return True
 
+    @property
     def classes_labels(self):
 
         """Retourne les labels des classes enseignées sous forme de chaîne, triés."""

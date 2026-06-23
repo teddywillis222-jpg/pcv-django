@@ -79,13 +79,13 @@
         <div class="info-bottom">
             <!-- Price -->
             <div class="price-block">
-                {% if teacher.tarifs_par_classe %}
+                {% if teacher.a_des_tarifs_multiples %}
                     <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">À partir de</span>
                     <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
                 {% else %}
                     <span class="price-amount">{{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }}</span>
                 {% endif %}
-                <span class="price-currency">FCFA/h</span>
+                <span class="price-currency">F/h</span>
             </div>
             
             <!-- Action Arrow -->
