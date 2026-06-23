@@ -1327,17 +1327,10 @@ class TeacherProfile(models.Model):
         filled = 0
 
         for field in fields_to_check:
-
             val = getattr(self, field)
-
-            if val:
-
-                if isinstance(val, (list, dict)) and not val:
-
-                    continue
-
+            # Un champ est rempli s'il n'est ni None, ni une chaîne vide, ni une liste/dict vide
+            if val is not None and val != "" and val != [] and val != {}:
                 filled += 1
-
         
 
         # On ajoute des points pour les diplÃ´mes
