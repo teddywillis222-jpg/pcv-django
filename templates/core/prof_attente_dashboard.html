@@ -465,16 +465,11 @@
         <form method="post" action="{% url 'prof_attente_dashboard' %}">
             {% csrf_token %}
 
-            <div class="grid-2">
-                <div class="form-group-m">
+            <div style="margin-bottom: 1.5rem;">
+                <div class="form-group-m" style="margin-bottom: 0;">
                     <label>Expérience en cours d'appui (Années)</label>
                     <input type="number" name="annees_d_experience" min="0"
                         value="{{ teacher.annees_d_experience|default:'' }}" placeholder="Ex: 5" required>
-                </div>
-                <div class="form-group-m">
-                    <label>Tarif horaire de base (FCFA / Heure de cours)</label>
-                    <input type="number" name="tarif_horaire" min="1000" step="500"
-                        value="{% if teacher.tarif_horaire %}{{ teacher.tarif_horaire|floatformat:'0' }}{% endif %}" placeholder="Ex: 3500" required>
                 </div>
             </div>
 

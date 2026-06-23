@@ -698,6 +698,11 @@
                 {{ form.email }}
             </div>
 
+            <div class="form-group">
+                <label>{{ form.telephone_whatsapp.label }} *</label>
+                {{ form.telephone_whatsapp }}
+            </div>
+
 
             <div class="form-group">
                 <label>{{ form.ville_quartier.label }} *</label>
@@ -752,6 +757,14 @@
             <div class="form-group" style="margin-top: 1.5rem;">
                 <label>Niveaux / Classes que vous maîtrisez *</label>
                 {{ form.classes_enseignees }}
+            </div>
+
+            <div id="dynamic-prices-container" class="form-section" style="display: none; background: #fff; border: 1px solid var(--dash-accent); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <h4 style="margin-top: 0; color: var(--dash-accent); display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">💰</span> Tarifs horaires par classe
+                </h4>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Fixez un tarif horaire adapté pour chaque classe sélectionnée ci-dessus.</p>
+                <div id="prices-inputs-wrapper"></div>
             </div>
  
             <div class="form-group" style="margin-top: 1.5rem;">
@@ -1114,6 +1127,94 @@
                 submitBtn.style.cursor = 'pointer';
             }
         });
+    }
+
+        // Dynamic prices logic
+        const existingPrices = {{ teacher_instance.tarifs_par_classe|safe|default:"{}" }};
+        const defaultTarif = "3000"; // default value for new profiles
+        const classesSelect = document.getElementById('id_classes_enseignees');
+        const pricesContainer = document.getElementById('dynamic-prices-container');
+        const pricesWrapper = document.getElementById('prices-inputs-wrapper');
+
+        function updatePricesUI() {
+            if (!classesSelect) return;
+            
+            const selectedOptions = Array.from(classesSelect.selectedOptions).map(opt => ({
+                value: opt.value,
+                text: opt.text
+            }));
+            
+            if (selectedOptions.length === 0) {
+                if (pricesContainer) pricesContainer.style.display = 'none';
+                if (pricesWrapper) pricesWrapper.innerHTML = '';
+                return;
+            }
+
+            if (pricesContainer) pricesContainer.style.display = 'block';
+            
+            // Save current values before re-rendering to avoid losing data
+            const currentInputs = pricesWrapper ? pricesWrapper.querySelectorAll('input') : [];
+            const currentValues = {};
+            currentInputs.forEach(input => {
+                currentValues[input.dataset.class] = input.value;
+            });
+
+            if (pricesWrapper) pricesWrapper.innerHTML = '';
+
+            selectedOptions.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.style.marginBottom = '1rem';
+                
+                const label = document.createElement('label');
+                label.className = 'form-label';
+                label.textContent = `Tarif pour ${opt.text} (FCFA) *`;
+                label.style.fontWeight = '600';
+                label.style.display = 'block';
+                label.style.marginBottom = '0.5rem';
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'form-input';
+                input.name = `tarif_classe_${opt.value}`;
+                input.dataset.class = opt.value;
+                input.min = "1000";
+                input.step = "500";
+                input.required = true;
+                
+                // Determine value: 1. currently typed, 2. from DB, 3. global tarif
+                if (currentValues[opt.value]) {
+                    input.value = currentValues[opt.value];
+                } else if (existingPrices && existingPrices[opt.value]) {
+                    input.value = existingPrices[opt.value];
+                } else {
+                    input.value = defaultTarif;
+                }
+                
+                div.appendChild(label);
+                div.appendChild(input);
+                if (pricesWrapper) pricesWrapper.appendChild(div);
+            });
+            
+            // Ensure global tarif input is not required to avoid form validation issues
+            const globalTarifInput = document.getElementById('id_tarif_horaire');
+            if(globalTarifInput) {
+                globalTarifInput.removeAttribute('required');
+                if(!globalTarifInput.value && selectedOptions.length > 0) {
+                   globalTarifInput.value = existingPrices[selectedOptions[0].value] || "3000";
+                }
+            }
+        }
+
+        if (classesSelect) {
+            // Initial call
+            updatePricesUI();
+            
+            // If using Choices.js, listen to its events
+            classesSelect.addEventListener('change', updatePricesUI);
+            classesSelect.addEventListener('addItem', updatePricesUI);
+            classesSelect.addEventListener('removeItem', updatePricesUI);
+        }
     }
 
     if (!document.getElementById('spin-style')) {

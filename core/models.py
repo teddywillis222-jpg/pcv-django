@@ -1194,6 +1194,12 @@ class TeacherProfile(models.Model):
 
     essai_gratuit_actif = models.BooleanField(default=False)
 
+    tarifs_par_classe = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Dictionnaire associant un code de classe à son tarif (ex: {'6EME': 3000})"
+    )
+
 
 
     # 6. Statistiques et visibilitÃ©
@@ -1347,10 +1353,44 @@ class TeacherProfile(models.Model):
 
 
     @property
+    def sorted_classes_enseignees(self):
+        """Retourne la liste des classes enseignées triées selon l'ordre officiel."""
+        from .choices import ClassLevel
+        
+        if not self.classes_enseignees:
+            return []
+            
+        # Créer un dictionnaire d'ordre basé sur VALUES de ClassLevel
+        order_dict = {val: idx for idx, val in enumerate(ClassLevel.VALUES)}
+        
+        def sort_key(class_code):
+            # Si la classe n'est pas dans la liste officielle (ajout personnalisé), on la met à la fin (index 999)
+            return order_dict.get(class_code, 999)
+            
+        return sorted(self.classes_enseignees, key=sort_key)
+
+    @property
+    def classes_avec_tarifs(self):
+        """Retourne une liste de dictionnaires avec le label et le tarif de chaque classe."""
+        from .choices import ClassLevel
+        choices_dict = dict(ClassLevel.CHOICES)
+        result = []
+        for c in self.sorted_classes_enseignees:
+            tarif = self.tarifs_par_classe.get(c)
+            if not tarif:
+                tarif = self.tarif_horaire
+            result.append({
+                'code': c,
+                'label': choices_dict.get(c, c),
+                'tarif': tarif
+            })
+        return result
+
+    @property
 
     def classes_labels(self):
 
-        """Retourne les labels des classes enseignÃ©es sous forme de chaÃ®ne."""
+        """Retourne les labels des classes enseignées sous forme de chaîne, triés."""
 
         if not self.classes_enseignees:
 
@@ -1360,7 +1400,7 @@ class TeacherProfile(models.Model):
 
         choices_dict = dict(ClassLevel.CHOICES)
 
-        return ", ".join([choices_dict.get(c, c) for c in self.classes_enseignees])
+        return ", ".join([choices_dict.get(c, c) for c in self.sorted_classes_enseignees])
 
 
 

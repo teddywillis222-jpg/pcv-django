@@ -623,11 +623,13 @@ class TeacherProfileForm(forms.ModelForm):
             self.fields["annees_d_experience"].required = is_editing
 
         if is_editing:
-            for field_name in ["presentation", "methodologie", "tarif_horaire"]:
+            for field_name in ["presentation", "methodologie"]:
                 if field_name in self.fields:
                     self.fields[field_name].required = True
                     if field_name in ["presentation", "methodologie"]:
                         self.fields[field_name].widget.attrs["minlength"] = "800"
+            if "tarif_horaire" in self.fields:
+                self.fields["tarif_horaire"].required = False
 
         if self.instance and self.instance.pk and self.instance.matiere_enseignee:
             if isinstance(self.instance.matiere_enseignee, str):
@@ -684,6 +686,33 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(categories, list) and len(categories) > 4:
             raise forms.ValidationError("Vous ne pouvez sélectionner que 4 catégories maximum.")
         return categories
+
+    def clean(self):
+        cleaned_data = super().clean()
+        classes = cleaned_data.get('classes_enseignees', [])
+        
+        tarifs = {}
+        tarif_horaire_global = cleaned_data.get('tarif_horaire')
+        
+        if isinstance(classes, list):
+            for c in classes:
+                prix_str = self.data.get(f'tarif_classe_{c}')
+                if prix_str and prix_str.isdigit():
+                    tarifs[c] = int(prix_str)
+                elif tarif_horaire_global:
+                    tarifs[c] = int(tarif_horaire_global)
+                    
+        self.cleaned_tarifs_par_classe = tarifs
+        return cleaned_data
+        
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if hasattr(self, 'cleaned_tarifs_par_classe'):
+            instance.tarifs_par_classe = self.cleaned_tarifs_par_classe
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
 
 from .models import ProfessorAnnouncement

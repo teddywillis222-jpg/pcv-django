@@ -769,7 +769,8 @@ def prof_create_profile(request):
     else:
         initial = {
             "nom": f"{request.user.first_name} {request.user.last_name}".strip(),
-            "email": request.user.email
+            "email": request.user.email,
+            "telephone_whatsapp": request.user.profile.telephone
         }
         form = TeacherProfileForm(instance=teacher_instance, initial=initial)
 
@@ -804,7 +805,6 @@ def prof_attente_dashboard(request):
         presentation = request.POST.get("presentation", "").strip()
         methodologie = request.POST.get("methodologie", "").strip()
         exp_str = request.POST.get("annees_d_experience", "").strip()
-        tarif_str = request.POST.get("tarif_horaire", "").strip()
         disponibilites = request.POST.getlist("disponibilites")
         
         errors = []
@@ -819,13 +819,6 @@ def prof_attente_dashboard(request):
                 errors.append("L'expérience ne peut pas être négative.")
         except ValueError:
             errors.append("Les années d'expérience doivent être un nombre entier valide.")
-            
-        try:
-            tarif_val = float(tarif_str)
-            if tarif_val < 1000:
-                errors.append("Le tarif horaire doit être de 1000 FCFA minimum.")
-        except ValueError:
-            errors.append("Le tarif horaire doit être un nombre valide.")
 
         if errors:
             for error in errors:
@@ -834,7 +827,6 @@ def prof_attente_dashboard(request):
             teacher_instance.presentation = presentation
             teacher_instance.methodologie = methodologie
             teacher_instance.annees_d_experience = exp_val
-            teacher_instance.tarif_horaire = tarif_val
             teacher_instance.grille_disponibilites = disponibilites
             teacher_instance.save()
             messages.success(request, "Votre vitrine a été mise à jour avec succès !")
