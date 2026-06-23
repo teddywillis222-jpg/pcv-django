@@ -19,9 +19,12 @@
     <!-- Utilisateurs -->
     <div class="card">
         <h3 style="margin-top:0; color:var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Utilisateurs</h3>
-        <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">{{ total_users }}</div>
+        <div style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0;">{{ total_inscrits }}</div>
         <div style="font-size: 0.875rem; color: var(--text-muted);">
             Parents: {{ total_parents }} | Apprentis: {{ total_apprenants }} | Profs: {{ total_professeurs }}
+            {% if total_incomplets > 0 %}
+            <br><span style="color: var(--danger-color); font-weight: 500;">Incomplets ou Sans rôle: {{ total_incomplets }}</span>
+            {% endif %}
         </div>
     </div>
 

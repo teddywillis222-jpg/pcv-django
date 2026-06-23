@@ -2463,11 +2463,17 @@ def debug_admin_pcv(request):
 
 def admin_api_accueil(request):
     """Retourne le HTML partiel pour l'accueil du dashboard"""
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    
     # 1. Statistiques Globales
+    total_inscrits = User.objects.filter(is_superuser=False).count()
     total_parents = Profile.objects.filter(role=Profile.ROLE_PARENT).count()
     total_apprenants = Profile.objects.filter(role=Profile.ROLE_APPRENANT).count()
     total_professeurs = Profile.objects.filter(role=Profile.ROLE_PROF).count()
-    total_users = total_parents + total_apprenants + total_professeurs
+    
+    total_users_avec_role = total_parents + total_apprenants + total_professeurs
+    total_incomplets = total_inscrits - total_users_avec_role
 
     engagements = Engagement.objects.all()
     stats_engagements = engagements.values('statut_general').annotate(count=Count('id'))
@@ -2518,10 +2524,11 @@ def admin_api_accueil(request):
     ).select_related('parent_apprenant').distinct()
 
     context = {
-        'total_users': total_users,
+        'total_inscrits': total_inscrits,
         'total_parents': total_parents,
         'total_apprenants': total_apprenants,
         'total_professeurs': total_professeurs,
+        'total_incomplets': total_incomplets,
         'total_engagements': total_engagements,
         'dict_engagements': dict_engagements,
         'StatutGeneral': StatutGeneral,
