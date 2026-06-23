@@ -1312,7 +1312,7 @@ class TeacherProfile(models.Model):
 
     def completion_percentage(self):
 
-        """Calcule le pourcentage de complÃ©tion du profil professeur."""
+        """Calcule le pourcentage de complétion du profil professeur."""
 
         fields_to_check = [
 
@@ -1320,7 +1320,7 @@ class TeacherProfile(models.Model):
 
             'annees_d_experience', 'classes_enseignees', 'modes_de_cours',
 
-            'ville_quartier', 'tarif_horaire', 'telephone_whatsapp'
+            'ville_quartier', 'tarifs_par_classe', 'telephone_whatsapp'
 
         ]
 

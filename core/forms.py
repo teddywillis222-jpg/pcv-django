@@ -695,12 +695,15 @@ class TeacherProfileForm(forms.ModelForm):
         tarif_horaire_global = cleaned_data.get('tarif_horaire')
         
         if isinstance(classes, list):
-            for c in classes:
-                prix_str = self.data.get(f'tarif_classe_{c}')
-                if prix_str and prix_str.isdigit():
-                    tarifs[c] = int(prix_str)
-                elif tarif_horaire_global:
-                    tarifs[c] = int(tarif_horaire_global)
+            classes_lower = [str(c).lower() for c in classes]
+            for key, val in self.data.items():
+                if key.startswith('tarif_classe_'):
+                    class_code = key.replace('tarif_classe_', '')
+                    if class_code.lower() in classes_lower:
+                        if val and val.isdigit():
+                            tarifs[class_code] = int(val)
+                        elif tarif_horaire_global:
+                            tarifs[class_code] = int(tarif_horaire_global)
                     
         self.cleaned_tarifs_par_classe = tarifs
         return cleaned_data
