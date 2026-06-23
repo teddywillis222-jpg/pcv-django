@@ -260,18 +260,18 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: fit-content; min-width: 220px;">
                     {% if teacher.classes_avec_tarifs %}
                         {% for item in teacher.classes_avec_tarifs %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 2rem;">
                             <span style="font-weight: 600; color: #475569; font-size: 0.95rem;">{{ item.label }}</span>
-                            <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem;">{{ item.tarif|default:"A définir" }} FCFA</span>
+                            <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem; white-space: nowrap;">{{ item.tarif|default:"A définir" }} FCFA</span>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 2rem;">
                             <span style="font-weight: 600; color: #475569; font-size: 0.95rem;">Tarif de base</span>
-                            <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem;">{{ teacher.tarif_horaire|default:"A définir" }} FCFA</span>
+                            <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem; white-space: nowrap;">{{ teacher.tarif_horaire|default:"A définir" }} FCFA</span>
                         </div>
                     {% endif %}
                 </div>

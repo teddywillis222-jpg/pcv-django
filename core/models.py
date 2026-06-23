@@ -1380,6 +1380,29 @@ class TeacherProfile(models.Model):
         return result
 
     @property
+    def tarif_minimum(self):
+        """Retourne le tarif minimum parmi toutes les classes enseignées, ou le tarif horaire de base."""
+        tarifs = []
+        if self.classes_enseignees and self.tarifs_par_classe:
+            for c in self.classes_enseignees:
+                tarif = self.tarifs_par_classe.get(c)
+                if tarif:
+                    try:
+                        tarifs.append(float(tarif))
+                    except (ValueError, TypeError):
+                        pass
+        if tarifs:
+            min_tarif = min(tarifs)
+            if self.tarif_horaire:
+                try:
+                    th = float(self.tarif_horaire)
+                    if th > 0 and th < min_tarif:
+                        min_tarif = th
+                except (ValueError, TypeError):
+                    pass
+            return min_tarif
+        return self.tarif_horaire
+    @property
 
     def classes_labels(self):
 

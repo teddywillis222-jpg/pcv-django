@@ -79,7 +79,12 @@
         <div class="info-bottom">
             <!-- Price -->
             <div class="price-block">
-                <span class="price-amount">{{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }}</span>
+                {% if teacher.tarifs_par_classe %}
+                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">À partir de</span>
+                    <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
+                {% else %}
+                    <span class="price-amount">{{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }}</span>
+                {% endif %}
                 <span class="price-currency">FCFA/h</span>
             </div>
             
