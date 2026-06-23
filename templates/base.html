@@ -8,13 +8,14 @@
     <title>{% block title %}Prof Chez Vous{% endblock %}</title>
     
     <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'core/images/logo_pr.svg' %}">
     <link rel="icon" type="image/png" href="{% static 'core/images/favicon.png' %}">
     <link rel="apple-touch-icon" href="{% static 'core/images/favicon.png' %}">
     
     <!-- Open Graph (Aperçu des liens sur WhatsApp, Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="Prof Chez Vous">
     <meta property="og:description" content="Trouvez le professeur idéal pour vous accompagner.">
-    <meta property="og:image" content="{% static 'core/images/favicon.png' %}">
+    <meta property="og:image" content="{% static 'core/images/logo_pr.svg' %}">
     <meta property="og:type" content="website">
     
     <!-- Google Fonts - Raleway -->
@@ -688,7 +689,8 @@
     {% block navbar %}
     <header class="navbar">
         <div class="navbar-container">
-            <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem;">
+            <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'core/images/logo_pr.svg' %}" alt="Logo Prof Chez Vous" style="height: 36px; width: 36px; border-radius: 8px;">
                 <span class="brand-text" style="position: relative; display: inline-block;">
                     Prof Chez Vous
                     {% if request.user.is_authenticated and request.user.profile %}
@@ -776,7 +778,10 @@
     <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
     <div class="mobile-menu">
         <div class="mobile-menu-header">
-            <div class="navbar-brand" style="font-size: 1.5rem;">ProfChezVous</div>
+            <div class="navbar-brand" style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'core/images/logo_pr.svg' %}" alt="Logo Prof Chez Vous" style="height: 32px; width: 32px; border-radius: 8px;">
+                ProfChezVous
+            </div>
             <button class="mobile-menu-close" onclick="closeMobileMenu()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 6L6 18M6 6l12 12"/>

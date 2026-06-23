@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+    <rect width="120" height="120" rx="28" fill="#15803d"/>
+    <!-- Roof: subtle chevron -->
+    <path d="M 32 50 L 60 28 L 88 50" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Text -->
+    <text x="30" y="95" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" fill="#ffffff">P</text>
+    <text x="68" y="95" font-family="system-ui, -apple-system, sans-serif" font-size="44" font-weight="800" fill="#ffffff">r</text>
+</svg>
