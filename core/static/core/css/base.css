@@ -221,7 +221,6 @@ a:hover {
 
 /* Stabilisation du Viewport globale */
 html, body {
-    overflow-x: hidden;
     width: 100%;
     position: relative;
 }

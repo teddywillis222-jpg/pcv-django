@@ -32,14 +32,13 @@ body {
     background-color: var(--dash-bg);
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--dash-text);
-    overflow-x: hidden;
     line-height: 1.5;
-    overscroll-behavior-y: none;
 }
 
 .dashboard-wrapper {
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Sidebar (Desktop) */
