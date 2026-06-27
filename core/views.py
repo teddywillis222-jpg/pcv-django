@@ -1285,7 +1285,11 @@ def apprenant_dashboard(request):
     recommandations = recommandations_list
 
     # 2. Engagements filtrés pour l'apprenant (parent_apprenant=request.user)
-    engagements = request.user.engagements_client.all().order_by("-date_creation")
+    engagements = request.user.engagements_client.select_related(
+        'professeur', 'professeur__user'
+    ).prefetch_related(
+        'enfants_concernes', 'conversation', 'professeur__parents_favoris'
+    ).order_by("-date_creation")
     for eng in engagements:
         eng.check_and_update_essai_status()
 
@@ -1426,7 +1430,7 @@ def track_teacher_view(request, teacher_profile):
 
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
-    teacher = get_object_or_404(TeacherProfile, slug=teacher_slug)
+    teacher = get_object_or_404(TeacherProfile.objects.prefetch_related('evaluations_recues', 'diplomes'), slug=teacher_slug)
     
     is_new_view = track_teacher_view(request, teacher)
     
@@ -2108,7 +2112,7 @@ def conversation_detail(request, conversation_id):
     )
     
     # Engagements liés
-    linked_engagements = conversation.engagements.all().order_by("-date_creation")
+    linked_engagements = conversation.engagements.prefetch_related('enfants_concernes').order_by("-date_creation")
     
     # Logique de blocage (cohérente avec api_send_message)
     is_blocked = False
@@ -2463,93 +2467,101 @@ def debug_admin_pcv(request):
 
 def admin_api_accueil(request):
     """Retourne le HTML partiel pour l'accueil du dashboard"""
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
+    from django.core.cache import cache
     
-    # 1. Statistiques Globales
-    total_inscrits = User.objects.filter(is_superuser=False).count()
-    total_parents = Profile.objects.filter(role=Profile.ROLE_PARENT).count()
-    total_apprenants = Profile.objects.filter(role=Profile.ROLE_APPRENANT).count()
-    total_professeurs = Profile.objects.filter(role=Profile.ROLE_PROF).count()
+    # OPTIMISATION NEON : Mise en cache des stats du dashboard admin pendant 15 minutes
+    context = cache.get('admin_dashboard_context')
     
-    total_users_avec_role = total_parents + total_apprenants + total_professeurs
-    total_incomplets = total_inscrits - total_users_avec_role
-
-    engagements = Engagement.objects.all()
-    stats_engagements = engagements.values('statut_general').annotate(count=Count('id'))
-    dict_engagements = {stat['statut_general']: stat['count'] for stat in stats_engagements}
-    total_engagements = engagements.count()
-
-    evaluations = Evaluation.objects.all()
-    total_evaluations = evaluations.count()
-    moyenne_generale = evaluations.aggregate(Avg('note'))['note__avg'] or 0
-
-    # Nouvelles statistiques de lancement
-    from django.db.models import Sum
-    from .models import Parent, TeacherProfile, Apprenant, Seance, Message, PageAnalytics
-    from .choices import EngagementType
-
-    parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
-    apprenant_recherches = Apprenant.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
-    total_recherches = parent_recherches + apprenant_recherches
+    if not context:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        # 1. Statistiques Globales
+        total_inscrits = User.objects.filter(is_superuser=False).count()
+        total_parents = Profile.objects.filter(role=Profile.ROLE_PARENT).count()
+        total_apprenants = Profile.objects.filter(role=Profile.ROLE_APPRENANT).count()
+        total_professeurs = Profile.objects.filter(role=Profile.ROLE_PROF).count()
+        
+        total_users_avec_role = total_parents + total_apprenants + total_professeurs
+        total_incomplets = total_inscrits - total_users_avec_role
     
-    parent_profils = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
-    apprenant_profils = Apprenant.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
-    total_profils_consultes = parent_profils + apprenant_profils
+        engagements = Engagement.objects.all()
+        stats_engagements = engagements.values('statut_general').annotate(count=Count('id'))
+        dict_engagements = {stat['statut_general']: stat['count'] for stat in stats_engagements}
+        total_engagements = engagements.count()
     
-    total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
-    total_vues_plan = Profile.objects.aggregate(total=Sum('nb_vues_page_plan'))['total'] or 0
-    total_vues_suivi = Profile.objects.aggregate(total=Sum('nb_vues_suivi'))['total'] or 0
-    total_connexions = Profile.objects.aggregate(total=Sum('nb_connexions'))['total'] or 0
+        evaluations = Evaluation.objects.all()
+        total_evaluations = evaluations.count()
+        moyenne_generale = evaluations.aggregate(Avg('note'))['note__avg'] or 0
     
-    total_seances = Seance.objects.count()
-    total_messages = Message.objects.count()
+        # Nouvelles statistiques de lancement
+        from django.db.models import Sum
+        from .models import Parent, TeacherProfile, Apprenant, Seance, Message, PageAnalytics
+        from .choices import EngagementType
     
-    essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
-    essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
-    essais_realises = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_REALISE).count()
-    engagements_finalises = engagements.filter(statut_general__in=[StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).count()
+        parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+        apprenant_recherches = Apprenant.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+        total_recherches = parent_recherches + apprenant_recherches
+        
+        parent_profils = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+        apprenant_profils = Apprenant.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+        total_profils_consultes = parent_profils + apprenant_profils
+        
+        total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
+        total_vues_plan = Profile.objects.aggregate(total=Sum('nb_vues_page_plan'))['total'] or 0
+        total_vues_suivi = Profile.objects.aggregate(total=Sum('nb_vues_suivi'))['total'] or 0
+        total_connexions = Profile.objects.aggregate(total=Sum('nb_connexions'))['total'] or 0
+        
+        total_seances = Seance.objects.count()
+        total_messages = Message.objects.count()
+        
+        essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
+        essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
+        essais_realises = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_REALISE).count()
+        engagements_finalises = engagements.filter(statut_general__in=[StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).count()
+        
+        taux_conversion = 0
+        if essais_realises > 0:
+            taux_conversion = round((engagements_finalises / essais_realises) * 100, 1)
     
-    taux_conversion = 0
-    if essais_realises > 0:
-        taux_conversion = round((engagements_finalises / essais_realises) * 100, 1)
-
-    # 2. Engagements Prioritaires
-    # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + Délai >= 30 min
-    limite_temps = timezone.now() - timedelta(minutes=30)
-    engagements_prioritaires = Engagement.objects.filter(
-        statut_general=StatutGeneral.EN_ATTENTE,
-        date_creation__lte=limite_temps,
-        parent_apprenant__abonnements__type_abonnement=TypeAbonnement.ACCESS_PREMIUM
-    ).select_related('parent_apprenant').distinct()
-
-    context = {
-        'total_inscrits': total_inscrits,
-        'total_parents': total_parents,
-        'total_apprenants': total_apprenants,
-        'total_professeurs': total_professeurs,
-        'total_incomplets': total_incomplets,
-        'total_engagements': total_engagements,
-        'dict_engagements': dict_engagements,
-        'StatutGeneral': StatutGeneral,
-        'total_evaluations': total_evaluations,
-        'moyenne_generale': round(moyenne_generale, 1),
-        'engagements_prioritaires': engagements_prioritaires,
-        'total_recherches': total_recherches,
-        'total_profils_consultes': total_profils_consultes,
-        'total_vues_profil': total_vues_profil,
-        'essais_programmes': essais_programmes,
-        'essais_confirmes': essais_confirmes,
-        'essais_realises': essais_realises,
-        'engagements_finalises': engagements_finalises,
-        'taux_conversion': taux_conversion,
-        'total_vues_plan': total_vues_plan,
-        'total_vues_suivi': total_vues_suivi,
-        'total_connexions': total_connexions,
-        'total_seances': total_seances,
-        'total_messages': total_messages,
-        'vues_page_ressources': PageAnalytics.objects.filter(page_name='Centre de Ressources').values_list('view_count', flat=True).first() or 0,
-    }
+        # 2. Engagements Prioritaires
+        # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + Délai >= 30 min
+        limite_temps = timezone.now() - timedelta(minutes=30)
+        engagements_prioritaires = list(Engagement.objects.filter(
+            statut_general=StatutGeneral.EN_ATTENTE,
+            date_creation__lte=limite_temps,
+            parent_apprenant__abonnements__type_abonnement=TypeAbonnement.ACCESS_PREMIUM
+        ).select_related('parent_apprenant').distinct())
+    
+        context = {
+            'total_inscrits': total_inscrits,
+            'total_parents': total_parents,
+            'total_apprenants': total_apprenants,
+            'total_professeurs': total_professeurs,
+            'total_incomplets': total_incomplets,
+            'total_engagements': total_engagements,
+            'dict_engagements': dict_engagements,
+            'StatutGeneral': StatutGeneral,
+            'total_evaluations': total_evaluations,
+            'moyenne_generale': round(moyenne_generale, 1),
+            'engagements_prioritaires': engagements_prioritaires,
+            'total_recherches': total_recherches,
+            'total_profils_consultes': total_profils_consultes,
+            'total_vues_profil': total_vues_profil,
+            'essais_programmes': essais_programmes,
+            'essais_confirmes': essais_confirmes,
+            'essais_realises': essais_realises,
+            'engagements_finalises': engagements_finalises,
+            'taux_conversion': taux_conversion,
+            'total_vues_plan': total_vues_plan,
+            'total_vues_suivi': total_vues_suivi,
+            'total_connexions': total_connexions,
+            'total_seances': total_seances,
+            'total_messages': total_messages,
+            'vues_page_ressources': PageAnalytics.objects.filter(page_name='Centre de Ressources').values_list('view_count', flat=True).first() or 0,
+        }
+        
+        cache.set('admin_dashboard_context', context, 60 * 15)
     return render(request, "core/admin_dashboard/partials/accueil.html", context)
 
 def admin_api_professeurs(request):
@@ -2731,7 +2743,7 @@ def suivi_engagement(request, engagement_id):
         request.user.profile.nb_vues_suivi += 1
         request.user.profile.save(update_fields=['nb_vues_suivi'])
         
-    seances = engagement.seances.all().order_by('-date_seance')[:5]
+    seances = engagement.seances.prefetch_related('notions').order_by('-date_seance')[:5]
     
     return render(request, "core/suivi_engagement.html", {
         "engagement": engagement,
@@ -2752,7 +2764,7 @@ def toutes_seances(request, engagement_id):
     if not (is_parent_apprenant or is_prof or is_apprenant):
         raise Http404("Accès refusé.")
         
-    seances = engagement.seances.all().order_by('-date_seance')
+    seances = engagement.seances.prefetch_related('notions').order_by('-date_seance')
     
     mois = request.GET.get('mois')
     taux = request.GET.get('taux')

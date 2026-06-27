@@ -1,0 +1,176 @@
+127: top_professeurs = TeacherProfile.objects.filter(
+166: conversations = Conversation.objects.filter(
+244: if eng and eng.enfants_concernes.exists():
+245: enfants_liste = eng.enfants_concernes.all()
+248: for e in conv.engagements.all():
+249: if e.enfants_concernes.exists():
+250: enfants_liste = e.enfants_concernes.all()
+254: enfants_liste = conv.parent.parent.enfants.all()
+310: last_msg = conv.messages.order_by('-date_envoi').first()
+366: professeurs = TeacherProfile.objects.filter(
+422: parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
+508: Profile.objects.create(user=user, role=role, telephone=telephone)
+510: Abonnement.objects.create(
+543: user = User.objects.filter(email=email).first()
+569: user = User.objects.get(pk=uid)
+642: profile, _ = Profile.objects.get_or_create(user=request.user, defaults={"role": role, "telephone": telephone})
+647: if not request.user.abonnements.exists():
+648: Abonnement.objects.create(
+701: if parent and parent.enfants.exists():
+766: Diplome.objects.create(teacher=teacher, nom_diplome=nom_diplome, fichier_preuve=file)
+947: engs_tous = engagements.all()
+950: nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI).count()
+951: nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).exclude(type_engagement=EngagementType.ESSAI).count()
+954: unread_messages_count = Message.objects.filter(
+957: ).count()
+960: parents_favoris = teacher.parents_favoris.all()
+974: "badge_essais_programmes": engs_essais_programmes.count(),
+975: "badge_essais_confirmes": engs_essais_confirmes.count(),
+980: announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PROF', 'ALL']).order_by('-created_at').first()
+981: if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+998: if parent_instance and parent_instance.enfants.exists():
+1056: enfants = parent.enfants.all()
+1057: if not enfants.exists():
+1062: active_enfant = enfants.filter(id=enfant_id).first() if enfant_id else enfants.first()
+1066: recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
+1136: engagements_tous = engagements.all()
+1139: favoris = request.user.professeurs_favoris.all()
+1149: announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PARENT_APPRENANT', 'ALL']).order_by('-created_at').first()
+1164: "badge_essais_programmes": engs_essais_programmes.count(),
+1165: "badge_essais_confirmes": engs_essais_confirmes.count(),
+1168: if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+1236: base_recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
+1288: engagements = request.user.engagements_client.all().order_by("-date_creation")
+1296: engagements_tous = engagements.all()
+1299: abonnement = request.user.abonnements.first()
+1300: favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
+1318: "badge_essais_programmes": engs_essais_programmes.count(),
+1319: "badge_essais_confirmes": engs_essais_confirmes.count(),
+1323: announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PARENT_APPRENANT', 'ALL']).order_by('-created_at').first()
+1324: if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
+1355: Abonnement.objects.create(
+1374: VueProfil.objects.filter(professeur_vise=teacher_profile, date_consultation__lt=limit_date).delete()
+1400: vue_exists = VueProfil.objects.filter(
+1404: ).exists()
+1408: VueProfil.objects.create(
+1414: teacher_profile.nb_vues_total = VueProfil.objects.filter(professeur_vise=teacher_profile).count()
+1418: teacher_profile.nb_vues_mois = VueProfil.objects.filter(
+1421: ).count()
+1450: temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
+1454: ).count()
+1474: _nb_actifs = teacher.engagements.filter(statut_general=StatutGeneral.FINALISE).count()
+1507: ).count()
+1513: conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
+1520: parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
+1527: ).first()
+1534: ).first()
+1546: 'enfant_id': existing_engagement_obj.enfants_concernes.first().id if hasattr(existing_engagement_obj, 'enfants_concernes') and existing_engagement_obj.enfants_concernes.exists() else (existing_engagement_obj.enfants_concernes.id if hasattr(existing_engagement_obj.enfants_concernes, 'id') else None),
+1584: related_teachers = TeacherProfile.objects.filter(
+1590: if same_matiere.count() >= 4:
+1606: teacher = TeacherProfile.objects.get(slug=teacher_slug)
+1614: temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
+1618: ).count()
+1621: related_teachers = TeacherProfile.objects.filter(
+1626: if same_matiere.count() >= 4:
+1659: conv = Conversation.objects.filter(participants=request.user).filter(participants=teacher.user).first()
+1670: ).count()
+1677: parent_children = list(request.user.parent.enfants.all().values('id', 'prenom'))
+1683: ).first()
+1690: ).first()
+1702: 'enfant_id': existing_engagement_obj.enfants_concernes.first().id if hasattr(existing_engagement_obj, 'enfants_concernes') and hasattr(existing_engagement_obj.enfants_concernes, 'exists') and existing_engagement_obj.enfants_concernes.exists() else (existing_engagement_obj.enfants_concernes.id if hasattr(existing_engagement_obj, 'enfants_concernes') and hasattr(existing_engagement_obj.enfants_concernes, 'id') else None),
+1783: existing = Engagement.objects.filter(
+1786: ).exclude(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).first()
+1852: enfant = Enfant.objects.get(id=int(enfant_id))
+1861: if not engagement.enfants_concernes.exists() and hasattr(request.user, 'parent'):
+1862: enfants = request.user.parent.enfants.all()
+1863: if enfants.count() == 1:
+1864: engagement.enfants_concernes.add(enfants.first())
+1941: conversation = Conversation.objects.filter(
+1944: ).first()
+1947: conversation = Conversation.objects.create(
+1964: teacher.nb_engagements_confirmes = Engagement.objects.filter(
+1967: ).exclude(type_engagement=EngagementType.ESSAI).count()
+1972: msg = Message.objects.create(
+1985: responses = Engagement.objects.filter(
+2052: if request.user not in conversation.participants.all():
+2064: raw_messages = conversation.messages.all().order_by("date_envoi")
+2111: linked_engagements = conversation.engagements.all().order_by("-date_creation")
+2150: parent_children = request.user.parent.enfants.all()
+2152: parent_children = conversation.parent.parent.enfants.all()
+2167: if eng and eng.enfants_concernes.exists():
+2168: enfants_liste = eng.enfants_concernes.all()
+2171: for e in conversation.engagements.all():
+2172: if e.enfants_concernes.exists():
+2173: enfants_liste = e.enfants_concernes.all()
+2177: enfants_liste = other_user.parent.enfants.all()
+2230: if request.user not in conversation.participants.all():
+2270: message = Message.objects.create(
+2314: if request.user not in conversation.participants.all():
+2326: if new_messages.exists():
+2328: if unread_received.exists():
+2417: enfant = Enfant.objects.filter(id=enfant_id).first()
+2447: teacher.nb_engagements_finalises = Engagement.objects.filter(professeur=teacher, statut_general=StatutGeneral.FINALISE).count()
+2470: total_inscrits = User.objects.filter(is_superuser=False).count()
+2471: total_parents = Profile.objects.filter(role=Profile.ROLE_PARENT).count()
+2472: total_apprenants = Profile.objects.filter(role=Profile.ROLE_APPRENANT).count()
+2473: total_professeurs = Profile.objects.filter(role=Profile.ROLE_PROF).count()
+2478: engagements = Engagement.objects.all()
+2481: total_engagements = engagements.count()
+2483: evaluations = Evaluation.objects.all()
+2484: total_evaluations = evaluations.count()
+2492: parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+2493: apprenant_recherches = Apprenant.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
+2496: parent_profils = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+2497: apprenant_profils = Apprenant.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
+2500: total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
+2501: total_vues_plan = Profile.objects.aggregate(total=Sum('nb_vues_page_plan'))['total'] or 0
+2502: total_vues_suivi = Profile.objects.aggregate(total=Sum('nb_vues_suivi'))['total'] or 0
+2503: total_connexions = Profile.objects.aggregate(total=Sum('nb_connexions'))['total'] or 0
+2505: total_seances = Seance.objects.count()
+2506: total_messages = Message.objects.count()
+2508: essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
+2509: essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
+2510: essais_realises = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_REALISE).count()
+2511: engagements_finalises = engagements.filter(statut_general__in=[StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).count()
+2520: engagements_prioritaires = Engagement.objects.filter(
+2551: 'vues_page_ressources': PageAnalytics.objects.filter(page_name='Centre de Ressources').values_list('view_count', flat=True).first() or 0,
+2559: professeurs = TeacherProfile.objects.filter(statut_de_validation=statut).order_by('-user__date_joined')
+2734: seances = engagement.seances.all().order_by('-date_seance')[:5]
+2755: seances = engagement.seances.all().order_by('-date_seance')
+2798: if Seance.objects.filter(engagement=engagement, date_seance=date_seance).exists():
+2821: seance = Seance.objects.create(
+2835: NotionSeance.objects.create(
+2898: TeacherProfile.objects.filter(id__in=valid_ids).update(
+2915: if request.user in prof.parents_favoris.all():
+3003: 'student_id': engagement.enfants_concernes.first().id if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.id if hasattr(engagement.parent_apprenant, 'apprenant') else None),
+3004: 'student_name': engagement.enfants_concernes.first().prenom if engagement.enfants_concernes.exists() else (engagement.parent_apprenant.apprenant.nom if hasattr(engagement.parent_apprenant, 'apprenant') else "Moi-mÛme"),
+3033: if request.user not in conversation.participants.all():
+3047: abonnement = request.user.abonnements.first()
+3049: abonnement = Abonnement.objects.create(user=request.user)
+3070: if request.user not in conversation.participants.all():
+3073: if request.user in conversation.archivee_par.all():
+3089: if request.user not in conversation.participants.all():
+3112: if Message.objects.filter(destinataire=request.user, lu=False, date_envoi__gt=last_check).exists():
+3117: user_engs = Engagement.objects.filter(
+3120: if user_engs.filter(date_mise_a_jour__gt=last_check).exists():
+3167: announcement = ProfessorAnnouncement.objects.get(pk=pk, is_active=True)
+3187: ProfessorAnnouncement.objects.filter(is_active=True).update(is_active=False)
+3250: local_txn = TransactionFedaPay.objects.get(transaction_id=str(transaction_id))
+3317: local_txn = TransactionFedaPay.objects.get(transaction_id=str(transaction_id), type_transaction='ABONNEMENT')
+3325: abonnement = local_txn.user.abonnements.order_by('-id').first()
+3356: engagement = Engagement.objects.get(id=engagement_id)
+3368: evaluation, created = Evaluation.objects.update_or_create(
+3482: enfant = Enfant.objects.get(id=int(enfant_id))
+3497: 'enfants': request.user.parent.enfants.all() if hasattr(request.user, 'parent') else []
+3513: analytics, created = PageAnalytics.objects.get_or_create(page_name="Centre de Ressources")
+3514: PageAnalytics.objects.filter(pk=analytics.pk).update(view_count=F('view_count') + 1)
+3516: ressources = RessourceProfesseur.objects.filter(actif=True)
+3517: faqs = FAQProfesseur.objects.filter(actif=True)
+3518: guide_officiel = ressources.filter(est_guide_officiel=True).first()
+3535: ressources = RessourceProfesseur.objects.all().order_by('ordre_affichage', '-date_creation')
+3539: faqs = FAQProfesseur.objects.all().order_by('ordre_affichage')
+3549: RessourceProfesseur.objects.filter(id=res_id).delete()
+3568: RessourceProfesseur.objects.all().update(est_guide_officiel=False)
+3582: RessourceProfesseur.objects.create(
+3601: FAQProfesseur.objects.filter(id=faq_id).delete()
+3623: FAQProfesseur.objects.create(

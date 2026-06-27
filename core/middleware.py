@@ -34,6 +34,10 @@ class ProfileCompletionMiddleware:
         if not request.user.is_authenticated:
             return self.get_response(request)
 
+        # OPTIMISATION NEON : Si le profil a déjà été vérifié comme complet durant cette session, on passe
+        if request.session.get('profile_is_complete'):
+            return self.get_response(request)
+
         if request.path.startswith("/admin/"):
             return self.get_response(request)
         if any(request.path.startswith(p) for p in EXEMPT_PATH_PREFIXES):
@@ -87,6 +91,8 @@ class ProfileCompletionMiddleware:
                 if url_name != "apprenant_create_profile":
                     return redirect("apprenant_create_profile")
 
+        # Si on arrive ici, le profil est complet. On le met en cache dans la session.
+        request.session['profile_is_complete'] = True
         return self.get_response(request)
 
 
