@@ -124,7 +124,7 @@ def home(request):
     from django.db.models import F
     
     # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
-    top_professeurs = TeacherProfile.objects.filter(
+    top_professeurs = TeacherProfile.objects.select_related('user').filter(
         statut_de_validation=ValidationStatus.VALIDE
     ).order_by('-profil_complet', '?')[:24]
 
@@ -363,7 +363,7 @@ def recherche(request):
             request.user.apprenant.save(update_fields=['nb_recherches'])
 
     from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
-    professeurs = TeacherProfile.objects.filter(
+    professeurs = TeacherProfile.objects.select_related('user').filter(
         statut_de_validation=ValidationStatus.VALIDE
     )
     
@@ -931,24 +931,25 @@ def prof_dashboard(request):
         return redirect("prof_create_profile")
 
     # 1. Gestion des Engagements
-    engagements = teacher.engagements.select_related(
-        'parent_apprenant'
+    engagements_base = teacher.engagements.select_related(
+        'parent_apprenant', 'parent_apprenant__profile', 'parent_apprenant__apprenant'
     ).prefetch_related(
         'enfants_concernes', 'conversation'
     ).order_by("-date_creation")
     
-    for eng in engagements:
+    engs_tous = list(engagements_base)
+    
+    for eng in engs_tous:
         eng.check_and_update_essai_status()
     
-    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
-    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
-    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
-    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
-    engs_tous = engagements.all()
+    engs_essais_programmes = [e for e in engs_tous if e.statut_general == StatutGeneral.ESSAI_PROGRAMME]
+    engs_essais_confirmes = [e for e in engs_tous if e.statut_general in [StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]]
+    engs_finalises = [e for e in engs_tous if e.statut_general == StatutGeneral.FINALISE]
+    engs_termines = [e for e in engs_tous if e.statut_general == StatutGeneral.TERMINE]
 
-    # 2. Statistiques dynamiques
-    nb_actifs = engagements.filter(statut_general=StatutGeneral.FINALISE).exclude(type_engagement=EngagementType.ESSAI).count()
-    nb_termines = engagements.filter(statut_general=StatutGeneral.TERMINE).exclude(type_engagement=EngagementType.ESSAI).count()
+    # 2. Statistiques dynamiques (calculées en mémoire pour éviter d'autres requêtes)
+    nb_actifs = sum(1 for e in engs_tous if e.statut_general == StatutGeneral.FINALISE and e.type_engagement != EngagementType.ESSAI)
+    nb_termines = sum(1 for e in engs_tous if e.statut_general == StatutGeneral.TERMINE and e.type_engagement != EngagementType.ESSAI)
     
     # 3. Centre de Notifications (Messages non lus)
     unread_messages_count = Message.objects.filter(
@@ -1126,17 +1127,17 @@ def parent_dashboard(request):
     engagements = engagements_base.filter(
         Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
     ).distinct().order_by("-date_creation")
-    for eng in engagements:
+    engagements_tous = list(engagements)
+    for eng in engagements_tous:
         eng.check_and_update_essai_status()
 
-    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
-    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
-    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
-    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
-    engagements_tous = engagements.all()
+    engs_essais_programmes = [e for e in engagements_tous if e.statut_general == StatutGeneral.ESSAI_PROGRAMME]
+    engs_essais_confirmes = [e for e in engagements_tous if e.statut_general in [StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]]
+    engs_finalises = [e for e in engagements_tous if e.statut_general == StatutGeneral.FINALISE]
+    engs_termines = [e for e in engagements_tous if e.statut_general == StatutGeneral.TERMINE]
 
     # 4. Données additionnelles
-    favoris = request.user.professeurs_favoris.all()
+    favoris = request.user.professeurs_favoris.select_related('user').all()
     abonnement = getattr(parent, "abonnement", None)
     enfant_form = EnfantForm()
 
@@ -1290,18 +1291,18 @@ def apprenant_dashboard(request):
     ).prefetch_related(
         'enfants_concernes', 'conversation', 'professeur__parents_favoris'
     ).order_by("-date_creation")
-    for eng in engagements:
+    engagements_tous = list(engagements)
+    for eng in engagements_tous:
         eng.check_and_update_essai_status()
 
-    engs_essais_programmes = engagements.filter(statut_general=StatutGeneral.ESSAI_PROGRAMME)
-    engs_essais_confirmes = engagements.filter(statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE])
-    engs_finalises = engagements.filter(statut_general=StatutGeneral.FINALISE)
-    engs_termines = engagements.filter(statut_general=StatutGeneral.TERMINE)
-    engagements_tous = engagements.all()
+    engs_essais_programmes = [e for e in engagements_tous if e.statut_general == StatutGeneral.ESSAI_PROGRAMME]
+    engs_essais_confirmes = [e for e in engagements_tous if e.statut_general in [StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]]
+    engs_finalises = [e for e in engagements_tous if e.statut_general == StatutGeneral.FINALISE]
+    engs_termines = [e for e in engagements_tous if e.statut_general == StatutGeneral.TERMINE]
 
     # 3. Abonnement & Favoris
     abonnement = request.user.abonnements.first()
-    favoris = TeacherProfile.objects.filter(parents_favoris=request.user)
+    favoris = TeacherProfile.objects.select_related('user').filter(parents_favoris=request.user)
 
     # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
     favoris = annotate_teachers_with_ratings(favoris).order_by(
@@ -1430,7 +1431,7 @@ def track_teacher_view(request, teacher_profile):
 
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
-    teacher = get_object_or_404(TeacherProfile.objects.prefetch_related('evaluations_recues', 'diplomes'), slug=teacher_slug)
+    teacher = get_object_or_404(TeacherProfile.objects.select_related('user').prefetch_related('evaluations_recues', 'diplomes'), slug=teacher_slug)
     
     is_new_view = track_teacher_view(request, teacher)
     
@@ -1607,7 +1608,7 @@ def professeur_detail(request, teacher_slug):
 def api_teacher_profile(request, teacher_slug):
     """API pour récupérer les données du professeur (pour le side panel) avec gestion d'erreur robuste"""
     try:
-        teacher = TeacherProfile.objects.get(slug=teacher_slug)
+        teacher = TeacherProfile.objects.select_related('user').get(slug=teacher_slug)
         
         track_teacher_view(request, teacher)
         
@@ -2983,7 +2984,12 @@ def api_toggle_essai(request):
 @login_required
 def api_engagement_details(request, engagement_id):
     """API pour récupérer les détails complets d'un engagement (pour les modaux)."""
-    engagement = get_object_or_404(Engagement, id=engagement_id)
+    engagement = get_object_or_404(
+        Engagement.objects.select_related(
+            'professeur', 'parent_apprenant', 'parent_apprenant__apprenant', 'parent_apprenant__profile'
+        ).prefetch_related('enfants_concernes'), 
+        id=engagement_id
+    )
     
     # Sécurité: Seuls les acteurs de l'engagement peuvent voir les détails
     is_prof = hasattr(request.user, 'teacher_profile') and engagement.professeur == request.user.teacher_profile
