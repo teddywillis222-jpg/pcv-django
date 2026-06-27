@@ -4,7 +4,6 @@ from .models import TeacherProfile
 from .choices import ValidationStatus
 
 class StaticViewSitemap(Sitemap):
-    changefreq = 'weekly'
 
     def items(self):
         # Liste blanche explicite : garantit qu'aucune page privée/auth ne fuité
@@ -13,6 +12,7 @@ class StaticViewSitemap(Sitemap):
             'recherche', 
             'prof_intro', 
             'faq', 
+            'charte_essai',
             'support', 
             'cgu', 
             'politique_confidentialite'
@@ -21,15 +21,29 @@ class StaticViewSitemap(Sitemap):
     def location(self, item):
         return reverse(item)
 
+    def changefreq(self, item):
+        freqs = {
+            'home': 'weekly',
+            'recherche': 'daily',
+            'prof_intro': 'monthly',
+            'faq': 'monthly',
+            'charte_essai': 'monthly',
+            'support': 'monthly',
+            'cgu': 'yearly',
+            'politique_confidentialite': 'yearly',
+        }
+        return freqs.get(item, 'monthly')
+
     def priority(self, item):
         priorities = {
             'home': 1.0,
-            'recherche': 0.8,
+            'recherche': 0.9,
             'prof_intro': 0.8,
-            'faq': 0.6,
+            'faq': 0.9,
+            'charte_essai': 0.8,
             'support': 0.6,
-            'cgu': 0.5,
-            'politique_confidentialite': 0.5,
+            'cgu': 0.4,
+            'politique_confidentialite': 0.4,
         }
         return priorities.get(item, 0.5)
 

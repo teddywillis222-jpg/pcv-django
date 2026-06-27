@@ -873,7 +873,7 @@
     {% endblock %}
 
     {% block footer %}
-    {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'prof_intro' or request.resolver_match.url_name == 'cgu' or request.resolver_match.url_name == 'faq' or request.resolver_match.url_name == 'politique_confidentialite' %}
+    {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'prof_intro' or request.resolver_match.url_name == 'cgu' or request.resolver_match.url_name == 'faq' or request.resolver_match.url_name == 'politique_confidentialite' or request.resolver_match.url_name == 'charte_essai' %}
     <!-- Footer -->
     <footer style="background: #1e293b; color: white; padding: 2rem 1rem 1rem;">
         <div class="container" style="max-width: 1200px; margin: 0 auto;">
@@ -898,7 +898,13 @@
                             <a href="{% url 'recherche' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Rechercher un prof</a>
                         </li>
                         <li style="margin-bottom: 0.25rem;">
-                            <a href="{% url 'faq' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">FAQ</a>
+                            <a href="{% url 'faq' %}#section-parent" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">FAQ Parents & Apprenants</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'faq' %}#section-prof" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">FAQ Professeurs</a>
+                        </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'charte_essai' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Charte de l'Essai Gratuit</a>
                         </li>
                         <li style="margin-bottom: 0.25rem;">
                             <a href="https://wa.me/message/QROCDDNKZIXAE1" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;" target="_blank">Support</a>
@@ -932,10 +938,13 @@
                         <li style="margin-bottom: 0.25rem;">
                             <a href="{% url 'politique_confidentialite' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Confidentialité</a>
                         </li>
+                        <li style="margin-bottom: 0.25rem;">
+                            <a href="{% url 'charte_essai' %}" style="color: #94a3b8; text-decoration: none; transition: color 0.3s ease; font-size: 0.9rem;">Charte Essai Gratuit</a>
+                        </li>
                     </ul>
                 </div>
 
-                <!-- Colonne D: Réseaux Sociaux -->
+                <!-- Colonne E: Réseaux Sociaux -->
                 <div class="footer-column">
                     <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc;">Suivez-nous</h4>
                     <ul style="list-style: none; padding: 0; margin: 0;">
