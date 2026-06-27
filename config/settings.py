@@ -40,6 +40,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-qsis4-wx7&s6c&6l0@arlw&44-
 
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
+MAINTENANCE_MODE = os.getenv('MAINTENANCE_MODE', 'False').lower() == 'true'
+
 # Emails des comptes de test (pour ignorer leurs actions dans les statistiques)
 TEST_ACCOUNT_EMAILS = [email.strip() for email in os.getenv('TEST_ACCOUNT_EMAILS', '').split(',') if email.strip()]
 
@@ -122,10 +124,10 @@ ACCOUNT_SIGNUP_FORM_CLASS = 'core.allauth_forms.CustomSignupForm'
 SILENCED_SYSTEM_CHECKS = ['account.W001', 'account.W002']
 
 MIDDLEWARE = [
-
+    'core.middleware.MaintenanceMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- IL DOIT ÃTRE ICI
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- IL DOIT ÃŠTRE ICI
 
     'django.contrib.sessions.middleware.SessionMiddleware',
 

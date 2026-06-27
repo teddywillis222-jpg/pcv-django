@@ -86,3 +86,56 @@ class ProfileCompletionMiddleware:
                     return redirect("apprenant_create_profile")
 
         return self.get_response(request)
+
+from django.http import HttpResponse
+from django.conf import settings
+
+class MaintenanceMiddleware:
+    """
+    Middleware qui intercepte TOUTES les requêtes et renvoie une page de maintenance HTML pure
+    si MAINTENANCE_MODE est True dans settings.py, sans faire AUCUN appel à la base de données.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if getattr(settings, 'MAINTENANCE_MODE', False):
+            # Page HTML statique pour ne pas dépendre de la base de données ni du moteur de template
+            html_content = """
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Maintenance - Prof Chez Vous</title>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; color: #1e293b; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; padding: 20px; box-sizing: border-box; }
+                    .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 600px; width: 100%; border-top: 6px solid #10b981; }
+                    h1 { color: #0f172a; margin-top: 0; font-size: 24px; font-weight: 800; }
+                    p { line-height: 1.6; color: #475569; font-size: 16px; margin-bottom: 24px; }
+                    .action-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 20px; border-radius: 12px; text-align: left; margin-top: 20px; }
+                    .action-box h3 { margin: 0 0 10px 0; color: #166534; font-size: 16px; }
+                    .action-box p { margin: 0; font-size: 15px; color: #15803d; }
+                    svg { width: 64px; height: 64px; color: #10b981; margin-bottom: 20px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <h1>Améliorations en cours !</h1>
+                    <p>Prof Chez Vous est temporairement indisponible. Nous effectuons une mise à niveau technique majeure pour vous offrir une plateforme encore plus rapide et performante.</p>
+                    <p><strong>Nous serons de retour en ligne le 1er Juillet.</strong></p>
+                    
+                    <div class="action-box">
+                        <h3>📣 Message spécial pour nos Professeurs :</h3>
+                        <p>Profitez de cette courte pause pour préparer vos éléments (photo professionnelle, scan de vos diplômes et carte d'identité). Dès la réouverture, une grande campagne sera lancée pour valider vos profils à 100% et vous proposer de nouveaux élèves !</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            return HttpResponse(html_content, status=503)
+            
+        return self.get_response(request)
