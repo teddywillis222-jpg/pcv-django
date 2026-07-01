@@ -972,8 +972,8 @@ def prof_dashboard(request):
         "completion": teacher.completion_percentage,
         "nb_actifs": nb_actifs,
         "nb_termines": nb_termines,
-        "badge_essais_programmes": engs_essais_programmes.count(),
-        "badge_essais_confirmes": engs_essais_confirmes.count(),
+        "badge_essais_programmes": len(engs_essais_programmes),
+        "badge_essais_confirmes": len(engs_essais_confirmes),
         "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
     }
 
@@ -1162,8 +1162,8 @@ def parent_dashboard(request):
         "favoris": favoris,
         "enfant_form": enfant_form,
         "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
-        "badge_essais_programmes": engs_essais_programmes.count(),
-        "badge_essais_confirmes": engs_essais_confirmes.count(),
+        "badge_essais_programmes": len(engs_essais_programmes),
+        "badge_essais_confirmes": len(engs_essais_confirmes),
     }
     
     if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
@@ -1320,8 +1320,8 @@ def apprenant_dashboard(request):
         "abonnement": abonnement,
         "favoris": favoris,
         "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
-        "badge_essais_programmes": engs_essais_programmes.count(),
-        "badge_essais_confirmes": engs_essais_confirmes.count(),
+        "badge_essais_programmes": len(engs_essais_programmes),
+        "badge_essais_confirmes": len(engs_essais_confirmes),
     }
 
     # Annonce (Parents/Apprenants)
