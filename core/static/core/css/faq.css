@@ -158,6 +158,10 @@
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
+    .faq-wrapper {
+        padding: 1.5rem 10px;
+    }
+    
     .faq-header h1 {
         font-size: 2rem;
     }
