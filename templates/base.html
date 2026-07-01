@@ -460,121 +460,72 @@
         .mobile-menu {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 100%;
+            left: -100%;
+            width: 280px;
+            max-width: 85vw;
             height: 100vh;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: white;
             z-index: 2000;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            opacity: 0;
-            visibility: hidden;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            overflow-y: auto;
         }
 
         .mobile-menu.active {
-            right: 0;
-            opacity: 1;
-            visibility: visible;
+            left: 0;
         }
 
         .mobile-menu-header {
-            position: absolute;
-            top: 1.5rem;
-            left: 1.5rem;
-            right: 1.5rem;
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1.5rem;
         }
 
         .mobile-menu-close {
-            background: transparent;
+            background: #f1f5f9;
+            color: #64748b;
             border: none;
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-        }
-
-        .mobile-menu-close:hover {
-            background: #f3f4f6;
-        }
-
-        .mobile-menu-nav {
-            width: 100%;
-            text-align: center;
-        }
-
-        .mobile-menu-nav a {
-            display: inline-block;
-            padding: 1.25rem;
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 800;
-            font-size: 2rem;
-            transition: all 0.3s ease;
-            position: relative;
-            letter-spacing: -0.05em;
-        }
-
-        .mobile-menu-nav a::after {
-            content: "";
-            position: absolute;
-            bottom: 0.8rem;
-            left: 50%;
-            width: 0;
-            height: 4px;
-            background: var(--success-600);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-
-        .mobile-menu-nav a:hover {
-            color: var(--success-600);
-            transform: scale(1.05);
-        }
-
-        .mobile-menu-nav a:hover::after {
-            width: 40%;
-        }
-
-        .mobile-menu-actions {
-            margin-top: 3rem;
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .auth-action-row {
-            display: flex;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        .btn-logout-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #fef2f2;
-            color: #ef4444;
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
-        .btn-logout-icon:hover {
-            background: #fee2e2;
+        .mobile-menu-close:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .sidebar-menu-item:hover,
+        .sidebar-menu-item.active {
+            background: var(--primary-soft);
+            color: var(--primary);
         }
 
         .mobile-menu-overlay {
@@ -609,34 +560,10 @@
             .navbar-nav {
                 display: none;
             }
-
-            /* Dashboard Sidebar Mobile Drawer Styles */
-            .dash-sidebar {
-                position: fixed !important;
-                top: 0 !important;
-                left: -100% !important;
-                width: 280px !important;
-                max-width: 85vw !important;
-                height: 100vh !important;
-                z-index: 2000 !important;
-                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                display: flex !important;
-                padding-top: 80px !important; /* Below the mobile header */
-                background: white !important;
-                box-shadow: 4px 0 15px rgba(0,0,0,0.05);
-                overflow-y: auto;
+            /* Masquer le logo textuel sur mobile pour aérer le header */
+            .navbar-brand .logo-image {
+                display: none;
             }
-
-            .dash-sidebar.active {
-                left: 0 !important;
-            }
-
-            .dash-sidebar .sidebar-menu-item,
-            .dash-sidebar a {
-                width: 100%;
-                box-sizing: border-box;
-            }
-
 
             .navbar-actions .btn-nav,
             .navbar-actions .btn-nav-outline,
@@ -718,7 +645,7 @@
     <header class="navbar">
         <div class="navbar-container">
             <a href="{% url 'home' %}" class="navbar-brand" style="padding-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <img src="{% static 'core/images/logo_pr.svg' %}" alt="Logo Prof Chez Vous" style="height: 36px; width: 36px; border-radius: 8px;">
+                <img src="{% static 'core/images/logo_pr.svg' %}" alt="Logo Prof Chez Vous" class="logo-image" style="height: 36px; width: 36px; border-radius: 8px;">
                 <span class="brand-text" style="position: relative; display: inline-block;">
                     Prof Chez Vous
                     {% if request.user.is_authenticated and request.user.profile %}
@@ -806,51 +733,128 @@
         </div>
     </header>
     
-    <!-- Menu Mobile -->
+    <!-- Menu Mobile (Tiroir) -->
     <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
     <div class="mobile-menu">
         <div class="mobile-menu-header">
-            <div class="navbar-brand" style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                <img src="{% static 'core/images/logo_pr.svg' %}" alt="Logo Prof Chez Vous" style="height: 32px; width: 32px; border-radius: 8px;">
-                ProfChezVous
+            <div class="navbar-brand" style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark);">
+                Menu Principal
             </div>
             <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 6L6 18M6 6l12 12"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
         </div>
         
-        <nav class="mobile-menu-nav">
-            <a href="{% url 'recherche' %}" onclick="closeMobileMenu()">Rechercher</a>
-            <a href="{% url 'home' %}" onclick="closeMobileMenu()">Accueil</a>
-            <a href="{% url 'faq' %}" onclick="closeMobileMenu()">Aide & FAQ</a>
-            <a href="https://wa.me/message/QROCDDNKZIXAE1" onclick="closeMobileMenu()" target="_blank">Support</a>
+        <nav style="width: 100%; display: flex; flex-direction: column; gap: 0.25rem;">
+            
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem; margin-top: 0.5rem; padding-left: 0.5rem; font-weight: 800;">Général</div>
+            <a href="{% url 'home' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Accueil
+            </a>
+            <a href="{% url 'recherche' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Rechercher un prof
+            </a>
+            <a href="{% url 'faq' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Aide & FAQ
+            </a>
+            <a href="https://wa.me/message/QROCDDNKZIXAE1" class="sidebar-menu-item" onclick="closeMobileMenu()" target="_blank">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Support WhatsApp
+            </a>
+
             {% if user.is_authenticated %}
-            <a href="{% url 'messagerie' %}" onclick="closeMobileMenu()">Messages</a>
-            {% endif %}
-        </nav>
-        
-        <div class="mobile-menu-actions">
-            {% if user.is_authenticated %}
-            <div class="auth-action-row">
-                <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="flex: 1; text-align: center; display: block;" onclick="closeMobileMenu()">Mon espace</a>
-                <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.75rem 0;">
+                
+                {% if user.profile.role == 'PARENT' or user.profile.role == 'APPRENANT' %}
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Espace {{ user.profile.get_role_display }}</div>
+                    
+                    {% if '/dashboard/' in request.path %}
+                        <a href="javascript:void(0)" class="sidebar-menu-item" onclick="if(typeof showSection === 'function') showSection('main-dash'); closeMobileMenu();">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Dashboard
+                        </a>
+                        <a href="javascript:void(0)" class="sidebar-menu-item" onclick="if(typeof showSection === 'function') showSection('favoris-section'); closeMobileMenu();">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            Mes Favoris
+                        </a>
+                        <a href="javascript:void(0)" class="sidebar-menu-item" onclick="if(typeof showSection === 'function') showSection('history-section'); closeMobileMenu();">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Historique
+                        </a>
+                    {% else %}
+                        <a href="{% url 'post_signup_redirect' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Dashboard
+                        </a>
+                    {% endif %}
+                    
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.75rem 0;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & Paramètres</div>
+                    <a href="{% url 'gestion_plan' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Gérer mon plan
+                    </a>
+                    <a href="{% url 'messagerie' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Messagerie
+                    </a>
+
+                {% elif user.profile.role == 'TEACHER' %}
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Mon Espace (Prof)</div>
+                    
+                    {% if '/dashboard/' in request.path %}
+                        <a href="javascript:void(0)" class="sidebar-menu-item" onclick="if(typeof showSection === 'function') showSection('section-main', this); closeMobileMenu();">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Tableau de bord
+                        </a>
+                        <a href="javascript:void(0)" class="sidebar-menu-item" onclick="if(typeof showSection === 'function') showSection('section-settings', this); closeMobileMenu();">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            Paramètres
+                        </a>
+                    {% else %}
+                        <a href="{% url 'post_signup_redirect' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            Tableau de bord
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'prof_edit_profile' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        Modifier mon profil
+                    </a>
+                    
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.75rem 0;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte</div>
+                    <a href="{% url 'messagerie' %}" class="sidebar-menu-item" onclick="closeMobileMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        Messagerie
+                    </a>
+                {% endif %}
+
+                <form action="{% url 'logout' %}" method="post" style="margin: 1rem 0;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout-icon" title="Se déconnecter">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
+                    <button type="submit" class="sidebar-menu-item" style="color: #ef4444; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Déconnexion
                     </button>
                 </form>
-            </div>
+
             {% else %}
-            <a href="{% url 'login' %}" class="btn-nav-outline" style="width: 100%; text-align: center;">Se connecter</a>
-            <a href="{% url 'signup' %}" class="btn-nav" style="width: 100%; text-align: center;">S'inscrire</a>
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.75rem 0;">
+                <a href="{% url 'login' %}" class="sidebar-menu-item" style="justify-content: center; background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; margin-bottom: 0.5rem;" onclick="closeMobileMenu()">
+                    Se connecter
+                </a>
+                <a href="{% url 'signup' %}" class="sidebar-menu-item" style="justify-content: center; background: var(--primary); color: white;" onclick="closeMobileMenu()">
+                    S'inscrire
+                </a>
             {% endif %}
-        </div>
+        </nav>
     </div>
     {% endblock %}
 
