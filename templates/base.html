@@ -610,6 +610,34 @@
                 display: none;
             }
 
+            /* Dashboard Sidebar Mobile Drawer Styles */
+            .dash-sidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: -100% !important;
+                width: 280px !important;
+                max-width: 85vw !important;
+                height: 100vh !important;
+                z-index: 2000 !important;
+                transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                display: flex !important;
+                padding-top: 80px !important; /* Below the mobile header */
+                background: white !important;
+                box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+                overflow-y: auto;
+            }
+
+            .dash-sidebar.active {
+                left: 0 !important;
+            }
+
+            .dash-sidebar .sidebar-menu-item,
+            .dash-sidebar a {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+
             .navbar-actions .btn-nav,
             .navbar-actions .btn-nav-outline,
             .navbar-actions .logout-form {
@@ -743,12 +771,16 @@
                 <a href="{% url 'signup' %}" class="btn-nav">S'inscrire</a>
                 {% endif %}
                 
-                    <!-- Mobile Icons Group: Home/Login + Burger -->
+                    <!-- Mobile Icons Group: Home/Login + Messenger + Burger -->
                     <div class="mobile-icons-group" id="mobileIconsGroup">
                         {% if user.is_authenticated %}
-                        <a href="{% url 'post_signup_redirect' %}" id="mobileHomeBtn" class="mobile-icon-btn" title="Mon espace">
+                        <a href="{% url 'post_signup_redirect' %}" id="mobileHomeBtn" class="mobile-icon-btn {% if request.path == '/' or '/dashboard/' in request.path %}icon-active{% endif %}" title="Mon espace">
                             <!-- Home Icon -->
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                        </a>
+                        <a href="{% url 'messagerie' %}" class="mobile-icon-btn {% if '/messagerie/' in request.path %}icon-active{% endif %}" title="Messagerie">
+                            <!-- Messenger Icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         </a>
                         {% else %}
                         <a href="{% url 'login' %}" id="mobileLoginBtn" class="mobile-icon-btn" title="Se connecter">
@@ -802,14 +834,14 @@
         <div class="mobile-menu-actions">
             {% if user.is_authenticated %}
             <div class="auth-action-row">
-                <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="flex: 1; text-align: center; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 16px;">Mon espace</a>
-                <form action="{% url 'logout' %}" method="post" class="logout-form" style="width: auto;">
+                <a href="{% url 'post_signup_redirect' %}" class="btn-nav" style="flex: 1; text-align: center; display: block;" onclick="closeMobileMenu()">Mon espace</a>
+                <form action="{% url 'logout' %}" method="post" style="margin: 0;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout-icon" title="Déconnexion">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                    <button type="submit" class="btn-logout-icon" title="Se déconnecter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
                         </svg>
                     </button>
                 </form>

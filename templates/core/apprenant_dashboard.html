@@ -450,29 +450,37 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-menu-item active" onclick="showSection('main-dash')">
+                <!-- Section Navigation Principale -->
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-gray); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Navigation</div>
+                <a href="#" class="sidebar-menu-item active" onclick="showSection('main-dash'); closeMobileMenu();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                     Dashboard
                 </a>
-                <a href="{% url 'profil_eleve' 'apprenant' apprenant.id %}" class="sidebar-menu-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Mon Profil Complet
-                </a>
-                <a href="#" class="sidebar-menu-item" onclick="showSection('favoris-section')">
+                <a href="#" class="sidebar-menu-item" onclick="showSection('favoris-section'); closeMobileMenu();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     Mes Favoris
                 </a>
-                <a href="{% url 'gestion_plan' %}" class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-item" onclick="showSection('history-section'); closeMobileMenu();">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Historique
+                </a>
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.5rem 0;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-gray); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Mon Profil</div>
+                <a href="{% url 'profil_eleve' 'apprenant' apprenant.id %}" class="sidebar-menu-item" onclick="closeMobileMenu();">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Profil Complet
+                </a>
+                
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 0.5rem 0;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-gray); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & Paramètres</div>
+                <a href="{% url 'gestion_plan' %}" class="sidebar-menu-item" onclick="closeMobileMenu();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     Gérer mon plan
                 </a>
-                <a href="{% url 'messagerie' %}" class="sidebar-menu-item">
+                <a href="{% url 'messagerie' %}" class="sidebar-menu-item" onclick="closeMobileMenu();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     Messagerie
-                </a>
-                <a href="#" class="sidebar-menu-item" onclick="showSection('history-section')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Historique
                 </a>
             </nav>
         </div>
@@ -486,29 +494,7 @@
         </form>
     </aside>
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="showSection('main-dash')" title="Accueil">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-            <span class="nav-label">Accueil</span>
-        </a>
-        <a href="#" class="nav-item" onclick="showSection('favoris-section')" title="Favoris">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span class="nav-label">Favoris</span>
-        </a>
-        <a href="#" class="nav-item" onclick="showSection('history-section')" title="Historique">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span class="nav-label">Historique</span>
-        </a>
-        <a href="{% url 'messagerie' %}" class="nav-item" title="Messages">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span class="nav-label">Messages</span>
-        </a>
-        <a href="{% url 'gestion_plan' %}" class="nav-item" title="Mon plan">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-            <span class="nav-label">Mon plan</span>
-        </a>
-    </nav>
+
 
     <!-- Main Content -->
     <main style="min-width: 0;">
