@@ -442,6 +442,14 @@
         // Close sidebar on mobile if needed (optional)
     }
 
+    // Auto-open section from URL hash (e.g. /prof/dashboard/#section-settings)
+    (function() {
+        var hash = window.location.hash.replace('#', '');
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        }
+    })();
+
     async function toggleEssai() {
         const container = document.getElementById('btnToggleEssaiContainer');
         const txt = document.getElementById('txtToggleEssai');

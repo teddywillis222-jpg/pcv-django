@@ -870,6 +870,14 @@
         });
     }
 
+    // Auto-open section from URL hash (e.g. /apprenant/dashboard/#favoris-section)
+    (function() {
+        var hash = window.location.hash.replace('#', '');
+        if (hash && document.getElementById(hash)) {
+            showSection(hash);
+        }
+    })();
+
     async function openDetailModal(id) {
         const modal = document.getElementById('detailModal');
         const body = document.getElementById('modal-body');
