@@ -531,23 +531,11 @@ select.pcv-multi-select,
     <!-- Header SEO -->
     <div class="search-header">
         <div class="search-container">
-            <h1 class="search-title">
-                {% if matiere and localisation %}
-                    Cours de {{ matiere }} à {{ localisation }}
-                {% elif matiere %}
-                    Professeurs de {{ matiere }}
-                {% elif localisation %}
-                    Professeurs à {{ localisation }}
-                {% else %}
-                    Trouvez le meilleur répétiteur à domicile au Bénin
-                {% endif %}
-            </h1>
-            
             <!-- Formulaire de recherche -->
             <form id="search-form" method="GET" action="{% url 'recherche' %}" onchange="this.submit()">
-                <!-- Filtres Principaux -->
-                <div class="main-filters">
-                    <!-- Badges Catégorie de Soutien -->
+                <h2 class="search-category-title" style="font-size: 1.1rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Catégorie de soutien</h2>
+                
+                <!-- Badges Catégorie de Soutien -->
                     <div style="position: relative; display: flex; align-items: center; margin-bottom: 1rem;">
                         <button type="button" class="scroll-badge-left" onclick="document.getElementById('badgesContainer').scrollBy({left: -250, behavior: 'smooth'})" style="position: absolute; left: 0; z-index: 5; background: linear-gradient(to right, #f8fafc 70%, transparent); border: none; height: 100%; padding: 0 1rem 0 0; cursor: pointer; color: #64748b; display: none; align-items: center;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -573,6 +561,8 @@ select.pcv-multi-select,
                         </button>
                     </div>
 
+                <!-- Filtres Principaux -->
+                <div class="main-filters">
                     <div class="search-inputs-row">
                         <div class="filter-group">
                             <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)" data-allow-create="false">
@@ -649,7 +639,19 @@ select.pcv-multi-select,
             </form>
     
     <!-- Résultats de Recherche -->
-    <div class="teachers-grid" id="teachersGrid" style="margin-top: 1rem;">
+    <h1 class="search-title" style="margin-top: 1.5rem; margin-bottom: 1rem;">
+        {% if matiere and localisation %}
+            Cours de {{ matiere }} à {{ localisation }}
+        {% elif matiere %}
+            Professeurs de {{ matiere }}
+        {% elif localisation %}
+            Professeurs à {{ localisation }}
+        {% else %}
+            Professeurs disponibles
+        {% endif %}
+    </h1>
+    
+    <div class="teachers-grid" id="teachersGrid" style="margin-top: 0;">
             {% for teacher in professeurs %}
                 {% include "core/components/_teacher_card.html" %}
             {% empty %}
@@ -662,6 +664,37 @@ select.pcv-multi-select,
                 <a href="{% url 'recherche' %}" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #f1f5f9; color: #334155; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">Réinitialiser les filtres</a>
             </div>
             {% endfor %}
+        </div>
+        
+        <!-- Bloc SEO de bas de page -->
+        <div class="seo-content-block" style="margin-top: 3rem; margin-bottom: 2rem; padding: 2rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);">
+            <h2 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 1rem; font-weight: 800;">
+                Pourquoi choisir un répétiteur avec Prof Chez Vous ?
+            </h2>
+            <p style="color: #475569; line-height: 1.6; margin-bottom: 1.5rem;">
+                {% if matiere and localisation %}
+                    Vous recherchez des <strong>cours particuliers de {{ matiere }} à {{ localisation }}</strong> ? Notre plateforme vous met en relation avec des enseignants qualifiés et rigoureusement vérifiés. L'accompagnement personnalisé est la clé de la réussite scolaire.
+                {% elif matiere %}
+                    Nos <strong>professeurs de {{ matiere }}</strong> accompagnent votre enfant avec une pédagogie adaptée à ses besoins. Qu'il s'agisse de remise à niveau ou de perfectionnement, nous vérifions méticuleusement chaque profil pour vous garantir un apprentissage de qualité.
+                {% elif localisation %}
+                    Trouvez rapidement un <strong>répétiteur de confiance à {{ localisation }}</strong>. Nous sélectionnons les meilleurs profils près de chez vous pour offrir à votre enfant un suivi régulier et adapté à ses objectifs scolaires.
+                {% else %}
+                    Prof Chez Vous est la référence pour trouver un répétiteur de confiance au Bénin. Notre communauté d'enseignants passionnés est évaluée et certifiée pour garantir un accompagnement d'excellence à votre enfant, quelle que soit la matière ou la classe.
+                {% endif %}
+            </p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 2rem;">
+                <div style="flex: 1; min-width: 250px; background: #f8fafc; padding: 1.5rem; border-radius: 0.75rem;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎁</div>
+                    <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Le premier cours est 100% offert !</h3>
+                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Profitez d'une première séance de découverte de 45 minutes offerte. Cet essai gratuit (30 min d'évaluation pédagogique + 15 min d'échange) permet de valider le feeling et la méthode avant tout engagement. Sans aucune obligation de poursuite si vous n'êtes pas satisfait.</p>
+                </div>
+                <div style="flex: 1; min-width: 250px; background: #f8fafc; padding: 1.5rem; border-radius: 0.75rem;">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛡️</div>
+                    <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Des profils 100% vérifiés</h3>
+                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Nous contrôlons minutieusement l'identité, les diplômes et l'expérience de chaque professeur avant publication de son profil. Vous avez ainsi la certitude de faire entrer chez vous un professionnel de l'éducation compétent et fiable.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
