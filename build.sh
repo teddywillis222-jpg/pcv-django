@@ -13,9 +13,9 @@ pip install -r requirements.txt
 echo "Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 
-# 3. Application des migrations à la base de données (Désactivé temporairement pour mode maintenance)
-echo "Application des migrations (ignoré car BDD bloquée)..."
-# python manage.py migrate --noinput
+# 3. Application des migrations à la base de données
+echo "Application des migrations..."
+python manage.py migrate --noinput
 
 # 5. Vérification finale
 echo "Vérification de la configuration Django..."
