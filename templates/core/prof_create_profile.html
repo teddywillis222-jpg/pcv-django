@@ -1015,136 +1015,178 @@
 
                 const formData = new FormData(mainForm);
                 const compressedFormData = new FormData();
+                let tooLarge = false;
                 
                 // Process fields using pre-compressed files from cache
                 for (const [key, value] of formData.entries()) {
                     if (value instanceof File && value.size > 0) {
                         const sig = getFileSignature(value);
                         const finalFile = (window.compressedFileMap && window.compressedFileMap.get(sig)) || value;
+                        // Vérification finale stricte : 5.5 Mo max (avec marge)
+                        if (finalFile.size > 5.5 * 1024 * 1024) {
+                            tooLarge = true;
+                        }
                         compressedFormData.append(key, finalFile, finalFile.name || value.name);
                     } else {
                         compressedFormData.append(key, value);
                     }
                 }
-
-                progressText.textContent = "Envoi en cours... (0%)";
-
-                // AJAX request with progress
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', mainForm.action || window.location.href, true);
-                // Django requires CSRF token header if not using the middleware properly with FormData, 
-                // but FormData already includes csrfmiddlewaretoken, so we just add the requested-with header.
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-                xhr.upload.onprogress = function(event) {
-                    if (event.lengthComputable) {
-                        const percentComplete = Math.round((event.loaded / event.total) * 100);
-                        progressBar.style.width = percentComplete + '%';
-                        progressText.textContent = "Envoi en cours... (" + percentComplete + "%)";
-                    }
-                };
-
-                xhr.onload = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        const contentType = xhr.getResponseHeader("Content-Type");
-                        if (contentType && contentType.includes("text/html")) {
-                            const responseText = xhr.responseText;
-                            // Check if there's actually an error rendered by django
-                            if (responseText.includes('alert-error') || responseText.includes('invalid-field') || responseText.includes('errorlist')) {
-                                // La validation a échoué côté serveur
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(responseText, 'text/html');
-                                let errorAlert = doc.querySelector('.alert-error');
-                                
-                                // Fallback si Django renvoie des erreurs sans le bloc alert-error
-                                if (!errorAlert) {
-                                    const errorList = doc.querySelector('.errorlist');
-                                    if (errorList) {
-                                        errorAlert = document.createElement('div');
-                                        errorAlert.className = 'alert-error';
-                                        errorAlert.innerHTML = '<strong>Veuillez corriger les erreurs suivantes :</strong>' + errorList.outerHTML;
-                                    }
-                                }
-                                
-                                if (errorAlert) {
-                                    const existingAlert = document.querySelector('.alert-error');
-                                    if (existingAlert) existingAlert.remove();
-                                    
-                                    const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
-                                    if (formHeader) {
-                                        // Use importNode to avoid WrongDocumentError
-                                        formHeader.insertAdjacentElement('afterend', document.importNode(errorAlert, true));
-                                    }
-                                    
-                                    // Mettre à jour le token CSRF pour les prochaines requêtes
-                                    const newCsrf = doc.querySelector('input[name="csrfmiddlewaretoken"]');
-                                    const oldCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
-                                    if (newCsrf && oldCsrf) {
-                                        oldCsrf.value = newCsrf.value;
-                                    }
-                                    
-                                    progressText.textContent = "Veuillez corriger les erreurs indiquées.";
-                                    progressText.style.color = '#ef4444';
-                                    progressBar.style.background = '#ef4444';
-                                    
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerHTML = 'Soumettre pour validation ➔';
-                                    submitBtn.style.opacity = '1';
-                                    submitBtn.style.cursor = 'pointer';
-                                    
-                                    // REVENIR À L'ÉTAPE 1 POUR VOIR L'ALERTE ET LES ERREURS
-                                    document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-                                    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
-                                    document.getElementById('step-1').classList.add('active');
-                                    document.getElementById('step-nav-1').classList.add('active');
-                                    document.getElementById('step-nav-1').classList.remove('completed');
-                                    updateProgress(1);
-                                    
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    return; // On stoppe l'exécution, pas de redirection
-                                }
-                            }
-                        }
-
-                        progressText.textContent = "Dossier soumis avec succès ! Redirection...";
-                        progressBar.style.background = '#10b981'; // green
-                        // Either redirect given by response or fallback
-                        if (xhr.responseURL && xhr.responseURL !== window.location.href) {
-                            window.location.href = xhr.responseURL;
-                        } else {
-                            window.location.href = "{% url 'prof_attente_dashboard' %}";
-                        }
-                    } else {
-                        // Try to parse JSON error or display generic text
-                        let errorMsg = "Une erreur est survenue lors de l'envoi.";
-                        try {
-                            const res = JSON.parse(xhr.responseText);
-                            if (res.error) errorMsg = res.error;
-                        } catch(e) {}
-                        
-                        progressText.textContent = "Erreur : " + errorMsg;
-                        progressText.style.color = '#ef4444';
-                        progressBar.style.background = '#ef4444';
-                        
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = 'Soumettre pour validation ➔';
-                        submitBtn.style.opacity = '1';
-                        submitBtn.style.cursor = 'pointer';
-                    }
-                };
-
-                xhr.onerror = function() {
-                    progressText.textContent = "Erreur de connexion. Vos fichiers sont peut-être trop lourds ou votre réseau instable. Essayez de réduire la taille des PDF.";
+                
+                // 1. Bloquer AVANT l'envoi réseau si un fichier est toujours trop lourd
+                if (tooLarge) {
+                    progressText.textContent = "Un de vos fichiers ou images est trop lourd (plus de 5 Mo). Veuillez le réduire avant de soumettre.";
                     progressText.style.color = '#ef4444';
                     progressBar.style.background = '#ef4444';
-                    
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = 'Soumettre pour validation ➔';
                     submitBtn.style.opacity = '1';
                     submitBtn.style.cursor = 'pointer';
-                };
+                    return; // Stoppe l'envoi pour éviter le crash Nginx
+                }
+                
+                // 2. Bloquer immédiatement si le téléphone n'a visiblement plus d'internet
+                if (!navigator.onLine) {
+                    progressText.textContent = "Aucune connexion internet détectée. Veuillez vérifier votre réseau (Wifi/4G).";
+                    progressText.style.color = '#ef4444';
+                    progressBar.style.background = '#ef4444';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                    return;
+                }
 
-                xhr.send(compressedFormData);
+                // 3. Système de réessai automatique (Retry System)
+                const MAX_RETRIES = 2;
+                let attempts = 0;
+                
+                function sendFormData() {
+                    progressText.textContent = attempts === 0 ? "Envoi en cours... (0%)" : `Réseau instable. Nouvelle tentative (${attempts}/${MAX_RETRIES})...`;
+                    if (attempts > 0) {
+                        progressText.style.color = '#f59e0b';
+                        progressBar.style.background = '#f59e0b';
+                    }
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', mainForm.action || window.location.href, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                    xhr.upload.onprogress = function(event) {
+                        if (event.lengthComputable) {
+                            const percentComplete = Math.round((event.loaded / event.total) * 100);
+                            progressBar.style.width = percentComplete + '%';
+                            progressText.textContent = "Envoi en cours... (" + percentComplete + "%)";
+                            // Repasser en vert si ça progresse bien
+                            progressText.style.color = 'var(--text-gray)';
+                            progressBar.style.background = 'var(--primary)';
+                        }
+                    };
+
+                    xhr.onload = function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            const contentType = xhr.getResponseHeader("Content-Type");
+                            if (contentType && contentType.includes("text/html")) {
+                                const responseText = xhr.responseText;
+                                if (responseText.includes('alert-error') || responseText.includes('invalid-field') || responseText.includes('errorlist')) {
+                                    const parser = new DOMParser();
+                                    const doc = parser.parseFromString(responseText, 'text/html');
+                                    let errorAlert = doc.querySelector('.alert-error');
+                                    
+                                    if (!errorAlert) {
+                                        const errorList = doc.querySelector('.errorlist');
+                                        if (errorList) {
+                                            errorAlert = document.createElement('div');
+                                            errorAlert.className = 'alert-error';
+                                            errorAlert.innerHTML = '<strong>Veuillez corriger les erreurs suivantes :</strong>' + errorList.outerHTML;
+                                        }
+                                    }
+                                    
+                                    if (errorAlert) {
+                                        const existingAlert = document.querySelector('.alert-error');
+                                        if (existingAlert) existingAlert.remove();
+                                        
+                                        const formHeader = document.querySelector('.profil-header') || document.querySelector('.stepper-container');
+                                        if (formHeader) {
+                                            formHeader.insertAdjacentElement('afterend', document.importNode(errorAlert, true));
+                                        }
+                                        
+                                        const newCsrf = doc.querySelector('input[name="csrfmiddlewaretoken"]');
+                                        const oldCsrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                                        if (newCsrf && oldCsrf) {
+                                            oldCsrf.value = newCsrf.value;
+                                        }
+                                        
+                                        progressText.textContent = "Veuillez corriger les erreurs indiquées.";
+                                        progressText.style.color = '#ef4444';
+                                        progressBar.style.background = '#ef4444';
+                                        
+                                        submitBtn.disabled = false;
+                                        submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                                        submitBtn.style.opacity = '1';
+                                        submitBtn.style.cursor = 'pointer';
+                                        
+                                        document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+                                        document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+                                        document.getElementById('step-1').classList.add('active');
+                                        document.getElementById('step-nav-1').classList.add('active');
+                                        document.getElementById('step-nav-1').classList.remove('completed');
+                                        updateProgress(1);
+                                        
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        return;
+                                    }
+                                }
+                            }
+
+                            progressText.textContent = "Dossier soumis avec succès ! Redirection...";
+                            progressBar.style.background = '#10b981';
+                            if (xhr.responseURL && xhr.responseURL !== window.location.href) {
+                                window.location.href = xhr.responseURL;
+                            } else {
+                                window.location.href = "{% url 'prof_attente_dashboard' %}";
+                            }
+                        } else {
+                            let errorMsg = "Une erreur est survenue lors de l'envoi.";
+                            try {
+                                const res = JSON.parse(xhr.responseText);
+                                if (res.error) errorMsg = res.error;
+                            } catch(e) {}
+                            
+                            progressText.textContent = "Erreur : " + errorMsg;
+                            progressText.style.color = '#ef4444';
+                            progressBar.style.background = '#ef4444';
+                            
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                            submitBtn.style.opacity = '1';
+                            submitBtn.style.cursor = 'pointer';
+                        }
+                    };
+
+                    xhr.onerror = function() {
+                        if (attempts < MAX_RETRIES) {
+                            attempts++;
+                            progressText.textContent = "Micro-coupure réseau. Relance automatique dans 3 secondes...";
+                            progressText.style.color = '#f59e0b';
+                            progressBar.style.background = '#f59e0b';
+                            setTimeout(sendFormData, 3000);
+                        } else {
+                            progressText.textContent = "Échec de connexion. Votre réseau semble trop instable, veuillez réessayer ultérieurement.";
+                            progressText.style.color = '#ef4444';
+                            progressBar.style.background = '#ef4444';
+                            
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = 'Soumettre pour validation ➔';
+                            submitBtn.style.opacity = '1';
+                            submitBtn.style.cursor = 'pointer';
+                        }
+                    };
+
+                    xhr.send(compressedFormData);
+                }
+                
+                // Lancer le premier envoi
+                sendFormData();
             } catch (err) {
                 console.error("Erreur inattendue:", err);
                 progressText.textContent = "Erreur locale: " + err.message;
