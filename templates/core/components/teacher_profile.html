@@ -225,13 +225,13 @@
                 </div>
                 <div>
                     <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Classes</span>
-                    <span style="font-weight: 600; color: #0f172a; display: block; overflow-wrap: break-word;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
                         {% for c in readable_classes %}
-                            {{ c }}{% if not forloop.last %}, {% endif %}
+                            <span style="display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; white-space: nowrap;">{{ c }}</span>
                         {% empty %}
-                            Toutes
+                            <span style="font-weight: 600; color: #0f172a;">Toutes</span>
                         {% endfor %}
-                    </span>
+                    </div>
                 </div>
                 <div>
                     <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Lieu</span>
@@ -258,16 +258,16 @@
                     </div>
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: fit-content; min-width: 220px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; width: 100%;">
                     {% if teacher.classes_avec_tarifs %}
                         {% for item in teacher.classes_avec_tarifs %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 1rem;">
                             <span style="font-weight: 600; color: #475569; font-size: 0.95rem;">{{ item.label }}</span>
                             <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem; white-space: nowrap;">{{ item.tarif|default:"A définir" }} FCFA</span>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #e2e8f0; gap: 1rem;">
                             <span style="font-weight: 600; color: #475569; font-size: 0.95rem;">Tarif de base</span>
                             <span style="font-weight: 800; color: #16a34a; font-size: 1.1rem; white-space: nowrap;">{{ teacher.tarif_horaire|default:"A définir" }} FCFA</span>
                         </div>

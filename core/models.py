@@ -1364,19 +1364,61 @@ class TeacherProfile(models.Model):
 
     @property
     def classes_avec_tarifs(self):
-        """Retourne une liste de dictionnaires avec le label et le tarif de chaque classe."""
+        """Retourne une liste de dictionnaires avec le label compressé et le tarif, groupés par tarif."""
         from .choices import ClassLevel
+        from collections import defaultdict
+        
         choices_dict = dict(ClassLevel.CHOICES)
-        result = []
+        order_list = ClassLevel.VALUES
+        order_dict = {val: idx for idx, val in enumerate(order_list)}
+        
+        # Grouper les classes par tarif
+        classes_by_tarif = defaultdict(list)
         for c in self.sorted_classes_enseignees:
             tarif = self.tarifs_par_classe.get(c)
             if not tarif:
                 tarif = self.tarif_horaire
+            classes_by_tarif[tarif].append(c)
+            
+        result = []
+        for tarif, classes in classes_by_tarif.items():
+            # Compresser les classes pour ce tarif (même logique que compact_classes_labels)
+            known = [c for c in classes if c in order_dict]
+            custom = [c for c in classes if c not in order_dict]
+            
+            runs = []
+            if known:
+                current_run = [known[0]]
+                for i in range(1, len(known)):
+                    prev_pos = order_dict[known[i - 1]]
+                    curr_pos = order_dict[known[i]]
+                    if curr_pos == prev_pos + 1:
+                        current_run.append(known[i])
+                    else:
+                        runs.append(current_run)
+                        current_run = [known[i]]
+                runs.append(current_run)
+                
+            parts = []
+            for run in runs:
+                if len(run) >= 3:
+                    first_label = choices_dict.get(run[0], run[0])
+                    last_label = choices_dict.get(run[-1], run[-1])
+                    parts.append(f"{first_label} à {last_label}")
+                else:
+                    for c in run:
+                        parts.append(choices_dict.get(c, c))
+                        
+            for c in custom:
+                parts.append(choices_dict.get(c, c))
+                
+            compact_label = " • ".join(parts)
+            
             result.append({
-                'code': c,
-                'label': choices_dict.get(c, c),
+                'label': compact_label,
                 'tarif': tarif
             })
+            
         return result
 
     @property
@@ -1433,6 +1475,63 @@ class TeacherProfile(models.Model):
         choices_dict = dict(ClassLevel.CHOICES)
 
         return ", ".join([choices_dict.get(c, c) for c in self.sorted_classes_enseignees])
+
+    @property
+    def compact_classes_labels(self):
+        """
+        Retourne un affichage compact des classes pour les cartes de recherche.
+        Détecte les suites continues et les compresse (ex: '6ème à 3ème').
+        Les classes isolées sont séparées par ' • '.
+        """
+        if not self.classes_enseignees:
+            return ""
+
+        from .choices import ClassLevel
+
+        # Ordre de référence : position dans VALUES
+        order_list = ClassLevel.VALUES
+        order_dict = {val: idx for idx, val in enumerate(order_list)}
+        choices_dict = dict(ClassLevel.CHOICES)
+
+        # Trier les classes du professeur selon l'ordre officiel
+        sorted_classes = self.sorted_classes_enseignees
+
+        # Séparer les classes connues (dans l'ordre officiel) des classes personnalisées
+        known = [c for c in sorted_classes if c in order_dict]
+        custom = [c for c in sorted_classes if c not in order_dict]
+
+        # Détecter les suites continues parmi les classes connues
+        runs = []  # liste de listes : chaque sous-liste est une suite continue
+        if known:
+            current_run = [known[0]]
+            for i in range(1, len(known)):
+                prev_pos = order_dict[known[i - 1]]
+                curr_pos = order_dict[known[i]]
+                if curr_pos == prev_pos + 1:
+                    current_run.append(known[i])
+                else:
+                    runs.append(current_run)
+                    current_run = [known[i]]
+            runs.append(current_run)
+
+        # Formater chaque suite
+        parts = []
+        for run in runs:
+            if len(run) >= 3:
+                # Suite continue de 3+ éléments → compresser
+                first_label = choices_dict.get(run[0], run[0])
+                last_label = choices_dict.get(run[-1], run[-1])
+                parts.append(f"{first_label} à {last_label}")
+            else:
+                # 1 ou 2 éléments → lister individuellement
+                for c in run:
+                    parts.append(choices_dict.get(c, c))
+
+        # Ajouter les classes personnalisées à la fin
+        for c in custom:
+            parts.append(choices_dict.get(c, c))
+
+        return " • ".join(parts)
 
 
 

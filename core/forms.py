@@ -545,7 +545,7 @@ class TeacherProfileForm(forms.ModelForm):
         required=True, 
         widget=forms.SelectMultiple(attrs={
             'class': 'pcv-multi-select allow-multiple',
-            'data-max-items': '3'
+            'data-max-items': '15'
         })
     )
     ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
@@ -675,8 +675,8 @@ class TeacherProfileForm(forms.ModelForm):
     def clean_classes_enseignees(self):
         classes = self.cleaned_data.get('classes_enseignees')
         if isinstance(classes, list):
-            if len(classes) > 3:
-                raise forms.ValidationError("Vous ne pouvez sélectionner que 3 classes maximum.")
+            if len(classes) > 15:
+                raise forms.ValidationError("Vous ne pouvez sélectionner que 15 classes maximum.")
             from core.utils import process_custom_choices
             return process_custom_choices('classe', classes)
         return classes
