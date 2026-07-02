@@ -537,12 +537,12 @@ class TeacherProfileForm(forms.ModelForm):
     
     modes_de_cours = forms.MultipleChoiceField(
         choices=CourseMode.CHOICES, 
-        required=False, 
+        required=True, 
         widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple', 'data-allow-create': 'false'})
     )
     classes_enseignees = DynamicMultipleChoiceField(
         choices=ClassLevel.CHOICES, 
-        required=False, 
+        required=True, 
         widget=forms.SelectMultiple(attrs={
             'class': 'pcv-multi-select allow-multiple',
             'data-max-items': '3'

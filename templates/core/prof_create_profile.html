@@ -509,9 +509,11 @@
             }
             // --- FIN MODIFICATION UX PHOTO DE PROFIL ---
 
-            // Robustesse: alerte si un fichier non-image (ex: PDF) est trop lourd (>15Mo)
-            if (!file.type.startsWith('image/') && file.size > 15 * 1024 * 1024) {
-                alert("Attention : Ce document dépasse 15 Mo. L'envoi pourrait prendre du temps selon votre connexion.");
+            // Robustesse: bloquer fermement les fichiers non-images (ex: PDF) > 5Mo
+            if (!file.type.startsWith('image/') && file.size > 5 * 1024 * 1024) {
+                alert("Erreur : Ce document (" + (file.size/1024/1024).toFixed(1) + " Mo) est trop lourd. Par mesure de sécurité, veuillez fournir un fichier de moins de 5 Mo (utilisez un compresseur PDF en ligne si nécessaire).");
+                e.target.value = ''; // On vide le champ pour forcer un nouveau choix
+                return;
             }
 
             let fileName = file.name;
