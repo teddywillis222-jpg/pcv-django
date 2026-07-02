@@ -515,19 +515,22 @@
             gap: 0.75rem;
             padding: 0.85rem 1rem;
             color: var(--text-gray);
-            text-decoration: none;
+            text-decoration: none !important;
             border-radius: 12px;
             font-weight: 600;
-            transition: all 0.2s;
+            transition: background 0.2s ease, color 0.2s ease;
             font-size: 0.95rem;
             width: 100%;
             box-sizing: border-box;
         }
 
         .sidebar-menu-item:hover,
+        .sidebar-menu-item:active,
+        .sidebar-menu-item:focus,
         .sidebar-menu-item.active {
-            background: var(--primary-soft);
+            background: #f0fdf4;
             color: var(--primary);
+            text-decoration: none !important;
         }
 
         .mobile-menu-overlay {
@@ -868,7 +871,7 @@
                     </a>
                 {% endif %}
 
-                <form action="{% url 'logout' %}" method="post" style="margin: 1rem 0;">
+                <form action="{% url 'logout' %}" method="post" style="margin: 0.25rem 0 0 0;">
                     {% csrf_token %}
                     <button type="submit" class="sidebar-menu-item" style="color: #ef4444; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
