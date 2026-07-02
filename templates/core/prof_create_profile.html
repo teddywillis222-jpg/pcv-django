@@ -996,6 +996,11 @@
         mainForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Valider l'étape 3 avant de soumettre
+            if (!validateStep(3)) {
+                return;
+            }
+            
             try {
                 // UI Updates
                 submitBtn.disabled = true;
