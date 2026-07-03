@@ -14,7 +14,11 @@
     <!-- Open Graph (Aperçu des liens sur WhatsApp, Facebook, LinkedIn, etc.) -->
     <meta property="og:title" content="Prof Chez Vous">
     <meta property="og:description" content="Trouvez le professeur idéal pour vous accompagner.">
-    <meta property="og:image" content="{% static 'core/images/logo_pr.svg' %}">
+    <!-- URL absolue et format PNG obligatoires pour les messageries -->
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'core/images/logo_pr.png' %}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="500">
+    <meta property="og:image:height" content="500">
     <meta property="og:type" content="website">
     
     <!-- Google Fonts - Raleway -->
