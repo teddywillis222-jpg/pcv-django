@@ -1353,6 +1353,9 @@ class TeacherProfile(models.Model):
         if not self.classes_enseignees:
             return []
             
+        # Normaliser en majuscules pour corriger les anciennes données corrompues (ex: '2nde_sci' -> '2NDE_SCI')
+        normalized_classes = [str(c).upper() for c in self.classes_enseignees]
+            
         # Créer un dictionnaire d'ordre basé sur VALUES de ClassLevel
         order_dict = {val: idx for idx, val in enumerate(ClassLevel.VALUES)}
         
@@ -1360,7 +1363,7 @@ class TeacherProfile(models.Model):
             # Si la classe n'est pas dans la liste officielle (ajout personnalisé), on la met à la fin (index 999)
             return order_dict.get(class_code, 999)
             
-        return sorted(self.classes_enseignees, key=sort_key)
+        return sorted(normalized_classes, key=sort_key)
 
     @property
     def classes_avec_tarifs(self):
@@ -1374,8 +1377,10 @@ class TeacherProfile(models.Model):
         
         # Grouper les classes par tarif
         classes_by_tarif = defaultdict(list)
+        tarifs_dict = self.tarifs_par_classe or {}
         for c in self.sorted_classes_enseignees:
-            tarif = self.tarifs_par_classe.get(c)
+            # Chercher le tarif avec le code exact ou en minuscules (pour les anciens profils)
+            tarif = tarifs_dict.get(c) or tarifs_dict.get(c.lower())
             if not tarif:
                 tarif = self.tarif_horaire
             classes_by_tarif[tarif].append(c)
