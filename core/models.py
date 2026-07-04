@@ -1564,6 +1564,57 @@ class TeacherProfile(models.Model):
 
         return " • ".join(parts)
 
+    @property
+    def compact_expertise_labels(self):
+        """Retourne les labels des classes d'expertise sous forme compactée."""
+        expertise = self.classes_expertise if isinstance(self.classes_expertise, list) else []
+        if not expertise:
+            return ""
+
+        from .choices import ClassLevel
+        order_list = ClassLevel.VALUES
+        order_dict = {val: idx for idx, val in enumerate(order_list)}
+        choices_dict = dict(ClassLevel.CHOICES)
+
+        normalized = [str(c).upper() for c in expertise]
+        sorted_expertise = sorted(normalized, key=lambda c: order_dict.get(c, 999))
+        
+        known = [c for c in sorted_expertise if c in order_dict]
+        custom = [c for c in sorted_expertise if c not in order_dict]
+
+        runs = []
+        if known:
+            current_run = [known[0]]
+            for i in range(1, len(known)):
+                prev_pos = order_dict[known[i - 1]]
+                curr_pos = order_dict[known[i]]
+                if curr_pos == prev_pos + 1:
+                    current_run.append(known[i])
+                else:
+                    runs.append(current_run)
+                    current_run = [known[i]]
+            runs.append(current_run)
+
+        parts = []
+        for run in runs:
+            if len(run) >= 3:
+                parts.append(f"{choices_dict.get(run[0], run[0])} à {choices_dict.get(run[-1], run[-1])}")
+            else:
+                for c in run:
+                    parts.append(choices_dict.get(c, c))
+
+        for c in custom:
+            parts.append(choices_dict.get(c, c))
+
+        return " • ".join(parts)
+
+    @property
+    def secondary_classes_count(self):
+        """Retourne le nombre de classes enseignées qui ne sont pas en expertise."""
+        enseignees = self.classes_enseignees if isinstance(self.classes_enseignees, list) else []
+        # Return count
+        return len(enseignees)
+
 
 
     @property

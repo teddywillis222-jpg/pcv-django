@@ -23,7 +23,12 @@
                     </svg>
                 {% endif %}
             </div>
-            <span class="compact-subtitle">🎓 {{ teacher.compact_classes_labels|default:"Toutes classes" }}</span>
+            <span class="compact-subtitle">
+                <span style="color: #d97706;">⭐ {{ teacher.compact_expertise_labels|default:"Toutes classes" }}</span>
+                {% if teacher.secondary_classes_count > 0 %}
+                    <span style="color: #94a3b8; font-size: 0.9em; margin-left: 2px;">+ {{ teacher.secondary_classes_count }}</span>
+                {% endif %}
+            </span>
         </div>
     </div>
 

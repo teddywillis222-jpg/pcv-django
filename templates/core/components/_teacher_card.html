@@ -56,7 +56,12 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; vertical-align:middle; display:inline-block;"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
                     {{ teacher.ville_quartier }}
                 </p>
-                <p class="info-text info-classes">{{ teacher.compact_classes_labels|default:"Toutes classes" }}</p>
+                <div class="info-classes-premium">
+                    <span class="expertise-highlight">⭐ {{ teacher.compact_expertise_labels|default:"Toutes classes" }}</span>
+                    {% if teacher.secondary_classes_count > 0 %}
+                        <span class="secondary-count" title="{{ teacher.secondary_classes_count }} autres niveaux enseignés">+ {{ teacher.secondary_classes_count }} autres</span>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Micro Badges -->
