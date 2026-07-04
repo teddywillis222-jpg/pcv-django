@@ -151,6 +151,9 @@ urlpatterns = [
     
     # Interface Admin Custom
     path("admin-outils/creer-annonce/", core_views.create_announcement, name="create_announcement"),
+
+    # Help Center
+    path("centre-daide/", include("help_center.urls")),
 ]
 
 from django.conf import settings

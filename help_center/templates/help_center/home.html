@@ -1,0 +1,162 @@
+{% extends "help_center/base_help.html" %}
+
+{% block help_content %}
+<!-- Hero Section avec Barre de Recherche -->
+<section class="hc-hero">
+    <div class="hc-container">
+        <h1 class="hc-title">Centre d'aide Prof Chez Vous</h1>
+        <p class="hc-subtitle">Retrouvez toutes les réponses concernant Prof Chez Vous, que vous soyez parent, apprenant ou professeur.</p>
+        
+        <div class="hc-search-wrapper">
+            <svg class="hc-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="hc-search" class="hc-search-input" placeholder="Rechercher une réponse, un mot-clé..." autocomplete="off">
+            <div id="hc-search-results" class="hc-search-results"></div>
+        </div>
+    </div>
+</section>
+
+<div class="hc-container">
+    <section class="hc-section">
+        <div class="hc-grid-3">
+            <!-- Carte Parents -->
+            <div class="hc-card">
+                <div class="hc-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3 class="hc-card-title">Parents & Apprenants</h3>
+                <p class="hc-card-desc">Trouvez comment réserver un cours, payer, et suivre la progression.</p>
+                <div class="hc-card-links">
+                    {% for cat in categories %}
+                        {% if cat.target_audience == 'parents' %}
+                            <a href="{% url 'help_center:category_detail' cat.slug %}" class="hc-link">
+                                {{ cat.name }}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    <a href="{% url 'help_center:category_detail' 'paiements' %}" class="hc-link">
+                        Paiements
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="{% url 'help_center:category_detail' 'cours-particuliers' %}" class="hc-link">
+                        Cours particuliers
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="{% url 'help_center:category_detail' 'compte' %}" class="hc-link">
+                        Compte
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Carte Professeurs -->
+            <div class="hc-card">
+                <div class="hc-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                </div>
+                <h3 class="hc-card-title">Professeurs</h3>
+                <p class="hc-card-desc">Gérez votre profil, vos disponibilités et vos paiements.</p>
+                <div class="hc-card-links">
+                    {% for cat in categories %}
+                        {% if cat.target_audience == 'teachers' %}
+                            <a href="{% url 'help_center:category_detail' cat.slug %}" class="hc-link">
+                                {{ cat.name }}
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    <a href="{% url 'help_center:category_detail' 'verification' %}" class="hc-link">
+                        Vérification
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="{% url 'help_center:category_detail' 'paiements' %}" class="hc-link">
+                        Paiements
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Carte À propos -->
+            <div class="hc-card">
+                <div class="hc-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+                <h3 class="hc-card-title">À propos de Prof Chez Vous</h3>
+                <p class="hc-card-desc">Notre mission, la sécurité, et les politiques de la plateforme.</p>
+                <div class="hc-card-links">
+                    <a href="{% url 'help_center:category_detail' 'securite' %}" class="hc-link">
+                        Sécurité
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="{% url 'politique_confidentialite' %}" class="hc-link">
+                        Politique de confidentialité
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="{% url 'cgu' %}" class="hc-link">
+                        Conditions d'utilisation
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Questions Populaires & Nouveautés -->
+    <div class="hc-grid-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        {% if popular_articles %}
+        <section class="hc-section" style="padding-top: 0;">
+            <h2 class="hc-section-title">Questions populaires</h2>
+            <div class="hc-list">
+                {% for article in popular_articles %}
+                <a href="{% url 'help_center:article_detail' article.category.slug article.slug %}" class="hc-list-item">
+                    <span class="hc-list-item-title">{{ article.title }}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hc-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if latest_articles %}
+        <section class="hc-section" style="padding-top: 0;">
+            <h2 class="hc-section-title">Nouveautés</h2>
+            <div class="hc-list">
+                {% for article in latest_articles %}
+                <a href="{% url 'help_center:article_detail' article.category.slug article.slug %}" class="hc-list-item">
+                    <span class="hc-list-item-title">{{ article.title }}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hc-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+    <!-- Toutes les catégories -->
+    <section class="hc-section" style="padding-top: 0;">
+        <h2 class="hc-section-title">Toutes les catégories</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+            {% for cat in categories %}
+            <a href="{% url 'help_center:category_detail' cat.slug %}" style="padding: 0.75rem 1.5rem; background: var(--hc-surface); border: 1px solid var(--hc-border); border-radius: 9999px; text-decoration: none; color: var(--hc-text-main); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;">
+                {{ cat.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

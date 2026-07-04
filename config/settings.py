@@ -103,6 +103,8 @@ INSTALLED_APPS = [
 
     'core',
 
+    'help_center',
+
 ]
 
 SITE_ID = 1

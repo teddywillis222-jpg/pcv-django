@@ -1,0 +1,38 @@
+{% extends "help_center/base_help.html" %}
+
+{% block title %}{{ category.name }} - Centre d'aide Prof Chez Vous{% endblock %}
+
+{% block help_content %}
+<div class="hc-container">
+    <div class="hc-breadcrumb">
+        <a href="{% url 'home' %}">Accueil</a>
+        <span class="hc-breadcrumb-sep">/</span>
+        <a href="{% url 'help_center:home' %}">Centre d'aide</a>
+        <span class="hc-breadcrumb-sep">/</span>
+        <span style="color: var(--hc-text-main); font-weight: 600;">{{ category.name }}</span>
+    </div>
+
+    <section class="hc-section" style="padding-top: 1rem;">
+        <h1 class="hc-title" style="font-size: 2rem; margin-bottom: 0.5rem;">{{ category.name }}</h1>
+        {% if category.description %}
+            <p class="hc-subtitle" style="margin-left: 0; text-align: left;">{{ category.description }}</p>
+        {% endif %}
+
+        {% if articles %}
+        <div class="hc-list" style="margin-top: 2rem;">
+            {% for article in articles %}
+            <a href="{% url 'help_center:article_detail' category.slug article.slug %}" class="hc-list-item">
+                <span class="hc-list-item-title">{{ article.title }}</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hc-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="hc-card" style="margin-top: 2rem; text-align: center; padding: 3rem 1.5rem;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--hc-border)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <p style="color: var(--hc-text-muted);">Aucun article dans cette catégorie pour le moment.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+
+{% block title %}Centre d'aide - Prof Chez Vous{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Mobile First Design System for Help Center */
+    :root {
+        --hc-bg: #f8fafc;
+        --hc-surface: #ffffff;
+        --hc-primary: var(--success-600);
+        --hc-primary-light: var(--success-50);
+        --hc-text-main: #0f172a;
+        --hc-text-muted: #64748b;
+        --hc-border: #e2e8f0;
+        --hc-radius: 16px;
+        --hc-shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+        --hc-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+        --hc-shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.03);
+    }
+
+    body {
+        background-color: var(--hc-bg);
+    }
+
+    .hc-container {
+        width: 100%;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    /* Hero Section */
+    .hc-hero {
+        padding: 3rem 0;
+        text-align: center;
+        background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        border-bottom: 1px solid var(--hc-border);
+        margin-top: -1.5rem; /* pull up under navbar */
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hc-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .hc-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--hc-text-main);
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.025em;
+    }
+
+    .hc-subtitle {
+        font-size: 1.1rem;
+        color: var(--hc-text-muted);
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.5;
+    }
+
+    /* Search Bar */
+    .hc-search-wrapper {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+        z-index: 10;
+    }
+
+    .hc-search-input {
+        width: 100%;
+        padding: 1rem 1.5rem 1rem 3rem;
+        font-size: 1.1rem;
+        border: 2px solid transparent;
+        border-radius: 9999px;
+        background: var(--hc-surface);
+        box-shadow: var(--hc-shadow-md);
+        transition: all 0.3s ease;
+        color: var(--hc-text-main);
+    }
+
+    .hc-search-input:focus {
+        outline: none;
+        border-color: var(--hc-primary);
+        box-shadow: 0 0 0 4px var(--hc-primary-light);
+    }
+
+    .hc-search-icon {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--hc-text-muted);
+        width: 20px;
+        height: 20px;
+    }
+
+    .hc-search-results {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        right: 0;
+        background: var(--hc-surface);
+        border-radius: var(--hc-radius);
+        box-shadow: var(--hc-shadow-lg);
+        border: 1px solid var(--hc-border);
+        overflow: hidden;
+        display: none;
+        z-index: 50;
+    }
+
+    .hc-search-results.active {
+        display: block;
+        animation: slideDown 0.2s ease-out;
+    }
+
+    .hc-search-result-item {
+        display: block;
+        padding: 1rem 1.2rem;
+        color: var(--hc-text-main);
+        text-decoration: none;
+        border-bottom: 1px solid var(--hc-border);
+        transition: background 0.2s;
+    }
+
+    .hc-search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .hc-search-result-item:hover {
+        background: var(--hc-primary-light);
+        text-decoration: none;
+    }
+
+    .hc-search-result-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .hc-search-result-cat {
+        font-size: 0.8rem;
+        color: var(--hc-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+    }
+
+    /* Section Layout */
+    .hc-section {
+        padding: 3rem 0;
+    }
+
+    .hc-section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--hc-text-main);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Cards */
+    .hc-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .hc-card {
+        background: var(--hc-surface);
+        border-radius: var(--hc-radius);
+        padding: 1.5rem;
+        box-shadow: var(--hc-shadow-sm);
+        border: 1px solid var(--hc-border);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hc-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--hc-shadow-lg);
+    }
+
+    .hc-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--hc-primary-light);
+        color: var(--hc-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .hc-card-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .hc-card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--hc-text-main);
+    }
+
+    .hc-card-desc {
+        color: var(--hc-text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .hc-card-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .hc-link {
+        color: var(--hc-primary);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.2s;
+    }
+
+    .hc-link:hover {
+        color: var(--hc-primary-dark);
+        text-decoration: underline;
+    }
+
+    /* List group */
+    .hc-list {
+        background: var(--hc-surface);
+        border-radius: var(--hc-radius);
+        border: 1px solid var(--hc-border);
+        overflow: hidden;
+    }
+
+    .hc-list-item {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--hc-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+        color: var(--hc-text-main);
+        transition: background 0.2s;
+    }
+
+    .hc-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .hc-list-item:hover {
+        background: var(--hc-primary-light);
+        text-decoration: none;
+    }
+
+    .hc-list-item-title {
+        font-weight: 600;
+    }
+
+    /* Breadcrumb */
+    .hc-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 0.9rem;
+        color: var(--hc-text-muted);
+    }
+
+    .hc-breadcrumb a {
+        color: var(--hc-primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .hc-breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .hc-breadcrumb-sep {
+        color: #cbd5e1;
+    }
+
+    /* Footer / Support block */
+    .hc-support-block {
+        background: var(--hc-primary);
+        color: white;
+        border-radius: var(--hc-radius);
+        padding: 2rem;
+        text-align: center;
+        margin: 2rem 0 4rem;
+    }
+
+    .hc-support-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .hc-support-desc {
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+
+    .hc-btn-white {
+        background: white;
+        color: var(--hc-primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s;
+    }
+
+    .hc-btn-white:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: var(--hc-primary-dark);
+    }
+
+    /* Desktop Media Queries */
+    @media (min-width: 768px) {
+        .hc-container {
+            max-width: 720px;
+        }
+        .hc-title {
+            font-size: 2.5rem;
+        }
+        .hc-grid-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .hc-container {
+            max-width: 1000px;
+        }
+        .hc-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    {% block help_content %}{% endblock %}
+    
+    <div class="hc-container">
+        <div class="hc-support-block">
+            <h2 class="hc-support-title">Toujours besoin d'aide ?</h2>
+            <p class="hc-support-desc">Notre équipe de support est là pour vous accompagner.</p>
+            <a href="https://wa.me/message/QROCDDNKZIXAE1" target="_blank" class="hc-btn-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Contacter sur WhatsApp
+            </a>
+        </div>
+    </div>
+</main>
+
+<script>
+    const searchInput = document.getElementById('hc-search');
+    const searchResults = document.getElementById('hc-search-results');
+
+    if(searchInput && searchResults) {
+        let timeout = null;
+
+        searchInput.addEventListener('input', function(e) {
+            clearTimeout(timeout);
+            const query = e.target.value.trim();
+            
+            if(query.length < 2) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            timeout = setTimeout(() => {
+                fetch(`/centre-daide/api/search/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.results && data.results.length > 0) {
+                            searchResults.innerHTML = data.results.map(item => `
+                                <a href="${item.url}" class="hc-search-result-item">
+                                    <div class="hc-search-result-title">${item.title}</div>
+                                    <div class="hc-search-result-cat">${item.category}</div>
+                                </a>
+                            `).join('');
+                            searchResults.classList.add('active');
+                        } else {
+                            searchResults.innerHTML = `
+                                <div class="hc-search-result-item" style="color: var(--hc-text-muted)">
+                                    Aucun résultat trouvé pour "${query}"
+                                </div>
+                            `;
+                            searchResults.classList.add('active');
+                        }
+                    });
+            }, 300);
+        });
+
+        // Fermer les résultats si on clique ailleurs
+        document.addEventListener('click', function(e) {
+            if(!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.remove('active');
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "help_center/base_help.html" %}
+
+{% block title %}{{ article.title }} - Centre d'aide Prof Chez Vous{% endblock %}
+
+{% block help_content %}
+<div class="hc-container">
+    <div class="hc-breadcrumb">
+        <a href="{% url 'home' %}">Accueil</a>
+        <span class="hc-breadcrumb-sep">/</span>
+        <a href="{% url 'help_center:home' %}">Centre d'aide</a>
+        <span class="hc-breadcrumb-sep">/</span>
+        <a href="{% url 'help_center:category_detail' category.slug %}">{{ category.name }}</a>
+        <span class="hc-breadcrumb-sep">/</span>
+        <span style="color: var(--hc-text-main); font-weight: 600;">{{ article.title }}</span>
+    </div>
+
+    <div class="hc-grid-3" style="grid-template-columns: 1fr; gap: 2rem; margin-top: 1rem;">
+        <!-- Contenu de l'article -->
+        <article class="hc-card" style="padding: 2.5rem; grid-column: 1 / -1;">
+            <h1 class="hc-title" style="font-size: 2.25rem; margin-bottom: 1.5rem;">{{ article.title }}</h1>
+            <div style="font-size: 0.9rem; color: var(--hc-text-muted); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--hc-border);">
+                Mise à jour : {{ article.updated_at|date:"d M Y" }}
+            </div>
+            
+            <div class="article-content" style="line-height: 1.8; font-size: 1.05rem; color: var(--hc-text-main);">
+                {{ article.content|safe }}
+            </div>
+        </article>
+
+        <!-- Articles liés -->
+        {% if related_articles %}
+        <section class="hc-section" style="padding-top: 0;">
+            <h2 class="hc-section-title">Articles liés</h2>
+            <div class="hc-list">
+                {% for related in related_articles %}
+                <a href="{% url 'help_center:article_detail' related.category.slug related.slug %}" class="hc-list-item">
+                    <span class="hc-list-item-title">{{ related.title }}</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hc-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    /* Styles spécifiques pour le contenu de l'article généré (Wysiwyg / HTML) */
+    .article-content h2 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; color: var(--hc-text-main); }
+    .article-content h3 { font-size: 1.25rem; margin: 1.5rem 0 1rem; font-weight: 600; color: var(--hc-text-main); }
+    .article-content p { margin-bottom: 1.25rem; }
+    .article-content ul, .article-content ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
+    .article-content li { margin-bottom: 0.5rem; }
+    .article-content a { color: var(--hc-primary); text-decoration: underline; }
+    .article-content img { max-width: 100%; border-radius: 8px; margin: 1.5rem 0; box-shadow: var(--hc-shadow-sm); }
+</style>
+{% endblock %}
