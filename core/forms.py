@@ -678,8 +678,8 @@ class TeacherProfileForm(forms.ModelForm):
         if isinstance(classes, list):
             if len(classes) > 15:
                 raise forms.ValidationError("Vous ne pouvez sélectionner que 15 classes maximum.")
-            from core.utils import process_custom_choices
-            return process_custom_choices('classe', classes)
+            # Les codes sont retournés tels quels (en majuscules) pour correspondre à ClassLevel.CHOICES
+            return classes
         return classes
 
     def clean_categories_de_soutien(self):
