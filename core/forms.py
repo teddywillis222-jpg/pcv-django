@@ -545,7 +545,8 @@ class TeacherProfileForm(forms.ModelForm):
         required=True, 
         widget=forms.SelectMultiple(attrs={
             'class': 'pcv-multi-select allow-multiple',
-            'data-max-items': '15'
+            'data-max-items': '15',
+            'data-allow-create': 'false'
         })
     )
     ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))

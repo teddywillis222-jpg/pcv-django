@@ -97,6 +97,9 @@ Matiere.LISTE = Matiere.load_liste()
 class ClassLevel:
     CI = "CI"
     CP = "CP"
+    MATERNELLE = "MATERNELLE"
+    CI = "CI"
+    CP = "CP"
     CE1 = "CE1"
     CE2 = "CE2"
     CM1 = "CM1"
@@ -105,9 +108,25 @@ class ClassLevel:
     CINQUIEME = "5EME"
     QUATRIEME = "4EME"
     TROISIEME = "3EME"
+    
+    # Nouveaux découpages par filière
+    SECONDE_LIT = "2NDE_LIT"
+    PREMIERE_LIT = "1ERE_LIT"
+    TERMINALE_LIT = "TLE_LIT"
+    
+    SECONDE_SCI = "2NDE_SCI"
+    PREMIERE_SCI = "1ERE_SCI"
+    TERMINALE_SCI = "TLE_SCI"
+    
+    SECONDE_TECH = "2NDE_TECH"
+    PREMIERE_TECH = "1ERE_TECH"
+    TERMINALE_TECH = "TLE_TECH"
+
+    # Anciens codes conservés pour compatibilité
     SECONDE = "2NDE"
     PREMIERE = "1ERE"
     TERMINALE = "TLE"
+    
     CAP1 = "CAP1"
     CAP2 = "CAP2"
     BEP1 = "BEP1"
@@ -121,7 +140,13 @@ class ClassLevel:
     LICENCE3 = "L3"
     MASTER = "MASTER"
     DOCTORAT = "PHD"
+    
+    # Divers
+    ADULTE = "ADULTE"
+    CONCOURS = "CONCOURS"
+    
     CHOICES = [
+        (MATERNELLE, "Maternelle"),
         (CI, "CI"),
         (CP, "CP"),
         (CE1, "CE1"),
@@ -132,9 +157,24 @@ class ClassLevel:
         (CINQUIEME, "5ème"),
         (QUATRIEME, "4ème"),
         (TROISIEME, "3ème"),
+        
+        (SECONDE_LIT, "2nde Littéraire"),
+        (PREMIERE_LIT, "1ère Littéraire"),
+        (TERMINALE_LIT, "Tle Littéraire"),
+        
+        (SECONDE_SCI, "2nde Scientifique"),
+        (PREMIERE_SCI, "1ère Scientifique"),
+        (TERMINALE_SCI, "Tle Scientifique"),
+        
+        (SECONDE_TECH, "2nde Technique"),
+        (PREMIERE_TECH, "1ère Technique"),
+        (TERMINALE_TECH, "Tle Technique"),
+        
+        # Les anciens codes conservés, mais affichés simplement (seront re-sélectionnés ou mis à jour par les profs)
         (SECONDE, "2nde"),
         (PREMIERE, "1ère"),
         (TERMINALE, "Tle"),
+        
         (CAP1, "1ère année CAP"),
         (CAP2, "2ème année CAP"),
         (BEP1, "1ère année BEP"),
@@ -148,6 +188,9 @@ class ClassLevel:
         (LICENCE3, "Licence 3"),
         (MASTER, "Master"),
         (DOCTORAT, "Doctorat"),
+        
+        (ADULTE, "Adultes / Professionnels"),
+        (CONCOURS, "Préparation aux Concours"),
     ]
     VALUES = [c[0] for c in CHOICES]
 
