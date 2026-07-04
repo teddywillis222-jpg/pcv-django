@@ -59,22 +59,6 @@
     <main class="dash-main">
         {% include "core/components/_announcement_card.html" %}
 
-        <!-- Carte d'annonce: Mise à jour des classes -->
-        <div style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border: 1px solid #c7d2fe; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);">
-            <div style="flex: 1; min-width: 250px;">
-                <h3 style="color: #3730a3; font-size: 1.05rem; font-weight: 800; margin: 0 0 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.2rem;">🚀</span>
-                    Mettez à jour vos classes !
-                </h3>
-                <p style="color: #4338ca; font-size: 0.85rem; margin: 0; line-height: 1.4; font-weight: 500;">
-                    De nouvelles filières (Littéraire, Scientifique, Technique) et de nouveaux niveaux (Maternelle, Adultes...) sont désormais disponibles. Actualisez votre profil pour être plus facilement trouvé par les parents.
-                </p>
-            </div>
-            <a href="{% url 'prof_edit_profile' %}" style="background: #4f46e5; color: white; padding: 0.6rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: inline-block; white-space: nowrap; transition: all 0.2s; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);" onmouseover="this.style.background='#4338ca'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#4f46e5'; this.style.transform='none';">
-                ✏️ Mettre à jour mon profil
-            </a>
-        </div>
-
         <div class="dash-header">
             <div class="dash-header-top">
                 <div class="teacher-avatar-wrapper" style="position: relative; display: inline-block;">
