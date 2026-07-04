@@ -86,7 +86,7 @@
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
-                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
+                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.all_classes|join:"," }}')">
                         <span class="btn-default-text">✏️ Modifier l'essai programmé</span>
                         <span class="btn-active-text" style="display: none;">⏳ Modification...</span>
                     </button>
@@ -124,7 +124,7 @@
                     <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
-                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:"," }}')">
+                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); openEssaiForm('{{ teacher.id }}', '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.all_classes|join:"," }}')">
                         <span class="btn-default-text">🤝 Programmer mon essai</span>
                         <span class="btn-active-text" style="display: none;">⏳ Ouverture...</span>
                     </button>
@@ -224,14 +224,27 @@
                     </div>
                 </div>
                 <div>
-                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Classes</span>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
-                        {% for c in readable_classes %}
-                            <span style="display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; white-space: nowrap;">{{ c }}</span>
-                        {% empty %}
-                            <span style="font-weight: 600; color: #0f172a;">Toutes</span>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">Classes</span>
+                    
+                    {% if readable_expertise %}
+                    <div style="margin-bottom: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                        {% for c in readable_expertise %}
+                            <span title="Classe d'expertise" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; white-space: nowrap;">⭐ {{ c }}</span>
                         {% endfor %}
                     </div>
+                    {% endif %}
+                    
+                    {% if readable_classes %}
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                        {% for c in readable_classes %}
+                            <span title="Classe secondaire" style="display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; white-space: nowrap;">{{ c }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if not readable_expertise and not readable_classes %}
+                        <span style="font-weight: 600; color: #0f172a;">Non défini</span>
+                    {% endif %}
                 </div>
                 <div>
                     <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Lieu</span>

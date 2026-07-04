@@ -8,9 +8,10 @@ from core.models import TeacherProfile
 
 fixed_count = 0
 for tp in TeacherProfile.objects.all():
-    if tp.classes_enseignees and not tp.tarifs_par_classe:
+    all_cls = tp.all_classes
+    if all_cls and not tp.tarifs_par_classe:
         new_tarifs = {}
-        for c in tp.classes_enseignees:
+        for c in all_cls:
             new_tarifs[str(c).upper()] = 3000 # default fallback
         
         tp.tarifs_par_classe = new_tarifs

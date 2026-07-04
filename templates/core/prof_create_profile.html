@@ -757,7 +757,14 @@
             </div>
  
             <div class="form-group" style="margin-top: 1.5rem;">
-                <label>Niveaux / Classes que vous maîtrisez *</label>
+                <label>🎯 Vos Classes d'Expertise (Max 3) *</label>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: -0.2rem; margin-bottom: 0.5rem;">Sélectionnez les 1 à 3 classes où vous excellez vraiment. Ces niveaux seront mis en évidence sur votre profil.</p>
+                {{ form.classes_expertise }}
+            </div>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label>📚 Autres classes que vous pouvez enseigner (Max 12)</label>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: -0.2rem; margin-bottom: 0.5rem;">Si un parent vous le demande, quels autres niveaux vous sentez-vous capable d'encadrer ? (Optionnel)</p>
                 {{ form.classes_enseignees }}
             </div>
 
@@ -1204,17 +1211,37 @@
         // Dynamic prices logic
         const existingPrices = {{ teacher_instance.tarifs_par_classe|safe|default:"{}" }};
         const defaultTarif = "3000"; // default value for new profiles
+        const classesExpertiseSelect = document.getElementById('id_classes_expertise');
         const classesSelect = document.getElementById('id_classes_enseignees');
         const pricesContainer = document.getElementById('dynamic-prices-container');
         const pricesWrapper = document.getElementById('prices-inputs-wrapper');
 
         function updatePricesUI() {
-            if (!classesSelect) return;
+            let selectedOptions = [];
             
-            const selectedOptions = Array.from(classesSelect.selectedOptions).map(opt => ({
-                value: opt.value,
-                text: opt.text
-            }));
+            if (classesExpertiseSelect) {
+                selectedOptions = selectedOptions.concat(Array.from(classesExpertiseSelect.selectedOptions).map(opt => ({
+                    value: opt.value,
+                    text: opt.text
+                })));
+            }
+            if (classesSelect) {
+                selectedOptions = selectedOptions.concat(Array.from(classesSelect.selectedOptions).map(opt => ({
+                    value: opt.value,
+                    text: opt.text
+                })));
+            }
+            
+            // Deduplicate in case somehow they selected the same thing twice
+            const uniqueOptions = [];
+            const seen = new Set();
+            for (const opt of selectedOptions) {
+                if (!seen.has(opt.value)) {
+                    seen.add(opt.value);
+                    uniqueOptions.push(opt);
+                }
+            }
+            selectedOptions = uniqueOptions;
             
             if (selectedOptions.length === 0) {
                 if (pricesContainer) pricesContainer.style.display = 'none';
@@ -1278,15 +1305,15 @@
             }
         }
 
-        if (classesSelect) {
-            // Initial call
-            updatePricesUI();
-            
-            // If using Choices.js, listen to its events
-            classesSelect.addEventListener('change', updatePricesUI);
-            classesSelect.addEventListener('addItem', updatePricesUI);
-            classesSelect.addEventListener('removeItem', updatePricesUI);
+        if (classesExpertiseSelect) {
+            classesExpertiseSelect.addEventListener('change', updatePricesUI);
         }
+        if (classesSelect) {
+            classesSelect.addEventListener('change', updatePricesUI);
+        }
+        
+        // Initial setup for prices
+        updatePricesUI();
 
     if (!document.getElementById('spin-style')) {
         const style = document.createElement('style');

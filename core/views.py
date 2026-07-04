@@ -380,7 +380,7 @@ def recherche(request):
     if localisation:
         professeurs = professeurs.filter(ville_quartier=localisation)
     if classe:
-        professeurs = professeurs.filter(classes_enseignees__icontains=classe)
+        professeurs = professeurs.filter(Q(classes_expertise__icontains=classe) | Q(classes_enseignees__icontains=classe))
     if mode:
         professeurs = professeurs.filter(modes_de_cours__icontains=mode)
     if soutien:
@@ -1079,9 +1079,10 @@ def parent_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 2: Classe en commun (2 points)
+    # Critère 2: Classe en commun (2 points, 5 si expertise)
     if active_enfant and active_enfant.classe:
         score_annotation = score_annotation + Case(
+            When(classes_expertise__icontains=active_enfant.classe, then=Value(5)),
             When(classes_enseignees__icontains=active_enfant.classe, then=Value(2)),
             default=Value(0),
             output_field=IntegerField()
@@ -1230,7 +1231,7 @@ def apprenant_dashboard(request):
     except Apprenant.DoesNotExist:
         return redirect("apprenant_create_profile")
 
-    from .choices import ValidationStatus, StatutGeneral, EngagementType, ObjectifMotivation, CreneauDisponibilite
+    from .choices import ValidationStatus, StatutGeneral, EngagementType, ObjectifMotivation, CreneauDisponibilite, ClassLevel
 
     # 1. Recommandations dynamiques basées sur la classe, matières et localisation de l'apprenant
     from django.db.models import Q, Case, When, Value, IntegerField
@@ -1249,9 +1250,10 @@ def apprenant_dashboard(request):
             output_field=IntegerField()
         )
         
-    # Critère 2: Classe en commun (2 points)
+    # Critère 2: Classe en commun (2 points, 5 si expertise)
     if apprenant.classe:
         score_annotation = score_annotation + Case(
+            When(classes_expertise__icontains=apprenant.classe, then=Value(5)),
             When(classes_enseignees__icontains=apprenant.classe, then=Value(2)),
             default=Value(0),
             output_field=IntegerField()
@@ -1431,6 +1433,7 @@ def track_teacher_view(request, teacher_profile):
 
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
+    from .choices import CourseMode, ClassLevel
     teacher = get_object_or_404(TeacherProfile.objects.select_related('user').prefetch_related('evaluations_recues', 'diplomes'), slug=teacher_slug)
     
     is_new_view = track_teacher_view(request, teacher)
@@ -1561,10 +1564,10 @@ def professeur_detail(request, teacher_slug):
 
     # Conversion des codes en noms lisibles
     mode_map = dict(CourseMode.CHOICES)
-    class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
-    
-    readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
-    readable_classes = [class_map.get(c, c) for c in teacher.classes_enseignees]
+    class_map = dict(ClassLevel.CHOICES)
+    readable_expertise = [class_map.get(c, c) for c in getattr(teacher, 'classes_expertise', [])]
+    readable_classes = [class_map.get(c, c) for c in getattr(teacher, 'classes_enseignees', [])]
+    readable_modes = [mode_map.get(m, m) for m in getattr(teacher, 'modes_de_cours', [])]
         
     context = {
         'teacher': teacher,
@@ -1576,6 +1579,7 @@ def professeur_detail(request, teacher_slug):
         'is_premium': is_premium,
         'can_schedule_trial': can_schedule_trial,
         'readable_modes': readable_modes,
+        'readable_expertise': readable_expertise,
         'readable_classes': readable_classes,
         'parent_children': parent_children,
         'parent_children_json': parent_children_json,
@@ -1608,6 +1612,7 @@ def professeur_detail(request, teacher_slug):
 def api_teacher_profile(request, teacher_slug):
     """API pour récupérer les données du professeur (pour le side panel) avec gestion d'erreur robuste"""
     try:
+        from .choices import CourseMode, ClassLevel
         teacher = TeacherProfile.objects.select_related('user').get(slug=teacher_slug)
         
         track_teacher_view(request, teacher)
@@ -1719,9 +1724,10 @@ def api_teacher_profile(request, teacher_slug):
         
         # Conversion des codes en noms lisibles
         mode_map = dict(CourseMode.CHOICES)
-        class_map = {'6EME': '6ème', '5EME': '5ème', '4EME': '4ème', '3EME': '3ème', '2NDE': '2nde', '1ERE': '1ère', 'TLE': 'Terminale'}
-        readable_modes = [mode_map.get(m, m) for m in teacher.modes_de_cours]
-        readable_classes = [class_map.get(c, c) for c in teacher.classes_enseignees]
+        class_map = dict(ClassLevel.CHOICES)
+        readable_expertise = [class_map.get(c, c) for c in getattr(teacher, 'classes_expertise', [])]
+        readable_classes = [class_map.get(c, c) for c in getattr(teacher, 'classes_enseignees', [])]
+        readable_modes = [mode_map.get(m, m) for m in getattr(teacher, 'modes_de_cours', [])]
             
         html = render_to_string('core/components/teacher_profile.html', {
             'teacher': teacher,
@@ -1734,6 +1740,7 @@ def api_teacher_profile(request, teacher_slug):
             'can_schedule_trial': can_schedule_trial,
             'existing_conversation_id': existing_conversation_id,
             'readable_modes': readable_modes,
+            'readable_expertise': readable_expertise,
             'readable_classes': readable_classes,
             'related_teachers': related_teachers,
             'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],

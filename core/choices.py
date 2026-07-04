@@ -621,3 +621,11 @@ def validate_classes_enseignees(value):
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste de classes.")
     # On autorise désormais les valeurs personnalisées ajoutées par l'utilisateur (Choices.js / TomSelect)
+
+
+def validate_classes_expertise(value):
+    """Liste de valeurs ClassLevel (Expertise)."""
+    if not isinstance(value, list):
+        raise ValidationError("Doit être une liste de classes.")
+    if len(value) > 3:
+        raise ValidationError("Vous ne pouvez sélectionner que 3 classes d'expertise maximum.")

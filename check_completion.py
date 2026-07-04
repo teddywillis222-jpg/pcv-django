@@ -12,7 +12,7 @@ if tp:
     
     fields_to_check = [
         'photo_de_profil', 'presentation', 'methodologie', 
-        'annees_d_experience', 'classes_enseignees', 'modes_de_cours',
+        'annees_d_experience', 'classes_expertise', 'modes_de_cours',
         'ville_quartier', 'tarifs_par_classe', 'telephone_whatsapp'
     ]
     

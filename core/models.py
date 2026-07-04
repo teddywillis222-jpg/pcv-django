@@ -65,6 +65,8 @@ from .choices import (
 
     validate_classes_enseignees,
 
+    validate_classes_expertise,
+
     validate_creneaux_disponibilites,
 
     validate_matieres_max_5,
@@ -1086,6 +1088,18 @@ class TeacherProfile(models.Model):
 
     matiere_enseignee = models.CharField(max_length=150)
 
+    classes_expertise = models.JSONField(
+
+        default=list,
+
+        blank=True,
+
+        validators=[validate_classes_expertise],
+
+        help_text="Top 3 classes (expertise) (ex: ['6EME','5EME'])",
+
+    )
+
     classes_enseignees = models.JSONField(
 
         default=list,
@@ -1318,7 +1332,7 @@ class TeacherProfile(models.Model):
 
             'photo_de_profil', 'presentation', 'methodologie', 
 
-            'annees_d_experience', 'classes_enseignees', 'modes_de_cours',
+            'annees_d_experience', 'classes_expertise', 'modes_de_cours',
 
             'ville_quartier', 'tarifs_par_classe', 'telephone_whatsapp'
 
@@ -1346,24 +1360,35 @@ class TeacherProfile(models.Model):
 
 
     @property
+    def all_classes(self):
+        """Retourne la liste combinée expertise + secondaires (sans doublons)."""
+        expertise = self.classes_expertise if isinstance(self.classes_expertise, list) else []
+        enseignees = self.classes_enseignees if isinstance(self.classes_enseignees, list) else []
+        seen = set()
+        combined = []
+        for c in expertise + enseignees:
+            upper_c = str(c).upper()
+            if upper_c not in seen:
+                seen.add(upper_c)
+                combined.append(upper_c)
+        return combined
+
+    @property
     def sorted_classes_enseignees(self):
-        """Retourne la liste des classes enseignées triées selon l'ordre officiel."""
+        """Retourne la liste de TOUTES les classes (expertise + secondaires) triées selon l'ordre officiel."""
         from .choices import ClassLevel
         
-        if not self.classes_enseignees:
+        combined = self.all_classes
+        if not combined:
             return []
-            
-        # Normaliser en majuscules pour corriger les anciennes données corrompues (ex: '2nde_sci' -> '2NDE_SCI')
-        normalized_classes = [str(c).upper() for c in self.classes_enseignees]
             
         # Créer un dictionnaire d'ordre basé sur VALUES de ClassLevel
         order_dict = {val: idx for idx, val in enumerate(ClassLevel.VALUES)}
         
         def sort_key(class_code):
-            # Si la classe n'est pas dans la liste officielle (ajout personnalisé), on la met à la fin (index 999)
             return order_dict.get(class_code, 999)
             
-        return sorted(normalized_classes, key=sort_key)
+        return sorted(combined, key=sort_key)
 
     @property
     def classes_avec_tarifs(self):
@@ -1430,8 +1455,9 @@ class TeacherProfile(models.Model):
     def tarif_minimum(self):
         """Retourne le tarif minimum parmi toutes les classes enseignées, ou le tarif horaire de base."""
         tarifs = []
-        if self.classes_enseignees and self.tarifs_par_classe:
-            for c in self.classes_enseignees:
+        all_cls = self.all_classes
+        if all_cls and self.tarifs_par_classe:
+            for c in all_cls:
                 tarif = self.tarifs_par_classe.get(c)
                 if tarif:
                     try:
@@ -1471,7 +1497,7 @@ class TeacherProfile(models.Model):
 
         """Retourne les labels des classes enseignées sous forme de chaîne, triés."""
 
-        if not self.classes_enseignees:
+        if not self.all_classes:
 
             return ""
 
@@ -1488,7 +1514,7 @@ class TeacherProfile(models.Model):
         Détecte les suites continues et les compresse (ex: '6ème à 3ème').
         Les classes isolées sont séparées par ' • '.
         """
-        if not self.classes_enseignees:
+        if not self.all_classes:
             return ""
 
         from .choices import ClassLevel

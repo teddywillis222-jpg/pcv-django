@@ -346,7 +346,11 @@
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label class="form-label">Classes / Niveaux *</label>
+                        <label class="form-label">🎯 Vos Classes d'Expertise (Max 3) *</label>
+                        {{ form.classes_expertise }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📚 Autres classes que vous pouvez enseigner (Max 12)</label>
                         {{ form.classes_enseignees }}
                     </div>
                     <div class="form-group">
@@ -532,17 +536,37 @@
         // Dynamic prices logic
         const existingPrices = {{ teacher.tarifs_par_classe|safe|default:"{}" }};
         const defaultTarif = document.getElementById('id_tarif_horaire') ? document.getElementById('id_tarif_horaire').value : '';
+        const classesExpertiseSelect = document.getElementById('id_classes_expertise');
         const classesSelect = document.getElementById('id_classes_enseignees');
         const pricesContainer = document.getElementById('dynamic-prices-container');
         const pricesWrapper = document.getElementById('prices-inputs-wrapper');
 
         function updatePricesUI() {
-            if (!classesSelect) return;
+            let selectedOptions = [];
             
-            const selectedOptions = Array.from(classesSelect.selectedOptions).map(opt => ({
-                value: opt.value,
-                text: opt.text
-            }));
+            if (classesExpertiseSelect) {
+                selectedOptions = selectedOptions.concat(Array.from(classesExpertiseSelect.selectedOptions).map(opt => ({
+                    value: opt.value,
+                    text: opt.text
+                })));
+            }
+            if (classesSelect) {
+                selectedOptions = selectedOptions.concat(Array.from(classesSelect.selectedOptions).map(opt => ({
+                    value: opt.value,
+                    text: opt.text
+                })));
+            }
+            
+            // Deduplicate
+            const uniqueOptions = [];
+            const seen = new Set();
+            for (const opt of selectedOptions) {
+                if (!seen.has(opt.value)) {
+                    seen.add(opt.value);
+                    uniqueOptions.push(opt);
+                }
+            }
+            selectedOptions = uniqueOptions;
             
             if (selectedOptions.length === 0) {
                 pricesContainer.style.display = 'none';
@@ -603,15 +627,18 @@
             }
         }
 
+        if (classesExpertiseSelect) {
+            classesExpertiseSelect.addEventListener('change', updatePricesUI);
+            classesExpertiseSelect.addEventListener('addItem', updatePricesUI);
+            classesExpertiseSelect.addEventListener('removeItem', updatePricesUI);
+        }
         if (classesSelect) {
-            // Initial call
-            updatePricesUI();
-            
-            // If using Choices.js, listen to its events
             classesSelect.addEventListener('change', updatePricesUI);
             classesSelect.addEventListener('addItem', updatePricesUI);
             classesSelect.addEventListener('removeItem', updatePricesUI);
         }
+        
+        updatePricesUI();
     });
 </script>
 {% endblock %}

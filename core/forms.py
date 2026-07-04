@@ -540,13 +540,24 @@ class TeacherProfileForm(forms.ModelForm):
         required=True, 
         widget=forms.SelectMultiple(attrs={'class': 'pcv-multi-select allow-multiple', 'data-allow-create': 'false'})
     )
-    classes_enseignees = DynamicMultipleChoiceField(
+    classes_expertise = DynamicMultipleChoiceField(
         choices=ClassLevel.CHOICES, 
         required=True, 
         widget=forms.SelectMultiple(attrs={
             'class': 'pcv-multi-select allow-multiple',
-            'data-max-items': '15',
-            'data-allow-create': 'false'
+            'data-max-items': '3',
+            'data-allow-create': 'false',
+            'placeholder': 'Expertise (Max 3)'
+        })
+    )
+    classes_enseignees = DynamicMultipleChoiceField(
+        choices=ClassLevel.CHOICES, 
+        required=False, 
+        widget=forms.SelectMultiple(attrs={
+            'class': 'pcv-multi-select allow-multiple',
+            'data-max-items': '12',
+            'data-allow-create': 'false',
+            'placeholder': 'Autres classes (Optionnel)'
         })
     )
     ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
@@ -593,6 +604,7 @@ class TeacherProfileForm(forms.ModelForm):
             "telephone_whatsapp",
             "ville_quartier",
             "matiere_enseignee",
+            "classes_expertise",
             "classes_enseignees",
             "categories_de_soutien",
             "modes_de_cours",
@@ -673,12 +685,21 @@ class TeacherProfileForm(forms.ModelForm):
             return ", ".join(processed)
         return matieres
 
+    def clean_classes_expertise(self):
+        classes = self.cleaned_data.get('classes_expertise')
+        if isinstance(classes, list):
+            if len(classes) == 0:
+                raise forms.ValidationError("Veuillez sélectionner au moins une classe d'expertise.")
+            if len(classes) > 3:
+                raise forms.ValidationError("Vous ne pouvez sélectionner que 3 classes d'expertise maximum.")
+            return classes
+        return classes
+
     def clean_classes_enseignees(self):
         classes = self.cleaned_data.get('classes_enseignees')
         if isinstance(classes, list):
-            if len(classes) > 15:
-                raise forms.ValidationError("Vous ne pouvez sélectionner que 15 classes maximum.")
-            # Les codes sont retournés tels quels (en majuscules) pour correspondre à ClassLevel.CHOICES
+            if len(classes) > 12:
+                raise forms.ValidationError("Vous ne pouvez sélectionner que 12 classes secondaires maximum.")
             return classes
         return classes
 
@@ -690,13 +711,21 @@ class TeacherProfileForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        classes = cleaned_data.get('classes_enseignees', [])
+        expertise = cleaned_data.get('classes_expertise', []) or []
+        autres = cleaned_data.get('classes_enseignees', []) or []
+        
+        # Vérification doublons
+        overlap = set(expertise).intersection(set(autres))
+        if overlap:
+            self.add_error('classes_enseignees', "Une classe ne peut pas être à la fois en expertise et en secondaire.")
+            
+        all_classes = expertise + autres
         
         tarifs = {}
         tarif_horaire_global = cleaned_data.get('tarif_horaire')
         
-        if isinstance(classes, list):
-            classes_lower = [str(c).lower() for c in classes]
+        if isinstance(all_classes, list):
+            classes_lower = [str(c).lower() for c in all_classes]
             for key, val in self.data.items():
                 if key.startswith('tarif_classe_'):
                     class_code = key.replace('tarif_classe_', '')
