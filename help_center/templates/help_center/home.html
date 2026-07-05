@@ -40,24 +40,8 @@
                 <h3 class="hc-card-title">Parents & Apprenants</h3>
                 <p class="hc-card-desc">Trouvez comment réserver un cours, payer, et suivre la progression.</p>
                 <div class="hc-card-links">
-                    {% for cat in categories %}
-                        {% if cat.target_audience == 'parents' %}
-                            <a href="{% url 'help_center:category_detail' cat.slug %}" class="hc-link">
-                                {{ cat.name }}
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                    <a href="{% url 'help_center:category_detail' 'paiements' %}" class="hc-link">
-                        Paiements
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </a>
-                    <a href="{% url 'help_center:category_detail' 'cours-particuliers' %}" class="hc-link">
-                        Cours particuliers
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </a>
-                    <a href="{% url 'help_center:category_detail' 'compte' %}" class="hc-link">
-                        Compte
+                    <a href="{% url 'help_center:category_detail' 'parents' %}" class="hc-link">
+                        Voir les 8 articles
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
@@ -74,20 +58,8 @@
                 <h3 class="hc-card-title">Professeurs</h3>
                 <p class="hc-card-desc">Gérez votre profil, vos disponibilités et vos paiements.</p>
                 <div class="hc-card-links">
-                    {% for cat in categories %}
-                        {% if cat.target_audience == 'teachers' %}
-                            <a href="{% url 'help_center:category_detail' cat.slug %}" class="hc-link">
-                                {{ cat.name }}
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                    <a href="{% url 'help_center:category_detail' 'verification' %}" class="hc-link">
-                        Vérification
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </a>
-                    <a href="{% url 'help_center:category_detail' 'paiements' %}" class="hc-link">
-                        Paiements
+                    <a href="{% url 'help_center:category_detail' 'professeurs' %}" class="hc-link">
+                        Voir les 8 articles
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
@@ -105,17 +77,15 @@
                 <h3 class="hc-card-title">À propos de Prof Chez Vous</h3>
                 <p class="hc-card-desc">Notre mission, la sécurité, et les politiques de la plateforme.</p>
                 <div class="hc-card-links">
-                    <a href="{% url 'help_center:category_detail' 'securite' %}" class="hc-link">
-                        Sécurité
+                    <a href="{% url 'help_center:category_detail' 'a-propos' %}" class="hc-link">
+                        Voir les 8 articles
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
-                    <a href="{% url 'politique_confidentialite' %}" class="hc-link">
+                    <a href="{% url 'politique_confidentialite' %}" class="hc-link" style="margin-top: 0.5rem; color: var(--hc-text-muted); font-size: 0.9rem;">
                         Politique de confidentialité
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
-                    <a href="{% url 'cgu' %}" class="hc-link">
+                    <a href="{% url 'cgu' %}" class="hc-link" style="color: var(--hc-text-muted); font-size: 0.9rem;">
                         Conditions d'utilisation
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
                 </div>
             </div>
