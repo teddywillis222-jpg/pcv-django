@@ -1,12 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.http import JsonResponse
 from .models import Category, Article
 
 def help_home(request):
     popular_articles = Article.objects.filter(is_published=True).order_by('-views')[:6]
     latest_articles = Article.objects.filter(is_published=True).order_by('-updated_at')[:4]
-    categories = Category.objects.all().order_by('order')
+    categories = Category.objects.annotate(
+        published_articles_count=Count('articles', filter=Q(articles__is_published=True))
+    ).order_by('order')
     
     context = {
         'popular_articles': popular_articles,
