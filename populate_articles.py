@@ -65,138 +65,586 @@ def run():
             "category": cat_parents,
             "title": "Qu'est-ce que Prof Chez Vous ?",
             "slug": "quest-ce-que-prof-chez-vous",
-            "keywords": "plateforme, presentation, concept, professeurs, benin, soutien scolaire",
+            "keywords": "plateforme, presentation, concept, professeurs, benin, soutien scolaire, mise en relation, profils verifies",
             "order": 1,
             "content": f"""
-<h2>Une nouvelle facon de trouver le bon professeur</h2>
-<p>Prof Chez Vous n'est pas une agence de soutien scolaire classique. C'est la premiere plateforme au Benin qui redonne le pouvoir aux parents et une veritable identite professionnelle aux enseignants.</p>
-<p>Notre plateforme vous permet de rechercher, comparer et engager directement des professeurs particuliers (repetiteurs) verifies et certifies. Fini le bouche-a-oreille incertain : vous avez desormais acces a un catalogue transparent de profils competents pres de chez vous.</p>
+<h2>Réponse rapide</h2>
+<p>Prof Chez Vous est une plateforme béninoise de mise en relation qui permet aux parents et aux apprenants de trouver facilement un professeur particulier correspondant à leurs besoins.</p>
+<p>Contrairement aux méthodes traditionnelles reposant sur les recommandations ou le bouche-à-oreille, Prof Chez Vous offre un espace où les parents peuvent consulter plusieurs profils vérifiés, comparer les enseignants et choisir librement celui qui leur inspire le plus confiance.</p>
 
-<h2>Comment ca marche concrètement ?</h2>
-<ol>
-    <li><strong>Recherche libre :</strong> Vous parcourez les profils selon la matiere, le niveau et la localisation. {lp("comment-trouver-un-professeur", "Decouvrez le parcours de recherche complet")}.</li>
-    <li><strong>Transparence totale :</strong> Les diplomes, l'experience et les tarifs sont affiches sur chaque profil. Chaque professeur est {lp("pourquoi-les-professeurs-sont-ils-verifies", "verifie par notre equipe")}.</li>
-    <li><strong>Contact direct :</strong> Vous echangez avec le professeur avant de prendre votre decision.</li>
-    <li><strong>Seance d'essai :</strong> Vous testez le professeur gratuitement pendant 45 minutes avant de vous engager. {lp("comment-fonctionne-la-seance-dessai", "En savoir plus sur l'essai gratuit")}.</li>
-</ol>
+<h2>Une nouvelle façon de trouver un professeur</h2>
+<p>Trouver un bon répétiteur n'est pas toujours simple.</p>
+<p>Beaucoup de parents doivent demander autour d'eux, attendre une recommandation ou accepter le premier professeur disponible sans réellement connaître son parcours.</p>
+<p>Prof Chez Vous a été créé pour rendre cette recherche plus simple, plus transparente et plus rassurante.</p>
+<p>Chaque professeur dispose d'un profil détaillé présentant notamment :</p>
+<ul>
+    <li>les matières enseignées ;</li>
+    <li>les classes prises en charge ;</li>
+    <li>les zones d'intervention ;</li>
+    <li>son expérience ;</li>
+    <li>sa présentation ;</li>
+    <li>ses disponibilités.</li>
+</ul>
+<p>Le parent peut ainsi comparer plusieurs profils avant de faire son choix.</p>
+<p>(Le fonctionnement détaillé de cette recherche est expliqué dans l'article {lp("comment-trouver-un-professeur", "Comment trouver un professeur ?")}.)</p>
 
-<h3>Pour qui est faite la plateforme ?</h3>
-<p>Prof Chez Vous s'adresse a tous les parents et apprenants au Benin qui cherchent un accompagnement scolaire de qualite, du primaire au superieur. Que votre enfant ait besoin d'un soutien regulier ou d'une preparation intensive avant un examen, vous trouverez le professeur qu'il lui faut.</p>
-<p>Vous voulez en savoir plus sur notre mission ? {la("pourquoi-prof-chez-vous-existe", "Decouvrez pourquoi Prof Chez Vous existe")}.</p>
+<h2>Des professeurs vérifiés avant d'être visibles</h2>
+<p>L'un des principes fondamentaux de Prof Chez Vous est la {lp("pourquoi-les-professeurs-sont-ils-verifies", "vérification des profils")}.</p>
+<p>Avant qu'un professeur puisse apparaître dans les résultats de recherche, son dossier est examiné par l'équipe de vérification.</p>
+<p>Cette étape permet de contrôler les informations fournies ainsi que les justificatifs demandés.</p>
+<p>L'objectif est d'offrir aux parents un environnement plus fiable pour rechercher un professeur.</p>
+<p>(Pour comprendre cette procédure, consultez l'article {lp("pourquoi-les-professeurs-sont-ils-verifies", "Pourquoi les professeurs sont-ils vérifiés ?")}.)</p>
+
+<h2>Le choix appartient toujours au parent</h2>
+<p>Prof Chez Vous ne désigne pas un professeur à votre place.</p>
+<p>La plateforme met à votre disposition plusieurs profils afin que vous puissiez comparer les enseignants selon vos propres critères.</p>
+<p>Vous êtes libre de consulter les profils, d'examiner leurs informations et de sélectionner le professeur qui correspond le mieux aux besoins de votre enfant.</p>
+<p>Cette liberté de choix constitue l'un des fondements de la plateforme.</p>
+<p>(Découvrez également {lp("comment-choisir-le-bon-professeur", "Comment choisir le bon professeur ?")}.)</p>
+
+<h2>Une première rencontre avant tout engagement</h2>
+<p>Choisir un professeur est une décision importante.</p>
+<p>C'est pourquoi Prof Chez Vous prévoit une première {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} permettant au parent, à l'apprenant et au professeur de faire connaissance avant de poursuivre leur collaboration.</p>
+<p>Cette rencontre permet à chacun d'évaluer si les attentes sont réunies avant de commencer un accompagnement régulier.</p>
+<p>(Voir {lp("comment-fonctionne-la-seance-dessai", "Comment fonctionne la séance d'essai ?")}.)</p>
+
+<h2>À qui s'adresse Prof Chez Vous ?</h2>
+<p>La plateforme est destinée :</p>
+<ul>
+    <li>aux parents recherchant un professeur particulier pour leurs enfants ;</li>
+    <li>aux apprenants souhaitant bénéficier d'un accompagnement personnalisé ;</li>
+    <li>aux professeurs souhaitant proposer leurs compétences dans un cadre professionnel.</li>
+</ul>
+
+<h2>Notre objectif</h2>
+<p>Prof Chez Vous souhaite rendre la recherche d'un professeur plus simple, plus transparente et plus professionnelle.</p>
+<p>En permettant aux parents de choisir librement parmi des {lp("pourquoi-les-professeurs-sont-ils-verifies", "profils vérifiés")}, la plateforme favorise une relation de confiance entre les familles et les enseignants.</p>
+
+<h2>En résumé</h2>
+<p>Prof Chez Vous est une plateforme qui permet :</p>
+<ul>
+    <li>✓ de rechercher facilement un professeur particulier ;</li>
+    <li>✓ de consulter plusieurs profils vérifiés ;</li>
+    <li>✓ de comparer les enseignants avant de choisir ;</li>
+    <li>✓ de bénéficier d'une première séance d'essai avant tout engagement.</li>
+</ul>
 """
         },
         {
             "category": cat_parents,
             "title": "Comment trouver un professeur ?",
             "slug": "comment-trouver-un-professeur",
-            "keywords": "recherche, trouver, parcours, chercher, filtrer, localisation",
+            "keywords": "recherche, trouver, parcours, chercher, filtrer, localisation, profils, comparer, recommandations, espace personnel",
             "order": 2,
             "content": f"""
-<h2>Le parcours de recherche pas-a-pas</h2>
-<p>Trouver le professeur ideal pour votre enfant se fait en quelques clics grace a notre moteur de recherche intelligent.</p>
+<h2>Réponse rapide</h2>
+<p>Trouver un professeur sur Prof Chez Vous est simple et entièrement guidé.</p>
+<p>Vous pouvez consulter librement les profils des professeurs partenaires vérifiés, comparer leurs informations et choisir celui qui correspond le mieux à vos besoins. La plateforme vous accompagne tout au long de votre recherche, tout en vous laissant libre de votre décision.</p>
 
-<h3>Les etapes de votre recherche</h3>
-<ol>
-    <li><strong>Utilisez la barre de recherche :</strong> Depuis la page d'accueil, cliquez sur "Rechercher un prof".</li>
-    <li><strong>Appliquez vos filtres :</strong> Precisez la matiere (ex: Mathematiques), le niveau (ex: Terminale) et votre localisation (ex: Cotonou).</li>
-    <li><strong>Parcourez les resultats :</strong> Une liste de professeurs correspondant a vos criteres s'affiche.</li>
-    <li><strong>Consultez les profils :</strong> Cliquez sur un professeur pour voir sa description detaillee, ses methodes pedagogiques et ses tarifs.</li>
-    <li><strong>Prenez contact :</strong> Une fois votre choix fait, connectez-vous ou creez votre compte parent pour lui envoyer une demande d'engagement.</li>
-</ol>
+<h2>Une recherche simple et organisée</h2>
+<p>Prof Chez Vous a été conçu pour rendre la recherche d'un professeur plus simple, plus transparente et plus rassurante.</p>
+<p>Que vous soyez un parent à la recherche d'un accompagnement pour votre enfant ou un apprenant souhaitant bénéficier de cours particuliers, la plateforme met à votre disposition des outils qui vous permettent d'identifier rapidement les professeurs correspondant à vos besoins.</p>
 
-<h2>Comment faire le meilleur choix ?</h2>
-<p>Nous vous recommandons de selectionner 2 ou 3 profils interessants afin de pouvoir echanger avec eux et comparer. {lp("comment-choisir-le-bon-professeur", "Consultez notre guide pour choisir le bon professeur")}.</p>
-<p>Tous les professeurs affiches sur la plateforme sont {lp("pourquoi-les-professeurs-sont-ils-verifies", "verifies par notre equipe")} : vous pouvez consulter les profils en toute confiance.</p>
+<h2>Étape 1 : Accéder aux professeurs</h2>
+<p>Il existe deux façons d'accéder aux profils des professeurs sur Prof Chez Vous.</p>
+
+<h3>Si vous n'êtes pas encore connecté</h3>
+<p>Vous pouvez consulter librement la page de recherche des professeurs. Vous y trouverez l'ensemble des professeurs partenaires actuellement vérifiés.</p>
+<p>Aucune inscription n'est nécessaire pour parcourir les profils.</p>
+
+<h3>Si vous êtes déjà connecté</h3>
+<p>Votre espace personnel facilite encore davantage votre recherche.</p>
+<p>En fonction des informations renseignées pour votre enfant ou pour vous-même (classe, matière, zone géographique, etc.), Prof Chez Vous peut vous proposer directement des professeurs correspondant à vos besoins.</p>
+<p>Vous pouvez consulter leurs profils depuis ces recommandations ou accéder à tout moment à la page complète de recherche afin d'explorer davantage de possibilités.</p>
+<p>Dans les deux cas, vous restez libre de consulter autant de profils que vous le souhaitez avant de faire votre choix.</p>
+
+<h2>Étape 2 : Affiner votre recherche</h2>
+<p>Pour gagner du temps, utilisez les filtres proposés par la plateforme.</p>
+<p>Selon votre besoin, vous pouvez notamment rechercher un professeur par :</p>
+<ul>
+    <li>matière ;</li>
+    <li>classe ou niveau ;</li>
+    <li>zone d'intervention ;</li>
+    <li>ou tout autre critère disponible.</li>
+</ul>
+<p>Ces filtres permettent d'afficher uniquement les professeurs correspondant à votre recherche.</p>
+
+<h2>Étape 3 : Comparer les profils</h2>
+<p>Chaque professeur partenaire possède une fiche détaillée.</p>
+<p>Vous pouvez notamment y consulter :</p>
+<ul>
+    <li>sa présentation ;</li>
+    <li>les matières qu'il enseigne ;</li>
+    <li>les classes qu'il accompagne ;</li>
+    <li>son expérience ;</li>
+    <li>ses diplômes ou qualifications validés ;</li>
+    <li>sa zone d'intervention ;</li>
+    <li>ses disponibilités.</li>
+</ul>
+<p>Prenez le temps de comparer plusieurs profils.</p>
+<p>Chaque enseignant possède sa propre expérience, sa méthode de travail et ses domaines de compétence.</p>
+<p>Pour savoir quels éléments observer avant de faire votre choix, consultez également l'article {lp("comment-choisir-le-bon-professeur", "Comment choisir le bon professeur ?")}.</p>
+
+<h2>Étape 4 : Choisir le professeur qui vous convient</h2>
+<p>Une fois votre comparaison effectuée, vous pouvez sélectionner le professeur qui répond le mieux à vos attentes.</p>
+<p>Prof Chez Vous ne désigne jamais un professeur à votre place.</p>
+<p>La décision finale vous appartient toujours.</p>
+<p>Vous choisissez selon les critères qui sont importants pour vous : expérience, présentation, proximité, matières enseignées, disponibilités ou tout autre élément qui vous inspire confiance.</p>
+
+<h2>Étape 5 : Créer votre espace personnel</h2>
+<p>La consultation des profils est libre.</p>
+<p>En revanche, lorsque vous souhaitez programmer une première séance avec un professeur, vous devez disposer d'un espace personnel.</p>
+<p>Cet espace vous permet notamment :</p>
+<ul>
+    <li>d'enregistrer vos informations ;</li>
+    <li>d'ajouter votre ou vos enfants si vous êtes parent ;</li>
+    <li>de gérer vos demandes ;</li>
+    <li>de retrouver facilement vos professeurs ;</li>
+    <li>de suivre vos échanges sur la plateforme.</li>
+</ul>
+<p>La création du compte est rapide et ne prend que quelques minutes.</p>
+
+<h2>Étape 6 : Programmer une première séance d'essai</h2>
+<p>Une fois votre compte créé et votre professeur choisi, vous pouvez programmer une première {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")}.</p>
+<p>Cette première rencontre permet :</p>
+<ul>
+    <li>au professeur ;</li>
+    <li>au parent ou à l'apprenant ;</li>
+    <li>et, le cas échéant, à l'enfant concerné,</li>
+</ul>
+<p>de faire connaissance et de vérifier que les attentes de chacun sont bien comprises avant de commencer un accompagnement régulier.</p>
+<p>Le déroulement complet de cette étape est présenté dans l'article {lp("comment-fonctionne-la-seance-dessai", "Comment fonctionne la séance d'essai ?")}.</p>
+
+<h2>Une plateforme qui vous guide sans choisir à votre place</h2>
+<p>Chez Prof Chez Vous, nous pensons que choisir un professeur est une décision importante.</p>
+<p>C'est pourquoi la plateforme ne vous impose jamais un enseignant.</p>
+<p>En revanche, elle met à votre disposition un environnement organisé pour faciliter votre décision :</p>
+<ul>
+    <li>des recommandations adaptées à votre profil lorsque vous êtes connecté ;</li>
+    <li>des filtres pour affiner votre recherche ;</li>
+    <li>des profils détaillés ;</li>
+    <li>des informations {lp("pourquoi-les-professeurs-sont-ils-verifies", "vérifiées")} ;</li>
+    <li>une présentation claire de chaque professeur.</li>
+</ul>
+<p>Vous bénéficiez ainsi d'un accompagnement structuré qui vous aide à identifier les professeurs les plus pertinents, tout en conservant une liberté totale dans votre décision.</p>
+<p>Notre rôle est de vous guider. Le choix vous appartient toujours.</p>
+
+<h2>Si vous ne trouvez pas immédiatement le professeur recherché</h2>
+<p>Prof Chez Vous continue d'accueillir régulièrement de nouveaux professeurs partenaires.</p>
+<p>Si aucun profil ne correspond encore à votre besoin, n'hésitez pas à contacter notre équipe.</p>
+<p>Nous pourrons vous accompagner dans votre recherche et vous informer lorsqu'un professeur répondant à vos critères rejoint la plateforme.</p>
+
+<h2>En résumé</h2>
+<p>Trouver un professeur sur Prof Chez Vous consiste à :</p>
+<ul>
+    <li>✓ consulter librement les profils des professeurs partenaires ;</li>
+    <li>✓ utiliser les filtres ou les recommandations proposées par la plateforme ;</li>
+    <li>✓ comparer plusieurs profils vérifiés ;</li>
+    <li>✓ choisir librement le professeur qui vous convient ;</li>
+    <li>✓ créer votre espace personnel au moment de programmer une première séance ;</li>
+    <li>✓ organiser une {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} avant tout engagement.</li>
+</ul>
 """
         },
         {
             "category": cat_parents,
             "title": "Comment choisir le bon professeur ?",
             "slug": "comment-choisir-le-bon-professeur",
-            "keywords": "choix, comparer, meilleur, profil, decision, criteres",
+            "keywords": "choix, comparer, meilleur, profil, decision, criteres, experience, matieres, localisation",
             "order": 3,
             "content": f"""
-<h2>Les criteres pour faire le bon choix</h2>
-<p>Choisir un repetiteur est une decision importante. Sur Prof Chez Vous, toutes les informations sont publiques pour vous aider a prendre une decision eclairee.</p>
+<h2>Réponse rapide</h2>
+<p>Le bon professeur n'est pas forcément celui qui possède le plus de diplômes ou le plus d'années d'expérience.</p>
+<p>C'est avant tout celui dont les compétences, la méthode de travail et la personnalité correspondent aux besoins de l'apprenant.</p>
+<p>Prof Chez Vous vous fournit les informations nécessaires pour comparer plusieurs profils et faire un choix éclairé.</p>
 
-<h3>Ce qu'il faut regarder sur un profil</h3>
+<h2>Il n'existe pas un professeur idéal pour tout le monde</h2>
+<p>Chaque apprenant est différent.</p>
+<p>Certains ont besoin d'un professeur très pédagogue.</p>
+<p>D'autres recherchent davantage de rigueur.</p>
+<p>Certains souhaitent préparer un examen précis.</p>
+<p>D'autres veulent simplement renforcer leurs bases.</p>
+<p>Le meilleur professeur est donc celui qui répond à votre besoin particulier.</p>
+<p>C'est pourquoi Prof Chez Vous vous laisse toujours libre de comparer plusieurs profils avant de prendre votre décision.</p>
+
+<h2>Commencez par définir votre besoin</h2>
+<p>Avant de consulter les profils, posez-vous quelques questions simples.</p>
+<p>Par exemple :</p>
 <ul>
-    <li><strong>L'experience et la methode :</strong> Lisez attentivement la description du professeur. Un bon professeur explique <em>comment</em> il enseigne, pas seulement ce qu'il enseigne.</li>
-    <li><strong>La verification :</strong> Assurez-vous que le profil possede le badge vert "Certifie". Cela garantit que nous avons {lp("pourquoi-les-professeurs-sont-ils-verifies", "controle son identite et ses diplomes")}.</li>
-    <li><strong>Le tarif :</strong> Verifiez que les honoraires du professeur correspondent a votre budget sur le long terme. {lp("combien-coute-prof-chez-vous", "Consultez notre guide sur les tarifs")}.</li>
-    <li><strong>La video de presentation (si disponible) :</strong> Rien de tel qu'une courte video pour ressentir l'energie et la pedagogie d'un enseignant !</li>
+    <li>Quelle matière souhaitez-vous renforcer ?</li>
+    <li>Quel est le niveau de l'apprenant ?</li>
+    <li>S'agit-il d'un accompagnement ponctuel ou régulier ?</li>
+    <li>Quels sont les objectifs recherchés ?</li>
+    <li>Existe-t-il des contraintes de localisation ou de disponibilité ?</li>
+</ul>
+<p>Plus votre besoin est clair, plus votre choix sera facile.</p>
+
+<h2>Lisez attentivement la présentation du professeur</h2>
+<p>Chaque professeur dispose d'une présentation personnelle.</p>
+<p>Prenez le temps de la lire.</p>
+<p>Elle vous permet souvent de comprendre :</p>
+<ul>
+    <li>sa manière d'enseigner ;</li>
+    <li>son expérience ;</li>
+    <li>sa vision de l'accompagnement ;</li>
+    <li>le public avec lequel il est le plus à l'aise.</li>
+</ul>
+<p>Cette présentation complète les informations techniques affichées sur son profil.</p>
+
+<h2>Vérifiez que le professeur correspond au niveau recherché</h2>
+<p>Tous les professeurs n'enseignent pas les mêmes classes.</p>
+<p>Consultez les niveaux pris en charge afin de vérifier qu'ils correspondent bien aux besoins de l'apprenant.</p>
+<p>Même lorsqu'un professeur intervient sur plusieurs classes, son expérience peut être particulièrement importante sur certains niveaux.</p>
+<p>Les informations présentes sur son profil vous aideront à apprécier cette expérience.</p>
+
+<h2>Vérifiez les matières proposées</h2>
+<p>Assurez-vous que le professeur enseigne bien la ou les matières recherchées.</p>
+<p>Chaque matière affichée sur la plateforme est associée aux compétences déclarées par le professeur et examinées lors de la vérification de son dossier.</p>
+
+<h2>Prenez en compte son expérience</h2>
+<p>L'expérience permet souvent d'apprécier la diversité des situations déjà rencontrées par un professeur.</p>
+<p>Selon les profils, vous pourrez retrouver :</p>
+<ul>
+    <li>les établissements dans lesquels il a exercé ;</li>
+    <li>son ancienneté ;</li>
+    <li>son parcours professionnel ;</li>
+    <li>ou d'autres informations utiles.</li>
+</ul>
+<p>L'expérience est un élément important, mais elle ne doit pas être le seul critère de décision.</p>
+
+<h2>Vérifiez sa zone d'intervention</h2>
+<p>Si les cours se déroulent en présentiel, assurez-vous que le professeur intervient bien dans votre secteur.</p>
+<p>Cela facilitera l'organisation des séances.</p>
+
+<h2>Consultez ses disponibilités</h2>
+<p>Les disponibilités indiquent les périodes pendant lesquelles le professeur peut généralement assurer des cours.</p>
+<p>Vérifiez qu'elles sont compatibles avec votre propre organisation.</p>
+<p>Ces informations peuvent évoluer au cours de l'année scolaire.</p>
+
+<h2>La vérification apporte une sécurité supplémentaire</h2>
+<p>Avant d'être rendu visible sur la plateforme, chaque professeur partenaire passe par une procédure de vérification.</p>
+<p>Cette étape permet de contrôler les informations et les justificatifs demandés.</p>
+<p>Elle constitue un élément supplémentaire pour vous aider à choisir en toute confiance.</p>
+<p>Pour en savoir davantage, consultez l'article {lp("pourquoi-les-professeurs-sont-ils-verifies", "Pourquoi les professeurs sont-ils vérifiés ?")}</p>
+
+<h2>La séance d'essai fait partie du choix</h2>
+<p>Même après avoir comparé plusieurs profils, il est parfois difficile de savoir si un professeur conviendra parfaitement.</p>
+<p>C'est précisément le rôle de la séance d'essai.</p>
+<p>Cette première rencontre permet :</p>
+<ul>
+    <li>de faire connaissance ;</li>
+    <li>d'échanger sur les attentes ;</li>
+    <li>d'observer la manière dont le professeur communique ;</li>
+    <li>d'évaluer si une collaboration durable est envisageable.</li>
+</ul>
+<p>La séance d'essai constitue donc une étape importante dans votre prise de décision.</p>
+<p>Son déroulement est présenté dans l'article {lp("comment-fonctionne-la-seance-dessai", "Comment fonctionne la séance d'essai ?")}</p>
+
+<h2>Prenez le temps de comparer</h2>
+<p>Il n'est pas nécessaire de choisir le premier profil consulté.</p>
+<p>Comparer plusieurs professeurs vous permettra de mieux apprécier les différences entre leurs parcours, leurs compétences et leur présentation.</p>
+<p>Quelques minutes supplémentaires peuvent vous aider à faire un choix plus serein.</p>
+
+<h2>En résumé</h2>
+<p>Pour choisir le bon professeur :</p>
+<ul>
+    <li>✓ définissez clairement votre besoin ;</li>
+    <li>✓ comparez plusieurs profils ;</li>
+    <li>✓ consultez attentivement les présentations ;</li>
+    <li>✓ vérifiez les matières, les classes et la zone d'intervention ;</li>
+    <li>✓ tenez compte de l'expérience et des disponibilités ;</li>
+    <li>✓ profitez de la {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} pour confirmer votre choix.</li>
 </ul>
 
-<h2>Le tarif le plus eleve est-il le meilleur ?</h2>
-<p>Pas necessairement. Le tarif le plus eleve ne garantit pas toujours le meilleur professeur pour <em>votre</em> enfant. Le feeling et la pedagogie sont essentiels. C'est pourquoi nous proposons toujours une {lp("comment-fonctionne-la-seance-dessai", "seance d'essai gratuite de 45 minutes")} pour que vous puissiez juger par vous-meme.</p>
+<div style="background-color: var(--hc-primary-light); padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid var(--hc-primary);">
+    <p style="margin: 0; font-weight: 500;"><strong>À retenir :</strong> Un bon professeur n'est pas seulement celui qui maîtrise une matière. C'est aussi une personne avec laquelle l'apprenant se sent écouté, compris et encouragé à progresser. C'est pourquoi Prof Chez Vous prévoit une première {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} avant tout engagement régulier.</p>
+</div>
 """
         },
         {
             "category": cat_parents,
-            "title": "Pourquoi les professeurs sont-ils verifies ?",
+            "title": "Pourquoi les professeurs sont-ils vérifiés ?",
             "slug": "pourquoi-les-professeurs-sont-ils-verifies",
-            "keywords": "verification, confiance, securite, diplomes, identite, badge, certifie",
+            "keywords": "verification, confiance, securite, diplomes, identite, badge, certifie, controle, procedure",
             "order": 4,
             "content": f"""
-<h2>Votre securite est notre priorite absolue</h2>
-<p>Faire entrer quelqu'un chez soi pour accompagner son enfant demande une confiance totale. C'est pourquoi nous avons mis en place le processus de verification le plus strict du Benin.</p>
+<h2>Réponse rapide</h2>
+<p>Avant d'apparaître publiquement sur Prof Chez Vous, chaque professeur partenaire passe par une procédure de vérification.</p>
+<p>Cette vérification permet de contrôler son identité ainsi que les informations et les justificatifs nécessaires à l'étude de son dossier.</p>
+<p>L'objectif est d'offrir aux parents et aux apprenants un environnement plus fiable pour rechercher un professeur.</p>
 
-<h3>En quoi consiste notre verification ?</h3>
-<p>Avant d'obtenir le badge <strong>Certifie</strong> et d'etre visible sur la plateforme, chaque professeur doit nous fournir :</p>
+<h2>Pourquoi cette vérification est-elle nécessaire ?</h2>
+<p>Choisir un professeur est une décision importante.</p>
+<p>Les parents comme les apprenants souhaitent naturellement savoir à qui ils confient leur apprentissage.</p>
+<p>Prof Chez Vous a donc mis en place une procédure de vérification afin que chaque profil visible sur la plateforme fasse l'objet d'un examen préalable.</p>
+<p>Cette démarche contribue à instaurer un climat de confiance avant même la première prise de contact.</p>
+
+<h2>Que vérifie Prof Chez Vous ?</h2>
+<p>Avant qu'un professeur puisse être rendu visible, notre équipe examine notamment :</p>
 <ul>
-    <li><strong>Une piece d'identite valide :</strong> Nous verifions que la personne est bien celle qu'elle pretend etre.</li>
-    <li><strong>Ses diplomes et attestations :</strong> Si un professeur affirme etre titulaire d'une Licence en Mathematiques, nous verifions physiquement ou numeriquement ce diplome.</li>
-    <li><strong>Son casier judiciaire (pour certains profils) :</strong> Afin de garantir un environnement sur pour les apprenants.</li>
+    <li>son identité ;</li>
+    <li>les informations renseignées sur son profil ;</li>
+    <li>les diplômes ou autres justificatifs présentés ;</li>
+    <li>les documents complémentaires lorsque cela est nécessaire pour apprécier certaines compétences ou expériences.</li>
 </ul>
+<p>Chaque dossier est étudié individuellement.</p>
+<p>Selon le profil du professeur, des informations complémentaires peuvent être demandées avant toute validation.</p>
 
-<h2>Un processus rigoureux pour votre tranquillite</h2>
-<p>Sur Prof Chez Vous, il n'y a pas d'anonymat. Vous savez exactement qui vous engagez. {la("pourquoi-verifions-nous-les-professeurs", "Decouvrez la philosophie derriere notre processus de verification")}.</p>
-<p>Si vous etes professeur, {lt("comment-fonctionne-la-verification", "consultez le detail du processus de verification")} et les {lt("quels-documents-sont-demandes", "documents necessaires")}.</p>
+<h2>Une qualification peut être démontrée de différentes façons</h2>
+<p>Toutes les compétences ne s'acquièrent pas uniquement par un diplôme portant exactement le nom de la matière enseignée.</p>
+<p>Dans certains cas, un professeur peut justifier ses compétences grâce :</p>
+<ul>
+    <li>à un diplôme compatible avec la discipline concernée ;</li>
+    <li>à une formation pertinente ;</li>
+    <li>à une expérience professionnelle significative ;</li>
+    <li>ou à des justificatifs complémentaires permettant d'apprécier son parcours.</li>
+</ul>
+<p>Chaque situation est étudiée individuellement par l'équipe de vérification.</p>
+<p>Cette approche permet d'évaluer les candidatures avec équité tout en maintenant un niveau d'exigence élevé.</p>
+
+<h2>Tous les dossiers ne sont pas validés automatiquement</h2>
+<p>Le dépôt d'un dossier ne garantit pas sa validation.</p>
+<p>Chaque candidature est examinée avant toute publication.</p>
+<p>Si certains éléments sont insuffisants ou nécessitent des précisions, le professeur peut être invité à compléter son dossier avant qu'une décision définitive ne soit prise.</p>
+<p>Cette procédure contribue à préserver la qualité des profils proposés sur la plateforme.</p>
+
+<h2>Que signifie un profil vérifié ?</h2>
+<p>Lorsqu'un professeur est indiqué comme vérifié sur Prof Chez Vous, cela signifie que son dossier a satisfait à la procédure de vérification mise en place par la plateforme.</p>
+<p>Autrement dit, son identité et les éléments nécessaires à l'étude de sa candidature ont été examinés avant la publication de son profil.</p>
+<p>Cette vérification constitue un niveau supplémentaire de confiance dans votre recherche.</p>
+
+<h2>Ce que la vérification ne signifie pas</h2>
+<p>La vérification ne signifie pas que Prof Chez Vous classe les professeurs entre eux ou garantit qu'un enseignant conviendra à tous les apprenants.</p>
+<p>Chaque professeur possède sa propre personnalité, sa méthode de travail et son expérience.</p>
+<p>C'est pourquoi la plateforme vous laisse toujours libre de comparer plusieurs profils et de choisir celui qui correspond le mieux à vos attentes.</p>
+<p>La {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} permet ensuite de confirmer que ce choix répond bien à vos besoins.</p>
+
+<h2>Pourquoi conserver une liberté de choix ?</h2>
+<p>Même après une vérification, plusieurs professeurs peuvent parfaitement répondre à votre recherche.</p>
+<p>Prof Chez Vous préfère donc vous fournir toutes les informations utiles afin que vous puissiez comparer les profils et prendre une décision éclairée.</p>
+<p>Notre rôle est de créer un cadre de confiance.</p>
+<p>Votre rôle est de choisir le professeur qui vous semble le plus adapté.</p>
+
+<h2>Une confiance qui se construit à plusieurs</h2>
+<p>La qualité d'une relation pédagogique repose sur plusieurs éléments :</p>
+<ul>
+    <li>les compétences du professeur ;</li>
+    <li>les attentes du parent ou de l'apprenant ;</li>
+    <li>une bonne communication ;</li>
+    <li>des objectifs clairement définis.</li>
+</ul>
+<p>La vérification constitue la première étape de cette relation de confiance.</p>
+<p>La {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} permet ensuite de confirmer que chacun souhaite poursuivre l'accompagnement dans de bonnes conditions.</p>
+
+<h2>En résumé</h2>
+<p>La vérification permet de :</p>
+<ul>
+    <li>✓ contrôler l'identité du professeur ;</li>
+    <li>✓ examiner les informations et justificatifs de son dossier ;</li>
+    <li>✓ évaluer ses compétences à partir de son parcours et des documents fournis ;</li>
+    <li>✓ publier uniquement les profils ayant satisfait à la procédure de vérification.</li>
+</ul>
+<p>Elle ne remplace toutefois ni votre propre appréciation, ni la première {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")}, qui restent essentielles pour choisir le professeur le plus adapté à vos besoins.</p>
 """
         },
         {
             "category": cat_parents,
-            "title": "Comment fonctionne la seance d'essai ?",
+            "title": "Comment fonctionne la séance d'essai ?",
             "slug": "comment-fonctionne-la-seance-dessai",
-            "keywords": "essai, gratuit, premier cours, 45 minutes, test, seance",
+            "keywords": "essai, gratuit, premier cours, rencontre, test, seance, faire connaissance",
             "order": 5,
             "content": f"""
-<h2>Testez avant de vous engager</h2>
-<p>Parce qu'un CV ne fait pas tout, nous avons rendu obligatoire une <strong>seance d'essai de 45 minutes</strong> pour chaque nouvel engagement.</p>
+<h2>Réponse rapide</h2>
+<p>La séance d'essai est une première rencontre organisée entre le professeur, le parent ou l'apprenant.</p>
+<p>Elle permet à chacun de faire connaissance, de préciser les besoins, de découvrir la manière de travailler du professeur et de vérifier si une collaboration durable est envisageable.</p>
+<p>À son issue, chacun reste entièrement libre de poursuivre ou non l'accompagnement.</p>
 
-<h3>Les regles de l'essai</h3>
-<ol>
-    <li><strong>100% Gratuit :</strong> Vous ne payez absolument rien pour cette premiere seance.</li>
-    <li><strong>Decouverte mutuelle :</strong> Ces 45 minutes servent a faire connaissance, evaluer le niveau de l'enfant et discuter des objectifs.</li>
-    <li><strong>Sans pression :</strong> Si le feeling ne passe pas, vous etes totalement libre de ne pas donner suite, sans avoir a vous justifier.</li>
-</ol>
+<h2>Pourquoi une séance d'essai ?</h2>
+<p>Choisir un professeur est une décision importante.</p>
+<p>Même après avoir consulté un profil détaillé, il est difficile de savoir si une collaboration conviendra réellement.</p>
+<p>La séance d'essai permet donc de transformer un choix effectué sur un écran en une véritable rencontre.</p>
+<p>Elle aide le professeur, le parent et l'apprenant à confirmer que leurs attentes sont compatibles avant tout engagement régulier.</p>
 
-<h2>Pourquoi cet essai est-il si important ?</h2>
-<p>Cette seance protege les parents d'un mauvais choix, et permet au professeur de s'assurer qu'il a les competences pour aider l'apprenant. {la("pourquoi-une-seance-dessai", "Decouvrez le raisonnement derriere cette politique")}.</p>
-<p>Si l'essai est concluant, {lp("comment-se-deroule-un-engagement", "decouvrez comment se deroule la suite de l'engagement")}. Sinon, {lp("que-faire-si-je-ne-suis-pas-satisfait", "vous etes libre de chercher un autre professeur")}.</p>
+<h2>Quel est l'objectif de cette première séance ?</h2>
+<p>La séance d'essai ne sert pas uniquement à dispenser un premier cours.</p>
+<p>Elle permet notamment :</p>
+<ul>
+    <li>de faire connaissance ;</li>
+    <li>de comprendre les besoins de l'apprenant ;</li>
+    <li>de discuter des objectifs à atteindre ;</li>
+    <li>de découvrir la méthode de travail du professeur ;</li>
+    <li>de répondre aux premières questions ;</li>
+    <li>d'établir un premier climat de confiance.</li>
+</ul>
+<p>Cette première rencontre pose les bases d'une éventuelle collaboration.</p>
+
+<h2>Comment une séance d'essai est-elle organisée ?</h2>
+<p>Une fois votre professeur choisi, vous pouvez demander une séance d'essai depuis votre espace personnel.</p>
+<p>Après confirmation, la date, l'heure et les modalités de la rencontre sont convenues entre les différentes parties.</p>
+<p>Selon la situation, cette séance peut être organisée dans le respect des modalités prévues par la plateforme.</p>
+
+<h2>Que se passe-t-il pendant la séance ?</h2>
+<p>Chaque professeur possède sa propre façon d'enseigner.</p>
+<p>En fonction des besoins de l'apprenant, la séance peut notamment comprendre :</p>
+<ul>
+    <li>une prise de contact ;</li>
+    <li>des échanges avec le parent ou l'apprenant ;</li>
+    <li>une évaluation du niveau si cela est nécessaire ;</li>
+    <li>une présentation de la méthode de travail ;</li>
+    <li>un premier accompagnement pédagogique.</li>
+</ul>
+<p>Il n'existe pas de déroulement unique.</p>
+<p>L'objectif est avant tout de permettre à chacun de mieux se connaître.</p>
+
+<h2>Comment savoir si le professeur vous convient ?</h2>
+<p>À l'issue de cette première rencontre, posez-vous quelques questions simples.</p>
+<p>Par exemple :</p>
+<ul>
+    <li>Le professeur a-t-il bien compris les besoins de l'apprenant ?</li>
+    <li>Sa manière d'expliquer est-elle adaptée ?</li>
+    <li>Le dialogue s'est-il installé facilement ?</li>
+    <li>Vous sentez-vous en confiance ?</li>
+    <li>Pensez-vous qu'il pourra accompagner efficacement l'apprenant dans la durée ?</li>
+</ul>
+<p>Ces éléments sont souvent aussi importants que les diplômes ou les années d'expérience.</p>
+
+<h2>Êtes-vous obligé de poursuivre ?</h2>
+<p>Non.</p>
+<p>La séance d'essai n'entraîne aucun engagement automatique.</p>
+<p>Elle est précisément prévue pour permettre à chacun d'évaluer sereinement si une collaboration est souhaitable.</p>
+<p>Si le professeur, le parent ou l'apprenant estime que cette collaboration ne correspond pas à ses attentes, chacun reste libre de ne pas poursuivre.</p>
+<p>Dans le cas contraire, l'accompagnement peut débuter dans les conditions convenues entre les deux parties.</p>
+
+<h2>Pourquoi Prof Chez Vous a-t-il choisi cette approche ?</h2>
+<p>Chez Prof Chez Vous, nous pensons qu'une relation pédagogique durable repose autant sur les compétences que sur la confiance.</p>
+<p>Une fiche de présentation permet de découvrir un professeur.</p>
+<p>Une séance d'essai permet de le rencontrer.</p>
+<p>C'est cette rencontre qui aide le plus souvent à prendre une décision éclairée.</p>
+<p>Notre objectif n'est pas simplement de mettre en relation des personnes, mais de favoriser des collaborations solides et durables.</p>
+
+<h2>Quelques conseils avant votre séance</h2>
+<p>Pour profiter pleinement de cette première rencontre, il est conseillé de :</p>
+<ul>
+    <li>réfléchir aux difficultés rencontrées ;</li>
+    <li>définir les objectifs recherchés ;</li>
+    <li>préparer les questions que vous souhaitez poser ;</li>
+    <li>permettre au professeur de bien comprendre votre situation.</li>
+</ul>
+<p>Une bonne préparation facilite les échanges et permet au professeur de proposer un accompagnement plus adapté.</p>
+
+<h2>En résumé</h2>
+<p>La séance d'essai permet :</p>
+<ul>
+    <li>✓ de rencontrer le professeur avant tout engagement ;</li>
+    <li>✓ de présenter les besoins et les objectifs de l'apprenant ;</li>
+    <li>✓ de découvrir la méthode de travail du professeur ;</li>
+    <li>✓ d'instaurer un climat de confiance ;</li>
+    <li>✓ de décider librement si l'accompagnement doit se poursuivre.</li>
+</ul>
 """
         },
         {
             "category": cat_parents,
-            "title": "Comment se deroule un engagement avec un professeur ?",
+            "title": "Comment se déroule un accompagnement avec un professeur ?",
             "slug": "comment-se-deroule-un-engagement",
-            "keywords": "engagement, apres essai, contrat, planning, paiement, suivi",
+            "keywords": "accompagnement, engagement, suivi, cours, journal de séance, modalités, horaires, fin, changer, plans",
             "order": 6,
             "content": f"""
-<h2>L'organisation de l'accompagnement</h2>
-<p>Si la {lp("comment-fonctionne-la-seance-dessai", "seance d'essai")} est concluante et que vous souhaitez poursuivre avec le professeur, voici comment cela s'organise.</p>
+<h2>Réponse rapide</h2>
+<p>Si la {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} est concluante, le parent ou l'apprenant et le professeur peuvent décider de poursuivre leur collaboration.</p>
+<p>Ils conviennent alors ensemble des modalités de l'accompagnement (fréquence, horaires, lieu des cours, objectifs, etc.), tandis que Prof Chez Vous reste la plateforme qui facilite cette mise en relation et accompagne ses utilisateurs tout au long de leur parcours.</p>
 
-<h3>1. Planification des cours</h3>
-<p>Vous convenez directement avec le professeur des jours et heures de cours (ex: tous les mercredis a 15h). Le planning est flexible et s'adapte a vos contraintes.</p>
+<h2>L'accompagnement commence après une décision commune</h2>
+<p>La séance d'essai permet à chacun de découvrir l'autre.</p>
+<p>Si le professeur, le parent ou l'apprenant estime que la collaboration est adaptée, ils peuvent décider ensemble de poursuivre l'accompagnement.</p>
+<p>Cette décision est toujours prise d'un commun accord.</p>
+<p>Prof Chez Vous n'impose jamais le début d'un accompagnement.</p>
 
-<h3>2. Tarification et paiement</h3>
-<p>Le professeur vous appliquera le tarif affiche sur son profil. Prof Chez Vous vous permet de payer le professeur via la plateforme (par Mobile Money ou carte) de maniere totalement securisee, garantissant ainsi une trace de toutes vos transactions. {lp("combien-coute-prof-chez-vous", "En savoir plus sur les tarifs et la transparence financiere")}.</p>
+<h2>Les modalités sont définies ensemble</h2>
+<p>Une fois la décision prise, le professeur et le parent ou l'apprenant définissent ensemble l'organisation des cours.</p>
+<p>Ils conviennent notamment :</p>
+<ul>
+    <li>des jours de cours ;</li>
+    <li>des horaires ;</li>
+    <li>de la fréquence des séances ;</li>
+    <li>du lieu où elles se dérouleront ;</li>
+    <li>des objectifs pédagogiques à atteindre.</li>
+</ul>
+<p>Chaque accompagnement est donc adapté aux besoins spécifiques de l'apprenant.</p>
 
-<h3>3. Suivi pedagogique</h3>
-<p>Le professeur pourra vous faire des retours reguliers sur la progression de votre enfant directement via la messagerie de la plateforme.</p>
+<h2>Un accompagnement qui évolue avec les besoins</h2>
+<p>Les besoins d'un apprenant évoluent naturellement au cours de l'année.</p>
+<p>Selon les progrès réalisés ou les nouveaux objectifs fixés, le professeur et le parent ou l'apprenant peuvent décider ensemble :</p>
+<ul>
+    <li>d'augmenter ou de réduire la fréquence des séances ;</li>
+    <li>de renforcer certaines notions ;</li>
+    <li>de préparer un examen ou un concours ;</li>
+    <li>d'adapter les objectifs pédagogiques.</li>
+</ul>
+<p>Cette souplesse permet d'offrir un accompagnement réellement personnalisé.</p>
 
-<h2>Et si ca ne se passe pas bien ?</h2>
-<p>Vous n'etes jamais bloque. {lp("que-faire-si-je-ne-suis-pas-satisfait", "Decouvrez vos options en cas d'insatisfaction")}.</p>
+<h2>Le rôle de Prof Chez Vous pendant l'accompagnement</h2>
+<p>Même après le début des cours, Prof Chez Vous continue d'assurer son rôle de plateforme.</p>
+<p>Notre équipe reste disponible pour :</p>
+<ul>
+    <li>répondre aux questions liées au fonctionnement de la plateforme ;</li>
+    <li>accompagner les utilisateurs en cas de difficulté ;</li>
+    <li>faciliter certaines démarches lorsque cela est nécessaire ;</li>
+    <li>contribuer au bon déroulement de chaque accompagnement.</li>
+</ul>
+<p>Notre objectif est de proposer un cadre organisé et sécurisé, afin que chacun puisse se concentrer sur l'essentiel : la réussite de l'apprenant.</p>
+
+<h2>Une relation fondée sur la confiance</h2>
+<p>La réussite d'un accompagnement repose autant sur la qualité du professeur que sur une communication régulière entre les différentes parties.</p>
+<p>Pour faciliter ce suivi, Prof Chez Vous met à disposition un <strong>journal de séance</strong> que le professeur complète après chaque cours.</p>
+<p>Ce journal permet notamment de renseigner :</p>
+<ul>
+    <li>les notions abordées ;</li>
+    <li>les objectifs travaillés ;</li>
+    <li>les difficultés rencontrées ;</li>
+    <li>les progrès observés ;</li>
+    <li>les recommandations pour les prochaines séances.</li>
+</ul>
+<p>Le parent ou l'apprenant peut ainsi suivre l'évolution de l'accompagnement presque en temps réel, sans devoir attendre plusieurs semaines pour faire le point.</p>
+<p>Cet outil renforce la transparence, facilite les échanges et permet à chacun de suivre la progression de l'apprenant tout au long de son parcours.</p>
+
+<h2>Peut-on mettre fin à un accompagnement ?</h2>
+<p>Oui.</p>
+<p>Le parent ou l'apprenant comme le professeur restent libres de mettre fin à leur collaboration si celle-ci ne répond plus à leurs attentes.</p>
+<p>Toutefois, avant toute rupture, les deux parties doivent respecter les engagements prévus dans le contrat conclu au début de l'accompagnement, notamment en ce qui concerne le règlement des éventuelles obligations financières restant dues.</p>
+<p>Cette règle permet de garantir une séparation claire, équitable et respectueuse des engagements pris par chacun.</p>
+<p>En cas de besoin, Prof Chez Vous peut accompagner les utilisateurs afin que cette transition se déroule dans les meilleures conditions.</p>
+
+<h2>Peut-on choisir un autre professeur ?</h2>
+<p>Oui.</p>
+<p>Si vos besoins évoluent ou si vous souhaitez poursuivre votre accompagnement avec un autre enseignant, vous pouvez effectuer une nouvelle recherche et sélectionner un autre professeur partenaire.</p>
+<p>Toutefois, les possibilités de remplacement dépendent du plan associé à votre compte.</p>
+<p>Dans le <strong>plan Standard</strong>, proposé actuellement dans le cadre de notre offre de lancement, chaque parent ou apprenant bénéficie <strong>d'une seule séance d'essai offerte à vie</strong> sur la plateforme.</p>
+<p>Si vous souhaitez rencontrer un autre professeur avant de vous engager, cette possibilité est ensuite déterminée par les avantages prévus dans votre plan.</p>
+<p>Les plans offrant davantage de liberté permettent notamment de réaliser plusieurs essais ou remplacements, dans les limites qui leur sont propres.</p>
+<p>Il est important de préciser que ces plans ne facturent pas les séances d'essai elles-mêmes. Ils donnent accès à des avantages supplémentaires tels qu'une plus grande liberté dans le choix des professeurs, un nombre d'essais adapté au plan souscrit ainsi que l'accès aux outils de suivi et aux fonctionnalités qui accompagnent votre parcours sur Prof Chez Vous.</p>
+
+<h2>Nos conseils pour une collaboration réussie</h2>
+<p>Quelques bonnes pratiques permettent généralement d'obtenir les meilleurs résultats :</p>
+<ul>
+    <li>définir des objectifs clairs dès le départ ;</li>
+    <li>respecter les horaires convenus ;</li>
+    <li>consulter régulièrement le journal de séance ;</li>
+    <li>échanger avec le professeur sur les progrès et les difficultés rencontrées ;
+    <li>signaler rapidement tout changement important.</li>
+</ul>
+<p>Une collaboration bien organisée favorise les progrès de l'apprenant et permet au professeur d'adapter son accompagnement au fil du temps.</p>
+
+<h2>En résumé</h2>
+<p>Après une {lp("comment-fonctionne-la-seance-dessai", "séance d'essai")} concluante :</p>
+<ul>
+    <li>✓ le professeur et le parent ou l'apprenant décident ensemble de poursuivre l'accompagnement ;</li>
+    <li>✓ les modalités des cours sont définies d'un commun accord ;</li>
+    <li>✓ le suivi de la progression est assuré grâce au journal de séance ;</li>
+    <li>✓ Prof Chez Vous reste disponible pour accompagner les utilisateurs dans l'utilisation de la plateforme ;</li>
+    <li>✓ toute fin d'accompagnement doit respecter les engagements prévus au contrat ;</li>
+    <li>✓ les possibilités de changement de professeur dépendent du plan associé à votre compte.</li>
+</ul>
 """
         },
         {

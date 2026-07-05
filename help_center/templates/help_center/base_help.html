@@ -25,8 +25,8 @@
 
     .hc-container {
         width: 100%;
-        padding-right: 1rem;
-        padding-left: 1rem;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
         margin-right: auto;
         margin-left: auto;
     }
@@ -177,7 +177,7 @@
     .hc-card {
         background: var(--hc-surface);
         border-radius: var(--hc-radius);
-        padding: 1.5rem;
+        padding: 1.25rem;
         box-shadow: var(--hc-shadow-sm);
         border: 1px solid var(--hc-border);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -340,10 +340,23 @@
         color: var(--hc-primary-dark);
     }
 
+    /* Tablet */
+    @media (min-width: 480px) {
+        .hc-container {
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+        .hc-card {
+            padding: 1.5rem;
+        }
+    }
+
     /* Desktop Media Queries */
     @media (min-width: 768px) {
         .hc-container {
             max-width: 720px;
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
         }
         .hc-title {
             font-size: 2.5rem;

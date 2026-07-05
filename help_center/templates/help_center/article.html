@@ -95,9 +95,9 @@
 
     <div style="margin-top: 1rem;">
         <!-- Contenu de l'article -->
-        <article class="hc-card" style="padding: 2.5rem;">
-            <h1 class="hc-title" style="font-size: 2.25rem; margin-bottom: 1.5rem;">{{ article.title }}</h1>
-            <div style="font-size: 0.9rem; color: var(--hc-text-muted); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--hc-border);">
+        <article class="hc-card hc-article-card">
+            <h1 class="hc-title hc-article-title">{{ article.title }}</h1>
+            <div style="font-size: 0.9rem; color: var(--hc-text-muted); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--hc-border);">
                 Mise à jour : {{ article.updated_at|date:"d M Y" }}
             </div>
             
@@ -135,14 +135,40 @@
 </div>
 
 <style>
+    /* Article card — mobile first: compact padding */
+    .hc-article-card {
+        padding: 1.25rem;
+    }
+    @media (min-width: 480px) {
+        .hc-article-card { padding: 1.75rem; }
+    }
+    @media (min-width: 768px) {
+        .hc-article-card { padding: 2.5rem; }
+    }
+
+    /* Article title responsive */
+    .hc-article-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    @media (min-width: 768px) {
+        .hc-article-title { font-size: 2.25rem; margin-bottom: 1.5rem; }
+    }
+
     /* Styles spécifiques pour le contenu de l'article */
-    .article-content h2 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; color: var(--hc-text-main); }
-    .article-content h3 { font-size: 1.25rem; margin: 1.5rem 0 1rem; font-weight: 600; color: var(--hc-text-main); }
+    .article-content h2 { font-size: 1.35rem; margin: 1.75rem 0 0.75rem; font-weight: 700; color: var(--hc-text-main); }
+    .article-content h3 { font-size: 1.15rem; margin: 1.25rem 0 0.75rem; font-weight: 600; color: var(--hc-text-main); }
     .article-content p { margin-bottom: 1.25rem; }
-    .article-content ul, .article-content ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
+    .article-content ul, .article-content ol { margin-bottom: 1.25rem; padding-left: 1.25rem; }
     .article-content li { margin-bottom: 0.5rem; }
     .article-content a { color: var(--hc-primary); text-decoration: underline; font-weight: 600; }
     .article-content a:hover { color: var(--hc-text-main); }
     .article-content img { max-width: 100%; border-radius: 8px; margin: 1.5rem 0; box-shadow: var(--hc-shadow-sm); }
+
+    @media (min-width: 768px) {
+        .article-content h2 { font-size: 1.5rem; margin: 2rem 0 1rem; }
+        .article-content h3 { font-size: 1.25rem; margin: 1.5rem 0 1rem; }
+        .article-content ul, .article-content ol { padding-left: 1.5rem; }
+    }
 </style>
 {% endblock %}
