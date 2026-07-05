@@ -1,5 +1,53 @@
 {% extends "help_center/base_help.html" %}
 
+{% block title %}Centre d'aide - Prof Chez Vous{% endblock %}
+
+{% block meta_seo %}
+<meta name="description" content="Centre d'aide officiel de Prof Chez Vous. Retrouvez toutes les réponses à vos questions : recherche de professeur, inscription, vérification, tarifs, séance d'essai et plus encore.">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:home' %}">
+<meta property="og:title" content="Centre d'aide - Prof Chez Vous">
+<meta property="og:description" content="Retrouvez toutes les réponses concernant Prof Chez Vous, que vous soyez parent, apprenant ou professeur.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:home' %}">
+<meta property="og:site_name" content="Prof Chez Vous">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% load static %}{% static 'core/images/logo_pr.jpg' %}">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Centre d'aide Prof Chez Vous",
+  "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:home' %}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:home' %}?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Centre d'aide"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
 {% block help_content %}
 <!-- Hero Section avec Barre de Recherche -->
 <section class="hc-hero">
@@ -37,8 +85,8 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                 </div>
-                <h3 class="hc-card-title">Parents & Apprenants</h3>
-                <p class="hc-card-desc">Trouvez comment réserver un cours, payer, et suivre la progression.</p>
+                <h2 class="hc-card-title">Parents & Apprenants</h2>
+                <p class="hc-card-desc">Trouvez comment rechercher un professeur, réserver un essai gratuit, et suivre la progression de votre enfant.</p>
                 <div class="hc-card-links">
                     <a href="{% url 'help_center:category_detail' 'parents' %}" class="hc-link">
                         Voir les 8 articles
@@ -55,8 +103,8 @@
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                     </svg>
                 </div>
-                <h3 class="hc-card-title">Professeurs</h3>
-                <p class="hc-card-desc">Gérez votre profil, vos disponibilités et vos paiements.</p>
+                <h2 class="hc-card-title">Professeurs</h2>
+                <p class="hc-card-desc">Créez votre profil, soumettez vos documents et recevez vos premières demandes d'élèves.</p>
                 <div class="hc-card-links">
                     <a href="{% url 'help_center:category_detail' 'professeurs' %}" class="hc-link">
                         Voir les 8 articles
@@ -74,8 +122,8 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                 </div>
-                <h3 class="hc-card-title">À propos de Prof Chez Vous</h3>
-                <p class="hc-card-desc">Notre mission, la sécurité, et les politiques de la plateforme.</p>
+                <h2 class="hc-card-title">À propos de Prof Chez Vous</h2>
+                <p class="hc-card-desc">Notre mission, nos engagements de transparence, de sécurité et notre vision pour l'éducation au Bénin.</p>
                 <div class="hc-card-links">
                     <a href="{% url 'help_center:category_detail' 'a-propos' %}" class="hc-link">
                         Voir les 8 articles

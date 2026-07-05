@@ -27,8 +27,27 @@ def article_detail(request, category_slug, article_slug):
     # Incrémentation des vues de manière atomique
     Article.objects.filter(pk=article.pk).update(views=F('views') + 1)
     
-    # Récupérer les articles liés s'il y en a
-    related_articles = article.related_articles.filter(is_published=True)[:5]
+    # Récupérer les articles liés s'il y en a (définis manuellement)
+    related_articles = list(article.related_articles.filter(is_published=True)[:3])
+    
+    # Si pas assez d'articles liés manuellement, utiliser les mots-clés pour trouver des similarités
+    if len(related_articles) < 3 and article.keywords:
+        import operator
+        from functools import reduce
+        keywords_list = [k.strip() for k in article.keywords.split(',') if len(k.strip()) > 3]
+        if keywords_list:
+            # Recherche des articles contenant l'un des mots clés
+            query = reduce(operator.or_, (Q(keywords__icontains=k) | Q(title__icontains=k) for k in keywords_list))
+            similar_articles = Article.objects.filter(is_published=True).filter(query).exclude(id=article.id).exclude(id__in=[a.id for a in related_articles]).distinct()
+            # On complète jusqu'à 3
+            needed = 3 - len(related_articles)
+            related_articles.extend(list(similar_articles[:needed]))
+            
+    # Fallback final sur les articles les plus vus de la même catégorie
+    if len(related_articles) < 3:
+        needed = 3 - len(related_articles)
+        cat_articles = category.articles.filter(is_published=True).exclude(id=article.id).exclude(id__in=[a.id for a in related_articles]).order_by('-views')[:needed]
+        related_articles.extend(list(cat_articles))
     
     return render(request, 'help_center/article.html', {'article': article, 'category': category, 'related_articles': related_articles})
 

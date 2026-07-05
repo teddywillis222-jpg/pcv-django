@@ -1,22 +1,101 @@
 {% extends "help_center/base_help.html" %}
+{% load static %}
 
 {% block title %}{{ article.title }} - Centre d'aide Prof Chez Vous{% endblock %}
 
+{% block meta_seo %}
+<meta name="description" content="{{ article.content|striptags|truncatewords:30 }}">
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:article_detail' category.slug article.slug %}">
+<meta property="og:title" content="{{ article.title }} - Centre d'aide Prof Chez Vous">
+<meta property="og:description" content="{{ article.content|striptags|truncatewords:30 }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:article_detail' category.slug article.slug %}">
+<meta property="og:site_name" content="Prof Chez Vous">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'core/images/logo_pr.jpg' %}">
+<meta property="article:published_time" content="{{ article.created_at|date:'c' }}">
+<meta property="article:modified_time" content="{{ article.updated_at|date:'c' }}">
+<meta property="article:section" content="{{ category.name }}">
+
+<!-- Schema.org BreadcrumbList -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Centre d'aide",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:home' %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ category.name }}",
+      "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:category_detail' category.slug %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ article.title }}"
+    }
+  ]
+}
+</script>
+
+<!-- Schema.org Article -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ article.title }}",
+  "description": "{{ article.content|striptags|truncatewords:30 }}",
+  "datePublished": "{{ article.created_at|date:'c' }}",
+  "dateModified": "{{ article.updated_at|date:'c' }}",
+  "author": {
+    "@type": "Organization",
+    "name": "Prof Chez Vous"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Prof Chez Vous",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'core/images/logo_pr.jpg' %}"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.scheme }}://{{ request.get_host }}{% url 'help_center:article_detail' category.slug article.slug %}"
+  },
+  "articleSection": "{{ category.name }}",
+  "keywords": "{{ article.keywords }}"
+}
+</script>
+{% endblock %}
+
 {% block help_content %}
 <div class="hc-container">
-    <div class="hc-breadcrumb">
+    <nav class="hc-breadcrumb" aria-label="Fil d'Ariane">
         <a href="{% url 'home' %}">Accueil</a>
         <span class="hc-breadcrumb-sep">/</span>
         <a href="{% url 'help_center:home' %}">Centre d'aide</a>
         <span class="hc-breadcrumb-sep">/</span>
         <a href="{% url 'help_center:category_detail' category.slug %}">{{ category.name }}</a>
         <span class="hc-breadcrumb-sep">/</span>
-        <span style="color: var(--hc-text-main); font-weight: 600;">{{ article.title }}</span>
-    </div>
+        <span style="color: var(--hc-text-main); font-weight: 600;">{{ article.title|truncatewords:6 }}</span>
+    </nav>
 
-    <div class="hc-grid-3" style="grid-template-columns: 1fr; gap: 2rem; margin-top: 1rem;">
+    <div style="margin-top: 1rem;">
         <!-- Contenu de l'article -->
-        <article class="hc-card" style="padding: 2.5rem; grid-column: 1 / -1;">
+        <article class="hc-card" style="padding: 2.5rem;">
             <h1 class="hc-title" style="font-size: 2.25rem; margin-bottom: 1.5rem;">{{ article.title }}</h1>
             <div style="font-size: 0.9rem; color: var(--hc-text-muted); margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--hc-border);">
                 Mise à jour : {{ article.updated_at|date:"d M Y" }}
@@ -27,31 +106,43 @@
             </div>
         </article>
 
-        <!-- Articles liés -->
+        <!-- Articles liés / À lire également -->
         {% if related_articles %}
-        <section class="hc-section" style="padding-top: 0;">
-            <h2 class="hc-section-title">Articles liés</h2>
+        <section style="margin-top: 2.5rem;">
+            <h2 class="hc-section-title">À lire également</h2>
             <div class="hc-list">
                 {% for related in related_articles %}
                 <a href="{% url 'help_center:article_detail' related.category.slug related.slug %}" class="hc-list-item">
-                    <span class="hc-list-item-title">{{ related.title }}</span>
+                    <div>
+                        <span class="hc-list-item-title">{{ related.title }}</span>
+                        <div style="font-size: 0.8rem; color: var(--hc-primary); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700;">{{ related.category.name }}</div>
+                    </div>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hc-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </a>
                 {% endfor %}
             </div>
         </section>
         {% endif %}
+
+        <!-- Navigation dans la catégorie -->
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="{% url 'help_center:category_detail' category.slug %}" class="hc-link" style="font-size: 1rem; padding: 0.75rem 1.5rem; background: var(--hc-primary-light); border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.5rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Voir tous les articles : {{ category.name }}
+            </a>
+        </div>
     </div>
 </div>
 
 <style>
-    /* Styles spécifiques pour le contenu de l'article généré (Wysiwyg / HTML) */
+    /* Styles spécifiques pour le contenu de l'article */
     .article-content h2 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; color: var(--hc-text-main); }
     .article-content h3 { font-size: 1.25rem; margin: 1.5rem 0 1rem; font-weight: 600; color: var(--hc-text-main); }
     .article-content p { margin-bottom: 1.25rem; }
     .article-content ul, .article-content ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
     .article-content li { margin-bottom: 0.5rem; }
-    .article-content a { color: var(--hc-primary); text-decoration: underline; }
+    .article-content a { color: var(--hc-primary); text-decoration: underline; font-weight: 600; }
+    .article-content a:hover { color: var(--hc-text-main); }
     .article-content img { max-width: 100%; border-radius: 8px; margin: 1.5rem 0; box-shadow: var(--hc-shadow-sm); }
 </style>
 {% endblock %}

@@ -7,8 +7,23 @@ django.setup()
 from help_center.models import Category, Article
 from django.utils.text import slugify
 
+# Base URL for internal links
+BASE = "/centre-daide"
+
+def link(cat_slug, art_slug, text):
+    """Helper to generate an internal link to another help center article."""
+    return f'<a href="{BASE}/{cat_slug}/{art_slug}/">{text}</a>'
+
+# Shortcut link builders per category
+def lp(slug, text): return link("parents", slug, text)
+def lt(slug, text): return link("professeurs", slug, text)
+def la(slug, text): return link("a-propos", slug, text)
+
+
 def run():
-    # 1. Ensure Categories Exist
+    # =========================================================================
+    # 1. Categories
+    # =========================================================================
     cat_parents, _ = Category.objects.update_or_create(
         slug="parents",
         defaults={
@@ -34,7 +49,7 @@ def run():
     cat_apropos, _ = Category.objects.update_or_create(
         slug="a-propos",
         defaults={
-            "name": "À propos de Prof Chez Vous",
+            "name": "A propos de Prof Chez Vous",
             "description": "Notre mission, notre vision et nos engagements.",
             "icon": "bi bi-info-circle",
             "order": 3,
@@ -42,402 +57,548 @@ def run():
         }
     )
 
+    # =========================================================================
+    # 2. Articles - PARENTS
+    # =========================================================================
     articles_data = [
-        # ==========================================
-        # PARENTS
-        # ==========================================
         {
             "category": cat_parents,
-            "title": "1. Qu'est-ce que Prof Chez Vous ?",
-            "slug": "quest-ce-que-prof-chez-vous-parents",
-            "keywords": "plateforme, fonctionnement, principe, concept, professeurs, bénin",
-            "content": """
-            <h2>Une nouvelle façon de trouver le bon professeur</h2>
-            <p>Prof Chez Vous n'est pas une agence de soutien scolaire classique. C'est la première plateforme au Bénin qui redonne le pouvoir aux parents et une véritable identité professionnelle aux enseignants.</p>
-            <p>Notre plateforme vous permet de rechercher, comparer et engager directement des professeurs particuliers (répétiteurs) vérifiés et certifiés. Fini le bouche-à-oreille incertain : vous avez désormais accès à un catalogue transparent de profils compétents près de chez vous.</p>
-            <h3>Comment ça marche ?</h3>
-            <ul>
-                <li><strong>Recherche libre :</strong> Vous parcourez les profils selon la matière, le niveau et la localisation.</li>
-                <li><strong>Transparence totale :</strong> Les diplômes, l'expérience et les tarifs sont affichés sur chaque profil.</li>
-                <li><strong>Contact direct :</strong> Vous échangez avec le professeur avant de prendre votre décision.</li>
-            </ul>
-            """
+            "title": "Qu'est-ce que Prof Chez Vous ?",
+            "slug": "quest-ce-que-prof-chez-vous",
+            "keywords": "plateforme, presentation, concept, professeurs, benin, soutien scolaire",
+            "order": 1,
+            "content": f"""
+<h2>Une nouvelle facon de trouver le bon professeur</h2>
+<p>Prof Chez Vous n'est pas une agence de soutien scolaire classique. C'est la premiere plateforme au Benin qui redonne le pouvoir aux parents et une veritable identite professionnelle aux enseignants.</p>
+<p>Notre plateforme vous permet de rechercher, comparer et engager directement des professeurs particuliers (repetiteurs) verifies et certifies. Fini le bouche-a-oreille incertain : vous avez desormais acces a un catalogue transparent de profils competents pres de chez vous.</p>
+
+<h2>Comment ca marche concrètement ?</h2>
+<ol>
+    <li><strong>Recherche libre :</strong> Vous parcourez les profils selon la matiere, le niveau et la localisation. {lp("comment-trouver-un-professeur", "Decouvrez le parcours de recherche complet")}.</li>
+    <li><strong>Transparence totale :</strong> Les diplomes, l'experience et les tarifs sont affiches sur chaque profil. Chaque professeur est {lp("pourquoi-les-professeurs-sont-ils-verifies", "verifie par notre equipe")}.</li>
+    <li><strong>Contact direct :</strong> Vous echangez avec le professeur avant de prendre votre decision.</li>
+    <li><strong>Seance d'essai :</strong> Vous testez le professeur gratuitement pendant 45 minutes avant de vous engager. {lp("comment-fonctionne-la-seance-dessai", "En savoir plus sur l'essai gratuit")}.</li>
+</ol>
+
+<h3>Pour qui est faite la plateforme ?</h3>
+<p>Prof Chez Vous s'adresse a tous les parents et apprenants au Benin qui cherchent un accompagnement scolaire de qualite, du primaire au superieur. Que votre enfant ait besoin d'un soutien regulier ou d'une preparation intensive avant un examen, vous trouverez le professeur qu'il lui faut.</p>
+<p>Vous voulez en savoir plus sur notre mission ? {la("pourquoi-prof-chez-vous-existe", "Decouvrez pourquoi Prof Chez Vous existe")}.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "2. Comment trouver un professeur ?",
+            "title": "Comment trouver un professeur ?",
             "slug": "comment-trouver-un-professeur",
             "keywords": "recherche, trouver, parcours, chercher, filtrer, localisation",
-            "content": """
-            <h2>Le parcours de recherche pas-à-pas</h2>
-            <p>Trouver le professeur idéal pour votre enfant se fait en quelques clics grâce à notre moteur de recherche intelligent.</p>
-            <h3>Les étapes de votre recherche :</h3>
-            <ol>
-                <li><strong>Utilisez la barre de recherche :</strong> Depuis la page d'accueil, cliquez sur « Rechercher un prof ».</li>
-                <li><strong>Appliquez vos filtres :</strong> Précisez la matière (ex: Mathématiques), le niveau (ex: Terminale) et votre localisation (ex: Cotonou).</li>
-                <li><strong>Parcourez les résultats :</strong> Une liste de professeurs correspondant à vos critères s'affiche.</li>
-                <li><strong>Consultez les profils :</strong> Cliquez sur un professeur pour voir sa description détaillée, ses méthodes pédagogiques et ses tarifs.</li>
-                <li><strong>Prenez contact :</strong> Une fois votre choix fait, connectez-vous ou créez votre compte parent pour lui envoyer une demande d'engagement.</li>
-            </ol>
-            <p>Nous vous recommandons de sélectionner 2 ou 3 profils intéressants afin de pouvoir échanger avec eux et faire le meilleur choix.</p>
-            """
+            "order": 2,
+            "content": f"""
+<h2>Le parcours de recherche pas-a-pas</h2>
+<p>Trouver le professeur ideal pour votre enfant se fait en quelques clics grace a notre moteur de recherche intelligent.</p>
+
+<h3>Les etapes de votre recherche</h3>
+<ol>
+    <li><strong>Utilisez la barre de recherche :</strong> Depuis la page d'accueil, cliquez sur "Rechercher un prof".</li>
+    <li><strong>Appliquez vos filtres :</strong> Precisez la matiere (ex: Mathematiques), le niveau (ex: Terminale) et votre localisation (ex: Cotonou).</li>
+    <li><strong>Parcourez les resultats :</strong> Une liste de professeurs correspondant a vos criteres s'affiche.</li>
+    <li><strong>Consultez les profils :</strong> Cliquez sur un professeur pour voir sa description detaillee, ses methodes pedagogiques et ses tarifs.</li>
+    <li><strong>Prenez contact :</strong> Une fois votre choix fait, connectez-vous ou creez votre compte parent pour lui envoyer une demande d'engagement.</li>
+</ol>
+
+<h2>Comment faire le meilleur choix ?</h2>
+<p>Nous vous recommandons de selectionner 2 ou 3 profils interessants afin de pouvoir echanger avec eux et comparer. {lp("comment-choisir-le-bon-professeur", "Consultez notre guide pour choisir le bon professeur")}.</p>
+<p>Tous les professeurs affiches sur la plateforme sont {lp("pourquoi-les-professeurs-sont-ils-verifies", "verifies par notre equipe")} : vous pouvez consulter les profils en toute confiance.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "3. Comment choisir le bon professeur ?",
+            "title": "Comment choisir le bon professeur ?",
             "slug": "comment-choisir-le-bon-professeur",
-            "keywords": "choix, comparer, meilleur, profil, décision",
-            "content": """
-            <h2>Les critères pour faire le bon choix</h2>
-            <p>Choisir un répétiteur est une décision importante. Sur Prof Chez Vous, toutes les informations sont publiques pour vous aider à prendre une décision éclairée.</p>
-            <h3>Ce qu'il faut regarder sur un profil :</h3>
-            <ul>
-                <li><strong>L'expérience et la méthode :</strong> Lisez attentivement la description du professeur. Un bon professeur explique <em>comment</em> il enseigne, pas seulement ce qu'il enseigne.</li>
-                <li><strong>La vérification :</strong> Assurez-vous que le profil possède le badge vert "Certifié". Cela garantit que nous avons contrôlé son identité et ses diplômes.</li>
-                <li><strong>Le tarif :</strong> Vérifiez que les honoraires du professeur correspondent à votre budget sur le long terme.</li>
-                <li><strong>La vidéo de présentation (si disponible) :</strong> Rien de tel qu'une courte vidéo pour ressentir l'énergie et la pédagogie d'un enseignant !</li>
-            </ul>
-            <p><strong>N'oubliez pas :</strong> Le tarif le plus élevé ne garantit pas toujours le meilleur professeur pour <em>votre</em> enfant. Le feeling et la pédagogie sont essentiels, c'est pourquoi nous proposons toujours une séance d'essai.</p>
-            """
+            "keywords": "choix, comparer, meilleur, profil, decision, criteres",
+            "order": 3,
+            "content": f"""
+<h2>Les criteres pour faire le bon choix</h2>
+<p>Choisir un repetiteur est une decision importante. Sur Prof Chez Vous, toutes les informations sont publiques pour vous aider a prendre une decision eclairee.</p>
+
+<h3>Ce qu'il faut regarder sur un profil</h3>
+<ul>
+    <li><strong>L'experience et la methode :</strong> Lisez attentivement la description du professeur. Un bon professeur explique <em>comment</em> il enseigne, pas seulement ce qu'il enseigne.</li>
+    <li><strong>La verification :</strong> Assurez-vous que le profil possede le badge vert "Certifie". Cela garantit que nous avons {lp("pourquoi-les-professeurs-sont-ils-verifies", "controle son identite et ses diplomes")}.</li>
+    <li><strong>Le tarif :</strong> Verifiez que les honoraires du professeur correspondent a votre budget sur le long terme. {lp("combien-coute-prof-chez-vous", "Consultez notre guide sur les tarifs")}.</li>
+    <li><strong>La video de presentation (si disponible) :</strong> Rien de tel qu'une courte video pour ressentir l'energie et la pedagogie d'un enseignant !</li>
+</ul>
+
+<h2>Le tarif le plus eleve est-il le meilleur ?</h2>
+<p>Pas necessairement. Le tarif le plus eleve ne garantit pas toujours le meilleur professeur pour <em>votre</em> enfant. Le feeling et la pedagogie sont essentiels. C'est pourquoi nous proposons toujours une {lp("comment-fonctionne-la-seance-dessai", "seance d'essai gratuite de 45 minutes")} pour que vous puissiez juger par vous-meme.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "4. Pourquoi les professeurs sont-ils vérifiés ?",
+            "title": "Pourquoi les professeurs sont-ils verifies ?",
             "slug": "pourquoi-les-professeurs-sont-ils-verifies",
-            "keywords": "vérification, confiance, sécurité, diplômes, identité, badge",
-            "content": """
-            <h2>Votre sécurité est notre priorité absolue</h2>
-            <p>Faire entrer quelqu'un chez soi pour accompagner son enfant demande une confiance totale. C'est pourquoi nous avons mis en place le processus de vérification le plus strict du Bénin.</p>
-            <h3>En quoi consiste notre vérification ?</h3>
-            <p>Avant d'obtenir le badge <strong>Certifié</strong> et d'être visible sur la plateforme, chaque professeur doit nous fournir :</p>
-            <ul>
-                <li><strong>Une pièce d'identité valide :</strong> Nous vérifions que la personne est bien celle qu'elle prétend être.</li>
-                <li><strong>Ses diplômes et attestations :</strong> Si un professeur affirme être titulaire d'une Licence en Mathématiques, nous vérifions physiquement ou numériquement ce diplôme.</li>
-                <li><strong>Son casier judiciaire (pour certains profils) :</strong> Afin de garantir un environnement sûr pour les apprenants.</li>
-            </ul>
-            <p>Sur Prof Chez Vous, il n'y a pas d'anonymat. Vous savez exactement qui vous engagez.</p>
-            """
+            "keywords": "verification, confiance, securite, diplomes, identite, badge, certifie",
+            "order": 4,
+            "content": f"""
+<h2>Votre securite est notre priorite absolue</h2>
+<p>Faire entrer quelqu'un chez soi pour accompagner son enfant demande une confiance totale. C'est pourquoi nous avons mis en place le processus de verification le plus strict du Benin.</p>
+
+<h3>En quoi consiste notre verification ?</h3>
+<p>Avant d'obtenir le badge <strong>Certifie</strong> et d'etre visible sur la plateforme, chaque professeur doit nous fournir :</p>
+<ul>
+    <li><strong>Une piece d'identite valide :</strong> Nous verifions que la personne est bien celle qu'elle pretend etre.</li>
+    <li><strong>Ses diplomes et attestations :</strong> Si un professeur affirme etre titulaire d'une Licence en Mathematiques, nous verifions physiquement ou numeriquement ce diplome.</li>
+    <li><strong>Son casier judiciaire (pour certains profils) :</strong> Afin de garantir un environnement sur pour les apprenants.</li>
+</ul>
+
+<h2>Un processus rigoureux pour votre tranquillite</h2>
+<p>Sur Prof Chez Vous, il n'y a pas d'anonymat. Vous savez exactement qui vous engagez. {la("pourquoi-verifions-nous-les-professeurs", "Decouvrez la philosophie derriere notre processus de verification")}.</p>
+<p>Si vous etes professeur, {lt("comment-fonctionne-la-verification", "consultez le detail du processus de verification")} et les {lt("quels-documents-sont-demandes", "documents necessaires")}.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "5. Comment fonctionne la séance d'essai ?",
+            "title": "Comment fonctionne la seance d'essai ?",
             "slug": "comment-fonctionne-la-seance-dessai",
-            "keywords": "essai, gratuit, premier cours, 45 minutes, test",
-            "content": """
-            <h2>Testez avant de vous engager</h2>
-            <p>Parce qu'un CV ne fait pas tout, nous avons rendu obligatoire une <strong>séance d'essai de 45 minutes</strong> pour chaque nouvel engagement.</p>
-            <h3>Les règles de l'essai :</h3>
-            <ol>
-                <li><strong>100% Gratuit :</strong> Vous ne payez absolument rien pour cette première séance.</li>
-                <li><strong>Découverte mutuelle :</strong> Ces 45 minutes servent à faire connaissance, évaluer le niveau de l'enfant et discuter des objectifs.</li>
-                <li><strong>Sans pression :</strong> Si le feeling ne passe pas, vous êtes totalement libre de ne pas donner suite, sans avoir à vous justifier.</li>
-            </ol>
-            <p>Cette séance protège les parents d'un mauvais choix, et permet au professeur de s'assurer qu'il a les compétences pour aider l'apprenant.</p>
-            """
+            "keywords": "essai, gratuit, premier cours, 45 minutes, test, seance",
+            "order": 5,
+            "content": f"""
+<h2>Testez avant de vous engager</h2>
+<p>Parce qu'un CV ne fait pas tout, nous avons rendu obligatoire une <strong>seance d'essai de 45 minutes</strong> pour chaque nouvel engagement.</p>
+
+<h3>Les regles de l'essai</h3>
+<ol>
+    <li><strong>100% Gratuit :</strong> Vous ne payez absolument rien pour cette premiere seance.</li>
+    <li><strong>Decouverte mutuelle :</strong> Ces 45 minutes servent a faire connaissance, evaluer le niveau de l'enfant et discuter des objectifs.</li>
+    <li><strong>Sans pression :</strong> Si le feeling ne passe pas, vous etes totalement libre de ne pas donner suite, sans avoir a vous justifier.</li>
+</ol>
+
+<h2>Pourquoi cet essai est-il si important ?</h2>
+<p>Cette seance protege les parents d'un mauvais choix, et permet au professeur de s'assurer qu'il a les competences pour aider l'apprenant. {la("pourquoi-une-seance-dessai", "Decouvrez le raisonnement derriere cette politique")}.</p>
+<p>Si l'essai est concluant, {lp("comment-se-deroule-un-engagement", "decouvrez comment se deroule la suite de l'engagement")}. Sinon, {lp("que-faire-si-je-ne-suis-pas-satisfait", "vous etes libre de chercher un autre professeur")}.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "6. Comment se déroule un engagement avec un professeur ?",
+            "title": "Comment se deroule un engagement avec un professeur ?",
             "slug": "comment-se-deroule-un-engagement",
-            "keywords": "engagement, après l'essai, contrat, planning, paiement",
-            "content": """
-            <h2>L'organisation de l'accompagnement</h2>
-            <p>Si la séance d'essai est concluante et que vous souhaitez poursuivre avec le professeur, voici comment cela s'organise :</p>
-            <h3>1. Planification des cours</h3>
-            <p>Vous convenez directement avec le professeur des jours et heures de cours (ex: tous les mercredis à 15h). Le planning est flexible et s'adapte à vos contraintes.</p>
-            <h3>2. Tarification et paiement</h3>
-            <p>Le professeur vous appliquera le tarif affiché sur son profil. Prof Chez Vous vous permet de payer le professeur via la plateforme (par Mobile Money ou carte) de manière totalement sécurisée, garantissant ainsi une trace de toutes vos transactions.</p>
-            <h3>3. Suivi pédagogique</h3>
-            <p>Le professeur pourra vous faire des retours réguliers sur la progression de votre enfant directement via la messagerie de la plateforme.</p>
-            """
+            "keywords": "engagement, apres essai, contrat, planning, paiement, suivi",
+            "order": 6,
+            "content": f"""
+<h2>L'organisation de l'accompagnement</h2>
+<p>Si la {lp("comment-fonctionne-la-seance-dessai", "seance d'essai")} est concluante et que vous souhaitez poursuivre avec le professeur, voici comment cela s'organise.</p>
+
+<h3>1. Planification des cours</h3>
+<p>Vous convenez directement avec le professeur des jours et heures de cours (ex: tous les mercredis a 15h). Le planning est flexible et s'adapte a vos contraintes.</p>
+
+<h3>2. Tarification et paiement</h3>
+<p>Le professeur vous appliquera le tarif affiche sur son profil. Prof Chez Vous vous permet de payer le professeur via la plateforme (par Mobile Money ou carte) de maniere totalement securisee, garantissant ainsi une trace de toutes vos transactions. {lp("combien-coute-prof-chez-vous", "En savoir plus sur les tarifs et la transparence financiere")}.</p>
+
+<h3>3. Suivi pedagogique</h3>
+<p>Le professeur pourra vous faire des retours reguliers sur la progression de votre enfant directement via la messagerie de la plateforme.</p>
+
+<h2>Et si ca ne se passe pas bien ?</h2>
+<p>Vous n'etes jamais bloque. {lp("que-faire-si-je-ne-suis-pas-satisfait", "Decouvrez vos options en cas d'insatisfaction")}.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "7. Que faire si je ne suis pas satisfait ?",
+            "title": "Que faire si je ne suis pas satisfait ?",
             "slug": "que-faire-si-je-ne-suis-pas-satisfait",
-            "keywords": "insatisfait, problème, changer, conflit, litige",
-            "content": """
-            <h2>Vous restez toujours aux commandes</h2>
-            <p>L'accompagnement scolaire doit être une solution, pas un problème. Si la prestation d'un professeur ne vous convient plus, vous avez tous les droits.</p>
-            <h3>Comment réagir ?</h3>
-            <ul>
-                <li><strong>Communiquez d'abord :</strong> Souvent, un simple échange avec le professeur permet de réajuster la méthode de travail.</li>
-                <li><strong>Mettez fin à l'engagement :</strong> Vous n'êtes lié par aucun contrat à long terme. Vous pouvez stopper les cours à tout moment (en réglant uniquement les cours déjà effectués).</li>
-                <li><strong>Signalez à la plateforme :</strong> Si le professeur a eu un comportement inapproprié ou non professionnel, vous pouvez le signaler à notre équipe de support. Nous prendrons des mesures immédiates, pouvant aller jusqu'à l'exclusion du professeur.</li>
-            </ul>
-            <p>N'hésitez jamais à chercher un autre professeur sur la plateforme si le premier ne convient pas !</p>
-            """
+            "keywords": "insatisfait, probleme, changer, conflit, litige, signalement",
+            "order": 7,
+            "content": f"""
+<h2>Vous restez toujours aux commandes</h2>
+<p>L'accompagnement scolaire doit etre une solution, pas un probleme. Si la prestation d'un professeur ne vous convient plus, vous avez tous les droits.</p>
+
+<h3>Comment reagir ?</h3>
+<ul>
+    <li><strong>Communiquez d'abord :</strong> Souvent, un simple echange avec le professeur permet de reajuster la methode de travail.</li>
+    <li><strong>Mettez fin a l'engagement :</strong> Vous n'etes lie par aucun contrat a long terme. Vous pouvez stopper les cours a tout moment (en reglant uniquement les cours deja effectues).</li>
+    <li><strong>Signalez a la plateforme :</strong> Si le professeur a eu un comportement inapproprie ou non professionnel, vous pouvez le signaler a notre equipe de support. Nous prendrons des mesures immediates, pouvant aller jusqu'a l'exclusion du professeur.</li>
+</ul>
+
+<h2>Trouver un autre professeur</h2>
+<p>N'hesitez jamais a chercher un autre professeur sur la plateforme si le premier ne convient pas ! {lp("comment-trouver-un-professeur", "Relancez une recherche")} et profitez a nouveau d'une {lp("comment-fonctionne-la-seance-dessai", "seance d'essai gratuite")} avec le nouveau professeur.</p>
+<p>{la("comment-protegeons-nous-les-parents", "Decouvrez comment nous protegeoons les parents et les apprenants")}.</p>
+"""
         },
         {
             "category": cat_parents,
-            "title": "8. Combien coûte Prof Chez Vous ?",
+            "title": "Combien coute Prof Chez Vous ?",
             "slug": "combien-coute-prof-chez-vous",
-            "keywords": "prix, tarif, coût, commission, gratuité, payer",
-            "content": """
-            <h2>La transparence financière</h2>
-            <p>Chez Prof Chez Vous, il n'y a pas de frais cachés. Voici exactement ce qui est gratuit et ce qui ne l'est pas :</p>
-            <h3>Ce qui est 100% GRATUIT :</h3>
-            <ul>
-                <li>La création de votre compte parent.</li>
-                <li>La recherche et la consultation des profils de professeurs.</li>
-                <li>La mise en relation et l'échange via messagerie.</li>
-                <li><strong>Les 45 premières minutes du premier cours (séance d'essai).</strong></li>
-            </ul>
-            <h3>Ce que vous payez :</h3>
-            <p>Vous ne payez <strong>que les heures de cours</strong> effectuées par le professeur, au tarif qu'il a lui-même fixé sur son profil. <br>
-            La plateforme se rémunère en prélevant une petite commission transparente sur les transactions, ce qui nous permet de maintenir le site, de vérifier les profils et de vous offrir un support client de qualité.</p>
-            """
+            "keywords": "prix, tarif, cout, commission, gratuite, payer, argent",
+            "order": 8,
+            "content": f"""
+<h2>La transparence financiere</h2>
+<p>Chez Prof Chez Vous, il n'y a pas de frais caches. Voici exactement ce qui est gratuit et ce qui ne l'est pas.</p>
+
+<h3>Ce qui est 100% GRATUIT</h3>
+<ul>
+    <li>La creation de votre compte parent.</li>
+    <li>La {lp("comment-trouver-un-professeur", "recherche et la consultation des profils")} de professeurs.</li>
+    <li>La mise en relation et l'echange via messagerie.</li>
+    <li><strong>Les 45 premieres minutes du premier cours</strong> ({lp("comment-fonctionne-la-seance-dessai", "seance d'essai")}).</li>
+</ul>
+
+<h3>Ce que vous payez</h3>
+<p>Vous ne payez <strong>que les heures de cours</strong> effectuees par le professeur, au tarif qu'il a lui-meme fixe sur son profil.</p>
+<p>La plateforme se remunere en prelevant une petite commission transparente sur les transactions, ce qui nous permet de maintenir le site, de {lp("pourquoi-les-professeurs-sont-ils-verifies", "verifier les profils")} et de vous offrir un support client de qualite.</p>
+
+<h2>Nos engagements financiers</h2>
+<p>{la("quels-sont-les-engagements", "Decouvrez tous les engagements de Prof Chez Vous")} en matiere de transparence, de securite et de qualite.</p>
+"""
         },
 
-        # ==========================================
+        # =====================================================================
         # PROFESSEURS
-        # ==========================================
+        # =====================================================================
         {
             "category": cat_profs,
-            "title": "1. Qui peut devenir professeur partenaire ?",
+            "title": "Qui peut devenir professeur partenaire ?",
             "slug": "qui-peut-devenir-professeur-partenaire",
-            "keywords": "profil, éligibilité, diplôme, étudiant, répétiteur",
-            "content": """
-            <h2>Une opportunité pour les passionnés d'enseignement</h2>
-            <p>Prof Chez Vous n'est pas réservé uniquement aux enseignants de métier. Nous croyons que la pédagogie et la maîtrise d'une matière peuvent venir de différents profils.</p>
-            <h3>Vous pouvez nous rejoindre si vous êtes :</h3>
-            <ul>
-                <li><strong>Un enseignant certifié :</strong> Professeur de collège/lycée ou instituteur.</li>
-                <li><strong>Un répétiteur expérimenté :</strong> Vous faites déjà du soutien scolaire depuis plusieurs années.</li>
-                <li><strong>Un étudiant universitaire :</strong> Vous avez un excellent niveau dans votre filière (Licence, Master, Ingénierie) et une forte envie de transmettre vos connaissances.</li>
-                <li><strong>Un professionnel :</strong> Vous maîtrisez une compétence spécifique (ex: informatique, langues) que vous souhaitez enseigner.</li>
-            </ul>
-            <p><strong>La seule condition absolue :</strong> Vous devez être capable de justifier votre niveau (par un diplôme ou un relevé de notes) dans la matière que vous souhaitez enseigner.</p>
-            """
+            "keywords": "profil, eligibilite, diplome, etudiant, repetiteur, inscription",
+            "order": 1,
+            "content": f"""
+<h2>Une opportunite pour les passionnes d'enseignement</h2>
+<p>Prof Chez Vous n'est pas reserve uniquement aux enseignants de metier. Nous croyons que la pedagogie et la maitrise d'une matiere peuvent venir de differents profils.</p>
+
+<h3>Vous pouvez nous rejoindre si vous etes</h3>
+<ul>
+    <li><strong>Un enseignant certifie :</strong> Professeur de college/lycee ou instituteur.</li>
+    <li><strong>Un repetiteur experimente :</strong> Vous faites deja du soutien scolaire depuis plusieurs annees.</li>
+    <li><strong>Un etudiant universitaire :</strong> Vous avez un excellent niveau dans votre filiere (Licence, Master, Ingenierie) et une forte envie de transmettre vos connaissances.</li>
+    <li><strong>Un professionnel :</strong> Vous maitrisez une competence specifique (ex: informatique, langues) que vous souhaitez enseigner.</li>
+</ul>
+
+<h2>La seule condition absolue</h2>
+<p>Vous devez etre capable de justifier votre niveau (par un diplome ou un releve de notes) dans la matiere que vous souhaitez enseigner. {lt("quels-documents-sont-demandes", "Consultez la liste des documents necessaires")}.</p>
+<p>Pret a vous lancer ? {lt("comment-creer-son-profil", "Suivez le guide de creation de profil")}.</p>
+<p>{la("quest-ce-quun-professeur-partenaire", "Decouvrez ce que signifie etre un professeur partenaire")}.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "2. Comment créer son profil ?",
+            "title": "Comment creer son profil ?",
             "slug": "comment-creer-son-profil",
-            "keywords": "inscription, création, formulaire, étapes, compte",
-            "content": """
-            <h2>Votre vitrine professionnelle en ligne</h2>
-            <p>Créer votre profil est la première étape pour attirer des élèves. C'est l'équivalent de votre CV en ligne, mais en mieux.</p>
-            <h3>Les étapes de création :</h3>
-            <ol>
-                <li>Allez sur la page d'inscription et sélectionnez le rôle <strong>Professeur</strong>.</li>
-                <li>Remplissez vos informations de base (Nom, prénom, email).</li>
-                <li>Complétez votre tableau de bord : ajoutez une belle photo de profil (souriante et professionnelle).</li>
-                <li>Rédigez votre biographie : expliquez qui vous êtes et quelle est votre méthode pédagogique.</li>
-                <li>Sélectionnez vos matières, les niveaux que vous ciblez, et définissez votre tarif horaire.</li>
-                <li>Soumettez vos pièces justificatives pour la vérification.</li>
-            </ol>
-            <p>Prenez votre temps pour rédiger une bonne présentation. C'est ce qui convaincra les parents de vous choisir !</p>
-            """
+            "keywords": "inscription, creation, formulaire, etapes, compte, guide",
+            "order": 2,
+            "content": f"""
+<h2>Votre vitrine professionnelle en ligne</h2>
+<p>Creer votre profil est la premiere etape pour attirer des eleves. C'est l'equivalent de votre CV en ligne, mais en mieux.</p>
+
+<h3>Les etapes de creation</h3>
+<ol>
+    <li>Allez sur la page d'inscription et selectionnez le role <strong>Professeur</strong>.</li>
+    <li>Remplissez vos informations de base (Nom, prenom, email).</li>
+    <li>Completez votre tableau de bord : ajoutez une belle photo de profil (souriante et professionnelle).</li>
+    <li>Redigez votre biographie : expliquez qui vous etes et quelle est votre methode pedagogique.</li>
+    <li>Selectionnez vos matieres, les niveaux que vous ciblez, et definissez votre tarif horaire. {lt("comment-choisir-matieres-et-classes", "Nos conseils pour bien choisir")}.</li>
+    <li>Soumettez vos {lt("quels-documents-sont-demandes", "pieces justificatives")} pour la verification.</li>
+</ol>
+
+<h2>L'importance d'une bonne presentation</h2>
+<p>Prenez votre temps pour rediger une bonne presentation. C'est ce qui convaincra les parents de vous choisir ! {lt("comment-ameliorer-qualite-profil", "Decouvrez nos conseils pour un profil qui convertit")}.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "3. Quels documents sont demandés ?",
+            "title": "Quels documents sont demandes ?",
             "slug": "quels-documents-sont-demandes",
-            "keywords": "documents, justificatifs, carte identité, diplôme, relevé",
-            "content": """
-            <h2>Les pièces à fournir pour être certifié</h2>
-            <p>Pour garantir la sécurité et le niveau des enseignants sur la plateforme, nous exigeons des documents officiels lors de votre inscription.</p>
-            <h3>Documents obligatoires :</h3>
-            <ul>
-                <li><strong>Une pièce d'identité valide :</strong> Carte d'Identité Nationale (CIP ou biométrique), Passeport ou Permis de conduire.</li>
-                <li><strong>Une preuve de niveau académique :</strong> Le diplôme le plus élevé que vous possédez (BAC, Licence, Master) OU un relevé de notes récent si vous êtes encore étudiant.</li>
-            </ul>
-            <p><em>Note :</em> Vos documents ne seront jamais publiés sur votre profil public. Ils sont stockés de manière sécurisée et ne servent qu'à notre équipe de validation.</p>
-            """
+            "keywords": "documents, justificatifs, carte identite, diplome, releve, pieces",
+            "order": 3,
+            "content": f"""
+<h2>Les pieces a fournir pour etre certifie</h2>
+<p>Pour garantir la securite et le niveau des enseignants sur la plateforme, nous exigeons des documents officiels lors de votre inscription.</p>
+
+<h3>Documents obligatoires</h3>
+<ul>
+    <li><strong>Une piece d'identite valide :</strong> Carte d'Identite Nationale (CIP ou biometrique), Passeport ou Permis de conduire.</li>
+    <li><strong>Une preuve de niveau academique :</strong> Le diplome le plus eleve que vous possedez (BAC, Licence, Master) OU un releve de notes recent si vous etes encore etudiant.</li>
+</ul>
+
+<h3>Confidentialite de vos documents</h3>
+<p>Vos documents ne seront jamais publies sur votre profil public. Ils sont stockes de maniere securisee et ne servent qu'a notre equipe de validation.</p>
+
+<h2>Etape suivante</h2>
+<p>Une fois vos documents soumis, {lt("comment-fonctionne-la-verification", "decouvrez comment se deroule le processus de verification")}.</p>
+<p>Vous souhaitez enseigner une matiere qui ne figure pas sur votre diplome ? {lt("enseigner-matiere-differente-diplome", "C'est possible, decouvrez comment")}.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "4. Comment fonctionne la vérification ?",
+            "title": "Comment fonctionne la verification ?",
             "slug": "comment-fonctionne-la-verification",
-            "keywords": "validation, équipe, contrôle, délai, approuvé, rejeté",
-            "content": """
-            <h2>Le processus d'approbation</h2>
-            <p>Une fois que vous avez rempli votre profil et soumis vos documents, notre équipe prend le relais.</p>
-            <h3>Les étapes de la vérification :</h3>
-            <ol>
-                <li><strong>Contrôle manuel :</strong> Un membre de notre équipe examine vos informations, votre photo, votre présentation et vérifie la cohérence de vos diplômes avec les matières que vous souhaitez enseigner.</li>
-                <li><strong>Retour sous 48h :</strong> Vous recevrez une notification (et un email) vous informant de la décision.</li>
-                <li><strong>Validation :</strong> Si tout est conforme, votre profil obtient le badge "Certifié" et devient visible publiquement sur la plateforme.</li>
-                <li><strong>Correction :</strong> S'il manque une information (photo floue, description trop courte), votre profil passera en statut "À corriger" et nous vous indiquerons ce qu'il faut modifier.</li>
-            </ol>
-            <p>Nous ne rejetons jamais un profil par pur plaisir. Notre but est de vous aider à avoir la meilleure présentation possible !</p>
-            """
+            "keywords": "validation, equipe, controle, delai, approuve, rejete, badge",
+            "order": 4,
+            "content": f"""
+<h2>Le processus d'approbation</h2>
+<p>Une fois que vous avez {lt("comment-creer-son-profil", "rempli votre profil")} et soumis vos {lt("quels-documents-sont-demandes", "documents")}, notre equipe prend le relais.</p>
+
+<h3>Les etapes de la verification</h3>
+<ol>
+    <li><strong>Controle manuel :</strong> Un membre de notre equipe examine vos informations, votre photo, votre presentation et verifie la coherence de vos diplomes avec les matieres que vous souhaitez enseigner.</li>
+    <li><strong>Retour sous 48h :</strong> Vous recevrez une notification (et un email) vous informant de la decision.</li>
+    <li><strong>Validation :</strong> Si tout est conforme, votre profil obtient le badge "Certifie" et devient visible publiquement sur la plateforme.</li>
+    <li><strong>Correction :</strong> S'il manque une information (photo floue, description trop courte), votre profil passera en statut "A corriger" et nous vous indiquerons ce qu'il faut modifier.</li>
+</ol>
+
+<h2>Apres la validation</h2>
+<p>Nous ne rejetons jamais un profil par pur plaisir. Notre but est de vous aider a avoir la meilleure presentation possible ! Une fois valide, {lt("comment-recevoir-premieres-demandes", "decouvrez comment recevoir vos premieres demandes d'eleves")}.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "5. Puis-je enseigner une matière différente de mon diplôme ?",
+            "title": "Puis-je enseigner une matiere differente de mon diplome ?",
             "slug": "enseigner-matiere-differente-diplome",
-            "keywords": "dérogation, autre matière, compétences, talent, diplôme",
-            "content": """
-            <h2>Vos compétences au-delà des diplômes</h2>
-            <p>Oui, c'est tout à fait possible ! Nous savons qu'un étudiant en Droit peut exceller en Anglais, ou qu'un étudiant en Médecine peut être un brillant professeur de Mathématiques au collège.</p>
-            <h3>La règle d'or :</h3>
-            <p>Si vous souhaitez enseigner une matière qui ne figure pas sur l'intitulé direct de votre diplôme supérieur, vous devez simplement être en mesure de <strong>prouver votre niveau</strong> dans cette matière.</p>
-            <p><strong>Exemple :</strong> Fournissez votre relevé de notes du Baccalauréat montrant que vous avez eu une excellente note dans cette matière spécifique. Notre équipe évaluera votre demande avec bienveillance.</p>
-            """
+            "keywords": "derogation, autre matiere, competences, talent, diplome",
+            "order": 5,
+            "content": f"""
+<h2>Vos competences au-dela des diplomes</h2>
+<p>Oui, c'est tout a fait possible ! Nous savons qu'un etudiant en Droit peut exceller en Anglais, ou qu'un etudiant en Medecine peut etre un brillant professeur de Mathematiques au college.</p>
+
+<h3>La regle d'or</h3>
+<p>Si vous souhaitez enseigner une matiere qui ne figure pas sur l'intitule direct de votre diplome superieur, vous devez simplement etre en mesure de <strong>prouver votre niveau</strong> dans cette matiere.</p>
+
+<h3>Exemple concret</h3>
+<p>Fournissez votre releve de notes du Baccalaureat montrant que vous avez eu une excellente note dans cette matiere specifique. Notre equipe evaluera votre demande avec bienveillance.</p>
+
+<h2>Comment soumettre votre demande ?</h2>
+<p>Lors de la {lt("comment-creer-son-profil", "creation de votre profil")}, selectionnez les matieres souhaitees et joignez les {lt("quels-documents-sont-demandes", "justificatifs correspondants")}. Notre equipe de {lt("comment-fonctionne-la-verification", "verification")} evaluera votre dossier.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "6. Comment choisir les matières et les classes ?",
+            "title": "Comment choisir les matieres et les classes ?",
             "slug": "comment-choisir-matieres-et-classes",
-            "keywords": "niveaux, classes, matières, spécialité, cibler",
-            "content": """
-            <h2>Misez sur vos points forts</h2>
-            <p>L'erreur la plus commune des nouveaux répétiteurs est de vouloir "tout enseigner, de la maternelle à l'université". C'est une erreur stratégique.</p>
-            <h3>Nos conseils pour un profil attractif :</h3>
-            <ul>
-                <li><strong>Soyez spécialiste, pas généraliste :</strong> Les parents préfèrent engager un "Expert en Mathématiques pour le Lycée" plutôt qu'un professeur "Toutes matières, tous niveaux".</li>
-                <li><strong>Soyez honnête sur vos capacités :</strong> N'acceptez d'enseigner en classe d'examen (3ème, Terminale) que si vous maîtrisez parfaitement les programmes officiels.</li>
-                <li><strong>Adaptez votre tarif :</strong> Les cours pour les classes supérieures demandent plus de préparation et justifient un tarif légèrement plus élevé.</li>
-            </ul>
-            """
+            "keywords": "niveaux, classes, matieres, specialite, cibler, strategie",
+            "order": 6,
+            "content": f"""
+<h2>Misez sur vos points forts</h2>
+<p>L'erreur la plus commune des nouveaux repetiteurs est de vouloir "tout enseigner, de la maternelle a l'universite". C'est une erreur strategique.</p>
+
+<h3>Nos conseils pour un profil attractif</h3>
+<ul>
+    <li><strong>Soyez specialiste, pas generaliste :</strong> Les parents preferent engager un "Expert en Mathematiques pour le Lycee" plutot qu'un professeur "Toutes matieres, tous niveaux".</li>
+    <li><strong>Soyez honnete sur vos capacites :</strong> N'acceptez d'enseigner en classe d'examen (3eme, Terminale) que si vous maitrisez parfaitement les programmes officiels.</li>
+    <li><strong>Adaptez votre tarif :</strong> Les cours pour les classes superieures demandent plus de preparation et justifient un tarif legerement plus eleve.</li>
+</ul>
+
+<h2>Envie d'enseigner une matiere hors diplome ?</h2>
+<p>{lt("enseigner-matiere-differente-diplome", "Decouvrez comment enseigner une matiere differente de votre diplome")}. C'est possible sous conditions.</p>
+<p>Pour maximiser vos chances de recevoir des demandes, {lt("comment-ameliorer-qualite-profil", "optimisez la qualite de votre profil")}.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "7. Comment recevoir mes premières demandes ?",
+            "title": "Comment recevoir mes premieres demandes ?",
             "slug": "comment-recevoir-premieres-demandes",
-            "keywords": "clients, élèves, demandes, visibilité, algorithme",
-            "content": """
-            <h2>Sortir du lot dès le premier jour</h2>
-            <p>Une fois votre profil validé, vous êtes en compétition avec d'autres excellents professeurs. Voici comment attirer l'attention des parents :</p>
-            <ol>
-                <li><strong>Une description impeccable :</strong> Évitez les fautes d'orthographe. Une seule faute dans votre biographie peut dissuader un parent.</li>
-                <li><strong>Une tarification juste :</strong> Pour obtenir vos premiers élèves et vos premiers avis positifs, commencez par un tarif raisonnable et attractif. Vous pourrez l'augmenter par la suite.</li>
-                <li><strong>Réactivité :</strong> Lorsque vous recevez un message d'un parent, répondez le plus vite possible. La rapidité de réponse est très appréciée.</li>
-                <li><strong>Partagez votre profil :</strong> Utilisez le lien direct de votre profil Prof Chez Vous et partagez-le sur vos réseaux sociaux (WhatsApp, Facebook) pour montrer votre professionnalisme à votre entourage.</li>
-            </ol>
-            """
+            "keywords": "clients, eleves, demandes, visibilite, premiers, attractivite",
+            "order": 7,
+            "content": f"""
+<h2>Sortir du lot des le premier jour</h2>
+<p>Une fois votre profil {lt("comment-fonctionne-la-verification", "valide")}, vous etes en competition avec d'autres excellents professeurs. Voici comment attirer l'attention des parents.</p>
+
+<h3>Les 4 cles du succes</h3>
+<ol>
+    <li><strong>Une description impeccable :</strong> Evitez les fautes d'orthographe. Une seule faute dans votre biographie peut dissuader un parent.</li>
+    <li><strong>Une tarification juste :</strong> Pour obtenir vos premiers eleves et vos premiers avis positifs, commencez par un tarif raisonnable et attractif. Vous pourrez l'augmenter par la suite.</li>
+    <li><strong>Reactivite :</strong> Lorsque vous recevez un message d'un parent, repondez le plus vite possible. La rapidite de reponse est tres appreciee.</li>
+    <li><strong>Partagez votre profil :</strong> Utilisez le lien direct de votre profil Prof Chez Vous et partagez-le sur vos reseaux sociaux (WhatsApp, Facebook) pour montrer votre professionnalisme a votre entourage.</li>
+</ol>
+
+<h2>Ameliorez votre profil en continu</h2>
+<p>{lt("comment-ameliorer-qualite-profil", "Decouvrez tous nos conseils pour un profil qui convertit")} : photo, bio, disponibilites et bien plus.</p>
+"""
         },
         {
             "category": cat_profs,
-            "title": "8. Comment améliorer la qualité de mon profil ?",
+            "title": "Comment ameliorer la qualite de mon profil ?",
             "slug": "comment-ameliorer-qualite-profil",
-            "keywords": "optimisation, photo, bio, présentation, marketing",
-            "content": """
-            <h2>Les secrets d'un profil qui convertit</h2>
-            <p>Votre profil est votre argumentaire de vente. S'il est négligé, les parents passeront au profil suivant.</p>
-            <h3>1. La Photo (Le plus important)</h3>
-            <p>Utilisez une photo lumineuse, où vous êtes seul, de face, et souriant. Un fond uni est préférable. Évitez les selfies de mauvaise qualité ou les lunettes de soleil.</p>
-            <h3>2. La Présentation (La Bio)</h3>
-            <p>Structurez votre présentation en 3 parties :</p>
-            <ul>
-                <li><em>Qui êtes-vous ?</em> (Votre parcours académique).</li>
-                <li><em>Quelle est votre méthode ?</em> (Comment faites-vous progresser un élève en difficulté).</li>
-                <li><em>Pourquoi vous choisir ?</em> (Votre patience, votre passion, vos résultats passés).</li>
-            </ul>
-            <h3>3. Les disponibilités</h3>
-            <p>Gardez votre calendrier de disponibilités à jour. Un parent sera frustré s'il vous contacte pour un jeudi alors que vous n'êtes finalement pas disponible.</p>
-            """
+            "keywords": "optimisation, photo, bio, presentation, marketing, qualite",
+            "order": 8,
+            "content": f"""
+<h2>Les secrets d'un profil qui convertit</h2>
+<p>Votre profil est votre argumentaire de vente. S'il est neglige, les parents passeront au profil suivant.</p>
+
+<h3>1. La Photo (Le plus important)</h3>
+<p>Utilisez une photo lumineuse, ou vous etes seul, de face, et souriant. Un fond uni est preferable. Evitez les selfies de mauvaise qualite ou les lunettes de soleil.</p>
+
+<h3>2. La Presentation (La Bio)</h3>
+<p>Structurez votre presentation en 3 parties :</p>
+<ul>
+    <li><em>Qui etes-vous ?</em> (Votre parcours academique).</li>
+    <li><em>Quelle est votre methode ?</em> (Comment faites-vous progresser un eleve en difficulte).</li>
+    <li><em>Pourquoi vous choisir ?</em> (Votre patience, votre passion, vos resultats passes).</li>
+</ul>
+
+<h3>3. Les disponibilites</h3>
+<p>Gardez votre calendrier de disponibilites a jour. Un parent sera frustre s'il vous contacte pour un jeudi alors que vous n'etes finalement pas disponible.</p>
+
+<h2>Les prochaines etapes</h2>
+<p>Un bon profil est la base, mais la {lt("comment-recevoir-premieres-demandes", "reactivite et le partage")} feront la difference pour recevoir vos premiers eleves.</p>
+<p>{lt("comment-choisir-matieres-et-classes", "Revoyez egalement vos choix de matieres et classes")} pour vous assurer qu'ils correspondent a votre expertise.</p>
+"""
         },
 
-        # ==========================================
+        # =====================================================================
         # A PROPOS
-        # ==========================================
+        # =====================================================================
         {
             "category": cat_apropos,
-            "title": "1. Pourquoi Prof Chez Vous existe ?",
+            "title": "Pourquoi Prof Chez Vous existe ?",
             "slug": "pourquoi-prof-chez-vous-existe",
-            "keywords": "histoire, origine, création, but, problème",
-            "content": """
-            <h2>Né d'un constat simple</h2>
-            <p>Au Bénin, trouver un bon répétiteur a toujours été un parcours du combattant, basé uniquement sur le bouche-à-oreille et la chance. De l'autre côté, d'excellents jeunes enseignants et étudiants brillants peinent à trouver des élèves pour rentabiliser leurs compétences.</p>
-            <p><strong>Prof Chez Vous</strong> a été créé pour résoudre ce problème : créer un pont numérique, fiable et transparent entre la demande des parents soucieux de la réussite de leurs enfants, et l'offre des talents locaux.</p>
-            """
+            "keywords": "histoire, origine, creation, but, probleme, mission",
+            "order": 1,
+            "content": f"""
+<h2>Ne d'un constat simple</h2>
+<p>Au Benin, trouver un bon repetiteur a toujours ete un parcours du combattant, base uniquement sur le bouche-a-oreille et la chance. De l'autre cote, d'excellents jeunes enseignants et etudiants brillants peinent a trouver des eleves pour rentabiliser leurs competences.</p>
+
+<h2>Notre mission</h2>
+<p><strong>Prof Chez Vous</strong> a ete cree pour resoudre ce probleme : creer un pont numerique, fiable et transparent entre la demande des parents soucieux de la reussite de leurs enfants, et l'offre des talents locaux.</p>
+<p>Nous croyons que chaque enfant merite un accompagnement de qualite, et que chaque enseignant competent merite une {la("quest-ce-quun-professeur-partenaire", "identite professionnelle reconnue")}.</p>
+<p>{la("quelle-est-notre-vision", "Decouvrez ou nous allons dans les prochaines annees")}.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "2. Comment fonctionne la plateforme ?",
+            "title": "Comment fonctionne la plateforme ?",
             "slug": "comment-fonctionne-la-plateforme",
-            "keywords": "technologie, mise en relation, concept, mécanisme",
-            "content": """
-            <h2>Le numérique au service de l'éducation</h2>
-            <p>Prof Chez Vous est une "marketplace" (place de marché) de l'éducation.</p>
-            <p>Nous centralisons les profils de professeurs particuliers de tout le pays dans une base de données consultable par tous. Lorsqu'un parent trouve un profil intéressant, notre système de messagerie intégrée permet la mise en relation.</p>
-            <p>Nous n'intervenons pas dans la pédagogie du professeur, nous fournissons simplement les outils technologiques pour que la rencontre et le suivi se fassent dans les meilleures conditions.</p>
-            """
+            "keywords": "technologie, mise en relation, concept, mecanisme, marketplace",
+            "order": 2,
+            "content": f"""
+<h2>Le numerique au service de l'education</h2>
+<p>Prof Chez Vous est une "marketplace" (place de marche) de l'education.</p>
+<p>Nous centralisons les profils de professeurs particuliers de tout le pays dans une base de donnees consultable par tous. Lorsqu'un parent trouve un profil interessant, notre systeme de messagerie integree permet la mise en relation.</p>
+
+<h2>Notre role</h2>
+<p>Nous n'intervenons pas dans la pedagogie du professeur. Nous fournissons simplement les outils technologiques pour que la rencontre et le suivi se fassent dans les meilleures conditions :</p>
+<ul>
+    <li>Un {lp("comment-trouver-un-professeur", "moteur de recherche intelligent")} pour les parents.</li>
+    <li>Un {lt("comment-creer-son-profil", "espace professionnel")} pour les professeurs.</li>
+    <li>Un {lp("pourquoi-les-professeurs-sont-ils-verifies", "systeme de verification")} rigoureux.</li>
+    <li>Une {lp("comment-fonctionne-la-seance-dessai", "seance d'essai gratuite")} pour chaque nouvel engagement.</li>
+</ul>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "3. Pourquoi vérifions-nous les professeurs ?",
+            "title": "Pourquoi verifions-nous les professeurs ?",
             "slug": "pourquoi-verifions-nous-les-professeurs",
-            "keywords": "philosophie, contrôle, charte, qualité, sérieux",
-            "content": """
-            <h2>L'excellence par la sélection</h2>
-            <p>Notre promesse aux parents est la sérénité. Sans vérification, n'importe qui pourrait s'improviser professeur de mathématiques, au risque de détruire le niveau d'un enfant au lieu de l'améliorer.</p>
-            <p>La vérification est le cœur de notre valeur ajoutée. Elle prouve notre engagement envers la qualité éducative et donne aux professeurs inscrits un véritable label de sérieux qui justifie leurs tarifs.</p>
-            """
+            "keywords": "philosophie, controle, charte, qualite, serieux, valeurs",
+            "order": 3,
+            "content": f"""
+<h2>L'excellence par la selection</h2>
+<p>Notre promesse aux parents est la serenite. Sans verification, n'importe qui pourrait s'improviser professeur de mathematiques, au risque de detruire le niveau d'un enfant au lieu de l'ameliorer.</p>
+
+<h2>Le coeur de notre valeur ajoutee</h2>
+<p>La verification est le pilier central de Prof Chez Vous. Elle prouve notre engagement envers la qualite educative et donne aux professeurs inscrits un veritable label de serieux qui justifie leurs tarifs.</p>
+<p>Pour les parents : {lp("pourquoi-les-professeurs-sont-ils-verifies", "decouvrez ce que garantit le badge Certifie")}.</p>
+<p>Pour les professeurs : {lt("comment-fonctionne-la-verification", "consultez le detail du processus de verification")}.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "4. Comment protégeons-nous les parents et les apprenants ?",
+            "title": "Comment protegeons-nous les parents et les apprenants ?",
             "slug": "comment-protegeons-nous-les-parents",
-            "keywords": "protection, signalement, exclusion, sécurité",
-            "content": """
-            <h2>Un écosystème sain et encadré</h2>
-            <p>Au-delà de la vérification initiale des identités, nous protégeons notre communauté grâce à :</p>
-            <ul>
-                <li><strong>Un système d'évaluation (à venir) :</strong> Les parents pourront noter les professeurs, ce qui écartera naturellement les profils peu performants.</li>
-                <li><strong>La séance d'essai :</strong> Qui agit comme un filet de sécurité pour s'assurer du bon comportement du professeur.</li>
-                <li><strong>Un service client réactif :</strong> Prêt à intervenir et à suspendre tout compte qui ne respecterait pas notre charte éthique.</li>
-            </ul>
-            """
+            "keywords": "protection, signalement, exclusion, securite, ecosysteme",
+            "order": 4,
+            "content": f"""
+<h2>Un ecosysteme sain et encadre</h2>
+<p>Au-dela de la {la("pourquoi-verifions-nous-les-professeurs", "verification initiale des identites")}, nous protegeons notre communaute grace a plusieurs mecanismes.</p>
+
+<h3>Nos dispositifs de protection</h3>
+<ul>
+    <li><strong>Un systeme d'evaluation (a venir) :</strong> Les parents pourront noter les professeurs, ce qui ecartera naturellement les profils peu performants.</li>
+    <li><strong>La {lp("comment-fonctionne-la-seance-dessai", "seance d'essai")} :</strong> Qui agit comme un filet de securite pour s'assurer du bon comportement du professeur.</li>
+    <li><strong>Un service client reactif :</strong> Pret a intervenir et a suspendre tout compte qui ne respecterait pas notre charte ethique.</li>
+</ul>
+
+<h2>Que faire en cas de probleme ?</h2>
+<p>Si vous rencontrez un souci avec un professeur, {lp("que-faire-si-je-ne-suis-pas-satisfait", "decouvrez les options a votre disposition")}.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "5. Pourquoi proposons-nous une séance d'essai ?",
+            "title": "Pourquoi proposons-nous une seance d'essai ?",
             "slug": "pourquoi-une-seance-dessai",
-            "keywords": "raisonnement, essai, gratuit, logique, philosophie",
-            "content": """
-            <h2>Le droit de choisir librement</h2>
-            <p>L'apprentissage humain est avant tout une question de "feeling" et de relation interpersonnelle. Un professeur peut être excellent sur le papier, mais sa pédagogie peut ne pas résonner avec le caractère de votre enfant.</p>
-            <p>Nous imposons cette séance d'essai gratuite car elle débloque la prise de décision. Elle retire le stress financier du premier contact et permet de construire l'engagement sur des bases saines et volontaires.</p>
-            """
+            "keywords": "raisonnement, essai, gratuit, logique, philosophie, choix",
+            "order": 5,
+            "content": f"""
+<h2>Le droit de choisir librement</h2>
+<p>L'apprentissage humain est avant tout une question de "feeling" et de relation interpersonnelle. Un professeur peut etre excellent sur le papier, mais sa pedagogie peut ne pas resonner avec le caractere de votre enfant.</p>
+
+<h2>Debloquer la prise de decision</h2>
+<p>Nous imposons cette seance d'essai gratuite car elle retire le stress financier du premier contact et permet de construire l'engagement sur des bases saines et volontaires.</p>
+<p>Pour connaitre les details pratiques de l'essai : {lp("comment-fonctionne-la-seance-dessai", "consultez le guide complet de la seance d'essai")}.</p>
+<p>Pour comprendre ce qui se passe apres : {lp("comment-se-deroule-un-engagement", "decouvrez le deroulement d'un engagement")}.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "6. Qu'est-ce qu'un professeur partenaire ?",
+            "title": "Qu'est-ce qu'un professeur partenaire ?",
             "slug": "quest-ce-quun-professeur-partenaire",
-            "keywords": "partenaire, statut, identité, freelance, indépendant",
-            "content": """
-            <h2>Des indépendants valorisés</h2>
-            <p>Un professeur partenaire n'est pas un employé de Prof Chez Vous. C'est un travailleur indépendant qui utilise notre plateforme pour gérer son activité de soutien scolaire.</p>
-            <p>Il est maître de son emploi du temps, de sa méthode pédagogique et de sa tarification. Nous lui offrons simplement la crédibilité (via le badge certifié) et les clients (via notre trafic web).</p>
-            """
+            "keywords": "partenaire, statut, identite, freelance, independant, label",
+            "order": 6,
+            "content": f"""
+<h2>Des independants valorises</h2>
+<p>Un professeur partenaire n'est pas un employe de Prof Chez Vous. C'est un travailleur independant qui utilise notre plateforme pour gerer son activite de soutien scolaire.</p>
+
+<h2>Liberte et credibilite</h2>
+<p>Il est maitre de son emploi du temps, de sa methode pedagogique et de sa tarification. Nous lui offrons simplement :</p>
+<ul>
+    <li>La <strong>credibilite</strong> via le badge Certifie ({la("pourquoi-verifions-nous-les-professeurs", "en savoir plus sur la verification")}).</li>
+    <li>La <strong>visibilite</strong> via notre trafic web et notre moteur de recherche.</li>
+    <li>Les <strong>outils</strong> pour gerer ses cours et sa communication avec les parents.</li>
+</ul>
+<p>Vous souhaitez devenir professeur partenaire ? {lt("qui-peut-devenir-professeur-partenaire", "Verifiez votre eligibilite")} et {lt("comment-creer-son-profil", "creez votre profil")}.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "7. Quels sont les engagements de Prof Chez Vous ?",
+            "title": "Quels sont les engagements de Prof Chez Vous ?",
             "slug": "quels-sont-les-engagements",
-            "keywords": "valeurs, transparence, sécurité, qualité, éthique",
-            "content": """
-            <h2>Notre charte de confiance</h2>
-            <p>Notre entreprise repose sur 3 piliers :</p>
-            <ol>
-                <li><strong>Transparence :</strong> Les tarifs affichés sont ceux qui sont appliqués. Pas de frais cachés.</li>
-                <li><strong>Sécurité :</strong> Nous ne publierons jamais le profil d'un enseignant dont nous n'avons pas vérifié l'identité.</li>
-                <li><strong>Soutien :</strong> Nous nous engageons à répondre rapidement à toute préoccupation d'un parent ou d'un professeur.</li>
-            </ol>
-            """
+            "keywords": "valeurs, transparence, securite, qualite, ethique, charte",
+            "order": 7,
+            "content": f"""
+<h2>Notre charte de confiance</h2>
+<p>Notre entreprise repose sur 3 piliers fondamentaux.</p>
+
+<h3>1. Transparence</h3>
+<p>Les tarifs affiches sont ceux qui sont appliques. Pas de frais caches. {lp("combien-coute-prof-chez-vous", "Decouvrez notre politique tarifaire")}.</p>
+
+<h3>2. Securite</h3>
+<p>Nous ne publierons jamais le profil d'un enseignant dont nous n'avons pas {la("pourquoi-verifions-nous-les-professeurs", "verifie l'identite")}. {la("comment-protegeons-nous-les-parents", "Decouvrez comment nous protegeons les familles")}.</p>
+
+<h3>3. Soutien</h3>
+<p>Nous nous engageons a repondre rapidement a toute preoccupation d'un parent ou d'un professeur via notre service de support.</p>
+"""
         },
         {
             "category": cat_apropos,
-            "title": "8. Quelle est notre vision ?",
+            "title": "Quelle est notre vision ?",
             "slug": "quelle-est-notre-vision",
-            "keywords": "futur, afrique, développement, edtech, avenir",
-            "content": """
-            <h2>Démocratiser l'excellence éducative au Bénin et au-delà</h2>
-            <p>Aujourd'hui, nous structurons le marché du soutien scolaire à domicile et en ligne au Bénin.</p>
-            <p>Demain, notre vision est de devenir la plateforme EdTech de référence en Afrique francophone, en proposant non seulement des professeurs particuliers, mais aussi des outils de suivi pédagogique avancés, des classes virtuelles interactives, et des ressources d'apprentissage adaptées aux réalités de nos systèmes éducatifs.</p>
-            """
-        }
+            "keywords": "futur, afrique, developpement, edtech, avenir, ambition",
+            "order": 8,
+            "content": f"""
+<h2>Democratiser l'excellence educative au Benin et au-dela</h2>
+<p>Aujourd'hui, nous structurons le marche du soutien scolaire a domicile et en ligne au Benin.</p>
+
+<h2>Notre feuille de route</h2>
+<p>Demain, notre vision est de devenir la plateforme EdTech de reference en Afrique francophone, en proposant non seulement des {la("quest-ce-quun-professeur-partenaire", "professeurs partenaires")}, mais aussi :</p>
+<ul>
+    <li>Des outils de suivi pedagogique avances.</li>
+    <li>Des classes virtuelles interactives.</li>
+    <li>Des ressources d'apprentissage adaptees aux realites de nos systemes educatifs.</li>
+</ul>
+<p>Tout a commence par un constat simple. {la("pourquoi-prof-chez-vous-existe", "Decouvrez l'histoire de Prof Chez Vous")}.</p>
+<p>{la("quels-sont-les-engagements", "Nos engagements")} guident chacune de nos decisions.</p>
+"""
+        },
     ]
 
-    # Delete all existing articles and categories first to start fresh
+    # =========================================================================
+    # 3. Populate
+    # =========================================================================
     Article.objects.all().delete()
-    
-    # We don't delete categories, just use the 3 we defined. 
-    # But let's delete the unused old ones to clean up the UI
     Category.objects.exclude(slug__in=["parents", "professeurs", "a-propos"]).delete()
 
     for item in articles_data:
@@ -447,12 +608,13 @@ def run():
                 "category": item["category"],
                 "title": item["title"],
                 "keywords": item["keywords"],
-                "content": item["content"]
+                "content": item["content"],
             }
         )
         print(f"[{'CREATED' if created else 'UPDATED'}] {article.title}")
 
-    print("Success! Help center populated with the 24 highly optimized articles.")
+    print("\nDone! 24 articles with inline cross-links populated successfully.")
+
 
 if __name__ == '__main__':
     run()
