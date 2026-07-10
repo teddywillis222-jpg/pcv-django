@@ -380,7 +380,16 @@ def recherche(request):
     if localisation:
         professeurs = professeurs.filter(ville_quartier=localisation)
     if classe:
-        professeurs = professeurs.filter(Q(classes_expertise__icontains=classe) | Q(classes_enseignees__icontains=classe))
+        from django.db.models import Case, When, Value, BooleanField
+        professeurs = professeurs.filter(
+            Q(classes_expertise__icontains=classe) | Q(classes_enseignees__icontains=classe)
+        ).annotate(
+            is_expert_classe=Case(
+                When(classes_expertise__icontains=classe, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
     if mode:
         professeurs = professeurs.filter(modes_de_cours__icontains=mode)
     if soutien:
@@ -405,15 +414,19 @@ def recherche(request):
     if sort_by == 'recent_active':
         professeurs = professeurs.order_by('-user__last_login', '-id')
     else:
-        # Ordre par défaut : 1) Certifiés en premier, 2) Badge suivi rigoureux, 3) Meilleure note, 4) Plus récent
-        professeurs = professeurs.order_by(
+        # Ordre par défaut : Expert de la classe (si recherchée) > Certifiés > Suivi rigoureux > Complétion > Moyenne > Récent
+        sort_args = []
+        if classe:
+            sort_args.append('-is_expert_classe')
+            
+        sort_args.extend([
             '-est_certifie',
             '-suivi_rigoureux',
             '-profil_complet',
             '-moyenne_avis',
             '-id'
-        )
-        
+        ])
+        professeurs = professeurs.order_by(*sort_args)
 
     # Contexte Parent/Enfants
     parent_children = []
