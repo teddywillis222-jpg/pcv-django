@@ -191,17 +191,8 @@ class ClassLevel:
 
     @classmethod
     def get_choices(cls):
-        base_choices = dict(cls.CHOICES)
-        try:
-            from django.apps import apps
-            CustomChoice = apps.get_model('core', 'CustomChoice')
-            customs = CustomChoice.objects.filter(category='classe').values_list('value', flat=True)
-            for c in customs:
-                if c not in base_choices:
-                    base_choices[c] = c
-        except Exception:
-            pass
-        return [(k, v) for k, v in base_choices.items()]
+        # We now enforce the clean list strictly and ignore CustomChoices
+        return cls.CHOICES
 
 
 # --- Mode de cours (partout : TeacherProfile, Engagement) ---
