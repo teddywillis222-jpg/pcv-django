@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.contrib.sitemaps.views import sitemap
-from core.sitemaps import StaticViewSitemap, TeacherProfileSitemap
+from core.sitemaps import StaticViewSitemap, TeacherProfileSitemap, SeoDirectorySitemap
 
 from core import views as core_views
 from django.views.generic import TemplateView
@@ -26,6 +26,7 @@ from django.views.generic import TemplateView
 sitemaps = {
     'static': StaticViewSitemap,
     'teachers': TeacherProfileSitemap,
+    'seo_directories': SeoDirectorySitemap,
 }
 
 urlpatterns = [

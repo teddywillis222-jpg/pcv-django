@@ -60,3 +60,28 @@ class TeacherProfileSitemap(Sitemap):
     def lastmod(self, obj):
         # On utilise la date de jointure de l'utilisateur ou une date fixe si non dispo
         return obj.user.date_joined
+
+class SeoDirectorySitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.9
+
+    def items(self):
+        """Retourne toutes les combinaisons possibles de matières et de villes"""
+        from .choices import Matiere, Localisation
+        from django.utils.text import slugify
+        
+        combinations = []
+        for mat in Matiere.LISTE:
+            for loc_key, loc_val in Localisation.CHOICES:
+                combinations.append({
+                    'subject_slug': slugify(mat),
+                    'city_slug': slugify(loc_val)
+                })
+        return combinations
+
+    def location(self, item):
+        return reverse('seo_directory', kwargs={
+            'subject_slug': item['subject_slug'],
+            'city_slug': item['city_slug']
+        })
+
