@@ -95,8 +95,7 @@ Matiere.LISTE = Matiere.load_liste()
 
 # --- Classe / niveau (partout : Enfant, Engagement, TeacherProfile) ---
 class ClassLevel:
-    CI = "CI"
-    CP = "CP"
+    # Primaire (Majuscules pour l'esthétique)
     MATERNELLE = "MATERNELLE"
     CI = "CI"
     CP = "CP"
@@ -104,55 +103,56 @@ class ClassLevel:
     CE2 = "CE2"
     CM1 = "CM1"
     CM2 = "CM2"
-    SIXIEME = "6EME"
-    CINQUIEME = "5EME"
-    QUATRIEME = "4EME"
-    TROISIEME = "3EME"
-    
-    # Nouveaux découpages par filière
-    SECONDE_LIT = "2NDE_LIT"
-    PREMIERE_LIT = "1ERE_LIT"
-    TERMINALE_LIT = "TLE_LIT"
-    
-    SECONDE_SCI = "2NDE_SCI"
-    PREMIERE_SCI = "1ERE_SCI"
-    TERMINALE_SCI = "TLE_SCI"
-    
-    SECONDE_TECH = "2NDE_TECH"
-    PREMIERE_TECH = "1ERE_TECH"
-    TERMINALE_TECH = "TLE_TECH"
 
-    # Anciens codes conservés pour compatibilité
-    SECONDE = "2NDE"
-    PREMIERE = "1ERE"
-    TERMINALE = "TLE"
+    # Collège (Format naturel)
+    SIXIEME = "6ème"
+    CINQUIEME = "5ème"
+    QUATRIEME = "4ème"
+    TROISIEME = "3ème"
     
-    CAP1 = "CAP1"
-    CAP2 = "CAP2"
-    BEP1 = "BEP1"
-    BEP2 = "BEP2"
-    BACPRO1 = "BACPRO1"
-    BACPRO_TLE = "BACPRO_TLE"
-    BTS1 = "BTS1"
-    BTS2 = "BTS2"
-    LICENCE1 = "L1"
-    LICENCE2 = "L2"
-    LICENCE3 = "L3"
-    MASTER = "MASTER"
-    DOCTORAT = "PHD"
+    # Lycée Littéraire
+    SECONDE_LIT = "2nde Littéraire"
+    PREMIERE_LIT = "1ère Littéraire"
+    TERMINALE_LIT = "Tle Littéraire"
+    
+    # Lycée Scientifique
+    SECONDE_SCI = "2nde Scientifique"
+    PREMIERE_SCI = "1ère Scientifique"
+    TERMINALE_SCI = "Tle Scientifique"
+    
+    # Lycée Technique
+    SECONDE_TECH = "2nde Technique"
+    PREMIERE_TECH = "1ère Technique"
+    TERMINALE_TECH = "Tle Technique"
+
+    # Supérieur et Professionnel
+    CAP1 = "1ère année CAP"
+    CAP2 = "2ème année CAP"
+    BEP1 = "1ère année BEP"
+    BEP2 = "2ème année BEP"
+    BACPRO1 = "1ère année BAC Pro"
+    BACPRO_TLE = "Tle BAC Pro"
+    BTS1 = "1ère année BTS"
+    BTS2 = "2ème année BTS"
+    LICENCE1 = "Licence 1"
+    LICENCE2 = "Licence 2"
+    LICENCE3 = "Licence 3"
+    MASTER = "Master"
+    DOCTORAT = "Doctorat"
     
     # Divers
-    ADULTE = "ADULTE"
-    CONCOURS = "CONCOURS"
+    ADULTE = "Adultes / Professionnels"
+    CONCOURS = "Préparation aux Concours"
     
     CHOICES = [
-        (MATERNELLE, "Maternelle"),
+        (MATERNELLE, "MATERNELLE"),
         (CI, "CI"),
         (CP, "CP"),
         (CE1, "CE1"),
         (CE2, "CE2"),
         (CM1, "CM1"),
         (CM2, "CM2"),
+        
         (SIXIEME, "6ème"),
         (CINQUIEME, "5ème"),
         (QUATRIEME, "4ème"),
@@ -169,11 +169,6 @@ class ClassLevel:
         (SECONDE_TECH, "2nde Technique"),
         (PREMIERE_TECH, "1ère Technique"),
         (TERMINALE_TECH, "Tle Technique"),
-        
-        # Les anciens codes conservés, mais affichés simplement (seront re-sélectionnés ou mis à jour par les profs)
-        (SECONDE, "2nde"),
-        (PREMIERE, "1ère"),
-        (TERMINALE, "Tle"),
         
         (CAP1, "1ère année CAP"),
         (CAP2, "2ème année CAP"),
