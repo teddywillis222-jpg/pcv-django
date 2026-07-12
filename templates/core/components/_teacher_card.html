@@ -1,8 +1,14 @@
 <div class="teacher-card premium-card group" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}">
+    {% load image_utils %}
     <!-- Left Photo Section (40% on mobile) -->
     <div class="card-photo-section">
         {% if teacher.photo_de_profil %}
-            <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}" class="teacher-photo">
+            <img src="{{ teacher.photo_de_profil.url|cloudinary_optimized:'400x500' }}" 
+                 alt="{{ teacher.prenom }} {{ teacher.nom }}" 
+                 class="teacher-photo"
+                 loading="lazy"
+                 decoding="async"
+                 width="400" height="500">
         {% else %}
             <div class="avatar-initials teacher-photo">
                 {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}

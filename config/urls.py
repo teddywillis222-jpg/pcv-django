@@ -93,6 +93,7 @@ urlpatterns = [
     path("politique-confidentialite/", core_views.politique_confidentialite, name="politique_confidentialite"),
     
     # URLs pour le système de recherche et profils (SEO + SPA)
+    path("cours/<slug:subject_slug>/<slug:city_slug>/", core_views.seo_directory_page, name="seo_directory"),
     path("professeur/<slug:teacher_slug>/", core_views.professeur_detail, name="professeur_detail"),
     path("api/teacher-profile/<slug:teacher_slug>/", core_views.api_teacher_profile, name="api_teacher_profile"),
     path("api/engagement/", core_views.api_engagement, name="api_engagement"),

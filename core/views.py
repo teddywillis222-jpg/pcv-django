@@ -1444,6 +1444,117 @@ def track_teacher_view(request, teacher_profile):
         
     return is_new_view
 
+def seo_directory_page(request, subject_slug, city_slug):
+    """Page de répertoire dynamique (SEO Programmatique)
+    
+    Optimisations appliquées :
+    - select_related('user') pour la FK directe
+    - prefetch_related('parents_favoris') pour le M2M utilisé dans _teacher_card.html
+    - annotate_teachers_with_ratings() pour avis/badges en une seule requête SQL
+    - Paginator Django natif (12 profs/page) pour limiter le DOM
+    - Agrégation Avg sur le queryset filtré, pas sur la page paginée
+    """
+    from django.utils.text import slugify
+    from django.db.models import Avg
+    from django.http import Http404
+    from django.core.paginator import Paginator
+    from .choices import Matiere, Localisation, ValidationStatus, ClassLevel
+    import random
+    
+    # ── 1. Reverse mapping (slug → nom réel) ──
+    subject_name = None
+    city_name = None
+    
+    for mat in Matiere.LISTE:
+        if slugify(mat) == subject_slug:
+            subject_name = mat
+            break
+            
+    for loc_key, loc_val in Localisation.CHOICES:
+        if slugify(loc_val) == city_slug:
+            city_name = loc_val
+            break
+            
+    if not city_name:
+        raise Http404("Ville non reconnue")
+    if not subject_name:
+        raise Http404("Matière non reconnue")
+        
+    # ── 2. Queryset optimisé (Anti N+1) ──
+    queryset = (
+        TeacherProfile.objects
+        .select_related('user')                 # FK directe → 1 JOIN
+        .prefetch_related('parents_favoris')     # M2M favoris → 1 requête séparée
+        .filter(statut_de_validation=ValidationStatus.VALIDE)
+    )
+    
+    queryset = queryset.filter(ville_quartier__icontains=city_name)
+    teachers_qs = queryset.filter(matiere_enseignee__icontains=subject_name)
+    
+    fallback_active = False
+    if not teachers_qs.exists():
+        teachers_qs = queryset
+        fallback_active = True
+    
+    # Annotations (avis, badges) — une seule passe SQL
+    teachers_qs = annotate_teachers_with_ratings(teachers_qs)
+    
+    # Tri : certifié d'abord, puis meilleure note, puis récent
+    teachers_qs = teachers_qs.order_by('-est_certifie', '-moyenne_avis', '-id')
+    
+    # Comptage et tarif moyen sur le queryset COMPLET (avant pagination)
+    teacher_count = teachers_qs.count()
+    avg_price_aggr = teachers_qs.aggregate(Avg('tarif_horaire'))
+    average_price = avg_price_aggr['tarif_horaire__avg']
+    average_price = int(average_price) if average_price else 2500
+    
+    # ── 3. Pagination (12 cartes/page pour mobile léger) ──
+    paginator = Paginator(teachers_qs, 12)
+    page_number = request.GET.get('page', 1)
+    teachers_page = paginator.get_page(page_number)
+    
+    available_classes = ClassLevel.get_choices()
+    
+    # ── 4. FAQ dynamique ──
+    faq_items = [
+        {
+            "question": f"Comment fonctionne la sélection des professeurs de {subject_name} à {city_name} ?",
+            "answer": f"Chaque profil indépendant inscrit sur Prof Chez Vous passe un processus de validation strict. Un enseignant ne peut proposer ses services dans une discipline que s'il a fourni des preuves concrètes et vérifiées de ses compétences pour cette matière spécifique."
+        },
+        {
+            "question": f"Quel est le tarif d'un accompagnement personnalisé sur cette page ?",
+            "answer": f"Le tarif moyen constaté pour les cours de {subject_name} dans la zone de {city_name} s'élève à {average_price} FCFA par heure. Les enseignants fixent leurs tarifs de manière indépendante, notamment en fonction de la classe de l'apprenant (de la 6ème à la Terminale)."
+        },
+        {
+            "question": f"Comment s'assurer du suivi des cours ?",
+            "answer": "La plateforme met à disposition des outils pour tracer l'évolution pédagogique. L'enseignant établit un score de maîtrise initial lors du premier contact et consigne un journal de session après chaque intervention pour documenter le travail effectué."
+        }
+    ]
+    
+    # ── 5. Maillage interne ──
+    all_cities = [c[1] for c in Localisation.CHOICES if slugify(c[1]) != city_slug]
+    random.shuffle(all_cities)
+    neighboring_cities = [{"name": c, "slug": slugify(c)} for c in all_cities[:4]]
+    
+    all_subj = [m for m in Matiere.LISTE if slugify(m) != subject_slug]
+    random.shuffle(all_subj)
+    other_subjects = [{"name": s, "slug": slugify(s)} for s in all_subj[:4]]
+
+    context = {
+        "subject": {"name": subject_name, "slug": subject_slug},
+        "city": {"name": city_name, "slug": city_slug},
+        "teacher_count": teacher_count,
+        "average_price": average_price,
+        "teachers_list": teachers_page,       # Page paginée, pas le queryset brut
+        "available_classes": available_classes,
+        "faq_items": faq_items,
+        "neighboring_cities": neighboring_cities,
+        "other_subjects": other_subjects,
+        "fallback_active": fallback_active,
+    }
+    
+    return render(request, "core/seo_directory.html", context)
+
 def professeur_detail(request, teacher_slug):
     """Page profil professeur dynamique pour SEO avec robustesse accrue"""
     from .choices import CourseMode, ClassLevel
