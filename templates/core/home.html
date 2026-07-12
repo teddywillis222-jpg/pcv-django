@@ -6,6 +6,59 @@
 {% block extra_head %}
 <meta name="description" content="Prof Chez Vous connecte les parents et élèves avec les meilleurs professeurs particuliers au Bénin. Cours de maths, anglais, français à domicile à Cotonou, Calavi et partout ailleurs.">
 <link rel="preload" as="image" href="{% static 'core/images/hero_home.webp' %}" fetchpriority="high">
+
+<!-- JSON-LD : Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Prof Chez Vous",
+  "url": "https://profchezvousapp.com",
+  "logo": "https://profchezvousapp.com{% static 'core/images/logo.png' %}",
+  "description": "Prof Chez Vous est une plateforme éducative béninoise agissant comme tiers de confiance. Elle met en relation des parents et élèves avec des enseignants indépendants rigoureusement vérifiés, pour des cours particuliers à domicile sécurisés du primaire au supérieur.",
+  "foundingDate": "2026",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Bénin",
+    "sameAs": "https://fr.wikipedia.org/wiki/B%C3%A9nin"
+  },
+  "serviceType": "Intermédiation éducative – Cours particuliers à domicile",
+  "knowsAbout": [
+    "Cours particuliers à domicile au Bénin",
+    "Soutien scolaire du primaire au supérieur",
+    "Vérification et validation des enseignants indépendants",
+    "Suivi pédagogique numérique",
+    "Tiers de confiance éducatif"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "Support Client",
+    "url": "https://profchezvousapp.com/centre-daide/",
+    "availableLanguage": "Français"
+  },
+  "sameAs": []
+}
+</script>
+
+<!-- JSON-LD : WebSite + SearchAction -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Prof Chez Vous",
+  "url": "https://profchezvousapp.com",
+  "description": "Plateforme béninoise de mise en relation entre parents/élèves et professeurs particuliers indépendants vérifiés. Tiers de confiance pour le soutien scolaire à domicile.",
+  "inLanguage": "fr",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://profchezvousapp.com/recherche/?matiere={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 {% endblock %}
 
 {% block extra_css %}
@@ -484,11 +537,11 @@ p {
     
     <div class="chips-container">
         <!-- Classes -->
-        <a href="{% url 'recherche' %}?classe=TLE" class="chip">🎓 Terminale</a>
-        <a href="{% url 'recherche' %}?classe=1ERE" class="chip">🎓 Première</a>
-        <a href="{% url 'recherche' %}?classe=2NDE" class="chip">🎓 Seconde</a>
-        <a href="{% url 'recherche' %}?classe=3EME" class="chip">📚 3ème / Troisième</a>
-        <a href="{% url 'recherche' %}?classe=4EME" class="chip">📚 4ème / Quatrième</a>
+        <a href="{% url 'recherche' %}?classe=Tle Littéraire" class="chip">🎓 Tle Littéraire</a>
+        <a href="{% url 'recherche' %}?classe=Tle Scientifique" class="chip">🎓 Tle Scientifique</a>
+        <a href="{% url 'recherche' %}?classe=1ère Littéraire" class="chip">🎓 1ère Littéraire</a>
+        <a href="{% url 'recherche' %}?classe=3ème" class="chip">📚 3ème</a>
+        <a href="{% url 'recherche' %}?classe=4ème" class="chip">📚 4ème</a>
         <a href="{% url 'recherche' %}?classe=CM2" class="chip">🎒 CM2</a>
 
         <!-- Matières -->

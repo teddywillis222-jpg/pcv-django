@@ -9,6 +9,44 @@
 
 {% block extra_head %}
 <link rel="preload" as="image" href="{% static 'core/images/hero_prof_benin.webp' %}" fetchpriority="high">
+
+<!-- JSON-LD : HowTo - Devenir Enseignant sur Prof Chez Vous -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Comment devenir enseignant indépendant sur Prof Chez Vous",
+  "description": "Prof Chez Vous agit strictement comme un intermédiaire de confiance (tiers de confiance) et non comme un centre de recrutement. La plateforme facilite la mise en relation entre enseignants indépendants vérifiés et familles au Bénin. Voici les étapes pour soumettre votre profil.",
+  "totalTime": "PT15M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "XOF",
+    "value": "0"
+  },
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Inscription en ligne",
+      "text": "Créez votre compte gratuit sur Prof Chez Vous en renseignant vos informations personnelles (nom, email, téléphone). Choisissez le rôle 'Professeur' lors de l'inscription. La plateforme est un intermédiaire de confiance, pas un employeur.",
+      "url": "https://profchezvousapp.com/signup/"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "Soumission des justificatifs et preuves de compétences",
+      "text": "Complétez votre profil en soumettant vos diplômes, vos matières d'expertise, les classes enseignées (du primaire au supérieur), votre zone géographique d'intervention au Bénin, votre tarif horaire et une vidéo de présentation. Chaque preuve de compétence est vérifiée par discipline par notre équipe de validation.",
+      "url": "https://profchezvousapp.com/prof/create-profile/"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Activation du profil après validation",
+      "text": "Après soumission, votre profil est examiné par l'équipe Prof Chez Vous selon des critères stricts de qualité et de fiabilité. Une fois validé, votre profil devient visible aux familles et vous pouvez recevoir des demandes de cours particuliers à domicile. Le suivi pédagogique numérique (cahier de texte, bilans de séances) est disponible dès l'activation."
+    }
+  ]
+}
+</script>
 {% endblock %}
 
 {% block extra_css %}

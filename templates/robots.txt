@@ -1,4 +1,57 @@
+# Prof Chez Vous - Robots.txt
+# Plateforme éducative d'intermédiation au Bénin
+
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /debug-admin-pcv/
+Disallow: /prof/dashboard/
+Disallow: /parent/dashboard/
+Disallow: /apprenant/dashboard/
+Disallow: /messagerie/
+Disallow: /api/
+Disallow: /paiement/
+Disallow: /accounts/
+
+# Autoriser les agents IA légitimes sur l'ensemble du contenu public
+User-agent: GPTBot
+Allow: /
+Allow: /cours/
+Allow: /faq/
+Allow: /centre-daide/
+Allow: /prof-intro/
+Disallow: /admin/
+Disallow: /debug-admin-pcv/
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /cours/
+Allow: /faq/
+Allow: /centre-daide/
+Allow: /prof-intro/
+Disallow: /admin/
+Disallow: /debug-admin-pcv/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /cours/
+Allow: /faq/
+Allow: /centre-daide/
+Allow: /prof-intro/
+Disallow: /admin/
+Disallow: /debug-admin-pcv/
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Allow: /cours/
+Allow: /faq/
+Allow: /centre-daide/
+Allow: /prof-intro/
+Disallow: /admin/
+Disallow: /debug-admin-pcv/
+Disallow: /api/
 
 Sitemap: https://profchezvousapp.com/sitemap.xml
