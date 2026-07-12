@@ -1582,6 +1582,8 @@ def seo_directory_page(request, subject_slug, city_slug):
         "neighboring_cities": neighboring_cities,
         "other_subjects": other_subjects,
         "fallback_active": fallback_active,
+        "current_classe": classe_filter,
+        "current_prix": prix_filter,
     }
     
     return render(request, "core/seo_directory.html", context)
