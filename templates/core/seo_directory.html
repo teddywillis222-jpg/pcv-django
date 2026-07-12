@@ -27,25 +27,389 @@
 </script>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+/* -------------------------------------------
+   STYLES SPECIFIQUES A LA PAGE SEO
+   Aucun Tailwind n'est utilisé ici, Vanilla CSS pur
+------------------------------------------- */
+.seo-hero {
+    background-color: var(--primary-bg, #f0fdf4);
+    padding: 3rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+.seo-hero-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.seo-hero h1 {
+    font-size: 2.2rem;
+    color: var(--text, #1f2937);
+    margin-bottom: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.seo-hero h1 span {
+    color: var(--primary, #15803d);
+}
+.seo-hero h2 {
+    font-size: 1.1rem;
+    color: var(--text-muted, #6b7280);
+    margin: 0 auto 2.5rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Filtres */
+.seo-filter-box {
+    background: var(--white, #ffffff);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg, 1rem);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    border: 1px solid var(--border, #e5e7eb);
+}
+.seo-filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+}
+.seo-filter-group {
+    flex: 1 1 200px;
+}
+.seo-filter-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius, 0.5rem);
+    font-size: 0.95rem;
+    background-color: var(--white);
+}
+.seo-filter-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.seo-filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1 1 150px;
+}
+.seo-filter-actions .btn-primary {
+    flex: 1;
+}
+.seo-btn-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: var(--radius);
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.seo-btn-reset:hover {
+    background: #e2e8f0;
+}
+.seo-btn-reset svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Notice Optionnelle */
+.seo-fallback-notice {
+    max-width: 1200px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+}
+.seo-alert-yellow {
+    background: #fffbeb;
+    border-left: 4px solid #fbbf24;
+    padding: 1rem 1.5rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    color: #92400e;
+}
+.seo-alert-yellow svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #fbbf24;
+}
+
+/* Badges de Confiance */
+.seo-trust-section {
+    padding: 3rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.seo-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+.seo-trust-card {
+    background: var(--white);
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+.seo-trust-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-bg);
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+}
+.seo-trust-icon svg {
+    width: 26px;
+    height: 26px;
+}
+.seo-trust-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    font-weight: 700;
+}
+.seo-trust-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Section Professeurs */
+.seo-teachers-section {
+    padding: 3rem 1rem;
+    background: #f8fafc;
+}
+.seo-teachers-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.seo-empty-state {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+}
+.seo-empty-state svg {
+    width: 48px;
+    height: 48px;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+}
+.seo-empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+.seo-empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* Pagination */
+.seo-pagination {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.seo-pagination-list {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.seo-page-btn, .seo-page-current {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    font-weight: 600;
+}
+.seo-page-btn {
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: 0.2s;
+}
+.seo-page-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    text-decoration: none;
+}
+.seo-page-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.seo-page-current {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+}
+.seo-pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* FAQ Section */
+.seo-faq-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1rem;
+}
+.seo-faq-section h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+    font-weight: 800;
+}
+.seo-faq-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.seo-faq-summary {
+    padding: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+    list-style: none;
+}
+.seo-faq-summary:hover {
+    background: #f8fafc;
+}
+.seo-faq-summary::-webkit-details-marker {
+    display: none;
+}
+.seo-faq-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+.seo-faq-item[open] .seo-faq-icon {
+    transform: rotate(180deg);
+}
+.seo-faq-content {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Maillage / Liens Matrix */
+.seo-matrix-section {
+    padding: 3rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+}
+.seo-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+}
+.seo-matrix-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.seo-matrix-title svg {
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+}
+.seo-matrix-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.seo-matrix-list li a {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+.seo-matrix-list li a::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 50%;
+}
+.seo-matrix-list li a:hover {
+    color: var(--primary);
+    text-decoration: none;
+}
+.seo-matrix-list li a:hover::before {
+    background: var(--primary);
+}
+
+/* Adaptations Mobiles Pures */
+@media (max-width: 768px) {
+    .seo-hero h1 { font-size: 1.75rem; }
+    .seo-hero h2 { font-size: 1rem; }
+    .seo-filter-form { flex-direction: column; }
+    .seo-filter-group { width: 100%; flex: 1 1 100%; }
+    .seo-filter-actions { flex-direction: row; width: 100%; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Composant A: Hero Header -->
-<section class="bg-primary/10 py-12 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
-    <div class="relative z-10 max-w-4xl mx-auto">
-        <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
-            {{ teacher_count }} Enseignants certifiés de <span class="text-primary">{{ subject.name }}</span> à <span class="text-primary">{{ city.name }}</span>
-        </h1>
-        <h2 class="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto font-medium">
-            Trouvez et contactez directement l'enseignant idéal en toute confiance. Profils indépendants vérifiés minutieusement par notre équipe.
-        </h2>
+<section class="seo-hero">
+    <div class="seo-hero-container">
+        <h1>{{ teacher_count }} Enseignants certifiés de <span>{{ subject.name }}</span> à <span>{{ city.name }}</span></h1>
+        <h2>Trouvez et contactez directement l'enseignant idéal en toute confiance. Profils indépendants vérifiés minutieusement par notre équipe.</h2>
         
-        <!-- Interface Filtre (Compact) -->
-        <div class="bg-white p-4 rounded-2xl shadow-xl max-w-3xl mx-auto flex flex-col sm:flex-row items-center gap-4 border border-gray-100">
-            <form action="{% url 'recherche' %}" method="GET" class="w-full flex flex-col sm:flex-row gap-4 items-center">
+        <!-- Interface Filtre -->
+        <div class="seo-filter-box">
+            <form action="{% url 'recherche' %}" method="GET" class="seo-filter-form">
                 <input type="hidden" name="matiere" value="{{ subject.name }}">
                 <input type="hidden" name="localisation" value="{{ city.name }}">
                 
-                <div class="w-full sm:w-1/3">
-                    <select name="classe" class="w-full rounded-xl border-gray-300 focus:border-primary focus:ring-primary shadow-sm text-sm">
+                <div class="seo-filter-group">
+                    <select name="classe">
                         <option value="">Toutes les classes</option>
                         {% for val, label in available_classes %}
                         <option value="{{ val }}">{{ label }}</option>
@@ -53,8 +417,8 @@
                     </select>
                 </div>
                 
-                <div class="w-full sm:w-1/3">
-                    <select name="prix" class="w-full rounded-xl border-gray-300 focus:border-primary focus:ring-primary shadow-sm text-sm">
+                <div class="seo-filter-group">
+                    <select name="prix">
                         <option value="">Budget horaire max</option>
                         <option value="0-2000">Moins de 2000 FCFA</option>
                         <option value="2000-5000">2000 - 5000 FCFA</option>
@@ -63,12 +427,10 @@
                     </select>
                 </div>
                 
-                <div class="w-full sm:w-1/3 flex gap-2">
-                    <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
-                        Filtrer
-                    </button>
-                    <a href="{% url 'seo_directory' subject.slug city.slug %}" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-xl hover:bg-gray-200 transition-colors font-medium text-center" title="Réinitialiser">
-                        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <div class="seo-filter-actions">
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                    <a href="{% url 'seo_directory' subject.slug city.slug %}" class="seo-btn-reset" title="Réinitialiser">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </a>
                 </div>
             </form>
@@ -77,152 +439,122 @@
 </section>
 
 {% if fallback_active %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="ml-3">
-                <p class="text-sm text-yellow-700 font-medium">
-                    Aucun professeur de {{ subject.name }} n'est actuellement disponible à {{ city.name }}. Voici d'autres excellents professeurs dans votre ville.
-                </p>
-            </div>
+<div class="seo-fallback-notice">
+    <div class="seo-alert-yellow">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <div>
+            <p style="margin:0; font-weight: 500;">
+                Aucun professeur de {{ subject.name }} n'est actuellement disponible à {{ city.name }}. Voici d'autres excellents professeurs dans votre ville.
+            </p>
         </div>
     </div>
 </div>
 {% endif %}
 
 <!-- Composant B: Tiers de Confiance PCV -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-gray-100">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+<section class="seo-trust-section">
+    <div class="seo-trust-grid">
         <!-- Bloc 1 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div class="seo-trust-card">
+            <div class="seo-trust-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Profils Validés sur Preuve</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">
-                Compétences Vérifiées : Chaque matière affichée sur le profil d'un enseignant fait l'objet d'une vérification stricte de ses diplômes et justificatifs par notre équipe.
-            </p>
+            <h3>Profils Validés sur Preuve</h3>
+            <p>Compétences Vérifiées : Chaque matière affichée sur le profil d'un enseignant fait l'objet d'une vérification stricte de ses diplômes et justificatifs.</p>
         </div>
         
         <!-- Bloc 2 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <div class="seo-trust-card">
+            <div class="seo-trust-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Suivi Scientifique</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">
-                Traçabilité des Progrès : Évaluation initiale systématique de l'apprenant et logs de session transparents à la fin de chaque cours.
-            </p>
+            <h3>Suivi Scientifique</h3>
+            <p>Traçabilité des Progrès : Évaluation initiale systématique de l'apprenant et logs de session transparents à la fin de chaque cours.</p>
         </div>
         
         <!-- Bloc 3 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <div class="seo-trust-card">
+            <div class="seo-trust-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Liberté Totale</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">
-                Place de marché indépendante : Vous comparez les profils librement et vous gérez vos modalités de cours en direct avec l'enseignant, sans intermédiaire opaque.
-            </p>
+            <h3>Liberté Totale</h3>
+            <p>Place de marché indépendante : Comparez librement et gérez vos modalités de cours en direct avec l'enseignant, sans intermédiaire opaque.</p>
         </div>
     </div>
 </section>
 
-<!-- Composant C: Flux Principal de Cartes (Teacher Cards Container) -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-50/50">
-    {% if teachers_list %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {% for teacher in teachers_list %}
-            {% include "core/components/_teacher_card.html" with teacher=teacher %}
-        {% endfor %}
-    </div>
-    
-    <!-- Pagination Controls -->
-    {% if teachers_list.has_other_pages %}
-    <nav class="mt-10 flex justify-center" aria-label="Pagination des résultats">
-        <ul class="inline-flex items-center gap-1">
-            <!-- Bouton Précédent -->
-            {% if teachers_list.has_previous %}
-            <li>
-                <a href="?page={{ teachers_list.previous_page_number }}" 
-                   class="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
-                   aria-label="Page précédente">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </a>
-            </li>
-            {% endif %}
-            
-            <!-- Numéros de page -->
-            {% for page_num in teachers_list.paginator.page_range %}
-                {% if teachers_list.number == page_num %}
+<!-- Composant C: Flux Principal de Cartes -->
+<section class="seo-teachers-section">
+    <div class="seo-teachers-container">
+        {% if teachers_list %}
+        <div class="teachers-grid">
+            {% for teacher in teachers_list %}
+                {% include "core/components/_teacher_card.html" with teacher=teacher %}
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination Controls -->
+        {% if teachers_list.has_other_pages %}
+        <nav class="seo-pagination" aria-label="Pagination des résultats">
+            <ul class="seo-pagination-list">
+                {% if teachers_list.has_previous %}
                 <li>
-                    <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-white font-bold shadow-md shadow-primary/30" aria-current="page">
-                        {{ page_num }}
-                    </span>
-                </li>
-                {% elif page_num > teachers_list.number|add:"-3" and page_num < teachers_list.number|add:"3" %}
-                <li>
-                    <a href="?page={{ page_num }}" 
-                       class="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm font-medium">
-                        {{ page_num }}
+                    <a href="?page={{ teachers_list.previous_page_number }}" class="seo-page-btn" aria-label="Page précédente">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </a>
                 </li>
                 {% endif %}
-            {% endfor %}
-            
-            <!-- Bouton Suivant -->
-            {% if teachers_list.has_next %}
-            <li>
-                <a href="?page={{ teachers_list.next_page_number }}" 
-                   class="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm"
-                   aria-label="Page suivante">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-    
-    <!-- Compteur contextuel -->
-    <p class="text-center text-sm text-gray-500 mt-4">
-        Page {{ teachers_list.number }} sur {{ teachers_list.paginator.num_pages }} — {{ teacher_count }} professeur{{ teacher_count|pluralize:"s" }} au total
-    </p>
-    {% endif %}
-    
-    {% else %}
-    <div class="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <h3 class="mt-4 text-lg font-bold text-gray-900">Aucun professeur trouvé</h3>
-        <p class="mt-2 text-gray-500">Nous n'avons pas d'enseignants disponibles pour le moment dans cette zone.</p>
-        <a href="{% url 'recherche' %}" class="mt-6 inline-block bg-primary text-white font-bold py-2 px-6 rounded-full hover:bg-primary/90 transition-colors shadow-md">
-            Voir tous nos professeurs
-        </a>
+                
+                {% for page_num in teachers_list.paginator.page_range %}
+                    {% if teachers_list.number == page_num %}
+                    <li><span class="seo-page-current" aria-current="page">{{ page_num }}</span></li>
+                    {% elif page_num > teachers_list.number|add:"-3" and page_num < teachers_list.number|add:"3" %}
+                    <li><a href="?page={{ page_num }}" class="seo-page-btn">{{ page_num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if teachers_list.has_next %}
+                <li>
+                    <a href="?page={{ teachers_list.next_page_number }}" class="seo-page-btn" aria-label="Page suivante">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <p class="seo-pagination-info">
+                Page {{ teachers_list.number }} sur {{ teachers_list.paginator.num_pages }} — {{ teacher_count }} professeur{{ teacher_count|pluralize:"s" }} au total
+            </p>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="seo-empty-state">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <h3>Aucun professeur trouvé</h3>
+            <p>Nous n'avons pas d'enseignants disponibles pour le moment dans cette zone.</p>
+            <a href="{% url 'recherche' %}" class="btn btn-primary">Voir tous nos professeurs</a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </section>
 
-<!-- Composant D: Guide FAQ Pédagogique -->
-<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">Foire Aux Questions Pédagogique</h2>
-    <div class="space-y-4">
+<!-- Composant D: Guide FAQ -->
+<section class="seo-faq-section">
+    <h2>Foire Aux Questions Pédagogique</h2>
+    <div>
         {% for faq in faq_items %}
-        <details class="group bg-white border border-gray-200 rounded-2xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors">
-                <h3 class="text-lg font-semibold text-gray-900 pr-6">{{ faq.question }}</h3>
-                <span class="flex-shrink-0 ml-1.5 p-1.5 bg-primary/10 rounded-full text-primary transition duration-300 group-open:-rotate-180">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </span>
+        <details class="seo-faq-item">
+            <summary class="seo-faq-summary">
+                <span>{{ faq.question }}</span>
+                <svg class="seo-faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
             </summary>
-            <div class="px-6 pb-6 text-gray-600 leading-relaxed bg-white">
+            <div class="seo-faq-content">
                 {{ faq.answer }}
             </div>
         </details>
@@ -231,39 +563,33 @@
 </section>
 
 <!-- Composant E: Maillage Interne Matrix -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <!-- Colonne 1 : Variations locales -->
+<section class="seo-matrix-section">
+    <div class="seo-matrix-grid">
+        <!-- Colonne 1 -->
         <div>
-            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <h3 class="seo-matrix-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 Autres matières à {{ city.name }}
             </h3>
-            <ul class="space-y-3">
+            <ul class="seo-matrix-list">
                 {% for subj in other_subjects %}
                 <li>
-                    <a href="{% url 'seo_directory' subj.slug city.slug %}" class="text-gray-600 hover:text-primary hover:underline transition-colors flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                        Trouver un prof de {{ subj.name }} à {{ city.name }}
-                    </a>
+                    <a href="{% url 'seo_directory' subj.slug city.slug %}">Trouver un prof de {{ subj.name }} à {{ city.name }}</a>
                 </li>
                 {% endfor %}
             </ul>
         </div>
         
-        <!-- Colonne 2 : Variations géographiques -->
+        <!-- Colonne 2 -->
         <div>
-            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <h3 class="seo-matrix-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 Professeurs de {{ subject.name }} aux alentours
             </h3>
-            <ul class="space-y-3">
+            <ul class="seo-matrix-list">
                 {% for loc in neighboring_cities %}
                 <li>
-                    <a href="{% url 'seo_directory' subject.slug loc.slug %}" class="text-gray-600 hover:text-primary hover:underline transition-colors flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                        Enseignants de {{ subject.name }} à {{ loc.name }}
-                    </a>
+                    <a href="{% url 'seo_directory' subject.slug loc.slug %}">Enseignants de {{ subject.name }} à {{ loc.name }}</a>
                 </li>
                 {% endfor %}
             </ul>
