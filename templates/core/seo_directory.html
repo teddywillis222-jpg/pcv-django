@@ -34,10 +34,11 @@
    Aucun Tailwind n'est utilisé ici, Vanilla CSS pur
 ------------------------------------------- */
 .seo-hero {
-    background-color: var(--primary-bg, #f0fdf4);
+    background: linear-gradient(180deg, #dcfce7 0%, #f0fdf4 10%, #f0fdf4 90%, #ffffff 100%);
     padding: 3rem 1rem;
     text-align: center;
     border-bottom: 1px solid var(--border, #e5e7eb);
+    width: 100%;
 }
 .seo-hero-container {
     max-width: 900px;
@@ -88,6 +89,7 @@
     border: 1px solid var(--border, #e5e7eb);
     border-radius: var(--radius, 0.5rem);
     font-size: 0.95rem;
+    height: 46px;
     background-color: var(--white);
 }
 .seo-filter-group select:focus {
@@ -101,12 +103,17 @@
 }
 .seo-filter-actions .btn-primary {
     flex: 1;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .seo-btn-reset {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0 1rem;
+    height: 46px;
     background: #f1f5f9;
     color: #475569;
     border-radius: var(--radius);
@@ -386,11 +393,17 @@
 
 /* Adaptations Mobiles Pures */
 @media (max-width: 768px) {
+    .seo-hero { padding: 2rem 0.5rem; }
     .seo-hero h1 { font-size: 1.75rem; }
     .seo-hero h2 { font-size: 1rem; }
+    .seo-filter-box { padding: 1rem; }
     .seo-filter-form { flex-direction: column; }
     .seo-filter-group { width: 100%; flex: 1 1 100%; }
     .seo-filter-actions { flex-direction: row; width: 100%; }
+    .seo-trust-section { padding: 2rem 0.5rem; }
+    .seo-teachers-section { padding: 2rem 0.5rem; }
+    .seo-faq-section { padding: 2rem 0.5rem; }
+    .seo-matrix-section { padding: 2rem 0.5rem; }
 }
 </style>
 {% endblock %}
@@ -404,9 +417,7 @@
         
         <!-- Interface Filtre -->
         <div class="seo-filter-box">
-            <form action="{% url 'recherche' %}" method="GET" class="seo-filter-form">
-                <input type="hidden" name="matiere" value="{{ subject.name }}">
-                <input type="hidden" name="localisation" value="{{ city.name }}">
+            <form action="." method="GET" class="seo-filter-form">
                 
                 <div class="seo-filter-group">
                     <select name="classe">

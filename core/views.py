@@ -1486,14 +1486,45 @@ def seo_directory_page(request, subject_slug, city_slug):
         .select_related('user')                 # FK directe → 1 JOIN
         .prefetch_related('parents_favoris')     # M2M favoris → 1 requête séparée
         .filter(statut_de_validation=ValidationStatus.VALIDE)
+        .filter(ville_quartier=city_name)
+        .filter(matiere_enseignee__icontains=subject_name)
     )
     
-    queryset = queryset.filter(ville_quartier__icontains=city_name)
-    teachers_qs = queryset.filter(matiere_enseignee__icontains=subject_name)
+    # ── 2.5 Filtrage Additionnel sur place ──
+    classe_filter = request.GET.get('classe', '').strip()
+    prix_filter = request.GET.get('prix', '').strip()
+
+    if classe_filter:
+        from django.db.models import Q, Case, When, Value, BooleanField
+        queryset = queryset.filter(
+            Q(classes_expertise__icontains=classe_filter) | Q(classes_enseignees__icontains=classe_filter)
+        ).annotate(
+            is_expert_classe=Case(
+                When(classes_expertise__icontains=classe_filter, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+        
+    if prix_filter:
+        from django.conf import settings
+        thresholds = [int(t) for t in settings.PRICE_THRESHOLDS]
+        if prix_filter == f"0-{thresholds[0]}":
+            queryset = queryset.filter(tarif_horaire__lt=thresholds[0])
+        elif prix_filter == f"{thresholds[0]}-{thresholds[1]}":
+            queryset = queryset.filter(tarif_horaire__gte=thresholds[0], tarif_horaire__lte=thresholds[1])
+        elif prix_filter == f"{thresholds[1]}-{thresholds[2]}":
+            queryset = queryset.filter(tarif_horaire__gte=thresholds[1], tarif_horaire__lte=thresholds[2])
+        elif prix_filter == f"{thresholds[2]}+":
+            queryset = queryset.filter(tarif_horaire__gt=thresholds[2])
+
+    teachers_qs = queryset
     
     fallback_active = False
-    if not teachers_qs.exists():
-        teachers_qs = queryset
+    if not teachers_qs.exists() and not classe_filter and not prix_filter:
+        teachers_qs = TeacherProfile.objects.select_related('user').filter(
+            statut_de_validation=ValidationStatus.VALIDE, ville_quartier=city_name
+        )
         fallback_active = True
     
     # Annotations (avis, badges) — une seule passe SQL
