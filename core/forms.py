@@ -127,7 +127,7 @@ class SignUpForm(forms.ModelForm):
         self.fields["first_name"].label = "Nom complet"
         self.fields["first_name"].required = True
         self.fields["first_name"].widget.attrs.update({
-            "placeholder": "Ex: Jean Dupont",
+            "placeholder": "AMEGAN Justin",
             "required": True,
             "minlength": "2"
         })
