@@ -3832,3 +3832,58 @@ def download_ressource_prof(request, res_id):
         url = url.replace('/upload/', '/upload/fl_attachment/', 1)
         
     return redirect(url)
+
+
+@csrf_exempt
+@require_POST
+def create_search_alert(request):
+    """
+    API endpoint pour recevoir l'alerte de recherche (Ajax).
+    """
+    from .models import SearchAlert
+    from django.core.mail import send_mail
+    from django.conf import settings
+    import json
+    
+    try:
+        data = json.loads(request.body)
+        contact = data.get('contact', '').strip()
+        matiere = data.get('matiere', '').strip()
+        localisation = data.get('localisation', '').strip()
+        
+        if not contact:
+            return JsonResponse({"success": False, "error": "Le contact est requis."})
+            
+        alert = SearchAlert.objects.create(
+            contact_info=contact,
+            matiere=matiere,
+            localisation=localisation
+        )
+        
+        # Envoi d'email à l'admin
+        admin_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'hello@profchezvous.com')
+        sujet = f"[ProfChezVous] Nouvelle alerte de recherche - {matiere}"
+        message = (
+            f"Une nouvelle alerte de recherche a été créée (Aucun résultat trouvé).\n\n"
+            f"Contact : {contact}\n"
+            f"Matière recherchée : {matiere}\n"
+            f"Localisation : {localisation}\n\n"
+            f"Connectez-vous à l'admin pour suivre ce lead."
+        )
+        
+        try:
+            send_mail(
+                sujet,
+                message,
+                admin_email,
+                [admin_email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            # Ne pas bloquer l'utilisateur si l'email échoue
+            pass
+            
+        return JsonResponse({"success": True, "message": "Alerte créée avec succès."})
+        
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})

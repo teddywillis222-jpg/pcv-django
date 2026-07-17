@@ -2732,3 +2732,19 @@ class PageAnalytics(models.Model):
 
     def __str__(self):
         return f"{self.page_name} - {self.view_count} vues"
+
+
+class SearchAlert(models.Model):
+    contact_info = models.CharField(max_length=255, verbose_name="Email ou Téléphone", help_text="Contact laissé par le parent/élève")
+    matiere = models.CharField(max_length=255, verbose_name="Matière recherchée", blank=True, null=True)
+    localisation = models.CharField(max_length=255, verbose_name="Localisation", blank=True, null=True)
+    resolved = models.BooleanField(default=False, verbose_name="Traitée")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
+
+    class Meta:
+        verbose_name = "Alerte de recherche"
+        verbose_name_plural = "Alertes de recherche"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Alerte ({self.matiere} à {self.localisation}) - {self.contact_info}"

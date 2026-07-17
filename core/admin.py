@@ -174,3 +174,13 @@ class FAQProfesseurAdmin(admin.ModelAdmin):
     search_fields = ('question', 'reponse')
 
 
+from .models import SearchAlert
+
+@admin.register(SearchAlert)
+class SearchAlertAdmin(admin.ModelAdmin):
+    list_display = ('matiere', 'localisation', 'contact_info', 'resolved', 'created_at')
+    list_filter = ('resolved', 'created_at')
+    search_fields = ('matiere', 'localisation', 'contact_info')
+    list_editable = ('resolved',)
+
+
