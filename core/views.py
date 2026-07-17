@@ -420,9 +420,9 @@ def recherche(request):
             sort_args.append('-is_expert_classe')
             
         sort_args.extend([
+            '-profil_complet',
             '-est_certifie',
             '-suivi_rigoureux',
-            '-profil_complet',
             '-moyenne_avis',
             '-id'
         ])

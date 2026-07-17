@@ -1347,15 +1347,17 @@ class TeacherProfile(models.Model):
                 filled += 1
         
 
-        # On ajoute des points pour les diplÃ´mes
-
+        # On ajoute des points pour les diplômes
         if self.diplomes.exists():
-
+            filled += 1
+            
+        # On ajoute des points pour les disponibilités
+        if self.disponibilites.exists() or self.grille_disponibilites:
             filled += 1
 
-            
-
-        return int((filled / (len(fields_to_check) + 1)) * 100)
+        # Nombre total de champs = len(fields_to_check) + 1 (diplômes) + 1 (disponibilités)
+        total_fields = len(fields_to_check) + 2
+        return int((filled / total_fields) * 100)
 
 
 
