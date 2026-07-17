@@ -92,8 +92,12 @@
                 {% if teacher.a_des_tarifs_multiples %}
                     <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">À partir de</span>
                     <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
+                {% elif teacher.tarif_minimum %}
+                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">À partir de</span>
+                    <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
                 {% else %}
-                    <span class="price-amount">{{ teacher.tarif_horaire|default:"À négocier"|floatformat:0 }}</span>
+                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">À partir de</span>
+                    <span class="price-amount">3 000</span>
                 {% endif %}
                 <span class="price-currency">F/h</span>
             </div>
