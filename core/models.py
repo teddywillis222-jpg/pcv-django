@@ -1322,7 +1322,7 @@ class TeacherProfile(models.Model):
 
         # YouTube
         if 'youtube.com' in url or 'youtu.be' in url:
-            match = re.search(r'(?:v=|/v/|/embed/|youtu\.be/)([^&?/]+)', url)
+            match = re.search(r'(?:v=|/v/|/embed/|/shorts/|youtu\.be/)([^&?/]+)', url)
             if match:
                 video_id = match.group(1)
                 return f"https://www.youtube.com/embed/{video_id}"
