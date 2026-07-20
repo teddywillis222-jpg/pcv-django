@@ -673,32 +673,28 @@ select.pcv-multi-select,
             {% endfor %}
 
             <!-- BLOC APPEL A L'ACTION GLOBAL (Permanent et Compact) -->
-            <div id="no-results-block" style="grid-column: 1 / -1; width: 100%; max-width: 100%; padding: 0 1rem; box-sizing: border-box;" data-matiere="{{ matiere }}" data-localisation="{{ localisation }}">
-                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #a7f3d0; border-radius: 1.25rem; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; max-width: 900px; margin: 1.5rem auto;">
+            <div id="no-results-block" style="grid-column: 1 / -1; width: 100%; max-width: 100%; padding: 0 0.5rem; box-sizing: border-box;" data-matiere="{{ matiere }}" data-localisation="{{ localisation }}">
+                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #a7f3d0; border-radius: 1.25rem; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; max-width: 900px; margin: 1.5rem auto;">
                     <div style="text-align: center;">
-                        <h3 style="font-size: 1.15rem; color: #065f46; font-weight: 800; margin-bottom: 0.25rem;">
+                        <h3 style="font-size: 1.15rem; color: #065f46; font-weight: 800; margin-bottom: 0.5rem;">
                             Vous ne trouvez pas votre professeur idéal ?
                         </h3>
-                        <p style="color: #374151; font-size: 0.9rem; margin-bottom: 0;">
-                            Contactez-nous, nous trouverons le bon profil dans notre réseau privé pour vous.
+                        <p style="color: #374151; font-size: 0.95rem; margin-bottom: 0; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                            <a id="wa-link-no-result" href="#" target="_blank" rel="noopener noreferrer" style="color: #065f46; font-weight: 800; text-decoration: none;">Discutez avec un conseiller</a> sur WhatsApp pour des besoins spécifiques, ou laissez-nous vous informer dès qu'un professeur correspondant à vos critères sera disponible.
                         </p>
                     </div>
                     
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; width: 100%;">
-                        <a id="wa-link-no-result" href="#" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; color: white; font-weight: 700; font-size: 0.95rem; padding: 0.75rem 1.25rem; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 10px rgba(37,211,102,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.746.943 3.71 1.444 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.48-8.45zm-8.477 18.304h-.005c-1.774 0-3.513-.474-5.03-1.37l-.36-.214-3.742.976.999-3.648-.235-.374a9.86 9.86 0 01-1.511-5.26c.002-5.45 4.436-9.884 9.896-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.893 9.884zm5.43-7.403c-.297-.149-1.758-.867-2.03-.967-.273-.099-.47-.148-.67.149-.198.297-.768.967-.941 1.165-.174.198-.347.224-.644.074-.297-.149-1.255-.461-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.174.198-.297.298-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.206-.241-.579-.486-.5-.67-.51a12.94 12.94 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-                            Discuter
-                        </a>
-                        <form id="search-alert-form" style="display: flex; gap: 0.5rem; flex-wrap: wrap; flex: 1; max-width: 400px; min-width: 280px;">
+                    <div style="display: flex; justify-content: center; width: 100%;">
+                        <form id="search-alert-form" style="display: flex; gap: 0.5rem; width: 100%; max-width: 600px;">
                             {% csrf_token %}
-                            <input type="text" id="alert-contact" name="contact" placeholder="Votre Numéro / Email" required style="flex: 1; min-width: 150px; padding: 0.75rem 1rem; border: 1.5px solid #d1fae5; border-radius: 50px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;">
-                            <button type="submit" id="alert-submit-btn" style="padding: 0.75rem 1rem; background: #065f46; color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-                                🔔 Alertez-moi
+                            <input type="text" id="alert-contact" name="contact" placeholder="Votre Numéro / Email" required style="flex: 1; padding: 0.75rem 1rem; border: 1.5px solid #d1fae5; border-radius: 50px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; min-width: 0;">
+                            <button type="submit" id="alert-submit-btn" style="padding: 0.75rem 1.2rem; background: #065f46; color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 0.9rem; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+                                M'alerter
                             </button>
                         </form>
                     </div>
-                    <div id="alert-success-msg" style="display: none; width: 100%; max-width: 400px; margin-top: 0.5rem; padding: 0.75rem; background: #dcfce7; border-radius: 0.5rem; color: #166534; font-size: 0.85rem; text-align: center;">✅ Parfait ! Nous vous contacterons dès qu'un profil est disponible.</div>
-                    <div id="alert-error-msg" style="display: none; width: 100%; max-width: 400px; margin-top: 0.5rem; padding: 0.75rem; background: #fef2f2; border-radius: 0.5rem; color: #991b1b; font-size: 0.85rem; text-align: center;"></div>
+                    <div id="alert-success-msg" style="display: none; width: 100%; max-width: 600px; margin-top: 0.25rem; padding: 0.75rem; background: #dcfce7; border-radius: 0.5rem; color: #166534; font-size: 0.85rem; text-align: center;">✅ Parfait ! Nous vous contacterons dès qu'un profil est disponible.</div>
+                    <div id="alert-error-msg" style="display: none; width: 100%; max-width: 600px; margin-top: 0.25rem; padding: 0.75rem; background: #fef2f2; border-radius: 0.5rem; color: #991b1b; font-size: 0.85rem; text-align: center;"></div>
                 </div>
             </div>
 

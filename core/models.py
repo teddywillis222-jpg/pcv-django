@@ -1439,15 +1439,15 @@ class TeacherProfile(models.Model):
             parts = []
             for run in runs:
                 if len(run) >= 3:
-                    first_label = choices_dict.get(run[0], run[0])
-                    last_label = choices_dict.get(run[-1], run[-1])
+                    first_label = choices_dict.get(run[0], run[0]).lower()
+                    last_label = choices_dict.get(run[-1], run[-1]).lower()
                     parts.append(f"{first_label} à {last_label}")
                 else:
                     for c in run:
-                        parts.append(choices_dict.get(c, c))
+                        parts.append(choices_dict.get(c, c).lower())
                         
             for c in custom:
-                parts.append(choices_dict.get(c, c))
+                parts.append(choices_dict.get(c, c).lower())
                 
             compact_label = " • ".join(parts)
             
@@ -1516,7 +1516,7 @@ class TeacherProfile(models.Model):
 
         choices_dict = dict(ClassLevel.CHOICES)
 
-        return ", ".join([choices_dict.get(c, c) for c in self.sorted_classes_enseignees])
+        return ", ".join([choices_dict.get(c, c).lower() for c in self.sorted_classes_enseignees])
 
     @property
     def compact_classes_labels(self):
@@ -1561,17 +1561,17 @@ class TeacherProfile(models.Model):
         for run in runs:
             if len(run) >= 3:
                 # Suite continue de 3+ éléments → compresser
-                first_label = choices_dict.get(run[0], run[0])
-                last_label = choices_dict.get(run[-1], run[-1])
+                first_label = choices_dict.get(run[0], run[0]).lower()
+                last_label = choices_dict.get(run[-1], run[-1]).lower()
                 parts.append(f"{first_label} à {last_label}")
             else:
                 # 1 ou 2 éléments → lister individuellement
                 for c in run:
-                    parts.append(choices_dict.get(c, c))
+                    parts.append(choices_dict.get(c, c).lower())
 
         # Ajouter les classes personnalisées à la fin
         for c in custom:
-            parts.append(choices_dict.get(c, c))
+            parts.append(choices_dict.get(c, c).lower())
 
         return " • ".join(parts)
 
@@ -1609,13 +1609,13 @@ class TeacherProfile(models.Model):
         parts = []
         for run in runs:
             if len(run) >= 3:
-                parts.append(f"{choices_dict.get(run[0], run[0])} à {choices_dict.get(run[-1], run[-1])}")
+                parts.append(f"{choices_dict.get(run[0], run[0]).lower()} à {choices_dict.get(run[-1], run[-1]).lower()}")
             else:
                 for c in run:
-                    parts.append(choices_dict.get(c, c))
+                    parts.append(choices_dict.get(c, c).lower())
 
         for c in custom:
-            parts.append(choices_dict.get(c, c))
+            parts.append(choices_dict.get(c, c).lower())
 
         return " • ".join(parts)
 
