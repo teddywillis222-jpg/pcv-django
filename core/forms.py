@@ -719,13 +719,11 @@ class TeacherProfileForm(forms.ModelForm):
         if overlap:
             self.add_error('classes_enseignees', "Une classe ne peut pas être à la fois en expertise et en secondaire.")
             
-        all_classes = expertise + autres
-        
         tarifs = {}
         tarif_horaire_global = cleaned_data.get('tarif_horaire')
         
-        if isinstance(all_classes, list):
-            classes_lower = [str(c).lower() for c in all_classes]
+        if isinstance(expertise, list):
+            classes_lower = [str(c).lower() for c in expertise]
             for key, val in self.data.items():
                 if key.startswith('tarif_classe_'):
                     class_code = key.replace('tarif_classe_', '')

@@ -1405,12 +1405,17 @@ class TeacherProfile(models.Model):
         # Grouper les classes par tarif
         classes_by_tarif = defaultdict(list)
         tarifs_dict = self.tarifs_par_classe or {}
-        for c in self.sorted_classes_enseignees:
+        
+        expertise = self.classes_expertise if isinstance(self.classes_expertise, list) else []
+        sorted_expertise = sorted(expertise, key=lambda c: order_dict.get(str(c).upper(), 999))
+        
+        for c in sorted_expertise:
+            c_upper = str(c).upper()
             # Chercher le tarif avec le code exact ou en minuscules (pour les anciens profils)
-            tarif = tarifs_dict.get(c) or tarifs_dict.get(c.lower())
+            tarif = tarifs_dict.get(c_upper) or tarifs_dict.get(c_upper.lower())
             if not tarif:
                 tarif = self.tarif_horaire
-            classes_by_tarif[tarif].append(c)
+            classes_by_tarif[tarif].append(c_upper)
             
         result = []
         for tarif, classes in classes_by_tarif.items():
@@ -1455,12 +1460,13 @@ class TeacherProfile(models.Model):
 
     @property
     def tarif_minimum(self):
-        """Retourne le tarif minimum parmi toutes les classes enseignées, ou le tarif horaire de base."""
+        """Retourne le tarif minimum parmi les classes d'expertise, ou le tarif horaire de base."""
         tarifs = []
-        all_cls = self.all_classes
-        if all_cls and self.tarifs_par_classe:
-            for c in all_cls:
-                tarif = self.tarifs_par_classe.get(c)
+        expertise = self.classes_expertise if isinstance(self.classes_expertise, list) else []
+        if expertise and self.tarifs_par_classe:
+            for c in expertise:
+                c_upper = str(c).upper()
+                tarif = self.tarifs_par_classe.get(c_upper) or self.tarifs_par_classe.get(c_upper.lower())
                 if tarif:
                     try:
                         tarifs.append(float(tarif))
@@ -1480,12 +1486,15 @@ class TeacherProfile(models.Model):
         
     @property
     def a_des_tarifs_multiples(self):
-        """Retourne True si le professeur a des tarifs différents selon la classe."""
+        """Retourne True si le professeur a des tarifs différents parmi ses classes d'expertise."""
         if not self.tarifs_par_classe:
             return False
         try:
             tarifs_set = set()
-            for k, v in self.tarifs_par_classe.items():
+            expertise = self.classes_expertise if isinstance(self.classes_expertise, list) else []
+            for c in expertise:
+                c_upper = str(c).upper()
+                v = self.tarifs_par_classe.get(c_upper) or self.tarifs_par_classe.get(c_upper.lower())
                 if v:
                     tarifs_set.add(float(v))
             if self.tarif_horaire:

@@ -1225,12 +1225,6 @@
                     text: opt.text
                 })));
             }
-            if (classesSelect) {
-                selectedOptions = selectedOptions.concat(Array.from(classesSelect.selectedOptions).map(opt => ({
-                    value: opt.value,
-                    text: opt.text
-                })));
-            }
             
             // Deduplicate in case somehow they selected the same thing twice
             const uniqueOptions = [];
