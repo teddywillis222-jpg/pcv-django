@@ -69,6 +69,7 @@ urlpatterns = [
     path("prof/dashboard/", core_views.prof_dashboard, name="prof_dashboard"),
     path("prof/edit-profile/", core_views.prof_edit_profile, name="prof_edit_profile"),
     path("prof/video-presentation/", core_views.prof_video_presentation, name="prof_video_presentation"),
+    path("prof/stats/", core_views.prof_stats_view, name="prof_stats"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
     path("parent/dashboard/", core_views.parent_dashboard, name="parent_dashboard"),
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),
@@ -111,6 +112,7 @@ urlpatterns = [
     path("finalisation-engagement/<int:engagement_id>/", core_views.finalisation_engagement, name="finalisation_engagement"),
     
     path("api/professeur/<int:prof_id>/toggle-favori/", core_views.toggle_favori, name="toggle_favori"),
+    path("api/professeur/<int:prof_id>/toggle-reaction/", core_views.toggle_reaction, name="toggle_reaction"),
     path("api/professeur/toggle-essai/", core_views.api_toggle_essai, name="api_toggle_essai"),
     path("api/fictional-payment/", core_views.api_fictional_payment, name="api_fictional_payment"),
     path("api/track-teacher-views/", core_views.api_track_teacher_views, name="api_track_teacher_views"),

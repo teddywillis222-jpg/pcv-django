@@ -1277,6 +1277,20 @@ class TeacherProfile(models.Model):
         help_text="Liste des parents marquÃ©s comme favoris par ce professeur"
 
     )
+    
+    # Nouveaux champs de statistiques historiques et réactions
+    total_favoris_historique = models.PositiveIntegerField(
+        default=0,
+        help_text="Nombre total de fois où ce prof a été ajouté aux favoris depuis le début"
+    )
+    likes_presentation = models.PositiveIntegerField(
+        default=0,
+        help_text="Nombre total de likes pour la présentation"
+    )
+    likes_methodologie = models.PositiveIntegerField(
+        default=0,
+        help_text="Nombre total de likes pour la méthodologie"
+    )
 
 
 
@@ -2759,3 +2773,25 @@ class SearchAlert(models.Model):
 
     def __str__(self):
         return f"Alerte ({self.matiere} à {self.localisation}) - {self.contact_info}"
+
+
+class ProfileReaction(models.Model):
+    SECTION_CHOICES = (
+        ('presentation', 'Présentation'),
+        ('methodologie', 'Méthodologie'),
+    )
+    professeur = models.ForeignKey(TeacherProfile, on_delete=models.CASCADE, related_name="reactions")
+    section = models.CharField(max_length=20, choices=SECTION_CHOICES)
+    session_key = models.CharField(max_length=255, blank=True, null=True, help_text="Pour les visiteurs non connectés")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, help_text="Pour les utilisateurs connectés")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Réaction de profil"
+        verbose_name_plural = "Réactions de profil"
+        # On ne permet pas plus d'un like par combo (professeur, section, session/user)
+        unique_together = ('professeur', 'section', 'session_key', 'user')
+
+    def __str__(self):
+        return f"Like sur {self.section} de {self.professeur}"
+

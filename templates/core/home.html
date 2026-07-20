@@ -108,7 +108,8 @@ p {
     margin-top: -10px; /* légèrement plus haut pour coller au navbar */
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
-    overflow: hidden;
+    /* Removed overflow: hidden so dropdowns can escape */
+    z-index: 10;
 }
 
 .hero-wrapper::before {
@@ -117,6 +118,8 @@ p {
     top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(180deg, rgba(15,23,42,0.1) 0%, rgba(15,23,42,0.8) 60%, rgba(15,23,42,0.95) 100%);
     z-index: 1;
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
 }
 
 .hero-content {
@@ -500,7 +503,7 @@ p {
         <div class="search-box">
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
                 <div class="search-input-group">
-                    <select name="matiere" class="pcv-multi-select" placeholder="Quelle matière ?">
+                    <select name="matiere" class="pcv-multi-select" placeholder="Quelle matière ?" data-allow-create="false">
                         <option value="">Quelle matière ?</option>
                         {% for val, label in MATIERE_CHOICES %}
                         <option value="{{ val }}">{{ label }}</option>
@@ -509,7 +512,7 @@ p {
                 </div>
                 
                 <div class="search-input-group">
-                    <select name="localisation" class="pcv-multi-select" placeholder="Dans quelle ville ?">
+                    <select name="localisation" class="pcv-multi-select" placeholder="Dans quelle ville ?" data-allow-create="false">
                         <option value="">Dans quelle ville ?</option>
                         {% for code, label in LOCALISATION_CHOICES %}
                         <option value="{{ code }}">{{ label }}</option>

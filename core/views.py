@@ -21,7 +21,7 @@ from .forms import (
     SignUpForm,
 )
 from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation, CourseMode
-from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message, ProfessorAnnouncement
+from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message, ProfessorAnnouncement, ProfileReaction
 from django.db.models import Q
 from django.template.loader import render_to_string
 
@@ -3095,6 +3095,9 @@ def toggle_favori(request, prof_id):
     else:
         prof.parents_favoris.add(request.user)
         is_favorite = True
+        # Incrémenter le compteur historique (ne décrémente jamais)
+        prof.total_favoris_historique += 1
+        prof.save(update_fields=['total_favoris_historique'])
         
     return JsonResponse({"success": True, "is_favorite": is_favorite})
 
@@ -3887,3 +3890,98 @@ def create_search_alert(request):
         
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def toggle_reaction(request, prof_id):
+    """Toggle a 👍 reaction on a teacher's presentation or methodology section.
+    Works for both logged-in users and anonymous visitors (via session key)."""
+    prof = get_object_or_404(TeacherProfile, id=prof_id)
+    
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"success": False, "error": "Données invalides."}, status=400)
+    
+    section = data.get("section")
+    if section not in ("presentation", "methodologie"):
+        return JsonResponse({"success": False, "error": "Section invalide."}, status=400)
+    
+    # Assurer qu'une session existe (même pour les anonymes)
+    if not request.session.session_key:
+        request.session.create()
+    
+    # Déterminer l'identifiant unique du visiteur
+    if request.user.is_authenticated:
+        lookup = {"professeur": prof, "section": section, "user": request.user}
+    else:
+        lookup = {"professeur": prof, "section": section, "session_key": request.session.session_key, "user": None}
+    
+    existing = ProfileReaction.objects.filter(**lookup).first()
+    
+    if existing:
+        # Retirer le like
+        existing.delete()
+        if section == "presentation":
+            prof.likes_presentation = max(0, prof.likes_presentation - 1)
+            prof.save(update_fields=["likes_presentation"])
+        else:
+            prof.likes_methodologie = max(0, prof.likes_methodologie - 1)
+            prof.save(update_fields=["likes_methodologie"])
+        liked = False
+    else:
+        # Ajouter le like
+        ProfileReaction.objects.create(**lookup)
+        if section == "presentation":
+            prof.likes_presentation += 1
+            prof.save(update_fields=["likes_presentation"])
+        else:
+            prof.likes_methodologie += 1
+            prof.save(update_fields=["likes_methodologie"])
+        liked = True
+    
+    count = prof.likes_presentation if section == "presentation" else prof.likes_methodologie
+    return JsonResponse({"success": True, "liked": liked, "count": count})
+
+
+@login_required
+def prof_stats_view(request):
+    """Page complète de statistiques pour le professeur connecté."""
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        return redirect("finalisation_compte")
+
+    if profile.role != Profile.ROLE_PROF:
+        return redirect("home")
+
+    try:
+        teacher = request.user.teacher_profile
+    except TeacherProfile.DoesNotExist:
+        return redirect("prof_create_profile")
+
+    # Statistiques des engagements
+    engagements = teacher.engagements.all()
+    nb_contrats_actifs = engagements.filter(
+        statut_general=StatutGeneral.FINALISE
+    ).exclude(type_engagement=EngagementType.ESSAI).count()
+    nb_contrats_total = engagements.exclude(
+        type_engagement=EngagementType.ESSAI
+    ).exclude(
+        statut_general__in=[StatutGeneral.REFUSE, StatutGeneral.ANNULE]
+    ).count()
+
+    context = {
+        "teacher": teacher,
+        "vues_mois": teacher.nombre_apparitions_mois,
+        "visites_mois": teacher.nb_vues_mois,
+        "contrats_actifs": nb_contrats_actifs,
+        "contrats_total": nb_contrats_total,
+        "total_favoris": teacher.total_favoris_historique,
+        "likes_presentation": teacher.likes_presentation,
+        "likes_methodologie": teacher.likes_methodologie,
+    }
+
+    return render(request, "core/prof_stats.html", context)
+
