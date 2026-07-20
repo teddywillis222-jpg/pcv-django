@@ -893,45 +893,7 @@ def prof_edit_profile(request):
 
 @login_required
 def prof_video_presentation(request):
-    """Page dédiée pour ajouter/modifier la vidéo de présentation (Workflow complet)"""
-    try:
-        profile = request.user.profile
-        teacher = request.user.teacher_profile
-    except (Profile.DoesNotExist, TeacherProfile.DoesNotExist):
-        return redirect("home")
-
-    if profile.role != Profile.ROLE_PROF:
-        return redirect("home")
-
-    from django.conf import settings
-    video_upload_enabled = getattr(settings, 'VIDEO_UPLOAD_ENABLED', False)
-
-    if request.method == "POST":
-        if not video_upload_enabled:
-            from django.contrib import messages
-            messages.error(request, "L'outil de vidéo n'est pas encore ouvert. Préparez-vous en attendant !")
-            return redirect("prof_video_presentation")
-
-        form = TeacherVideoPresentationForm(request.POST, request.FILES, instance=teacher)
-        if form.is_valid():
-            form.save()
-            from django.contrib import messages
-            messages.success(request, "Votre vidéo de présentation a été enregistrée avec succès !")
-            return redirect("prof_dashboard")
-    else:
-        form = TeacherVideoPresentationForm(instance=teacher)
-
-    return render(request, "core/prof_video_presentation.html", {
-        "form": form,
-        "teacher": teacher,
-        "video_upload_enabled": video_upload_enabled,
-    })
-
-
-@login_required
-def prof_video_youtube_test(request):
-    """Page de TEST pour l'intégration vidéo via lien YouTube.
-    Clone de prof_video_presentation mais avec un champ URL au lieu d'un upload fichier."""
+    """Page officielle d'intégration vidéo via lien YouTube."""
     from .forms import YouTubeVideoForm
 
     try:
@@ -943,20 +905,21 @@ def prof_video_youtube_test(request):
     if profile.role != Profile.ROLE_PROF:
         return redirect("home")
 
+    # Si on soumet le formulaire, on l'ignore car le bouton est désactivé (Bientôt disponible)
     if request.method == "POST":
         form = YouTubeVideoForm(request.POST, instance=teacher)
         if form.is_valid():
-            form.save()
+            # Uncomment form.save() quand la fonctionnalité sera officiellement activée
+            # form.save()
             from django.contrib import messages
-            messages.success(request, "Votre lien vidéo YouTube a été enregistré avec succès !")
-            return redirect("prof_video_youtube_test")
+            messages.success(request, "Aperçu de la vidéo généré avec succès ! L'enregistrement sera activé très prochainement.")
+            return redirect("prof_video_presentation")
     else:
         form = YouTubeVideoForm(instance=teacher)
 
-    # Calculer l'embed URL pour la prévisualisation
     embed_url = teacher.video_embed_url if teacher.youtube_video_id else None
 
-    return render(request, "core/prof_video_youtube_test.html", {
+    return render(request, "core/prof_video_presentation.html", {
         "form": form,
         "teacher": teacher,
         "embed_url": embed_url,
