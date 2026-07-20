@@ -208,10 +208,13 @@
             </ul>
         </div>
 
-        <!-- Rappel -->
+        <!-- Rappel & Consignes YouTube -->
         <div style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; color: #1e40af; font-size: 0.85rem; line-height: 1.6;">
-            <strong>💡 Astuce :</strong> Vous pouvez publier votre vidéo en mode <strong>« Non répertorié »</strong> sur YouTube. 
-            Ainsi, seuls les visiteurs de votre profil Prof Chez Vous pourront la voir, elle n'apparaîtra pas dans les recherches YouTube.
+            <strong>💡 Paramètres de confidentialité obligatoires :</strong>
+            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem;">
+                <li>Assurez-vous que votre vidéo est en mode <strong>Publique</strong> ou <strong>Non répertoriée</strong>. (Le mode "Non répertoriée" est idéal : la vidéo ne sera pas trouvée sur YouTube, mais vos élèves pourront la lire ici).</li>
+                <li>Vérifiez dans les paramètres avancés de YouTube Studio que l'option <strong>"Autoriser l'intégration"</strong> est bien cochée.</li>
+            </ul>
         </div>
 
         <!-- Formulaire -->
@@ -223,10 +226,11 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.25rem;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.6C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
                     Lien de votre vidéo YouTube
                 </label>
-                {{ form.youtube_video_url }}
-                {% if form.youtube_video_url.errors %}
+                {{ form.youtube_url_input }}
+                {{ form.youtube_video_id }} <!-- hidden field for Django modelform internals -->
+                {% if form.youtube_url_input.errors %}
                 <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem;">
-                    {{ form.youtube_video_url.errors }}
+                    {{ form.youtube_url_input.errors }}
                 </div>
                 {% endif %}
             </div>
@@ -241,14 +245,14 @@
             </div>
         </form>
 
-        <!-- Aperçu conditionnel -->
+        <!-- Aperçu conditionnel (après enregistrement) -->
         {% if embed_url %}
         <div class="video-preview">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Aperçu de votre vidéo</h3>
                 <form method="POST" style="margin: 0;" onsubmit="return confirm('Voulez-vous vraiment retirer cette vidéo ?');">
                     {% csrf_token %}
-                    <input type="hidden" name="youtube_video_url" value="">
+                    <input type="hidden" name="youtube_url_input" value="">
                     <button type="submit" class="remove-link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         Retirer la vidéo
@@ -259,7 +263,8 @@
                 <iframe 
                     src="{{ embed_url }}" 
                     title="Vidéo de présentation" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                     allowfullscreen>
                 </iframe>
             </div>
@@ -280,13 +285,13 @@
         if (urlInput) {
             urlInput.addEventListener('input', function(e) {
                 const url = e.target.value.trim();
-                // Regex for all YouTube formats including /shorts/
-                const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/;
+                // Strict regex matching 11 chars
+                const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
                 const match = url.match(youtubePattern);
                 
                 if (match && match[1]) {
                     const videoId = match[1];
-                    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
                     
                     let existingPreview = document.querySelector('.video-preview');
                     
@@ -295,13 +300,11 @@
                         const iframe = existingPreview.querySelector('iframe');
                         if (iframe && iframe.src !== embedUrl) {
                             iframe.src = embedUrl;
-                            
-                            // Change title slightly to indicate it's a dynamic preview
                             const title = existingPreview.querySelector('h3');
                             if (title) title.innerText = "Aperçu de votre nouvelle vidéo (Non enregistré)";
                         }
                     } else {
-                        // Inject a new preview dynamically
+                        // Inject dynamic preview with correct attributes
                         const previewHtml = `
                         <div class="video-preview dynamic-preview" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -311,7 +314,8 @@
                                 <iframe 
                                     src="${embedUrl}" 
                                     title="Vidéo de présentation" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                     allowfullscreen>
                                 </iframe>
                             </div>
@@ -323,7 +327,6 @@
                         formContainer.insertAdjacentHTML('beforeend', previewHtml);
                     }
                 } else {
-                    // Remove dynamic preview if the URL becomes invalid and it was dynamically added
                     const dynamicPreview = document.querySelector('.dynamic-preview');
                     if (dynamicPreview) {
                         dynamicPreview.remove();

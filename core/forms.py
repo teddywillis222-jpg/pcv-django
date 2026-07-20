@@ -793,31 +793,49 @@ class TeacherVideoPresentationForm(forms.ModelForm):
 
 class YouTubeVideoForm(forms.ModelForm):
     """Formulaire de test pour l'intégration vidéo via lien YouTube."""
+    
+    # We display an URLInput, but we save to youtube_video_id
+    youtube_url_input = forms.URLField(
+        label='Lien de votre vidéo YouTube',
+        required=False,
+        widget=forms.URLInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'https://www.youtube.com/watch?v=...',
+            'id': 'id_youtube_video_url'  # keep same ID for JS
+        })
+    )
+
     class Meta:
         model = TeacherProfile
-        fields = ['youtube_video_url']
-        labels = {
-            'youtube_video_url': 'Lien de votre vidéo YouTube',
-        }
-        widgets = {
-            'youtube_video_url': forms.URLInput(attrs={
-                'class': 'form-input',
-                'placeholder': 'https://www.youtube.com/watch?v=...',
-            })
-        }
+        fields = ['youtube_video_id']
+        # We don't display youtube_video_id directly, we only display youtube_url_input
+        widgets = {'youtube_video_id': forms.HiddenInput()}
 
-    def clean_youtube_video_url(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Pre-fill the URL input if the ID exists
+        if self.instance and self.instance.youtube_video_id:
+            self.fields['youtube_url_input'].initial = f"https://www.youtube.com/watch?v={self.instance.youtube_video_id}"
+
+    def clean_youtube_url_input(self):
         import re
-        url = self.cleaned_data.get('youtube_video_url')
+        url = self.cleaned_data.get('youtube_url_input')
         if url:
             url = url.strip()
-            # Vérifier que c'est un lien YouTube valide
+            # Strict regex to extract exactly 11 alphanumeric characters
             youtube_pattern = re.compile(
-                r'(https?://)?(www\.)?(youtube\.com/(watch\?v=|embed/|v/|shorts/)|youtu\.be/)[a-zA-Z0-9_-]+'
+                r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
             )
-            if not youtube_pattern.search(url):
+            match = youtube_pattern.search(url)
+            if not match:
                 raise forms.ValidationError(
                     "Ce lien ne semble pas être une URL YouTube valide. "
                     "Collez un lien du type : https://www.youtube.com/watch?v=XXXXX ou https://youtu.be/XXXXX"
                 )
-        return url
+            return match.group(1) # Return just the 11 char ID
+        return ""
+
+    def save(self, commit=True):
+        # Map the cleaned URL input (which is now just the ID) to the model field
+        self.instance.youtube_video_id = self.cleaned_data.get('youtube_url_input', '')
+        return super().save(commit)

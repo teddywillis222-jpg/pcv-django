@@ -954,7 +954,7 @@ def prof_video_youtube_test(request):
         form = YouTubeVideoForm(instance=teacher)
 
     # Calculer l'embed URL pour la prévisualisation
-    embed_url = teacher.video_embed_url if teacher.youtube_video_url else None
+    embed_url = teacher.video_embed_url if teacher.youtube_video_id else None
 
     return render(request, "core/prof_video_youtube_test.html", {
         "form": form,
