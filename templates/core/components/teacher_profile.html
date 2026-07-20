@@ -696,6 +696,200 @@
 function openTextModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    .info-grid-container {
+        padding: 1rem !important;
+        margin: 0 -0.5rem; /* Augmente légèrement la largeur apparente */
+    }
+}
+@media (max-width: 576px) {
+    .teacher-profile {
+        padding: 0.25rem !important;
+    }
+    .teacher-profile > div:first-child {
+        margin-bottom: 1rem !important;
+    }
+    .teacher-profile h2 {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* Badges dynamiques pour matières */
+.badge-matiere {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    white-space: nowrap;
+}
+.badge-color-0 { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; } /* Blue */
+.badge-color-1 { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; } /* Pink */
+.badge-color-2 { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; } /* Amber */
+.badge-color-3 { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; } /* Indigo */
+.badge-color-4 { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; } /* Green */
+.badge-color-5 { background: #fae8ff; color: #a21caf; border: 1px solid #f5d0fe; } /* Fuchsia */
+
+/* Modal CSS */
+.text-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 1rem;
+}
+.text-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+.text-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transform: translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+}
+.text-modal-overlay.show .text-modal-content {
+    transform: translateY(0);
+}
+.text-modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+.text-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.text-modal-close {
+    background: #f1f5f9;
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+.text-modal-close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+.text-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    color: #475569;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+/* --- Related Teachers Horizontal Scroll --- */
+.related-teachers-scroll {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-right: 1.5rem;
+    padding-bottom: 0.5rem;
+}
+.related-teachers-scroll::-webkit-scrollbar {
+    display: none;
+}
+.related-teacher-item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 330px;
+}
+.related-teacher-item .teacher-card-compact {
+    width: 100%;
+    padding: 1.25rem;
+}
+.related-teacher-item .compact-avatar img,
+.related-teacher-item .compact-avatar .avatar-placeholder {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+}
+.related-teacher-item .compact-name {
+    font-size: 1.15rem;
+}
+.related-teacher-item .compact-matiere {
+    font-size: 1.05rem;
+}
+.related-teacher-item .btn-view {
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+    .related-teacher-item {
+        width: 240px;
+    }
+}
+</style>
+
+<!-- Modals -->
+{% if teacher.presentation %}
+<div class="text-modal-overlay" id="presentationModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'presentationModal-{{ teacher.id }}', 'closeTextModal', event)">
+    <div class="text-modal-content">
+        <div class="text-modal-header">
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Présentation</h3>
+            <button class="text-modal-close" onclick="closeTextModal('presentationModal-{{ teacher.id }}')">✕</button>
+        </div>
+        <div class="text-modal-body">
+            {{ teacher.presentation|linebreaksbr }}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if teacher.methodologie %}
+<div class="text-modal-overlay" id="methodologieModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'methodologieModal-{{ teacher.id }}', 'closeTextModal', event)">
+    <div class="text-modal-content">
+        <div class="text-modal-header">
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Méthodologie</h3>
+            <button class="text-modal-close" onclick="closeTextModal('methodologieModal-{{ teacher.id }}')">✕</button>
+        </div>
+        <div class="text-modal-body">
+            {{ teacher.methodologie|linebreaksbr }}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function openTextModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
     }
@@ -708,6 +902,21 @@ function closeTextModal(modalId) {
     }
 }
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 async function toggleReaction(profId, section, btnElement) {
     // Optimistic UI update
     const countSpan = btnElement.querySelector('.count');
@@ -718,11 +927,13 @@ async function toggleReaction(profId, section, btnElement) {
     btnElement.style.opacity = '0.7';
 
     try {
+        const csrftoken = getCookie('csrftoken');
         const response = await fetch(`/api/professeur/${profId}/toggle-reaction/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // Ne nécessite pas de CSRF token car la vue est csrf_exempt
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({ section: section })
         });
@@ -741,6 +952,8 @@ async function toggleReaction(profId, section, btnElement) {
                 btnElement.style.borderColor = '#e2e8f0';
                 btnElement.onmouseout = () => { btnElement.style.background = 'none'; };
             }
+        } else {
+            console.error("Erreur serveur:", data.error);
         }
     } catch (e) {
         console.error("Erreur toggle reaction", e);

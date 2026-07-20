@@ -3924,24 +3924,24 @@ def toggle_reaction(request, prof_id):
         # Retirer le like
         existing.delete()
         if section == "presentation":
-            prof.likes_presentation = max(0, prof.likes_presentation - 1)
+            prof.likes_presentation = max(0, (prof.likes_presentation or 0) - 1)
             prof.save(update_fields=["likes_presentation"])
         else:
-            prof.likes_methodologie = max(0, prof.likes_methodologie - 1)
+            prof.likes_methodologie = max(0, (prof.likes_methodologie or 0) - 1)
             prof.save(update_fields=["likes_methodologie"])
         liked = False
     else:
         # Ajouter le like
         ProfileReaction.objects.create(**lookup)
         if section == "presentation":
-            prof.likes_presentation += 1
+            prof.likes_presentation = (prof.likes_presentation or 0) + 1
             prof.save(update_fields=["likes_presentation"])
         else:
-            prof.likes_methodologie += 1
+            prof.likes_methodologie = (prof.likes_methodologie or 0) + 1
             prof.save(update_fields=["likes_methodologie"])
         liked = True
     
-    count = prof.likes_presentation if section == "presentation" else prof.likes_methodologie
+    count = (prof.likes_presentation or 0) if section == "presentation" else (prof.likes_methodologie or 0)
     return JsonResponse({"success": True, "liked": liked, "count": count})
 
 
