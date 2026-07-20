@@ -69,6 +69,7 @@ urlpatterns = [
     path("prof/dashboard/", core_views.prof_dashboard, name="prof_dashboard"),
     path("prof/edit-profile/", core_views.prof_edit_profile, name="prof_edit_profile"),
     path("prof/video-presentation/", core_views.prof_video_presentation, name="prof_video_presentation"),
+    path("prof/video-youtube-test/", core_views.prof_video_youtube_test, name="prof_video_youtube_test"),
     path("prof/stats/", core_views.prof_stats_view, name="prof_stats"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
     path("parent/dashboard/", core_views.parent_dashboard, name="parent_dashboard"),

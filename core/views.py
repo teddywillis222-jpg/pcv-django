@@ -929,6 +929,41 @@ def prof_video_presentation(request):
 
 
 @login_required
+def prof_video_youtube_test(request):
+    """Page de TEST pour l'intégration vidéo via lien YouTube.
+    Clone de prof_video_presentation mais avec un champ URL au lieu d'un upload fichier."""
+    from .forms import YouTubeVideoForm
+
+    try:
+        profile = request.user.profile
+        teacher = request.user.teacher_profile
+    except (Profile.DoesNotExist, TeacherProfile.DoesNotExist):
+        return redirect("home")
+
+    if profile.role != Profile.ROLE_PROF:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = YouTubeVideoForm(request.POST, instance=teacher)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, "Votre lien vidéo YouTube a été enregistré avec succès !")
+            return redirect("prof_video_youtube_test")
+    else:
+        form = YouTubeVideoForm(instance=teacher)
+
+    # Calculer l'embed URL pour la prévisualisation
+    embed_url = teacher.video_embed_url if teacher.youtube_video_url else None
+
+    return render(request, "core/prof_video_youtube_test.html", {
+        "form": form,
+        "teacher": teacher,
+        "embed_url": embed_url,
+    })
+
+
+@login_required
 def prof_dashboard(request):
     try:
         profile = request.user.profile

@@ -789,3 +789,35 @@ class TeacherVideoPresentationForm(forms.ModelForm):
                 'accept': 'video/*',
             })
         }
+
+
+class YouTubeVideoForm(forms.ModelForm):
+    """Formulaire de test pour l'intégration vidéo via lien YouTube."""
+    class Meta:
+        model = TeacherProfile
+        fields = ['youtube_video_url']
+        labels = {
+            'youtube_video_url': 'Lien de votre vidéo YouTube',
+        }
+        widgets = {
+            'youtube_video_url': forms.URLInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'https://www.youtube.com/watch?v=...',
+            })
+        }
+
+    def clean_youtube_video_url(self):
+        import re
+        url = self.cleaned_data.get('youtube_video_url')
+        if url:
+            url = url.strip()
+            # Vérifier que c'est un lien YouTube valide
+            youtube_pattern = re.compile(
+                r'(https?://)?(www\.)?(youtube\.com/(watch\?v=|embed/|v/|shorts/)|youtu\.be/)[a-zA-Z0-9_-]+'
+            )
+            if not youtube_pattern.search(url):
+                raise forms.ValidationError(
+                    "Ce lien ne semble pas être une URL YouTube valide. "
+                    "Collez un lien du type : https://www.youtube.com/watch?v=XXXXX ou https://youtu.be/XXXXX"
+                )
+        return url

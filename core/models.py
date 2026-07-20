@@ -1070,6 +1070,13 @@ class TeacherProfile(models.Model):
         help_text="Vidéo de présentation (Max 25 Mo, format 480p/720p recommandé)"
     )
 
+    youtube_video_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="Lien YouTube de la vidéo de présentation (ex: https://www.youtube.com/watch?v=...)"
+    )
+
     annees_d_experience = models.PositiveIntegerField(default=0)
 
     categories_de_soutien = models.JSONField(
@@ -1295,41 +1302,36 @@ class TeacherProfile(models.Model):
 
 
     @property
-
     def video_embed_url(self):
-
-        """Retourne l'URL d'intÃ©gration (embed) pour la vidÃ©o de prÃ©sentation (YouTube ou TikTok)."""
-
+        """Retourne l'URL d'intégration (embed) pour la vidéo de présentation (YouTube ou TikTok).
+        Priorise le champ youtube_video_url s'il est renseigné."""
         import re
 
-        if not self.video_presentation:
+        # Prioriser le nouveau champ YouTube URL
+        url = self.youtube_video_url or ''
 
+        # Fallback sur l'ancien champ video_presentation (si c'est une URL texte)
+        if not url and self.video_presentation:
+            try:
+                url = str(self.video_presentation)
+            except Exception:
+                return None
+
+        if not url:
             return None
 
-        url = self.video_presentation
-
         # YouTube
-
         if 'youtube.com' in url or 'youtu.be' in url:
-
             match = re.search(r'(?:v=|/v/|/embed/|youtu\.be/)([^&?/]+)', url)
-
             if match:
-
                 video_id = match.group(1)
-
                 return f"https://www.youtube.com/embed/{video_id}"
 
         # TikTok
-
         elif 'tiktok.com' in url:
-
             match = re.search(r'/video/(\d+)', url)
-
             if match:
-
                 video_id = match.group(1)
-
                 return f"https://www.tiktok.com/embed/v2/{video_id}"
 
         return None
