@@ -3987,6 +3987,6 @@ def prof_stats_view(request):
 
 def test_ui_cards(request):
     "Vue de test pour comparer les designs de cartes professeur."
-    teacher = TeacherProfile.objects.filter(is_active=True).first()
+    teacher = TeacherProfile.objects.first()
     return render(request, "core/test_ui_cards.html", {"teacher": teacher})
 
