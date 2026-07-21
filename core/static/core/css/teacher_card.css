@@ -312,7 +312,7 @@
     color: #64748b;
     font-style: italic;
     line-height: 1.4;
-    margin: 0.5rem 0;
+    margin: 0.25rem 0 0.1rem; /* Reduced margin to bring it closer to bottom */
     width: 100%;
     padding-right: 0.5rem;
     
@@ -342,29 +342,34 @@
     margin-left: 2px;
 }
 
-/* Option A: Subtle Link */
+/* Option A: Button Decouvrir */
 .info-bottom-subtle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-top: 0.35rem; /* Reduced space */
 }
-.subtle-link {
-    font-size: 0.85rem;
+.btn-decouvrir-card {
+    font-size: 0.8rem;
     font-weight: 700;
-    color: var(--primary, #2563eb);
+    color: #16a34a;
+    background: rgba(22, 163, 74, 0.08);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
 }
-.teacher-card.premium-card:hover .subtle-link {
-    opacity: 0.8;
+.teacher-card.premium-card:hover .btn-decouvrir-card {
+    background: rgba(22, 163, 74, 0.15);
+    color: #15803d;
 }
-.subtle-link svg {
+.btn-decouvrir-card svg {
     transition: transform 0.2s;
 }
-.teacher-card.premium-card:hover .subtle-link svg {
+.teacher-card.premium-card:hover .btn-decouvrir-card svg {
     transform: translateX(3px);
 }/* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {

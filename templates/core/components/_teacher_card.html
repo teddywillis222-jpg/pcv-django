@@ -88,7 +88,7 @@
 
         <!-- L'Accroche (Hook) -->
         <div class="card-description-hook">
-            {{ teacher.description|default:"Professeur qualifié et passionné. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir une progression constante." }}
+            {{ teacher.presentation|default:"Professeur qualifié et passionné. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir une progression constante."|striptags }}
         </div>
 
         <div class="info-bottom info-bottom-subtle">
@@ -108,7 +108,7 @@
             </div>
             
             <!-- Action Arrow Subtle -->
-            <div class="subtle-link arrow-action" role="button" tabindex="0" aria-label="Voir le profil">
+            <div class="btn-decouvrir-card arrow-action" role="button" tabindex="0" aria-label="Voir le profil">
                 Découvrir
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
