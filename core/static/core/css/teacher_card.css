@@ -313,6 +313,8 @@
     font-style: italic;
     line-height: 1.4;
     margin: 0.5rem 0;
+    width: 100%;
+    padding-right: 0.5rem;
     
     /* Force 2 lines and ellipsis */
     display: -webkit-box;

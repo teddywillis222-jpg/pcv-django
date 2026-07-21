@@ -1275,13 +1275,13 @@
             if (e.target.closest('.favorite-btn-glass')) {
                 return;
             }
-            
-            const arrow = e.target.closest('.arrow-action');
-            if (arrow) {
-                const card = arrow.closest('.teacher-card, .teacher-card-compact');
-                const slug = card && (card.dataset.teacherSlug || card.getAttribute('data-teacher-slug'));
-                if (!slug) return;
 
+            // Clicks on whole card or arrow
+            const card = e.target.closest('.teacher-card, .teacher-card-compact');
+            if (card) {
+                const slug = card.dataset.teacherSlug || card.getAttribute('data-teacher-slug');
+                if (!slug) return;
+                
                 const isSearchPage = window.location.pathname.includes('/recherche');
 
                 if (isSearchPage && typeof openTeacherProfile === 'function') {
@@ -1291,18 +1291,6 @@
                     return;
                 }
 
-                // Default: go to profile page
-                e.preventDefault();
-                e.stopPropagation();
-                window.location.href = `/professeur/${slug}/`;
-                return;
-            }
-
-            // Clicks on whole card: navigate to profile (same behavior across pages)
-            const card = e.target.closest('.teacher-card, .teacher-card-compact');
-            if (card) {
-                const slug = card.dataset.teacherSlug || card.getAttribute('data-teacher-slug');
-                if (!slug) return;
                 e.preventDefault();
                 e.stopPropagation();
                 window.location.href = `/professeur/${slug}/`;
