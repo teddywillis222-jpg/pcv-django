@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+{% load static %}
+{% load image_utils %}
+
+{% block title %}Test UI Cartes Professeur{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ui-test-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .ui-test-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .ui-test-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .ui-test-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 10px auto;
+    }
+
+    .ui-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 40px;
+        align-items: start;
+    }
+
+    .ui-column {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 24px;
+    }
+
+    .ui-column-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .ui-column-desc {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-bottom: 24px;
+        line-height: 1.5;
+    }
+
+    /* ---- Card Base Styles ---- */
+    .teacher-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        display: flex;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        height: 100%;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .teacher-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        border-color: #cbd5e1;
+    }
+
+    .card-photo-section {
+        width: 40%;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .teacher-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .avatar-initials {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        color: #64748b;
+        font-size: 2.5rem;
+        font-weight: 800;
+    }
+
+    .card-info-section {
+        width: 60%;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .name-badge-row {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .teacher-name {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .info-text-group {
+        margin-bottom: 0.5rem;
+    }
+
+    .info-text {
+        margin: 0 0 0.1rem 0;
+        font-size: 0.85rem;
+        color: #475569;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-subjects {
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+    .info-classes-premium {
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    .expertise-highlight {
+        background: #fef3c7;
+        color: #b45309;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+
+    .micro-badges {
+        display: flex;
+        gap: 0.4rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        max-width: 100%;
+        padding-bottom: 2px;
+        margin-bottom: 0.5rem;
+    }
+    .micro-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .badge-rating { background: #fef08a; color: #854d0e; }
+    .badge-neutral { background: #f1f5f9; color: #475569; }
+
+    /* ---- New Description Hook styles ---- */
+    .card-description-hook {
+        font-size: 0.825rem;
+        color: #64748b;
+        font-style: italic;
+        line-height: 1.4;
+        margin: 0.5rem 0;
+        
+        /* Magic CSS to truncate at 2 lines */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-description-hook::before {
+        content: '"';
+        color: #cbd5e1;
+        font-size: 1.2rem;
+        line-height: 0;
+        vertical-align: -0.2rem;
+        margin-right: 2px;
+    }
+    .card-description-hook::after {
+        content: '"';
+        color: #cbd5e1;
+        font-size: 1.2rem;
+        line-height: 0;
+        vertical-align: -0.2rem;
+        margin-left: 2px;
+    }
+
+    /* ---- Card Bottom / CTA ---- */
+    .info-bottom {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .price-block {
+        display: flex;
+        align-items: baseline;
+    }
+    .price-amount {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+    .price-currency {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-left: 2px;
+    }
+
+    /* Option A: Subtle Link */
+    .info-bottom-subtle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .subtle-link {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: opacity 0.2s;
+    }
+    .teacher-card:hover .subtle-link {
+        opacity: 0.8;
+    }
+    .subtle-link svg {
+        transition: transform 0.2s;
+    }
+    .teacher-card:hover .subtle-link svg {
+        transform: translateX(3px);
+    }
+
+    /* Option B: Prominent Button */
+    .info-bottom-prominent {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .prominent-btn {
+        width: 100%;
+        padding: 0.6rem;
+        text-align: center;
+        background: #f8fafc;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        transition: all 0.2s;
+    }
+    .teacher-card:hover .prominent-btn {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ui-test-container">
+    <div class="ui-test-header">
+        <h1>Analyse d'Ergonomie : Cartes Professeur</h1>
+        <p>Comparez les deux approches en conditions réelles. Regardez cette page sur votre smartphone pour juger de la densité de l'information.</p>
+    </div>
+
+    <div class="ui-grid">
+        
+        <!-- APPROCHE A -->
+        <div class="ui-column">
+            <h2 class="ui-column-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Approche A : Subtile & Élégante
+            </h2>
+            <p class="ui-column-desc">Toute la carte est cliquable. Intègre un "Hook" (extrait de texte) et un indicateur textuel léger en bas. Très aéré sur mobile.</p>
+            
+            <div class="teacher-card">
+                <div class="card-photo-section">
+                    {% if teacher and teacher.photo_de_profil %}
+                        <img src="{{ teacher.photo_de_profil.url|cloudinary_optimized:'400x500' }}" class="teacher-photo" alt="Photo">
+                    {% else %}
+                        <div class="avatar-initials">J</div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-info-section">
+                    <div class="name-badge-row">
+                        <h3 class="teacher-name">{{ teacher.prenom|default:"Jean" }} {{ teacher.nom|default:"D." }}</h3>
+                    </div>
+                    
+                    <div class="info-text-group">
+                        <p class="info-text info-subjects">{{ teacher.matiere_enseignee|default:"Mathématiques, Physique" }}</p>
+                        <p class="info-text">📍 {{ teacher.ville_quartier|default:"Cotonou (Fidjrossè)" }}</p>
+                    </div>
+
+                    <!-- L'ACCROCHE (HOOK) -->
+                    <p class="card-description-hook">
+                        {{ teacher.description|default:"Je suis un professeur passionné avec plus de 5 ans d'expérience. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir sa réussite totale." }}
+                    </p>
+
+                    <div class="info-bottom info-bottom-subtle">
+                        <div class="price-block">
+                            <span style="font-size: 0.75rem; color: #64748b; margin-right: 0.25rem;">Dès</span>
+                            <span class="price-amount">{{ teacher.tarif_minimum|default:"3 500"|floatformat:0 }}</span>
+                            <span class="price-currency">F/h</span>
+                        </div>
+                        
+                        <!-- CTA Subtil -->
+                        <div class="subtle-link">
+                            Découvrir
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APPROCHE B -->
+        <div class="ui-column">
+            <h2 class="ui-column-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                Approche B : Bouton Explicite
+            </h2>
+            <p class="ui-column-desc">Intègre l'extrait de texte + un bouton fantôme complet (Ghost Button). Plus direct, mais prend plus de hauteur (scroll).</p>
+            
+            <div class="teacher-card">
+                <div class="card-photo-section">
+                    {% if teacher and teacher.photo_de_profil %}
+                        <img src="{{ teacher.photo_de_profil.url|cloudinary_optimized:'400x500' }}" class="teacher-photo" alt="Photo">
+                    {% else %}
+                        <div class="avatar-initials">M</div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-info-section">
+                    <div class="name-badge-row">
+                        <h3 class="teacher-name">{{ teacher.prenom|default:"Marie" }} {{ teacher.nom|default:"L." }}</h3>
+                    </div>
+                    
+                    <div class="info-text-group">
+                        <p class="info-text info-subjects">{{ teacher.matiere_enseignee|default:"SVT, Physique-Chimie" }}</p>
+                        <p class="info-text">📍 {{ teacher.ville_quartier|default:"Abomey-Calavi" }}</p>
+                    </div>
+
+                    <!-- L'ACCROCHE (HOOK) -->
+                    <p class="card-description-hook">
+                        {{ teacher.description|default:"Enseignante certifiée, je vous accompagne dans vos révisions et la préparation de vos examens avec des exercices pratiques." }}
+                    </p>
+
+                    <div class="info-bottom info-bottom-prominent">
+                        <div class="price-block">
+                            <span style="font-size: 0.75rem; color: #64748b; margin-right: 0.25rem;">Dès</span>
+                            <span class="price-amount">{{ teacher.tarif_minimum|default:"4 000"|floatformat:0 }}</span>
+                            <span class="price-currency">F/h</span>
+                        </div>
+                        
+                        <!-- CTA Bouton Explicite -->
+                        <div class="prominent-btn">
+                            Voir le profil
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

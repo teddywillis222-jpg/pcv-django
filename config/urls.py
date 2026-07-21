@@ -80,6 +80,8 @@ urlpatterns = [
     path("profil-eleve/<str:type_eleve>/<int:id_eleve>/", core_views.profil_eleve, name="profil_eleve"),
     path("enfant/<int:id_enfant>/edit/", core_views.edit_enfant, name="edit_enfant"),
     
+    path("test-ui-cards/", core_views.test_ui_cards, name="test_ui_cards"),
+
     # Nouvelles URLs pour la navigation principale
     path("faq/", core_views.faq, name="faq"),
     path("support/", core_views.support, name="support"),
