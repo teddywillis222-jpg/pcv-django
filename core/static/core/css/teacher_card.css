@@ -312,7 +312,7 @@
     color: #64748b;
     font-style: italic;
     line-height: 1.4;
-    margin: 0.25rem 0 0.1rem; /* Reduced margin to bring it closer to bottom */
+    margin: 0.4rem 0 0.1rem; /* Slightly more top margin */
     width: 100%;
     padding-right: 0.5rem;
     
@@ -342,34 +342,30 @@
     margin-left: 2px;
 }
 
-/* Option A: Button Decouvrir */
+/* Option A: Subtle Link */
 .info-bottom-subtle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-top: 0.35rem; /* Reduced space */
+    margin-top: 0.35rem;
 }
-.btn-decouvrir-card {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #16a34a;
-    background: rgba(22, 163, 74, 0.08);
-    padding: 0.35rem 0.85rem;
-    border-radius: 20px;
+.subtle-link {
+    font-size: 0.85rem;
+    font-weight: 800; /* Bolder text to attract the eye */
+    color: var(--primary, #16a34a); /* Green color */
     display: flex;
     align-items: center;
     gap: 4px;
-    transition: all 0.2s;
+    transition: opacity 0.2s;
 }
-.teacher-card.premium-card:hover .btn-decouvrir-card {
-    background: rgba(22, 163, 74, 0.15);
-    color: #15803d;
+.teacher-card.premium-card:hover .subtle-link {
+    opacity: 0.8;
 }
-.btn-decouvrir-card svg {
+.subtle-link svg {
     transition: transform 0.2s;
 }
-.teacher-card.premium-card:hover .btn-decouvrir-card svg {
+.teacher-card.premium-card:hover .subtle-link svg {
     transform: translateX(3px);
 }/* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {
