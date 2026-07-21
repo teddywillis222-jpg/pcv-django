@@ -86,7 +86,12 @@
             </div>
         </div>
 
-        <div class="info-bottom">
+        <!-- L'Accroche (Hook) -->
+        <div class="card-description-hook">
+            {{ teacher.description|default:"Professeur qualifié et passionné. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir une progression constante." }}
+        </div>
+
+        <div class="info-bottom info-bottom-subtle">
             <!-- Price -->
             <div class="price-block">
                 {% if teacher.a_des_tarifs_multiples %}
@@ -102,9 +107,10 @@
                 <span class="price-currency">F/h</span>
             </div>
             
-            <!-- Action Arrow -->
-            <div class="action-arrow arrow-action" role="button" tabindex="0" aria-label="Voir le profil">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Action Arrow Subtle -->
+            <div class="subtle-link arrow-action" role="button" tabindex="0" aria-label="Voir le profil">
+                Découvrir
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </div>

@@ -12,7 +12,7 @@
     padding: 1rem;
     gap: 1rem;
     width: 100%;
-    height: 240px; /* Fixed height for uniformity */
+    height: 290px; /* Increased height for uniformity with hook */
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
     position: relative;
@@ -306,8 +306,65 @@
     transform: scale(0.95);
 }
 
+/* ---- New Description Hook styles ---- */
+.card-description-hook {
+    font-size: 0.825rem;
+    color: #64748b;
+    font-style: italic;
+    line-height: 1.4;
+    margin: 0.5rem 0;
+    
+    /* Force 2 lines and ellipsis */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.8em; /* Force uniform height even if empty or 1 line */
+}
 
-/* --- COMPACT CARD (Recommendations) --- */
+.card-description-hook::before {
+    content: '"';
+    color: #cbd5e1;
+    font-size: 1.2rem;
+    line-height: 0;
+    vertical-align: -0.2rem;
+    margin-right: 2px;
+}
+.card-description-hook::after {
+    content: '"';
+    color: #cbd5e1;
+    font-size: 1.2rem;
+    line-height: 0;
+    vertical-align: -0.2rem;
+    margin-left: 2px;
+}
+
+/* Option A: Subtle Link */
+.info-bottom-subtle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.subtle-link {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary, #2563eb);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s;
+}
+.teacher-card.premium-card:hover .subtle-link {
+    opacity: 0.8;
+}
+.subtle-link svg {
+    transition: transform 0.2s;
+}
+.teacher-card.premium-card:hover .subtle-link svg {
+    transform: translateX(3px);
+}/* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
