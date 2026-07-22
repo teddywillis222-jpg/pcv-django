@@ -273,10 +273,10 @@ class FinalisationCompteForm(forms.Form):
 
 
 class ParentForm(forms.ModelForm):
-    quartier_ville = DynamicChoiceField(
+    quartier_ville = forms.ChoiceField(
         choices=Localisation.CHOICES,
         required=True,
-        widget=forms.Select(attrs={'class': 'pcv-multi-select'})
+        widget=forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'})
     )
 
     class Meta:
@@ -300,29 +300,32 @@ class EnfantForm(forms.ModelForm):
         ("Baisse de motivation", "Baisse de motivation / Confiance"),
     ]
 
-    matieres_predefinies = DynamicMultipleChoiceField(
+    matieres_predefinies = forms.MultipleChoiceField(
         label="Matières nécessitant appui (Max 5)",
         required=False,
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
             'placeholder': 'Ex : Mathématiques',
-            'data-max-items': '5'
+            'data-max-items': '5',
+            'data-allow-create': 'false'
         })
     )
-    objectifs_motivations = DynamicMultipleChoiceField(
+    objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifMotivation.CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
-            'placeholder': 'Quels sont les objectifs ?'
+            'placeholder': 'Quels sont les objectifs ?',
+            'data-allow-create': 'false'
         }),
         required=False
     )
-    difficultes_predefinies = DynamicMultipleChoiceField(
+    difficultes_predefinies = forms.MultipleChoiceField(
         choices=DIFFICULTES_CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
-            'placeholder': 'Quelles difficultés ?'
+            'placeholder': 'Quelles difficultés ?',
+            'data-allow-create': 'false'
         }),
         required=False
     )
@@ -358,13 +361,6 @@ class EnfantForm(forms.ModelForm):
         self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
 
 
-
-    def clean_matieres_predefinies(self):
-        matieres = self.cleaned_data.get('matieres_predefinies', [])
-        if matieres:
-            from core.utils import process_custom_choices
-            return process_custom_choices('matiere', matieres)
-        return matieres
 
     def clean(self):
         cleaned_data = super().clean()
@@ -409,7 +405,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         })
     )
 
-    matieres_recherchees = DynamicMultipleChoiceField(
+    matieres_recherchees = forms.MultipleChoiceField(
         choices=Matiere.get_choices(),
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
@@ -419,16 +415,17 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         required=False
     )
     
-    objectifs_motivations = DynamicMultipleChoiceField(
+    objectifs_motivations = forms.MultipleChoiceField(
         choices=ObjectifApprenant.CHOICES,
         widget=forms.SelectMultiple(attrs={
             'class': 'form-input pcv-multi-select allow-multiple', 
-            'placeholder': 'Quels sont vos objectifs ?'
+            'placeholder': 'Quels sont vos objectifs ?',
+            'data-allow-create': 'false'
         }),
         required=False
     )
     
-    quartier_ville = DynamicChoiceField(
+    quartier_ville = forms.ChoiceField(
         choices=Localisation.CHOICES,
         widget=forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'}),
         required=True
@@ -474,13 +471,6 @@ class ApprenantCreateProfileForm(forms.ModelForm):
                 self.fields[field_name].required = False
 
 
-
-    def clean_matieres_recherchees(self):
-        matieres = self.cleaned_data.get('matieres_recherchees', [])
-        if matieres:
-            from core.utils import process_custom_choices
-            return process_custom_choices('matiere', matieres)
-        return matieres
 
 class EditEnfantForm(EnfantForm):
     numero_whatsapp = forms.CharField(
@@ -638,22 +628,14 @@ class TeacherProfileForm(forms.ModelForm):
             return self.instance.nom
         return self.cleaned_data.get('nom')
 
-    def clean_ville_quartier(self):
-        ville = self.cleaned_data.get('ville_quartier')
-        if ville:
-            from core.utils import process_custom_choices
-            return process_custom_choices('localisation', ville)
-        return ville
-
     def clean_matiere_enseignee(self):
         matieres = self.cleaned_data.get('matiere_enseignee')
         if isinstance(matieres, list):
             if len(matieres) > 3:
                 raise forms.ValidationError("Vous ne pouvez sélectionner que 3 matières maximum.")
-            from core.utils import process_custom_choices
-            processed = process_custom_choices('matiere', matieres)
-            return ", ".join(processed)
+            return ", ".join(matieres)
         return matieres
+
 
     def clean_classes_expertise(self):
         classes = self.cleaned_data.get('classes_expertise')

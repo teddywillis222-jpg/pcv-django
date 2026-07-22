@@ -2062,10 +2062,9 @@ def api_engagement(request):
 
         # --- DEBUT NOTIFICATION EMAIL PROFESSEUR ---
         if is_new_engagement and engagement.type_engagement == EngagementType.ESSAI:
-            import threading
             from .utils_emails import send_essai_scheduled_email
             professor_user = engagement.professeur.user
-            threading.Thread(target=send_essai_scheduled_email, args=(professor_user, engagement)).start()
+            send_essai_scheduled_email(professor_user, engagement)
         # --- FIN NOTIFICATION EMAIL PROFESSEUR ---
 
         return JsonResponse({
@@ -2204,7 +2203,7 @@ def api_engagement_action(request, engagement_id):
             if engagement.type_engagement == EngagementType.ESSAI:
                 from .utils_emails import send_essai_confirmed_email
                 parent_user = engagement.parent_apprenant
-                threading.Thread(target=send_essai_confirmed_email, args=(parent_user, engagement)).start()
+                send_essai_confirmed_email(parent_user, engagement)
             # --- FIN NOTIFICATION EMAIL PARENT/APPRENANT ---
 
             return JsonResponse({'success': True, 'message': 'Engagement accepté', 'conversation_id': conversation.id})

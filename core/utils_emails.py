@@ -212,6 +212,7 @@ def send_essai_scheduled_email(professor_user, engagement):
         logger.warning("Aucun email pour le professeur %s (id=%s), notification d'essai programmé ignorée.", professor_user.username, professor_user.pk)
         return False
 
+    prof_email = professor_user.email
     prof_name = engagement.professeur.prenom or professor_user.first_name or "Professeur"
     parent_name = engagement.parent_apprenant.first_name or "Un parent"
     matiere = engagement.matiere or "Non précisée"
@@ -255,19 +256,22 @@ Professionnellement,
 
 L'équipe Prof Chez Vous."""
 
-    try:
-        send_mail(
-            subject=sujet,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[professor_user.email],
-            fail_silently=False,
-        )
-        logger.info("Email de notification d'essai programmé envoyé avec succès à %s.", professor_user.email)
-        return True
-    except Exception as e:
-        logger.error("Échec d'envoi de l'email d'essai programmé à %s : %s", professor_user.email, e, exc_info=True)
-        return False
+    def _send():
+        try:
+            send_mail(
+                subject=sujet,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[prof_email],
+                fail_silently=False,
+            )
+            logger.info("Email de notification d'essai programmé envoyé avec succès à %s.", prof_email)
+        except Exception as e:
+            logger.error("Échec d'envoi de l'email d'essai programmé à %s : %s", prof_email, e, exc_info=True)
+            
+    import threading
+    threading.Thread(target=_send).start()
+    return True
 
 
 def send_essai_confirmed_email(parent_user, engagement):
@@ -278,6 +282,7 @@ def send_essai_confirmed_email(parent_user, engagement):
         logger.warning("Aucun email pour %s (id=%s), notification de confirmation d'essai ignorée.", parent_user.username, parent_user.pk)
         return False
 
+    parent_email = parent_user.email
     parent_name = parent_user.first_name or "Cher(e) utilisateur"
     prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip() or "Votre professeur"
     matiere = engagement.matiere or "Non précisée"
@@ -326,17 +331,20 @@ Cordialement,
 
 L'équipe Prof Chez Vous."""
 
-    try:
-        send_mail(
-            subject=sujet,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[parent_user.email],
-            fail_silently=False,
-        )
-        logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_user.email)
-        return True
-    except Exception as e:
-        logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_user.email, e, exc_info=True)
-        return False
+    def _send():
+        try:
+            send_mail(
+                subject=sujet,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[parent_email],
+                fail_silently=False,
+            )
+            logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
+        except Exception as e:
+            logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
+            
+    import threading
+    threading.Thread(target=_send).start()
+    return True
 
