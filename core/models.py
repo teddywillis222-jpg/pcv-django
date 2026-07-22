@@ -745,6 +745,7 @@ class Apprenant(models.Model):
 
     classe = models.CharField(
         max_length=30,
+        choices=ClassLevel.CHOICES,
         blank=True,
     )
 
@@ -770,6 +771,7 @@ class Apprenant(models.Model):
 
     quartier_ville = models.CharField(
         max_length=150,
+        choices=Localisation.CHOICES,
         blank=True,
         help_text="Format Â« Quartier - Ville Â» pour matching",
     )
