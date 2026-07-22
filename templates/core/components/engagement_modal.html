@@ -366,107 +366,117 @@ function populateFormSelects(prefix, teacherId, teacherName, matiere, isParent, 
 
 function openEngagementForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, children = [], existingEng = null, classesStr = '') {
     requireAuth(() => {
-        document.getElementById('engagementForm').reset();
-        
-        currentTeacherData = { is_parent: isParent, is_premium: isPremium, children: children, existing_engagement: existingEng };
-
-        populateFormSelects('eng', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
-
-        // Pré-remplissage
-        if (existingEng && existingEng.status === 'EN_ATTENTE' && existingEng.type !== 'essai') {
-            document.getElementById('eng_id_hidden').value = existingEng.id;
-            document.querySelector('#engagementModal h3').textContent = 'Modifier ma proposition';
-            document.getElementById('eng_matiere').value = existingEng.matiere;
-            if (existingEng.classe) document.getElementById('eng_classe').value = existingEng.classe;
-            document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'PARENT_HOME';
-            if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
-            if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1H';
+        try {
+            document.getElementById('engagementForm').reset();
             
-            if (existingEng.enfant_id && document.getElementById('eng_enfant_id')) document.getElementById('eng_enfant_id').value = existingEng.enfant_id;
-            if (existingEng.localisation) {
-                const locEl = document.getElementById('eng_localisation');
-                if (locEl.tomselect) locEl.tomselect.setValue(existingEng.localisation);
-                else locEl.value = existingEng.localisation;
+            currentTeacherData = { is_parent: isParent, is_premium: isPremium, children: children, existing_engagement: existingEng };
+
+            populateFormSelects('eng', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
+
+            // Pré-remplissage
+            if (existingEng && existingEng.status === 'EN_ATTENTE' && existingEng.type !== 'essai') {
+                document.getElementById('eng_id_hidden').value = existingEng.id;
+                document.querySelector('#engagementModal h3').textContent = 'Modifier ma proposition';
+                document.getElementById('eng_matiere').value = existingEng.matiere;
+                if (existingEng.classe) document.getElementById('eng_classe').value = existingEng.classe;
+                document.getElementById('eng_mode').value = existingEng.mode_de_cours || 'PARENT_HOME';
+                if (document.getElementById('eng_frequence')) document.getElementById('eng_frequence').value = existingEng.frequence || '1';
+                if (document.getElementById('eng_duree')) document.getElementById('eng_duree').value = existingEng.duree || '1H';
+                
+                if (existingEng.enfant_id && document.getElementById('eng_enfant_id')) document.getElementById('eng_enfant_id').value = existingEng.enfant_id;
+                if (existingEng.localisation) {
+                    const locEl = document.getElementById('eng_localisation');
+                    if (locEl.tomselect) locEl.tomselect.setValue(existingEng.localisation);
+                    else locEl.value = existingEng.localisation;
+                }
+                if (existingEng.date_debut) document.getElementById('eng_date_debut').value = existingEng.date_debut;
+                if (existingEng.budget) document.querySelector('input[name="budget"]').value = existingEng.budget;
+                if (existingEng.duree_mois) document.getElementById('eng_duree_mois').value = existingEng.duree_mois;
+                
+                if (existingEng.indications_geographiques) document.getElementById('eng_indications_geo').value = existingEng.indications_geographiques;
+                
+                document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
+            } else {
+                document.querySelector('#engagementModal h3').textContent = 'Demander un engagement standard';
+                document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
             }
-            if (existingEng.date_debut) document.getElementById('eng_date_debut').value = existingEng.date_debut;
-            if (existingEng.budget) document.querySelector('input[name="budget"]').value = existingEng.budget;
-            if (existingEng.duree_mois) document.getElementById('eng_duree_mois').value = existingEng.duree_mois;
-            
-            if (existingEng.indications_geographiques) document.getElementById('eng_indications_geo').value = existingEng.indications_geographiques;
-            
-            document.getElementById('eng_submit_btn').textContent = 'Mettre à jour la proposition';
-        } else {
-            document.querySelector('#engagementModal h3').textContent = 'Demander un engagement standard';
-            document.getElementById('eng_submit_btn').textContent = 'Envoyer la proposition';
-        }
 
-        toggleModeFields('eng');
-        document.getElementById('engagementModal').style.display = 'flex';
-        try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
-        // Close any auto-opened TomSelect dropdowns
-        setTimeout(function() {
-            document.querySelectorAll('#engagementModal .pcv-multi-select').forEach(function(el) {
-                if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
-            });
-        }, 50);
+            toggleModeFields('eng');
+            document.getElementById('engagementModal').style.display = 'flex';
+            try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
+            // Close any auto-opened TomSelect dropdowns
+            setTimeout(function() {
+                document.querySelectorAll('#engagementModal .pcv-multi-select').forEach(function(el) {
+                    if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
+                });
+            }, 50);
+        } catch (error) {
+            console.error("Erreur lors de l'ouverture du modal d'engagement :", error);
+            alert("Impossible d'ouvrir le formulaire. Veuillez recharger la page.");
+        }
     });
 }
 
 function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPremium = false, essaiActif = false, children = [], existingEng = null, classesStr = '') {
     requireAuth(() => {
-        document.getElementById('essaiForm').reset();
-        
-        currentTeacherData = { is_parent: isParent, is_premium: isPremium, children: children, existing_engagement: existingEng };
-
-        populateFormSelects('essai', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
-
-        const banner = document.getElementById('essai_banner');
-        const bannerText = document.getElementById('essai_banner_text');
-        const bannerBtn = document.getElementById('essai_banner_btn');
-        const submitBtn = document.getElementById('essai_submit_btn');
-
-        // Bannière informative — offre de lancement
-        banner.style.display = 'block';
-        bannerText.textContent = "Offre de lancement : 1 essai gratuit unique par compte, profitez-en !";
-        bannerBtn.style.display = 'none';
-        
-        // Le bouton est toujours actif : le quota est d\u00e9j\u00e0 g\u00e9r\u00e9 par can_schedule_trial c\u00f4t\u00e9 template
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.title = '';
-
-        // Pré-remplissage essai
-        if (existingEng && (existingEng.status === 'EN_ATTENTE' || existingEng.status === 'ESSAI_PROGRAMME') && existingEng.type === 'essai') {
-            document.getElementById('essai_id_hidden').value = existingEng.id;
-            document.querySelector('#essaiModal h3').textContent = 'Modifier mon essai gratuit';
-            document.getElementById('essai_matiere').value = existingEng.matiere;
-            if (existingEng.classe) document.getElementById('essai_classe').value = existingEng.classe;
-            document.getElementById('essai_mode').value = existingEng.mode_de_cours || 'PARENT_HOME';
+        try {
+            document.getElementById('essaiForm').reset();
             
-            if (existingEng.enfant_id && document.getElementById('essai_enfant_id')) document.getElementById('essai_enfant_id').value = existingEng.enfant_id;
-            if (existingEng.localisation) {
-                const locEl = document.getElementById('essai_localisation');
-                if (locEl.tomselect) locEl.tomselect.setValue(existingEng.localisation);
-                else locEl.value = existingEng.localisation;
+            currentTeacherData = { is_parent: isParent, is_premium: isPremium, children: children, existing_engagement: existingEng };
+
+            populateFormSelects('essai', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
+
+            const banner = document.getElementById('essai_banner');
+            const bannerText = document.getElementById('essai_banner_text');
+            const bannerBtn = document.getElementById('essai_banner_btn');
+            const submitBtn = document.getElementById('essai_submit_btn');
+
+            // Bannière informative — offre de lancement
+            banner.style.display = 'block';
+            bannerText.textContent = "Offre de lancement : 1 essai gratuit unique par compte, profitez-en !";
+            bannerBtn.style.display = 'none';
+            
+            // Le bouton est toujours actif : le quota est déjà géré par can_schedule_trial côté template
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.title = '';
+
+            // Pré-remplissage essai
+            if (existingEng && (existingEng.status === 'EN_ATTENTE' || existingEng.status === 'ESSAI_PROGRAMME') && existingEng.type === 'essai') {
+                document.getElementById('essai_id_hidden').value = existingEng.id;
+                document.querySelector('#essaiModal h3').textContent = 'Modifier mon essai gratuit';
+                document.getElementById('essai_matiere').value = existingEng.matiere;
+                if (existingEng.classe) document.getElementById('essai_classe').value = existingEng.classe;
+                document.getElementById('essai_mode').value = existingEng.mode_de_cours || 'PARENT_HOME';
+                
+                if (existingEng.enfant_id && document.getElementById('essai_enfant_id')) document.getElementById('essai_enfant_id').value = existingEng.enfant_id;
+                if (existingEng.localisation) {
+                    const locEl = document.getElementById('essai_localisation');
+                    if (locEl.tomselect) locEl.tomselect.setValue(existingEng.localisation);
+                    else locEl.value = existingEng.localisation;
+                }
+                if (existingEng.date_essai) document.getElementById('essai_date_essai').value = existingEng.date_essai;
+                if (existingEng.indications_geographiques) document.getElementById('essai_indications_geo').value = existingEng.indications_geographiques;
+                
+                submitBtn.textContent = "Mettre à jour l’essai";
+            } else {
+                document.querySelector('#essaiModal h3').textContent = 'Réserver mon Essai Gratuit';
+                submitBtn.textContent = "Réserver l’Essai";
             }
-            if (existingEng.date_essai) document.getElementById('essai_date_essai').value = existingEng.date_essai;
-            if (existingEng.indications_geographiques) document.getElementById('essai_indications_geo').value = existingEng.indications_geographiques;
-            
-            submitBtn.textContent = "Mettre \u00e0 jour l\u2019essai";
-        } else {
-            document.querySelector('#essaiModal h3').textContent = 'Réserver mon Essai Gratuit';
-            submitBtn.textContent = "R\u00e9server l\u2019Essai";
-        }
 
-        toggleModeFields('essai');
-        document.getElementById('essaiModal').style.display = 'flex';
-        try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
-        // Close any auto-opened TomSelect dropdowns
-        setTimeout(function() {
-            document.querySelectorAll('#essaiModal .pcv-multi-select').forEach(function(el) {
-                if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
-            });
-        }, 50);
+            toggleModeFields('essai');
+            document.getElementById('essaiModal').style.display = 'flex';
+            try { lockBodyScroll(); } catch(e) { document.body.style.overflow = 'hidden'; }
+            // Close any auto-opened TomSelect dropdowns
+            setTimeout(function() {
+                document.querySelectorAll('#essaiModal .pcv-multi-select').forEach(function(el) {
+                    if (el.tomselect) { el.tomselect.close(); el.tomselect.blur(); }
+                });
+            }, 50);
+        } catch (error) {
+            console.error("Erreur lors de l'ouverture du modal d'essai :", error);
+            alert("Impossible d'ouvrir le formulaire. Veuillez recharger la page.");
+        }
     });
 }
 
@@ -609,25 +619,49 @@ function getCookie(name) {
     return cookieValue;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.addEventListener('click', function(e) {
-        const btn = e.target.closest('.js-btn-essai');
-        if (btn) {
+(function() {
+    function handleModalClicks(e) {
+        const btnEssai = e.target.closest('.js-btn-essai');
+        const btnEngagement = e.target.closest('.js-btn-engagement');
+        
+        if (btnEssai) {
             e.preventDefault();
-            
-            const teacherId = btn.dataset.teacherId;
-            const teacherName = btn.dataset.teacherName;
-            const matiere = btn.dataset.matiere;
-            const isParent = btn.dataset.isParent === 'True' || btn.dataset.isParent === 'true';
-            const isPremium = btn.dataset.isPremium === 'True' || btn.dataset.isPremium === 'true';
-            const essaiActif = btn.dataset.essaiActif === 'True' || btn.dataset.essaiActif === 'true';
-            const classesStr = btn.dataset.classes || '';
+            const teacherId = btnEssai.dataset.teacherId;
+            const teacherName = btnEssai.dataset.teacherName;
+            const matiere = btnEssai.dataset.matiere;
+            const isParent = btnEssai.dataset.isParent === 'True' || btnEssai.dataset.isParent === 'true';
+            const isPremium = btnEssai.dataset.isPremium === 'True' || btnEssai.dataset.isPremium === 'true';
+            const essaiActif = btnEssai.dataset.essaiActif === 'True' || btnEssai.dataset.essaiActif === 'true';
+            const classesStr = btnEssai.dataset.classes || '';
             
             const children = window.currentChildren || [];
             const existingEng = window.currentExistingEngagement || null;
             
             openEssaiForm(teacherId, teacherName, matiere, isParent, isPremium, essaiActif, children, existingEng, classesStr);
+        } else if (btnEngagement) {
+            e.preventDefault();
+            const teacherId = btnEngagement.dataset.teacherId;
+            const teacherName = btnEngagement.dataset.teacherName;
+            const matiere = btnEngagement.dataset.matiere;
+            const isParent = btnEngagement.dataset.isParent === 'True' || btnEngagement.dataset.isParent === 'true';
+            const isPremium = btnEngagement.dataset.isPremium === 'True' || btnEngagement.dataset.isPremium === 'true';
+            const classesStr = btnEngagement.dataset.classes || '';
+            
+            const children = window.currentChildren || [];
+            const existingEng = window.currentExistingEngagement || null;
+            
+            openEngagementForm(teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
         }
-    });
-});
+    }
+
+    // Attach immediately to body (since this script is near the end of the body)
+    if (document.body) {
+        document.body.addEventListener('click', handleModalClicks);
+    } else {
+        // Fallback if body is somehow not available yet
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('click', handleModalClicks);
+        });
+    }
+})();
 </script>
