@@ -744,57 +744,34 @@ class Apprenant(models.Model):
     )
 
     classe = models.CharField(
-
         max_length=30,
-
-        choices=ClassLevel.CHOICES,
-
         blank=True,
-
     )
 
     matieres_recherchees = models.JSONField(
-
         default=list,
-
         blank=True,
-
         validators=[validate_matieres_recherchees_max_5],
-
         help_text="MatiÃ¨res prioritaires (max 5)",
-
     )
 
     objectifs_motivations = models.JSONField(
-
         default=list,
-
         blank=True,
-
         validators=[validate_objectifs_motivations],
-
         help_text="Liste de codes ObjectifMotivation (ex: ['PREPARER_EXAMEN'])",
-
     )
 
     description_difficultes = models.TextField(blank=True)
 
     habitudes_de_travail = models.TextField(blank=True)
 
-
-
     # 3. Logistique et localisation
 
     quartier_ville = models.CharField(
-
         max_length=150,
-
-        choices=Localisation.CHOICES,
-
         blank=True,
-
         help_text="Format Â« Quartier - Ville Â» pour matching",
-
     )
 
     preference_de_cours = models.CharField(
