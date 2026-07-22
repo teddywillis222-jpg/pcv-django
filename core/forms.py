@@ -357,19 +357,7 @@ class EnfantForm(forms.ModelForm):
         self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
         self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
 
-    def clean_quartier_ville(self):
-        ville = self.cleaned_data.get('quartier_ville')
-        if ville:
-            from core.utils import process_custom_choices
-            return process_custom_choices('localisation', ville)
-        return ville
 
-    def clean_classe(self):
-        classe = self.cleaned_data.get('classe')
-        if classe:
-            from core.utils import process_custom_choices
-            return process_custom_choices('classe', classe)
-        return classe
 
     def clean_matieres_predefinies(self):
         matieres = self.cleaned_data.get('matieres_predefinies', [])
@@ -485,19 +473,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             if field_name in self.fields:
                 self.fields[field_name].required = False
 
-    def clean_quartier_ville(self):
-        ville = self.cleaned_data.get('quartier_ville')
-        if ville:
-            from core.utils import process_custom_choices
-            return process_custom_choices('localisation', ville)
-        return ville
 
-    def clean_classe(self):
-        classe = self.cleaned_data.get('classe')
-        if classe:
-            from core.utils import process_custom_choices
-            return process_custom_choices('classe', classe)
-        return classe
 
     def clean_matieres_recherchees(self):
         matieres = self.cleaned_data.get('matieres_recherchees', [])
