@@ -202,3 +202,141 @@ L'équipe Prof Chez Vous"""
     except Exception as e:
         logger.error("Échec d'envoi de l'email de dossier incomplet à %s : %s", user.email, e, exc_info=True)
         return False
+
+
+def send_essai_scheduled_email(professor_user, engagement):
+    """
+    Email envoyé au professeur lorsqu'un parent ou apprenant programme un cours d'essai.
+    """
+    if not professor_user.email:
+        logger.warning("Aucun email pour le professeur %s (id=%s), notification d'essai programmé ignorée.", professor_user.username, professor_user.pk)
+        return False
+
+    prof_name = engagement.professeur.prenom or professor_user.first_name or "Professeur"
+    parent_name = engagement.parent_apprenant.first_name or "Un parent"
+    matiere = engagement.matiere or "Non précisée"
+    classe = engagement.classe or "Non précisée"
+    mode = engagement.get_mode_de_cours_display() if hasattr(engagement, 'get_mode_de_cours_display') else (engagement.mode_de_cours or "Non précisé")
+
+    # Date et heure de l'essai
+    date_str = ""
+    if engagement.date_heure_essai:
+        from django.utils import timezone as tz
+        dt_local = tz.localtime(engagement.date_heure_essai)
+        date_str = dt_local.strftime("%A %d %B %Y à %Hh%M")
+
+    dashboard_url = get_full_url(reverse("prof_dashboard"))
+
+    sujet = "Nouvelle demande de cours d'essai – Prof Chez Vous"
+    message = f"""Bonjour Professeur {prof_name},
+
+Excellente nouvelle ! {parent_name} vient de programmer un cours d'essai avec vous sur Prof Chez Vous.
+
+Voici les détails de la demande :
+
+    Matière : {matiere}
+    Classe : {classe}
+    Mode de cours : {mode}"""
+
+    if date_str:
+        message += f"""
+    Date proposée : {date_str}"""
+
+    message += f"""
+
+L'étape suivante est entre vos mains : connectez-vous à votre espace professeur pour consulter la demande complète et confirmer (ou proposer un autre créneau).
+
+Accéder à mon tableau de bord :
+{dashboard_url}
+
+Conseil : Les professeurs qui répondent rapidement obtiennent un meilleur score de réactivité et sont davantage mis en avant auprès des familles.
+
+Professionnellement,
+
+L'équipe Prof Chez Vous."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[professor_user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de notification d'essai programmé envoyé avec succès à %s.", professor_user.email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email d'essai programmé à %s : %s", professor_user.email, e, exc_info=True)
+        return False
+
+
+def send_essai_confirmed_email(parent_user, engagement):
+    """
+    Email envoyé au parent ou apprenant lorsque le professeur confirme le cours d'essai.
+    """
+    if not parent_user.email:
+        logger.warning("Aucun email pour %s (id=%s), notification de confirmation d'essai ignorée.", parent_user.username, parent_user.pk)
+        return False
+
+    parent_name = parent_user.first_name or "Cher(e) utilisateur"
+    prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip() or "Votre professeur"
+    matiere = engagement.matiere or "Non précisée"
+
+    # Date et heure de l'essai
+    date_str = ""
+    if engagement.date_heure_essai:
+        from django.utils import timezone as tz
+        dt_local = tz.localtime(engagement.date_heure_essai)
+        date_str = dt_local.strftime("%A %d %B %Y à %Hh%M")
+
+    # Lien vers le bon espace selon le rôle
+    if hasattr(parent_user, 'parent'):
+        dashboard_url = get_full_url(reverse("parent_dashboard"))
+    else:
+        dashboard_url = get_full_url(reverse("apprenant_dashboard"))
+
+    sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
+    message = f"""Bonjour {parent_name},
+
+Bonne nouvelle ! Le Professeur {prof_name} vient de confirmer votre cours d'essai.
+
+Récapitulatif :
+
+    Professeur : {prof_name}
+    Matière : {matiere}"""
+
+    if date_str:
+        message += f"""
+    Date et heure : {date_str}"""
+
+    message += f"""
+
+Que faire maintenant ?
+
+1. Connectez-vous à votre espace pour consulter tous les détails de la séance.
+2. Préparez vos questions ou les points que vous souhaitez aborder durant ce premier cours.
+3. Profitez de cette séance pour évaluer la pédagogie du professeur et voir si le courant passe.
+
+Accéder à mon espace :
+{dashboard_url}
+
+Nous vous souhaitons une excellente première séance !
+
+Cordialement,
+
+L'équipe Prof Chez Vous."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[parent_user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_user.email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_user.email, e, exc_info=True)
+        return False
+
