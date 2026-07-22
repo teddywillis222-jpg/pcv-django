@@ -82,11 +82,11 @@
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
                 {% if existing_engagement.statut_general == 'ESSAI_PROGRAMME' or existing_engagement.statut_general == 'EN_ATTENTE' %}
-                    <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai js-btn-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
-                        class="js-btn-essai"
+
                         data-teacher-id="{{ teacher.id }}"
                         data-teacher-name="{{ teacher.prenom }} {{ teacher.nom }}"
                         data-matiere="{{ teacher.matiere_enseignee }}"
@@ -129,10 +129,10 @@
                 {% endif %}
             {% else %}
                 {% if can_schedule_trial %}
-                    <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                    <button class="btn-reserver-essai js-btn-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
-                        class="js-btn-essai"
+
                         data-teacher-id="{{ teacher.id }}"
                         data-teacher-name="{{ teacher.prenom }} {{ teacher.nom }}"
                         data-matiere="{{ teacher.matiere_enseignee }}"
