@@ -484,12 +484,6 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             if field_name in self.fields:
                 self.fields[field_name].required = False
 
-    def clean_telephone(self):
-        numero = self.cleaned_data.get('telephone')
-        if numero:
-            return formater_telephone_benin(numero)
-        return numero
-
     def clean_quartier_ville(self):
         ville = self.cleaned_data.get('quartier_ville')
         if ville:

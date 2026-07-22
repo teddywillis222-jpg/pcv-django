@@ -610,7 +610,40 @@ document.getElementById('apprenantForm').addEventListener('submit', async functi
             
         } else {
             console.error(data.errors);
-            globalErr.textContent = "Certains champs sont invalides. Veuillez vérifier vos saisies.";
+            
+            // Supprimer les anciennes erreurs visuelles
+            document.querySelectorAll('.error-msg-dyn').forEach(el => el.remove());
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            
+            let hasSpecificErrors = false;
+            
+            if (data.errors) {
+                for (let field in data.errors) {
+                    let input = document.getElementById(`id_${field}`);
+                    if (input) {
+                        hasSpecificErrors = true;
+                        // On remonte au parent direct (qui est souvent un div .form-group)
+                        let container = input.closest('.form-group') || input.parentNode;
+                        input.classList.add('input-error');
+                        
+                        let errDiv = document.createElement('div');
+                        errDiv.className = 'error-msg-dyn';
+                        errDiv.style.color = '#ef4444'; // text-red-500
+                        errDiv.style.fontSize = '0.85rem';
+                        errDiv.style.marginTop = '0.4rem';
+                        errDiv.innerText = data.errors[field][0]; // Prend le premier message d'erreur
+                        
+                        container.appendChild(errDiv);
+                    }
+                }
+            }
+            
+            if (hasSpecificErrors) {
+                globalErr.innerHTML = "Certains champs sont invalides. Veuillez corriger les erreurs signalées en rouge ci-dessous.";
+            } else {
+                globalErr.textContent = "Certains champs sont invalides. Veuillez vérifier vos saisies.";
+            }
+            
             globalErr.style.display = 'block';
             btn.classList.remove('btn-disabled');
             btn.innerHTML = 'Enregistrer mon profil <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5l10 -10"></path></svg>';
