@@ -256,21 +256,18 @@ Professionnellement,
 
 L'équipe Prof Chez Vous."""
 
-    def _send():
-        try:
-            send_mail(
-                subject=sujet,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[prof_email],
-                fail_silently=False,
-            )
-            logger.info("Email de notification d'essai programmé envoyé avec succès à %s.", prof_email)
-        except Exception as e:
-            logger.error("Échec d'envoi de l'email d'essai programmé à %s : %s", prof_email, e, exc_info=True)
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[prof_email],
+            fail_silently=False,
+        )
+        logger.info("Email de notification d'essai programmé envoyé avec succès à %s.", prof_email)
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email d'essai programmé à %s : %s", prof_email, e, exc_info=True)
             
-    import threading
-    threading.Thread(target=_send).start()
     return True
 
 
@@ -331,20 +328,17 @@ Cordialement,
 
 L'équipe Prof Chez Vous."""
 
-    def _send():
-        try:
-            send_mail(
-                subject=sujet,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[parent_email],
-                fail_silently=False,
-            )
-            logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
-        except Exception as e:
-            logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[parent_email],
+            fail_silently=False,
+        )
+        logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
             
-    import threading
-    threading.Thread(target=_send).start()
     return True
 

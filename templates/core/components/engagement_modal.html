@@ -608,4 +608,26 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.js-btn-essai').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Optional: The button itself adds/removes 'loading' class via its onclick.
+            
+            const teacherId = this.dataset.teacherId;
+            const teacherName = this.dataset.teacherName;
+            const matiere = this.dataset.matiere;
+            const isParent = this.dataset.isParent === 'True' || this.dataset.isParent === 'true';
+            const isPremium = this.dataset.isPremium === 'True' || this.dataset.isPremium === 'true';
+            const essaiActif = this.dataset.essaiActif === 'True' || this.dataset.essaiActif === 'true';
+            const classesStr = this.dataset.classes || '';
+            
+            const children = window.currentChildren || [];
+            const existingEng = window.currentExistingEngagement || null;
+            
+            openEssaiForm(teacherId, teacherName, matiere, isParent, isPremium, essaiActif, children, existingEng, classesStr);
+        });
+    });
+});
 </script>
