@@ -1989,14 +1989,21 @@ def api_engagement(request):
         engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
         
         if type_eng == EngagementType.ESSAI:
+            from django.utils.dateparse import parse_datetime
+            from django.utils.timezone import make_aware, is_naive
+            
             date_essai_str = data.get('date_essai')
             if date_essai_str:
-                from django.utils.dateparse import parse_datetime
-                engagement.date_heure_essai = parse_datetime(date_essai_str)
+                dt = parse_datetime(date_essai_str)
+                if dt and is_naive(dt): dt = make_aware(dt)
+                engagement.date_heure_essai = dt
             
             date_fin_essai_str = data.get('date_fin_essai')
             if date_fin_essai_str:
-                engagement.date_heure_fin_essai = parse_datetime(date_fin_essai_str)
+                dt_fin = parse_datetime(date_fin_essai_str)
+                if dt_fin and is_naive(dt_fin): dt_fin = make_aware(dt_fin)
+                engagement.date_heure_fin_essai = dt_fin
+                
             engagement.description_essai = data.get('description_essai', '')
         else:
             budget = data.get('budget')
