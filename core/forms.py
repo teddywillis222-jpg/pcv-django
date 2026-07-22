@@ -413,11 +413,10 @@ class ApprenantCreateProfileForm(forms.ModelForm):
 
     telephone = forms.CharField(
         label="Numéro WhatsApp",
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={
             "placeholder": "Ex: 01XXXXXXXX",
             "class": "form-input",
-            "required": True,
             "type": "tel"
         })
     )
