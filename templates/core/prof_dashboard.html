@@ -409,13 +409,10 @@
         if (modal) {
             modal.style.display = 'none';
             // Mark as seen via API
-            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-            const token = csrfInput ? csrfInput.value : (typeof getCookie === 'function' ? getCookie('csrftoken') : '');
-            
             fetch("{% url 'api_mark_popup_partage_vu' %}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': token,
+                    'X-CSRFToken': '{{ csrf_token }}',
                     'Content-Type': 'application/json'
                 }
             }).catch(err => console.error("Error marking popup as seen:", err));
