@@ -55,3 +55,32 @@ def cloudinary_optimized(url, dimensions="400x500"):
         )
     
     return url
+
+@register.filter(name='cloudinary_og')
+def cloudinary_og(url):
+    """
+    Transforme une URL Cloudinary pour servir une image Open Graph (Facebook, WhatsApp).
+    Oblige le format JPEG (f_jpg) car Facebook gère mal les WebP.
+    Centre sur le visage (g_face) avec une dimension carrée idéale (600x600).
+    """
+    if not url:
+        return url
+    
+    url = str(url)
+    if 'cloudinary' not in url and 'res.cloudinary.com' not in url:
+        return url
+    
+    transformation = "w_600,h_600,c_fill,g_face,f_jpg,q_auto"
+    if '/upload/' in url:
+        url = re.sub(
+            r'/upload/(?:v\d+/)?',
+            f'/upload/{transformation}/',
+            url,
+            count=1
+        )
+    
+    # En plus, remplacer l'extension .webp par .jpg à la fin de l'URL pour plus de sécurité
+    url = re.sub(r'\.webp$', '.jpg', url, flags=re.IGNORECASE)
+    
+    return url
+
