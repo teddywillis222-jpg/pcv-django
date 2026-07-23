@@ -13,9 +13,13 @@
 <meta property="og:title" content="{{ teacher.prenom }} {{ teacher.nom }} - Prof Chez Vous">
 <meta property="og:description" content="Professeur de {{ teacher.matiere_enseignee }} pour le(s) niveau(x) : {% for c in readable_classes %}{{ c }}{% if not forloop.last %}, {% endif %}{% empty %}Tous niveaux{% endfor %}.">
 {% if teacher.photo_de_profil %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ teacher.photo_de_profil.url }}">
+    {% if "http" in teacher.photo_de_profil.url %}
+        <meta property="og:image" content="{{ teacher.photo_de_profil.url }}">
+    {% else %}
+        <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ teacher.photo_de_profil.url }}">
+    {% endif %}
 {% else %}
-<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'core/images/logo_pr.jpg' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'core/images/logo_pr.jpg' %}">
 {% endif %}
 <meta property="og:url" content="{{ request.build_absolute_uri }}">
 <meta property="og:site_name" content="Prof Chez Vous">
