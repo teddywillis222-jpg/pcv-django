@@ -350,9 +350,9 @@
         </div>
         
         <!-- Text -->
-        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Bienvenue sur votre Espace ! 🎉</h3>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Boostez votre visibilité ! 🚀</h3>
         <p style="font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-            Votre profil est maintenant actif. Pour multiplier vos chances de trouver des élèves rapidement, <strong>partagez votre lien de profil certifié</strong> à votre réseau !
+            Pour multiplier vos chances de trouver des élèves rapidement, <strong>partagez votre lien de profil certifié</strong> à votre réseau !
         </p>
         
         <!-- Share Buttons (Copied logic from dashboard) -->
@@ -374,7 +374,7 @@
                 Partager sur LinkedIn
             </a>
             
-            <button onclick="copyToClipboard('{{ profile_url }}'); closeWelcomeShareModal();" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;">
+            <button onclick="copyWelcomeLink('{{ profile_url }}', this);" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 Copier le lien
             </button>
@@ -384,15 +384,38 @@
 </div>
 
 <script>
+    function copyWelcomeLink(link, btn) {
+        navigator.clipboard.writeText(link).then(() => {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Lien copié ! ✓';
+            btn.style.backgroundColor = '#dcfce7';
+            btn.style.color = '#16a34a';
+            btn.style.borderColor = '#bbf7d0';
+            
+            setTimeout(() => {
+                closeWelcomeShareModal();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.backgroundColor = '#f1f5f9';
+                    btn.style.color = '#475569';
+                    btn.style.borderColor = '#e2e8f0';
+                }, 300);
+            }, 1200);
+        });
+    }
+
     function closeWelcomeShareModal() {
         const modal = document.getElementById('welcomeShareModal');
         if (modal) {
             modal.style.display = 'none';
             // Mark as seen via API
+            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            const token = csrfInput ? csrfInput.value : (typeof getCookie === 'function' ? getCookie('csrftoken') : '');
+            
             fetch("{% url 'api_mark_popup_partage_vu' %}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-CSRFToken': token,
                     'Content-Type': 'application/json'
                 }
             }).catch(err => console.error("Error marking popup as seen:", err));
@@ -459,20 +482,26 @@
         font-size: 0.9rem;
         font-weight: 700;
         text-decoration: none;
-        color: white;
-        transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+        color: white !important;
+        transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s, background-color 0.2s;
     }
     .share-btn:hover {
         transform: translateY(-2px) scale(1.02);
-        opacity: 0.95;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        opacity: 1;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        color: white !important;
     }
     .share-btn:active {
         transform: translateY(0) scale(1);
+        color: white !important;
     }
     .share-wa { background: #25D366; }
     .share-fb { background: #1877F2; }
     .share-li { background: #0A66C2; }
+    
+    .share-wa:hover { background: #20bd5a; }
+    .share-fb:hover { background: #166fe5; }
+    .share-li:hover { background: #0958a8; }
 </style>
 
 <script>

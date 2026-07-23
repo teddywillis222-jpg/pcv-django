@@ -13,6 +13,7 @@
     <link rel="apple-touch-icon" href="{% static 'core/images/favicon-192x192.png' %}?v=5">
     
     <!-- Open Graph (Aperçu des liens sur WhatsApp, Facebook, LinkedIn, etc.) -->
+    {% block opengraph %}
     <meta property="og:title" content="Prof Chez Vous">
     <meta property="og:description" content="Trouvez le professeur idéal pour vous accompagner.">
     <!-- URL absolue et format PNG obligatoires pour les messageries -->
@@ -22,6 +23,7 @@
     <meta property="og:image:height" content="500">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% endblock %}
     
     <!-- Google Fonts - Raleway -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1459,7 +1461,8 @@
     {% if user.is_authenticated %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let lastCheckTime = Date.now();
+            // Utilise l'heure du serveur pour éviter les boucles de rechargement dues au décalage d'horloge client/serveur
+            let lastCheckTime = {% now "U" %}000;
             
             function checkGlobalUpdates() {
                 // Ne pas recharger si l'utilisateur est en train de taper
