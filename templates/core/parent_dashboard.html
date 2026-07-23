@@ -746,7 +746,7 @@
                         <!-- Avatar -->
                         <div style="position: relative;">
                             <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(255,255,255,0.2); border: 3px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: white; backdrop-filter: blur(4px);">
-                                {{ parent.user.first_name|default:parent.nom|slice:":1"|upper }}
+                                {{ parent_details.user.first_name|default:parent_details.nom|slice:":1"|upper }}
                             </div>
                             <div style="position: absolute; bottom: -4px; right: -4px; background: #fbbf24; width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center;" title="Compte Parent">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -757,11 +757,11 @@
                         <div style="min-width: 0; flex: 1;">
                             <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 0.25rem;">
                                 <span style="flex-shrink: 0;">Bonjour,</span>
-                                <span class="name-mobile" title="{{ parent.nom }}">
-                                    {{ parent.user.first_name|default:parent.nom|truncatechars:10 }}
+                                <span class="name-mobile" title="{{ parent_details.nom }}">
+                                    {{ parent_details.user.first_name|default:parent_details.nom|truncatechars:10 }}
                                 </span>
-                                <span class="name-desktop" title="{{ parent.nom }}">
-                                    {{ parent.user.first_name|default:parent.nom }}
+                                <span class="name-desktop" title="{{ parent_details.nom }}">
+                                    {{ parent_details.user.first_name|default:parent_details.nom }}
                                 </span>
                                 <span style="flex-shrink: 0;">👋</span>
                             </h2>
@@ -770,10 +770,10 @@
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                     {{ enfants|length }} enfant(s) inscrit(s)
                                 </span>
-                                {% if parent.quartier_ville %}
+                                {% if parent_details.quartier_ville %}
                                 <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 0.25rem 0.6rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    {{ parent.quartier_ville }}
+                                    {{ parent_details.quartier_ville }}
                                 </span>
                                 {% endif %}
                             </div>
