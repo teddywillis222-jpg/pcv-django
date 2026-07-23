@@ -17,10 +17,21 @@
 
         <!-- Photo de profil -->
         {% if teacher.photo_de_profil %}
-            <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}"
-                 onclick="openZoom('{{ teacher.photo_de_profil.url }}')" fetchpriority="high"
-                 style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover;
-                        border: 3px solid #e9eef5; margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto; cursor: zoom-in;">
+            <div style="position: relative; width: 160px; height: 160px; margin: 0 auto 1rem;">
+                <!-- Placeholder par défaut (Initiales) -->
+                <div style="position: absolute; inset: 0; border-radius: 50%; background: #e2e8f0; border: 3px solid #e9eef5; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; color: #94a3b8; font-weight: 800; letter-spacing: -1px; z-index: 1;">
+                    {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
+                </div>
+                
+                <!-- Image réelle qui apparaît en fondu une fois chargée -->
+                <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}"
+                     onclick="openZoom('{{ teacher.photo_de_profil.url }}')" 
+                     onload="this.style.opacity='1'; this.style.zIndex='2';" 
+                     onerror="this.style.display='none';"
+                     fetchpriority="high"
+                     decoding="async"
+                     style="position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #e9eef5; cursor: zoom-in; opacity: 0; transition: opacity 0.4s ease; z-index: 0; background: white;">
+            </div>
         {% else %}
             <div class="avatar-initials" style="width: 160px; height: 160px; border-radius: 50%; background: #e2e8f0;
                         border: 3px solid #e9eef5; margin: 0 auto 1rem; display: flex;
