@@ -358,7 +358,7 @@ class EnfantForm(forms.ModelForm):
             
         self.fields["quartier_ville"].widget = forms.Select(choices=Localisation.CHOICES, attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'})
         self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
-        self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
+        self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '100'})
 
 
 
@@ -445,7 +445,7 @@ class ApprenantCreateProfileForm(forms.ModelForm):
             "preference_de_cours",
         ]
         widgets = {
-            'classe': forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'}, choices=ClassLevel.CHOICES),
+            'classe': forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '100'}, choices=ClassLevel.CHOICES),
             'preference_de_cours': forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'}, choices=CourseMode.CHOICES),
             'description_difficultes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ex: Je ne comprends pas bien les théorèmes de maths, et je manque d\'organisation.'}),
             'nom': forms.TextInput(attrs={'placeholder': 'Ex: Jean Dupont'}),

@@ -70,6 +70,7 @@ urlpatterns = [
     path("prof/edit-profile/", core_views.prof_edit_profile, name="prof_edit_profile"),
     path("prof/video-presentation/", core_views.prof_video_presentation, name="prof_video_presentation"),
     path("prof/stats/", core_views.prof_stats_view, name="prof_stats"),
+    path("api/prof/popup-partage-vu/", core_views.api_mark_popup_partage_vu, name="api_mark_popup_partage_vu"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
     path("parent/dashboard/", core_views.parent_dashboard, name="parent_dashboard"),
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),

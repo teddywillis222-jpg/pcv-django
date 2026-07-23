@@ -1139,7 +1139,12 @@ class TeacherProfile(models.Model):
 
 
 
-    # 4. Documents et vÃ©rification
+    # 4. Documents et vérification
+
+    popup_partage_vu = models.BooleanField(
+        default=False,
+        help_text="Indique si le prof a déjà vu le popup d'incitation au partage"
+    )
 
     fichier_cni = models.FileField(
 

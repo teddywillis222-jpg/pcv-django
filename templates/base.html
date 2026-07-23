@@ -1384,6 +1384,7 @@
                 const maxItemsAttr = select.getAttribute('data-max-items');
                 const allowCreateAttr = select.getAttribute('data-allow-create');
                 const allowCreate = allowCreateAttr !== 'false';
+                const maxOptionsAttr = select.getAttribute('data-max-options');
                 
                 const plugins = ['remove_button'];
                 
@@ -1396,7 +1397,7 @@
                     closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
                     maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1),
-                    maxOptions: 15,
+                    maxOptions: maxOptionsAttr ? parseInt(maxOptionsAttr) : 15,
                     placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                     openOnFocus: true,
                     onInitialize: function() {

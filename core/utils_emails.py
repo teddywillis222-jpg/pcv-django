@@ -7,6 +7,14 @@ from .models import Profile
 
 logger = logging.getLogger(__name__)
 
+JOURS_FR = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
+MOIS_FR = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+
+def format_date_fr(dt):
+    """Formatte une datetime en français de manière déterministe."""
+    jour = JOURS_FR[dt.weekday()]
+    mois = MOIS_FR[dt.month]
+    return f"{jour} {dt.day} {mois} {dt.year} à {dt.strftime('%Hh%M')}"
 
 def send_welcome_email(user, profile):
     """
@@ -224,7 +232,7 @@ def send_essai_scheduled_email(professor_user, engagement):
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
         dt_local = tz.localtime(engagement.date_heure_essai)
-        date_str = dt_local.strftime("%A %d %B %Y à %Hh%M")
+        date_str = format_date_fr(dt_local)
 
     dashboard_url = get_full_url(reverse("prof_dashboard"))
 
@@ -289,7 +297,7 @@ def send_essai_confirmed_email(parent_user, engagement):
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
         dt_local = tz.localtime(engagement.date_heure_essai)
-        date_str = dt_local.strftime("%A %d %B %Y à %Hh%M")
+        date_str = format_date_fr(dt_local)
 
     # Lien vers le bon espace selon le rôle
     if hasattr(parent_user, 'parent'):

@@ -508,6 +508,7 @@
             }
             
             const maxItemsValue = isMatieres ? 5 : (isMultiple ? null : 1);
+            const maxOptionsAttr = select.getAttribute('data-max-options');
 
             new TomSelect(select, {
                 plugins: plugins,
@@ -516,7 +517,7 @@
                 dropdownParent: 'body',
                 maxItems: maxItemsValue,
                 closeAfterSelect: (maxItemsValue === null || maxItemsValue > 1) ? false : true,
-                maxOptions: 15,
+                maxOptions: maxOptionsAttr ? parseInt(maxOptionsAttr) : 15,
                 placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
                 onChange: function(value) {
                     select.dispatchEvent(new Event('change'));

@@ -2639,6 +2639,21 @@ def api_finalize_engagement(request, engagement_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@login_required
+@require_http_methods(["POST"])
+def api_mark_popup_partage_vu(request):
+    """API pour marquer le popup d'incitation au partage comme vu par le professeur."""
+    if request.user.role != 'PROFESSEUR':
+        return JsonResponse({'error': 'Action non autorisée'}, status=403)
+        
+    try:
+        prof = request.user.teacher_profile
+        prof.popup_partage_vu = True
+        prof.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 # --- ADMIN DASHBOARD (SPA & API) ---
 from django.utils import timezone
 from datetime import timedelta
