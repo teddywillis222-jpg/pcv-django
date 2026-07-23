@@ -1056,6 +1056,11 @@ class TeacherProfile(models.Model):
         help_text="ID YouTube de la vidéo de présentation (11 caractères, ex: dQw4w9WgXcQ)"
     )
 
+    autorise_utilisation_video_promo = models.BooleanField(
+        "Autorise l'utilisation de la vidéo à des fins promotionnelles",
+        default=False
+    )
+
     annees_d_experience = models.PositiveIntegerField(default=0)
 
     categories_de_soutien = models.JSONField(

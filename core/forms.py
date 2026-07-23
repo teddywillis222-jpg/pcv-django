@@ -757,9 +757,15 @@ class YouTubeVideoForm(forms.ModelForm):
         })
     )
 
+    autorise_utilisation_video_promo = forms.BooleanField(
+        label="J'autorise Prof Chez Vous à utiliser des extraits de cette vidéo de présentation à des fins promotionnelles (réseaux sociaux, publicités) pour mettre en valeur mon profil et la plateforme.",
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
     class Meta:
         model = TeacherProfile
-        fields = ['youtube_video_id']
+        fields = ['youtube_video_id', 'autorise_utilisation_video_promo']
         # We don't display youtube_video_id directly, we only display youtube_url_input
         widgets = {'youtube_video_id': forms.HiddenInput()}
 

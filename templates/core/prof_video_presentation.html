@@ -210,6 +210,24 @@
                 {% endif %}
             </div>
 
+            <!-- Autorisation promo -->
+            <div class="form-group" style="margin-top: 1.5rem; background: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 0.85rem; cursor: pointer;" onclick="document.getElementById('{{ form.autorise_utilisation_video_promo.id_for_label }}').click();">
+                <style>
+                    input[type="checkbox"].form-check-input {
+                        width: 1.25rem;
+                        height: 1.25rem;
+                        cursor: pointer;
+                        accent-color: var(--dash-accent);
+                    }
+                </style>
+                <div style="padding-top: 0.2rem;">
+                    {{ form.autorise_utilisation_video_promo }}
+                </div>
+                <label for="{{ form.autorise_utilisation_video_promo.id_for_label }}" style="font-size: 0.95rem; color: #334155; cursor: pointer; line-height: 1.5; margin: 0; font-weight: 500;" onclick="event.stopPropagation();">
+                    J'autorise Prof Chez Vous à utiliser des extraits de cette vidéo de présentation à des fins promotionnelles (réseaux sociaux, publicités) pour mettre en valeur mon profil et la plateforme.
+                </label>
+            </div>
+
             <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
                 <button type="submit" class="btn-dash btn-dash-primary btn-disabled" disabled style="flex: 2; height: 56px; font-size: 1.1rem; border-radius: 16px;">
                     Enregistrer (Bientôt disponible)
