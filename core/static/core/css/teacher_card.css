@@ -350,24 +350,36 @@
     width: 100%;
     margin-top: 0.35rem;
 }
-.subtle-link {
-    font-size: 0.85rem;
-    font-weight: 800; /* Bolder text to attract the eye */
-    color: var(--primary, #16a34a); /* Green color */
+.action-circle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary, #16a34a);
+    color: white;
     display: flex;
     align-items: center;
-    gap: 4px;
-    transition: opacity 0.2s;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
 }
-.teacher-card.premium-card:hover .subtle-link {
-    opacity: 0.8;
+.teacher-card.premium-card:hover .action-circle-btn {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.5);
 }
-.subtle-link svg {
-    transition: transform 0.2s;
+.action-circle-btn svg {
+    animation: bounceRightCircle 1.2s infinite ease-in-out;
 }
-.teacher-card.premium-card:hover .subtle-link svg {
-    transform: translateX(3px);
-}/* --- COMPACT CARD (Recommendations) --- */
+@keyframes bounceRightCircle {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
+}
+/* --- COMPACT CARD (Recommendations) --- */
 .teacher-card-compact {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);

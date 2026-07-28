@@ -239,23 +239,34 @@
         justify-content: space-between;
         align-items: center;
     }
-    .subtle-link {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #2563eb;
+    .action-circle-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary, #16a34a);
+        color: white;
         display: flex;
         align-items: center;
-        gap: 4px;
-        transition: opacity 0.2s;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+        transition: transform 0.2s, box-shadow 0.2s;
+        flex-shrink: 0;
     }
-    .teacher-card:hover .subtle-link {
-        opacity: 0.8;
+    .teacher-card:hover .action-circle-btn {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(22, 163, 74, 0.5);
     }
-    .subtle-link svg {
-        transition: transform 0.2s;
+    .action-circle-btn svg {
+        animation: bounceRightCircle 1.2s infinite ease-in-out;
     }
-    .teacher-card:hover .subtle-link svg {
-        transform: translateX(3px);
+    @keyframes bounceRightCircle {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        50% {
+            transform: translateX(4px);
+        }
     }
 
     /* Option B: Prominent Button */
@@ -333,10 +344,9 @@
                             <span class="price-currency">F/h</span>
                         </div>
                         
-                        <!-- CTA Subtil -->
-                        <div class="subtle-link">
-                            Découvrir
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Action Arrow Vibrant Circle -->
+                        <div class="action-circle-btn arrow-action" role="button" tabindex="0" aria-label="Découvrir le profil complet" title="Découvrir le profil complet">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
                         </div>
