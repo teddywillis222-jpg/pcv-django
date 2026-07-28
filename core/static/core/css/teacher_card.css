@@ -351,8 +351,8 @@
     margin-top: 0.35rem;
 }
 .action-circle-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background-color: var(--primary, #16a34a);
     color: white;
