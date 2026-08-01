@@ -389,6 +389,39 @@
             <h1>Devenez professeur partenaire vérifié sur Prof Chez Vous.</h1>
             <p>Développez votre activité de cours particuliers grâce à un profil professionnel, des outils modernes et une visibilité auprès des parents et apprenants.</p>
             
+            <div class="join-counter" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 1.5rem auto 2.5rem; background: white; padding: 0.5rem 1rem 0.5rem 0.5rem; border-radius: 9999px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); width: fit-content; border: 1px solid rgba(22, 163, 74, 0.15);">
+                <div class="avatars" style="display: flex; align-items: center;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; border: 2px solid white; z-index: 3; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">JD</div>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #f59e0b; border: 2px solid white; margin-left: -12px; z-index: 2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">AM</div>
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; border: 2px solid white; margin-left: -12px; z-index: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">KL</div>
+                </div>
+                <div style="color: var(--text-main); font-size: 0.95rem; font-weight: 600;">
+                    <span style="color: var(--primary); font-weight: 800; font-size: 1.05rem;">+<span id="fakeCounter">0</span></span> profs nous font confiance
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Random number between 120 and 150
+                    const targetNum = Math.floor(Math.random() * 30) + 120;
+                    const counterEl = document.getElementById('fakeCounter');
+                    
+                    let current = 0;
+                    const duration = 1500; // 1.5 seconds animation
+                    const steps = 30;
+                    const increment = targetNum / steps;
+                    const stepTime = duration / steps;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetNum) {
+                            current = targetNum;
+                            clearInterval(timer);
+                        }
+                        counterEl.textContent = Math.floor(current);
+                    }, stepTime);
+                });
+            </script>
             <div style="text-align: left; max-width: 350px; margin: 0 auto 2rem; color: var(--text-main); font-weight: 600; font-size: 1.05rem;">
                 <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;"><span style="color: white; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;">✓</span> Inscription gratuite</div>
                 <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;"><span style="color: white; background: var(--primary); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;">✓</span> Profil modifiable à tout moment</div>
