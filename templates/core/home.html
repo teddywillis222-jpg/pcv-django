@@ -497,18 +497,31 @@ p {
 <!-- HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
+        <div style="display: inline-block; background: rgba(22, 163, 74, 0.1); color: var(--brand-success-dark); padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 700; font-size: 0.9rem; margin-bottom: 1.5rem; border: 1px solid rgba(22, 163, 74, 0.2);">
+            ⚡ Trouvez un professeur particulier en moins de deux minutes
+        </div>
         <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
         <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
         
         <div class="search-box">
             <form action="{% url 'recherche' %}" method="GET" class="search-form">
-                <div class="search-input-group">
-                    <select name="matiere" class="pcv-multi-select" placeholder="Quelle matière ?" data-allow-create="false">
-                        <option value="">Quelle matière ?</option>
-                        {% for val, label in MATIERE_CHOICES %}
-                        <option value="{{ val }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="search-input-group" style="display: flex; gap: 0.5rem;">
+                    <div style="flex: 1; min-width: 0;">
+                        <select name="classe" class="pcv-multi-select" placeholder="Classe ?" data-allow-create="false">
+                            <option value="">Classe ?</option>
+                            {% for val, label in CLASS_LEVEL_CHOICES %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <select name="matiere" class="pcv-multi-select" placeholder="Matière ?" data-allow-create="false">
+                            <option value="">Matière ?</option>
+                            {% for val, label in MATIERE_CHOICES %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="search-input-group">
@@ -529,37 +542,6 @@ p {
                 </button>
             </form>
         </div>
-    </div>
-</section>
-
-<!-- RECHERCHES POPULAIRES (CHIPS) -->
-<section class="section-mobile bg-white">
-    <div class="section-mobile-header">
-        <h2>Recherches rapides</h2>
-    </div>
-    
-    <div class="chips-container">
-        <!-- Classes -->
-        <a href="{% url 'recherche' %}?classe=Tle Littéraire" class="chip">🎓 Tle Littéraire</a>
-        <a href="{% url 'recherche' %}?classe=Tle Scientifique" class="chip">🎓 Tle Scientifique</a>
-        <a href="{% url 'recherche' %}?classe=1ère Littéraire" class="chip">🎓 1ère Littéraire</a>
-        <a href="{% url 'recherche' %}?classe=3ème" class="chip">📚 3ème</a>
-        <a href="{% url 'recherche' %}?classe=4ème" class="chip">📚 4ème</a>
-        <a href="{% url 'recherche' %}?classe=CM2" class="chip">🎒 CM2</a>
-
-        <!-- Matières -->
-        <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
-        <a href="{% url 'recherche' %}?matiere=Physique-Chimie" class="chip">🔬 Physique-Chimie</a>
-        <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
-        <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
-        <a href="{% url 'recherche' %}?matiere=SVT" class="chip">🧬 SVT</a>
-        <a href="{% url 'recherche' %}?matiere=Philosophie" class="chip">🧠 Philosophie</a>
-        <a href="{% url 'recherche' %}?matiere=Histoire-Géographie" class="chip">🌍 Histoire-Géo</a>
-        
-        <!-- Localisations -->
-        <a href="{% url 'recherche' %}?localisation=Cotonou" class="chip">📍 Cotonou</a>
-        <a href="{% url 'recherche' %}?localisation=Abomey-Calavi" class="chip">📍 Calavi</a>
-        <a href="{% url 'recherche' %}?localisation=Porto-Novo" class="chip">📍 Porto-Novo</a>
     </div>
 </section>
 
@@ -633,6 +615,37 @@ p {
             {% endfor %}
         </div>
         <button class="scroll-arrow right" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: 320, behavior: 'smooth'})">❯</button>
+    </div>
+</section>
+
+<!-- RECHERCHES POPULAIRES (CHIPS) -->
+<section class="section-mobile bg-white">
+    <div class="section-mobile-header">
+        <h2>Recherches rapides</h2>
+    </div>
+    
+    <div class="chips-container">
+        <!-- Classes -->
+        <a href="{% url 'recherche' %}?classe=Tle Littéraire" class="chip">🎓 Tle Littéraire</a>
+        <a href="{% url 'recherche' %}?classe=Tle Scientifique" class="chip">🎓 Tle Scientifique</a>
+        <a href="{% url 'recherche' %}?classe=1ère Littéraire" class="chip">🎓 1ère Littéraire</a>
+        <a href="{% url 'recherche' %}?classe=3ème" class="chip">📚 3ème</a>
+        <a href="{% url 'recherche' %}?classe=4ème" class="chip">📚 4ème</a>
+        <a href="{% url 'recherche' %}?classe=CM2" class="chip">🎒 CM2</a>
+
+        <!-- Matières -->
+        <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
+        <a href="{% url 'recherche' %}?matiere=Physique-Chimie" class="chip">🔬 Physique-Chimie</a>
+        <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
+        <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
+        <a href="{% url 'recherche' %}?matiere=SVT" class="chip">🧬 SVT</a>
+        <a href="{% url 'recherche' %}?matiere=Philosophie" class="chip">🧠 Philosophie</a>
+        <a href="{% url 'recherche' %}?matiere=Histoire-Géographie" class="chip">🌍 Histoire-Géo</a>
+        
+        <!-- Localisations -->
+        <a href="{% url 'recherche' %}?localisation=Cotonou" class="chip">📍 Cotonou</a>
+        <a href="{% url 'recherche' %}?localisation=Abomey-Calavi" class="chip">📍 Calavi</a>
+        <a href="{% url 'recherche' %}?localisation=Porto-Novo" class="chip">📍 Porto-Novo</a>
     </div>
 </section>
 
