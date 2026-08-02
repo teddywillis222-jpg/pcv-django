@@ -258,19 +258,31 @@
         </div>
 
         {% if ambassador_stats %}
-        <div id="section-ambassadeur" class="dash-section" style="display:none; padding: 1.5rem;">
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 2rem; margin-bottom: 2rem;">
+        <style>
+            #section-ambassadeur { padding: 1.5rem; }
+            .ambassador-card { padding: 2rem; }
+            .referral-link-container { padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+            .referral-link-text { font-size: 1.25rem; word-break: break-all; }
+            @media (max-width: 640px) {
+                #section-ambassadeur { padding: 0.5rem; }
+                .ambassador-card { padding: 1rem; margin-bottom: 1rem; }
+                .referral-link-container { padding: 1rem; flex-direction: column; align-items: stretch; text-align: center; gap: 1rem; }
+                .referral-link-text { font-size: 1rem; }
+            }
+        </style>
+        <div id="section-ambassadeur" class="dash-section" style="display:none;">
+            <div class="ambassador-card" style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
                 <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem;">Programme Ambassadeur</h2>
                 <p style="color: #64748b; margin-bottom: 2rem;">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
                 
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <div class="referral-link-container" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 2rem;">
                     <div>
                         <div style="font-size: 0.875rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Votre lien personnel</div>
-                        <div style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #2563eb;" id="referral-link">
+                        <div class="referral-link-text" style="font-family: monospace; font-weight: 700; color: #2563eb;" id="referral-link">
                             https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/
                         </div>
                     </div>
-                    <button onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText).then(() => alert('Lien copié !'))" style="background: #2563eb; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer;">
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText).then(() => alert('Lien copié !'))" style="background: #2563eb; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; white-space: nowrap;">
                         Copier le lien
                     </button>
                 </div>
