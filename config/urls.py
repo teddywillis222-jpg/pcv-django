@@ -150,6 +150,10 @@ urlpatterns = [
     path("debug-admin-pcv/api/ressources/action/", core_views.admin_api_ressources_action, name="admin_api_ressources_action"),
     path("debug-admin-pcv/api/faqs/action/", core_views.admin_api_faqs_action, name="admin_api_faqs_action"),
     
+    # API pour l'admin custom (Programme Ambassadeur)
+    path("debug-admin-pcv/api/ambassadeurs/", core_views.admin_api_ambassadeurs, name="admin_api_ambassadeurs"),
+    path("debug-admin-pcv/api/ambassadeurs/action/", core_views.admin_api_ambassadeurs_action, name="admin_api_ambassadeurs_action"),
+    
     # Temps Réel et Popup
     path("api/ping/", core_views.api_ping, name="api_ping"),
     path("api/mark-welcome-seen/", core_views.api_mark_welcome_seen, name="api_mark_welcome_seen"),

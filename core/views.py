@@ -4050,3 +4050,80 @@ def test_ui_cards(request):
     teacher = TeacherProfile.objects.first()
     return render(request, "core/test_ui_cards.html", {"teacher": teacher})
 
+
+
+# --- ADMIN API: AMBASSADEURS ---
+from django.db.models import Sum
+
+@login_required
+def admin_api_ambassadeurs(request):
+    "Retourne la liste des recommandations et des paiements en attente."
+    if not request.user.is_superuser:
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    try:
+        from referrals.models import Referral, Reward, Ambassador
+    except ImportError:
+        return HttpResponse("<div>L'application referrals n'est pas installée.</div>")
+        
+    # Stats globales
+    total_paid = Reward.objects.filter(status='PAID').aggregate(total=Sum('amount'))['total'] or 0
+    total_pending = Reward.objects.filter(status='PENDING').aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Recommandations nécessitant une action (Paiement)
+    pending_rewards = Referral.objects.filter(status='REWARD_PENDING').order_by('-created_at')
+    
+    # Autres recommandations récentes
+    recent_referrals = Referral.objects.exclude(status='REWARD_PENDING').order_by('-created_at')[:20]
+    
+    context = {
+        'total_paid': total_paid,
+        'total_pending': total_pending,
+        'pending_rewards': pending_rewards,
+        'recent_referrals': recent_referrals,
+    }
+    return render(request, "core/admin_dashboard/partials/ambassadeurs.html", context)
+
+@login_required
+def admin_api_ambassadeurs_action(request):
+    "Action sur les ambassadeurs (payer une récompense, annuler, etc.)."
+    if not request.user.is_superuser or request.method != 'POST':
+        return JsonResponse({'error': 'Non autorisé'}, status=403)
+        
+    action = request.POST.get('action')
+    referral_id = request.POST.get('referral_id')
+    
+    try:
+        from referrals.models import Referral
+        referral = Referral.objects.get(id=referral_id)
+        
+        if action == 'mark_paid':
+            if referral.status == 'REWARD_PENDING' and hasattr(referral, 'reward'):
+                referral.status = 'REWARD_PAID'
+                referral.reward_paid_at = timezone.now()
+                referral.save()
+                
+                reward = referral.reward
+                reward.status = 'PAID'
+                reward.payment_date = timezone.now()
+                reward.admin = request.user
+                reward.save()
+                
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'error': 'État invalide pour paiement.'}, status=400)
+                
+        elif action == 'cancel_referral':
+            # Annuler ou refuser une recommandation
+            referral.status = 'REJECTED'
+            referral.save()
+            if hasattr(referral, 'reward') and referral.reward.status == 'PENDING':
+                referral.reward.status = 'CANCELLED'
+                referral.reward.save()
+            return JsonResponse({'success': True})
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+        
+    return JsonResponse({'error': 'Action inconnue.'}, status=400)
+

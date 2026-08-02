@@ -1,0 +1,131 @@
+<div class="header-section">
+    <h2>Gestion du Programme Ambassadeur</h2>
+    <p style="color: var(--text-muted); margin-top: 0.5rem;">Validation et suivi des récompenses de parrainage.</p>
+</div>
+
+<div class="grid grid-cols-2 gap-6" style="margin-bottom: 2rem;">
+    <div class="card">
+        <h3 style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Total Récompenses Payées</h3>
+        <p style="font-size: 1.5rem; font-weight: 700; color: var(--primary-green);">{{ total_paid }} FCFA</p>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--danger-color);">
+        <h3 style="color: var(--text-muted); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Récompenses en Attente</h3>
+        <p style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">{{ total_pending }} FCFA</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Paiements en Attente d'Action</h3>
+    
+    {% if pending_rewards %}
+    <div style="overflow-x: auto;">
+        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Date de création</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Ambassadeur (Parrain)</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Professeur Recommandé</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Montant</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ref in pending_rewards %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem;">{{ ref.created_at|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 1rem;">
+                        <strong>{{ ref.referrer.first_name }} {{ ref.referrer.last_name }}</strong><br>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ ref.referrer.email }}</span>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <strong>{{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}</strong><br>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ ref.referred_teacher.email }}</span>
+                    </td>
+                    <td style="padding: 1rem; font-weight: bold;">
+                        {% if ref.reward %}
+                            {{ ref.reward.amount }} FCFA
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <button class="btn btn-primary" onclick="markRewardPaid({{ ref.id }})">Marquer comme Payé</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+        <p>Aucune récompense en attente de paiement.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Autres Recommandations (Récentes)</h3>
+    {% if recent_referrals %}
+    <div style="overflow-x: auto;">
+        <table class="data-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Date</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Parrain</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Filleul</th>
+                    <th style="padding: 0.75rem 1rem; color: var(--text-muted);">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ref in recent_referrals %}
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem;">{{ ref.created_at|date:"d/m/Y" }}</td>
+                    <td style="padding: 1rem;">{{ ref.referrer.first_name }} {{ ref.referrer.last_name }}</td>
+                    <td style="padding: 1rem;">
+                        {% if ref.referred_teacher %}
+                            {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
+                        {% else %}
+                            <i>Enregistrement incomplet</i>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span style="padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; background-color: #f3f4f6;">
+                            {{ ref.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted);">Aucune recommandation récente.</p>
+    {% endif %}
+</div>
+
+<script>
+function markRewardPaid(referralId) {
+    if (!confirm("Avez-vous bien transféré la prime à l'ambassadeur ? Cette action est irréversible.")) return;
+
+    fetch("{% url 'admin_api_ambassadeurs_action' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: `action=mark_paid&referral_id=${referralId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast("Récompense marquée comme payée.", "success");
+            loadSection("ambassadeurs"); // Recharger la section pour mettre à jour la liste
+        } else {
+            showToast("Erreur: " + data.error, "error");
+        }
+    })
+    .catch(error => {
+        showToast("Erreur lors de l'opération.", "error");
+    });
+}
+</script>
