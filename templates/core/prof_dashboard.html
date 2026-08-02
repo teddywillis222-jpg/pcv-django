@@ -259,86 +259,104 @@
 
         {% if ambassador_stats %}
         <style>
-            #section-ambassadeur { padding: 1.5rem; }
-            .ambassador-card { padding: 2rem; }
-            .referral-link-container { padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-            .referral-link-text { font-size: 1.25rem; word-break: break-all; }
+            #section-ambassadeur .amb-title { font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0 0 0.25rem 0; }
+            #section-ambassadeur .amb-desc { color: var(--dash-text-muted); font-size: 0.9rem; margin: 0 0 1.25rem 0; }
+            #section-ambassadeur .amb-link-box { background: #f8fafc; border: 1px solid var(--dash-border); border-radius: 12px; padding: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem; }
+            #section-ambassadeur .amb-link-label { font-size: 0.75rem; font-weight: 700; color: var(--dash-text-muted); text-transform: uppercase; margin-bottom: 0.35rem; }
+            #section-ambassadeur .amb-link-url { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #2563eb; word-break: break-all; }
+            #section-ambassadeur .amb-copy-btn { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+            #section-ambassadeur .amb-copy-btn:hover { background: #1d4ed8; }
+            #section-ambassadeur .amb-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+            #section-ambassadeur .amb-stat { background: white; border: 1px solid var(--dash-border); border-radius: 12px; padding: 1rem; }
+            #section-ambassadeur .amb-stat-val { font-size: 1.75rem; font-weight: 800; color: var(--dash-text); }
+            #section-ambassadeur .amb-stat-label { font-size: 0.8rem; color: var(--dash-text-muted); font-weight: 500; }
+            #section-ambassadeur .amb-rewards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem; }
+            #section-ambassadeur .amb-reward { border-radius: 12px; padding: 1rem; }
+            #section-ambassadeur .amb-reward-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+            #section-ambassadeur .amb-reward-val { font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem; }
+            #section-ambassadeur .amb-table-wrap { background: white; border: 1px solid var(--dash-border); border-radius: 12px; overflow: hidden; }
+            #section-ambassadeur .amb-table-title { font-size: 1rem; font-weight: 700; color: var(--dash-text); padding: 1rem; border-bottom: 1px solid var(--dash-border); margin: 0; }
+            #section-ambassadeur .amb-table { width: 100%; text-align: left; border-collapse: collapse; }
+            #section-ambassadeur .amb-table th { padding: 0.75rem 1rem; color: var(--dash-text-muted); font-weight: 600; font-size: 0.8rem; }
+            #section-ambassadeur .amb-table td { padding: 0.75rem 1rem; color: #334155; font-size: 0.875rem; border-top: 1px solid #f1f5f9; }
             @media (max-width: 640px) {
-                #section-ambassadeur { padding: 0.5rem; }
-                .ambassador-card { padding: 1rem; margin-bottom: 1rem; }
-                .referral-link-container { padding: 1rem; flex-direction: column; align-items: stretch; text-align: center; gap: 1rem; }
-                .referral-link-text { font-size: 1rem; }
+                #section-ambassadeur .amb-link-box { flex-direction: column; align-items: stretch; text-align: center; }
+                #section-ambassadeur .amb-copy-btn { width: 100%; }
+                #section-ambassadeur .amb-stats-grid { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+                #section-ambassadeur .amb-stat { padding: 0.75rem 0.5rem; text-align: center; }
+                #section-ambassadeur .amb-stat-val { font-size: 1.4rem; }
+                #section-ambassadeur .amb-stat-label { font-size: 0.7rem; }
+                #section-ambassadeur .amb-rewards-grid { gap: 0.5rem; }
+                #section-ambassadeur .amb-reward { padding: 0.75rem; }
+                #section-ambassadeur .amb-reward-val { font-size: 1.2rem; }
+                #section-ambassadeur .amb-table th, #section-ambassadeur .amb-table td { padding: 0.6rem 0.5rem; font-size: 0.75rem; }
             }
         </style>
         <div id="section-ambassadeur" class="dash-section" style="display:none;">
-            <div class="ambassador-card" style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem;">Programme Ambassadeur</h2>
-                <p style="color: #64748b; margin-bottom: 2rem;">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
-                
-                <div class="referral-link-container" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; margin-bottom: 2rem;">
-                    <div>
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Votre lien personnel</div>
-                        <div class="referral-link-text" style="font-family: monospace; font-weight: 700; color: #2563eb;" id="referral-link">
-                            https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/
-                        </div>
-                    </div>
-                    <button onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText).then(() => alert('Lien copié !'))" style="background: #2563eb; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; white-space: nowrap;">
-                        Copier le lien
-                    </button>
+            <h2 class="amb-title">Programme Ambassadeur</h2>
+            <p class="amb-desc">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
+            
+            <div class="amb-link-box">
+                <div>
+                    <div class="amb-link-label">Votre lien personnel</div>
+                    <div class="amb-link-url" id="referral-link">https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/</div>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
-                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.visits_count }}</div>
-                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Visites du lien</div>
-                    </div>
-                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
-                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.accounts_count }}</div>
-                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Comptes créés</div>
-                    </div>
-                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
-                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.verified_count }}</div>
-                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Profs vérifiés</div>
-                    </div>
+                <button class="amb-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText.trim()).then(() => alert('Lien copié !'))">
+                    Copier le lien
+                </button>
+            </div>
+            
+            <div class="amb-stats-grid">
+                <div class="amb-stat">
+                    <div class="amb-stat-val">{{ ambassador_stats.visits_count }}</div>
+                    <div class="amb-stat-label">Visites du lien</div>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
-                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.5rem;">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #166534; text-transform: uppercase;">Récompenses payées</div>
-                        <div style="font-size: 2rem; font-weight: 800; color: #15803d; margin-top: 0.5rem;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
-                    </div>
-                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 1.5rem;">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #1e40af; text-transform: uppercase;">Récompenses en attente</div>
-                        <div style="font-size: 2rem; font-weight: 800; color: #1d4ed8; margin-top: 0.5rem;">{{ ambassador_stats.total_pending_amount }} FCFA</div>
-                    </div>
+                <div class="amb-stat">
+                    <div class="amb-stat-val">{{ ambassador_stats.accounts_count }}</div>
+                    <div class="amb-stat-label">Comptes créés</div>
+                </div>
+                <div class="amb-stat">
+                    <div class="amb-stat-val">{{ ambassador_stats.verified_count }}</div>
+                    <div class="amb-stat-label">Profs vérifiés</div>
                 </div>
             </div>
             
+            <div class="amb-rewards-grid">
+                <div class="amb-reward" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="amb-reward-label" style="color: #166534;">Récompenses payées</div>
+                    <div class="amb-reward-val" style="color: #15803d;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
+                </div>
+                <div class="amb-reward" style="background: #eff6ff; border: 1px solid #bfdbfe;">
+                    <div class="amb-reward-label" style="color: #1e40af;">En attente</div>
+                    <div class="amb-reward-val" style="color: #1d4ed8;">{{ ambassador_stats.total_pending_amount }} FCFA</div>
+                </div>
+            </div>
+
             {% if ambassador_stats.referrals %}
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 2rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem;">Dernières recommandations</h3>
+            <div class="amb-table-wrap">
+                <h3 class="amb-table-title">Dernières recommandations</h3>
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <table class="amb-table">
                         <thead>
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Date</th>
-                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Professeur</th>
-                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Statut</th>
+                            <tr style="border-bottom: 1px solid var(--dash-border);">
+                                <th>Date</th>
+                                <th>Professeur</th>
+                                <th>Statut</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for ref in ambassador_stats.referrals %}
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 1rem 0; color: #334155;">{{ ref.created_at|date:"d M Y" }}</td>
-                                <td style="padding: 1rem 0; font-weight: 500; color: #0f172a;">
+                            <tr>
+                                <td>{{ ref.created_at|date:"d M Y" }}</td>
+                                <td style="font-weight: 500; color: #0f172a;">
                                     {% if ref.referred_teacher %}
                                         {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
                                     {% else %}
                                         Compte en création
                                     {% endif %}
                                 </td>
-                                <td style="padding: 1rem 0;">
-                                    <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
+                                <td>
+                                    <span style="padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; 
                                         {% if ref.status == 'VERIFIED' or ref.status == 'REWARD_PENDING' or ref.status == 'REWARD_PAID' %}background: #dcfce7; color: #166534;
                                         {% elif ref.status == 'REJECTED' %}background: #fee2e2; color: #991b1b;
                                         {% else %}background: #f1f5f9; color: #475569;{% endif %}">
