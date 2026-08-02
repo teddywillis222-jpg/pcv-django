@@ -25,6 +25,10 @@
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     {% endblock %}
     
+    <!-- SEO: URL canonique pour éviter le contenu dupliqué avec les paramètres de filtres (ex: ?ville=) -->
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+
+    
     <!-- Google Fonts - Raleway -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

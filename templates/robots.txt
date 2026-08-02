@@ -12,6 +12,7 @@ Disallow: /messagerie/
 Disallow: /api/
 Disallow: /paiement/
 Disallow: /accounts/
+Disallow: /recherche/?*
 
 # Autoriser les agents IA légitimes sur l'ensemble du contenu public
 User-agent: GPTBot
