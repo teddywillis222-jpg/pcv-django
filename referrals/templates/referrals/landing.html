@@ -16,7 +16,7 @@
     .landing-hero {
         position: relative;
         padding: 7rem 1.5rem 5rem;
-        background: linear-gradient(160deg, #eff6ff 0%, #ffffff 60%, #f0fdf4 100%);
+        background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 60%, #dcfce7 100%);
         text-align: center;
         overflow: hidden;
     }
@@ -28,7 +28,7 @@
         width: 360px;
         height: 360px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(22,163,74,0.08) 0%, transparent 70%);
         pointer-events: none;
     }
     .landing-hero .badge-invite {
@@ -37,8 +37,8 @@
         gap: 0.5rem;
         padding: 0.5rem 1.25rem;
         border-radius: 999px;
-        background: #dbeafe;
-        color: #1d4ed8;
+        background: #dcfce7;
+        color: #15803d;
         font-weight: 700;
         font-size: 0.85rem;
         margin-bottom: 1.5rem;
@@ -51,7 +51,7 @@
         color: #0f172a;
     }
     .landing-hero h1 span {
-        color: #2563eb;
+        color: #16a34a;
     }
     .landing-hero .hero-desc {
         font-size: 1.1rem;
@@ -64,18 +64,18 @@
         align-items: center;
         gap: 0.5rem;
         padding: 1rem 2.5rem;
-        background: #2563eb;
+        background: #16a34a;
         color: #fff;
         border-radius: 1rem;
         font-weight: 700;
         font-size: 1.1rem;
         text-decoration: none;
-        box-shadow: 0 8px 24px rgba(37,99,235,0.25);
+        box-shadow: 0 8px 24px rgba(22,163,74,0.25);
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .landing-hero .hero-cta:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(37,99,235,0.35);
+        box-shadow: 0 12px 32px rgba(22,163,74,0.35);
     }
     .landing-hero .hero-cta svg {
         width: 18px;
@@ -91,10 +91,14 @@
         margin: 0 auto;
         padding: 0 1rem;
     }
+    .landing-container-full {
+        max-width: 960px;
+        margin: 0 auto;
+    }
 
     /* ---------- Section Commune ---------- */
     .landing-section {
-        padding: 4rem 1.5rem;
+        padding: 4rem 0; /* Padding left/right handled by containers */
     }
     .landing-section.bg-light {
         background: #f8fafc;
@@ -106,8 +110,8 @@
         background: #0f172a;
         color: #fff;
     }
-    .landing-section.bg-blue {
-        background: #2563eb;
+    .landing-section.bg-green {
+        background: #16a34a;
         color: #fff;
     }
     .landing-section-title {
@@ -115,16 +119,46 @@
         font-weight: 800;
         text-align: center;
         margin-bottom: 0.75rem;
+        padding: 0 1rem;
     }
     .landing-section-subtitle {
         text-align: center;
         color: #64748b;
-        margin-bottom: 3rem;
+        margin-bottom: 2.5rem;
         font-size: 1rem;
+        padding: 0 1rem;
     }
     .landing-section.bg-dark .landing-section-subtitle,
-    .landing-section.bg-blue .landing-section-subtitle {
+    .landing-section.bg-green .landing-section-subtitle {
         color: rgba(255,255,255,0.7);
+    }
+
+    /* ---------- Horizontal Swipe (Mobile) ---------- */
+    .swipe-container {
+        display: grid;
+    }
+    @media (max-width: 640px) {
+        .swipe-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 1.5rem;
+            padding-left: 1rem;
+            padding-right: 1.5rem;
+            gap: 1rem;
+            scroll-behavior: smooth;
+        }
+        .swipe-container::-webkit-scrollbar {
+            display: none;
+        }
+        .swipe-item {
+            scroll-snap-align: center;
+            flex-shrink: 0;
+            width: 85vw; /* Each card takes up 85% of screen width */
+            max-width: 320px;
+        }
     }
 
     /* ---------- Section 2 – Pourquoi ---------- */
@@ -142,8 +176,8 @@
         width: 56px;
         height: 56px;
         border-radius: 1rem;
-        background: #dbeafe;
-        color: #2563eb;
+        background: #dcfce7;
+        color: #16a34a;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -173,14 +207,21 @@
 
     /* ---------- Section 3 – Comment ça marche ---------- */
     .steps-grid {
-        display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 2rem;
-        max-width: 960px;
-        margin: 0 auto;
     }
     .step-item {
         text-align: center;
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid transparent;
+    }
+    @media (max-width: 640px) {
+        .step-item {
+            border-color: #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
     }
     .step-icon {
         width: 72px;
@@ -196,13 +237,13 @@
     .step-icon svg {
         width: 32px;
         height: 32px;
-        stroke: #2563eb;
+        stroke: #16a34a;
         stroke-width: 2;
         fill: none;
         transition: stroke 0.3s;
     }
     .step-item:hover .step-icon {
-        background: #2563eb;
+        background: #16a34a;
     }
     .step-item:hover .step-icon svg {
         stroke: #fff;
@@ -220,24 +261,22 @@
 
     /* ---------- Section 4 – Avantages ---------- */
     .advantages-grid {
-        display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 1.5rem;
-        max-width: 960px;
-        margin: 0 auto;
     }
     .advantage-card {
         background: rgba(255,255,255,0.06);
         border: 1px solid rgba(255,255,255,0.12);
         border-radius: 1.25rem;
         padding: 1.5rem;
+        height: 100%; /* For uniform height in carousel */
     }
     .advantage-card .adv-icon {
         width: 44px;
         height: 44px;
         border-radius: 0.75rem;
-        background: rgba(59,130,246,0.15);
-        color: #60a5fa;
+        background: rgba(22,163,74,0.15);
+        color: #34d399;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -265,13 +304,19 @@
         align-items: flex-start;
         gap: 1rem;
     }
+    @media (max-width: 640px) {
+        .advantage-card.highlight {
+            flex-direction: column;
+            grid-column: auto;
+        }
+    }
     .advantage-card.highlight .adv-icon {
-        background: rgba(16,185,129,0.15);
-        color: #34d399;
+        background: rgba(52,211,153,0.15);
+        color: #6ee7b7;
         flex-shrink: 0;
     }
     .advantage-card.highlight h3 {
-        color: #34d399;
+        color: #6ee7b7;
     }
     .advantage-card.highlight p {
         color: rgba(255,255,255,0.75);
@@ -281,14 +326,16 @@
     .process-flow {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         max-width: 720px;
         margin: 0 auto;
+        padding: 0 1rem;
     }
     @media (min-width: 640px) {
         .process-flow {
             flex-direction: row;
             gap: 2rem;
+            padding: 0;
         }
     }
     .process-step {
@@ -311,10 +358,6 @@
         font-size: 1.1rem;
         margin: 0 auto 1rem;
     }
-    .process-step .step-num.blue {
-        background: #dbeafe;
-        color: #2563eb;
-    }
     .process-step .step-num.green {
         background: #dcfce7;
         color: #16a34a;
@@ -336,6 +379,7 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        padding: 0 1rem;
     }
     .faq-item {
         background: #f8fafc;
@@ -416,7 +460,7 @@
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: #1d4ed8;
+        background: #15803d;
         border: 2px solid #fff;
         display: flex;
         align-items: center;
@@ -449,7 +493,7 @@
         gap: 0.5rem;
         padding: 1.25rem 3rem;
         background: #fff;
-        color: #2563eb;
+        color: #16a34a;
         border-radius: 1rem;
         font-weight: 800;
         font-size: 1.15rem;
@@ -477,28 +521,20 @@
     /* ---------- Mobile Refinements ---------- */
     @media (max-width: 640px) {
         .landing-hero {
-            padding: 5rem 1rem 3rem;
+            padding: 4rem 1rem 3rem;
         }
         .landing-section {
-            padding: 3rem 1rem;
+            padding: 2.5rem 0; /* No side padding, containers handle it */
         }
         .why-card {
-            padding: 1.75rem 1.25rem;
-        }
-        .steps-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-        }
-        .advantages-grid {
-            grid-template-columns: 1fr;
-        }
-        .advantage-card.highlight {
-            flex-direction: column;
+            padding: 1.5rem 1.25rem;
+            margin: 0 1rem;
         }
         .referrer-card {
             padding: 1.25rem;
         }
     }
+</style>
 </style>
 {% endblock %}
 
@@ -543,9 +579,9 @@
             <h2 class="landing-section-title">Comment ça marche ?</h2>
             <p class="landing-section-subtitle">Rejoindre notre communauté se fait en quelques étapes simples.</p>
             
-            <div class="steps-grid">
+            <div class="steps-grid swipe-container">
                 <!-- Étape 1 -->
-                <div class="step-item">
+                <div class="step-item swipe-item">
                     <div class="step-icon">
                         <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
                     </div>
@@ -553,7 +589,7 @@
                     <p>Créez votre compte en quelques clics via le lien sécurisé.</p>
                 </div>
                 <!-- Étape 2 -->
-                <div class="step-item">
+                <div class="step-item swipe-item">
                     <div class="step-icon">
                         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                     </div>
@@ -561,17 +597,17 @@
                     <p>Nous vérifions vos compétences et vos documents (CNI, diplômes).</p>
                 </div>
                 <!-- Étape 3 -->
-                <div class="step-item">
+                <div class="step-item swipe-item">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                     </div>
-                    <h3>3. Mise en ligne</h3>
-                    <p>Votre profil devient visible pour des centaines de parents.</p>
+                    <h3>3. Profil en ligne</h3>
+                    <p>Votre profil est validé et mis en avant auprès des parents.</p>
                 </div>
                 <!-- Étape 4 -->
-                <div class="step-item">
+                <div class="step-item swipe-item">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </div>
                     <h3>4. Réception des demandes</h3>
                     <p>Les parents intéressés vous contactent directement via la plateforme.</p>
@@ -586,8 +622,8 @@
             <h2 class="landing-section-title">Les avantages d'un profil vérifié</h2>
             <p class="landing-section-subtitle">&nbsp;</p>
             
-            <div class="advantages-grid">
-                <div class="advantage-card">
+            <div class="advantages-grid swipe-container">
+                <div class="advantage-card swipe-item">
                     <div class="adv-icon">
                         <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     </div>
@@ -595,7 +631,7 @@
                     <p>Rassure les parents sur votre identité et vos compétences.</p>
                 </div>
                 
-                <div class="advantage-card">
+                <div class="advantage-card swipe-item">
                     <div class="adv-icon">
                         <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
@@ -603,7 +639,7 @@
                     <p>Votre profil est mis en avant dans les résultats de recherche.</p>
                 </div>
                 
-                <div class="advantage-card">
+                <div class="advantage-card swipe-item">
                     <div class="adv-icon">
                         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
                     </div>
@@ -611,7 +647,7 @@
                     <p>Outils dédiés pour gérer vos engagements et vos élèves.</p>
                 </div>
 
-                <div class="advantage-card">
+                <div class="advantage-card swipe-item">
                     <div class="adv-icon">
                         <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                     </div>
@@ -619,7 +655,7 @@
                     <p>Faites un compte rendu professionnel aux parents après chaque cours.</p>
                 </div>
                 
-                <div class="advantage-card highlight">
+                <div class="advantage-card swipe-item highlight">
                     <div class="adv-icon">
                         <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                     </div>
