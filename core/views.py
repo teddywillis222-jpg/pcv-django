@@ -993,6 +993,30 @@ def prof_dashboard(request):
     if announcement and not announcement.dismissed_by.filter(id=request.user.id).exists():
         context['announcement'] = announcement
 
+    # Statistiques Ambassadeur
+    ambassador_stats = None
+    if teacher.statut_de_validation == 'APPROVED':
+        from referrals.models import Ambassador, Referral, Reward, ReferralProgram
+        ambassador, _ = Ambassador.objects.get_or_create(user=request.user)
+        
+        referrals = Referral.objects.filter(referrer=request.user)
+        rewards_pending = Reward.objects.filter(teacher=request.user, status='PENDING')
+        rewards_paid = Reward.objects.filter(teacher=request.user, status='PAID')
+        
+        ambassador_stats = {
+            'ambassador': ambassador,
+            'visits_count': referrals.filter(status='VISITED').count(),
+            'accounts_count': referrals.filter(status__in=['ACCOUNT_CREATED', 'PROFILE_COMPLETED', 'UNDER_REVIEW', 'VERIFIED', 'REWARD_PENDING', 'REWARD_PAID']).count(),
+            'profiles_completed_count': referrals.filter(status__in=['PROFILE_COMPLETED', 'UNDER_REVIEW', 'VERIFIED', 'REWARD_PENDING', 'REWARD_PAID']).count(),
+            'verified_count': referrals.filter(status__in=['VERIFIED', 'REWARD_PENDING', 'REWARD_PAID']).count(),
+            'total_pending_amount': sum([r.amount for r in rewards_pending]) if rewards_pending else 0,
+            'total_paid_amount': sum([r.amount for r in rewards_paid]) if rewards_paid else 0,
+            'current_reward': ReferralProgram.get_current_amount(),
+            'referrals': referrals.exclude(status='PENDING').order_by('-created_at')[:10],
+            'rewards': Reward.objects.filter(teacher=request.user).order_by('-created_at')[:10]
+        }
+    context['ambassador_stats'] = ambassador_stats
+
     return render(request, "core/prof_dashboard.html", context)
 
 

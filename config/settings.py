@@ -104,6 +104,8 @@ INSTALLED_APPS = [
     'core',
 
     'help_center',
+    
+    'referrals',
 
 ]
 
@@ -477,3 +479,9 @@ LOGGING = {
 # Bascule manuelle pour activer/désactiver l'upload de la vidéo de présentation
 VIDEO_UPLOAD_ENABLED = False
 
+# --- Programme Ambassadeur ---
+# Montant par défaut de la récompense (utilisé comme fallback si aucun ReferralProgram n'existe en BDD)
+REFERRAL_DEFAULT_REWARD_AMOUNT = int(os.getenv('REFERRAL_DEFAULT_REWARD_AMOUNT', '700'))
+
+# Domaine principal du site (pour construire les liens de parrainage)
+SITE_DOMAIN = os.getenv('SITE_DOMAIN', 'profchezvousapp.com')

@@ -1,3 +1,4 @@
+from django.conf import settings
 from .choices import Localisation, Matiere, ClassLevel, CourseMode, SupportCategory, PriceRange
 
 def global_choices(request):
@@ -10,4 +11,5 @@ def global_choices(request):
         'COURSE_MODE_CHOICES': CourseMode.CHOICES,
         'SUPPORT_CATEGORY_CHOICES': SupportCategory.CHOICES,
         'PRICE_RANGE_CHOICES': PriceRange.CHOICES,
+        'SITE_DOMAIN': settings.SITE_DOMAIN,
     }

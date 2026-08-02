@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vous avez été recommandé | Prof Chez Vous{% endblock %}
+
+{% block content %}
+<main class="bg-slate-50 min-h-screen">
+    <!-- Section 1 - Hero -->
+    <section class="relative pt-32 pb-20 overflow-hidden bg-white">
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-transparent"></div>
+        <div class="container mx-auto px-4 relative max-w-4xl text-center">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-medium text-sm mb-6">
+                <i class="fa-solid fa-star"></i> Invitation privée
+            </span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
+                Vous avez été recommandé par un professeur de <span class="text-blue-600">Prof Chez Vous</span>.
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+                Si vous êtes ici, c'est qu'un enseignant déjà membre de Prof Chez Vous estime que votre profil pourrait enrichir notre communauté de professeurs vérifiés.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#cta-final" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 font-semibold text-lg hover:-translate-y-0.5">
+                    Découvrir Prof Chez Vous
+                    <i class="fa-solid fa-arrow-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2 - Pourquoi cette recommandation ? -->
+    <section class="py-20 bg-slate-50">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl shadow-slate-200/50 border border-slate-100 text-center">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-900 mb-6">Pourquoi cette recommandation ?</h2>
+                <div class="space-y-4 text-slate-600 text-lg">
+                    <p>
+                        Ce n'est pas une publicité, c'est une <strong>recommandation personnelle</strong>.
+                    </p>
+                    <p>
+                        Chez Prof Chez Vous, nous privilégions la <strong>qualité des enseignants</strong>. Nos ambassadeurs (les professeurs déjà validés) choisissent soigneusement leurs collègues qu'ils jugent compétents, sérieux et dignes de confiance pour rejoindre la plateforme.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3 - Comment fonctionne Prof Chez Vous ? -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Comment ça marche ?</h2>
+                <p class="text-slate-600">Rejoindre notre communauté se fait en quelques étapes simples.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Etape 1 -->
+                <div class="relative flex flex-col items-center text-center group">
+                    <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">1. Création du compte</h3>
+                    <p class="text-slate-600 text-sm">Créez votre compte en quelques clics via le lien sécurisé.</p>
+                </div>
+                
+                <!-- Etape 2 -->
+                <div class="relative flex flex-col items-center text-center group">
+                    <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">2. Vérification</h3>
+                    <p class="text-slate-600 text-sm">Nous vérifions vos compétences et vos documents (CNI, diplômes).</p>
+                </div>
+                
+                <!-- Etape 3 -->
+                <div class="relative flex flex-col items-center text-center group">
+                    <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">3. Mise en ligne</h3>
+                    <p class="text-slate-600 text-sm">Votre profil devient visible pour des centaines de parents.</p>
+                </div>
+                
+                <!-- Etape 4 -->
+                <div class="relative flex flex-col items-center text-center group">
+                    <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">4. Réception des demandes</h3>
+                    <p class="text-slate-600 text-sm">Vous recevez des demandes de cours directement sur WhatsApp.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4 - Pourquoi être vérifié ? -->
+    <section class="py-20 bg-slate-900 text-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Les avantages d'un profil vérifié</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Avantage -->
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-badge-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Badge Confiance</h3>
+                    <p class="text-slate-400 text-sm">Rassure les parents sur votre identité et vos compétences.</p>
+                </div>
+                
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Plus de visibilité</h3>
+                    <p class="text-slate-400 text-sm">Votre profil est mis en avant dans les résultats de recherche.</p>
+                </div>
+                
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Relation organisée</h3>
+                    <p class="text-slate-400 text-sm">Outils dédiés pour gérer vos engagements et vos élèves.</p>
+                </div>
+                
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-4 text-xl">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2">Journal de séance</h3>
+                    <p class="text-slate-400 text-sm">Faites un compte rendu professionnel aux parents après chaque cours.</p>
+                </div>
+                
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 lg:col-span-2">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 shrink-0 bg-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-percent"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-2 text-emerald-400">Aucune commission</h3>
+                            <p class="text-slate-300 text-sm">
+                                Nous ne prenons <strong>aucune commission</strong> sur vos cours. Vous convenez de vos tarifs directement avec les parents et vous gardez 100% de vos revenus.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5 - Processus de vérification -->
+    <section class="py-20 bg-slate-50">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <h2 class="text-3xl font-bold text-slate-900 mb-12">Notre processus de vérification</h2>
+            
+            <div class="flex flex-col md:flex-row justify-between relative">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-10"></div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 w-full md:w-[30%] mb-6 md:mb-0">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">1</div>
+                    <h4 class="font-bold text-slate-900 mb-2">Documents</h4>
+                    <p class="text-sm text-slate-600">Soumission de votre CNI et de vos diplômes/attestations.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 w-full md:w-[30%] mb-6 md:mb-0">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">2</div>
+                    <h4 class="font-bold text-slate-900 mb-2">Contrôle manuel</h4>
+                    <p class="text-sm text-slate-600">Notre équipe pédagogique examine attentivement chaque dossier.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 w-full md:w-[30%]">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">3</div>
+                    <h4 class="font-bold text-slate-900 mb-2">Validation</h4>
+                    <p class="text-sm text-slate-600">Obtention du badge et visibilité maximale sur la plateforme.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6 - FAQ -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold text-slate-900 mb-12 text-center">Questions fréquentes</h2>
+            <!-- On peut inclure une FAQ standard ici ou simplement mettre quelques questions clés -->
+            <div class="space-y-4">
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-slate-900">
+                        <span>Est-ce vraiment gratuit ?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </span>
+                    </summary>
+                    <div class="text-slate-600 mt-3 group-open:animate-fadeIn px-6 pb-6">
+                        L'inscription et la création de profil sont totalement gratuites. Nous ne prenons aucune commission sur vos revenus.
+                    </div>
+                </details>
+                
+                <details class="group bg-slate-50 rounded-2xl border border-slate-100">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 text-slate-900">
+                        <span>Quels documents sont nécessaires ?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </span>
+                    </summary>
+                    <div class="text-slate-600 mt-3 group-open:animate-fadeIn px-6 pb-6">
+                        Une pièce d'identité (CNI, Passeport, LEPI) et la copie de vos diplômes ou attestations pertinents.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 7 - CTA Final -->
+    <section id="cta-final" class="py-20 bg-blue-600 text-white">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            
+            {% if referrer_profile %}
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl inline-block mb-10 max-w-md w-full mx-auto">
+                <p class="text-blue-100 text-sm mb-4 uppercase tracking-wider font-semibold">Vous avez été recommandé par :</p>
+                <div class="flex items-center gap-4 text-left">
+                    {% if referrer_profile.photo_de_profil %}
+                        <img src="{{ referrer_profile.photo_de_profil.url }}" alt="{{ referrer_profile.prenom }}" class="w-16 h-16 rounded-full object-cover border-2 border-white">
+                    {% else %}
+                        <div class="w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center text-xl font-bold border-2 border-white">
+                            {{ referrer_profile.prenom|slice:":1" }}{{ referrer_profile.nom|slice:":1" }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <h4 class="font-bold text-lg">{{ referrer_profile.prenom }} {{ referrer_profile.nom }}</h4>
+                        <p class="text-blue-200 text-sm">Professeur vérifié en {{ referrer_profile.matiere_enseignee }}</p>
+                        <p class="text-yellow-400 text-xs mt-1"><i class="fa-solid fa-star"></i> Membre de Prof Chez Vous</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <h2 class="text-3xl md:text-4xl font-bold mb-8">Prêt à rejoindre Prof Chez Vous ?</h2>
+            
+            <!-- Lien vers la page d'inscription avec un paramètre role=PROF ou juste signup standard. -->
+            <a href="{% url 'signup' %}?role=PROF" class="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-blue-600 rounded-2xl hover:bg-slate-50 transition-all shadow-xl shadow-blue-900/20 font-bold text-xl hover:-translate-y-1">
+                Créer mon compte
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <p class="text-blue-200 text-sm mt-6">Inscription gratuite. Aucune commission.</p>
+        </div>
+    </section>
+</main>
+{% endblock %}

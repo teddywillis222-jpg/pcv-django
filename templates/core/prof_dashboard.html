@@ -32,6 +32,11 @@
                 Modifier mon profil
             </a>
 
+            <a href="javascript:void(0)" onclick="showSection('section-ambassadeur', this); closeMobileMenu();" style="display: flex !important; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #2563eb; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Programme Ambassadeur
+            </a>
+
             <hr style="border: none; border-top: 1px solid var(--dash-border); margin: 0.5rem 0;">
             <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dash-text-muted); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & Paramètres</div>
             <a href="{% url 'messagerie' %}" onclick="closeMobileMenu();" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
@@ -251,6 +256,92 @@
                 </div>
             </div>
         </div>
+
+        {% if ambassador_stats %}
+        <div id="section-ambassadeur" class="dash-section" style="display:none; padding: 1.5rem;">
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 2rem; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem;">Programme Ambassadeur</h2>
+                <p style="color: #64748b; margin-bottom: 2rem;">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
+                
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                    <div>
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Votre lien personnel</div>
+                        <div style="font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #2563eb;" id="referral-link">
+                            https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/
+                        </div>
+                    </div>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText).then(() => alert('Lien copié !'))" style="background: #2563eb; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer;">
+                        Copier le lien
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.visits_count }}</div>
+                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Visites du lien</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.accounts_count }}</div>
+                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Comptes créés</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="font-size: 2rem; font-weight: 800; color: #1e293b;">{{ ambassador_stats.verified_count }}</div>
+                        <div style="font-size: 0.875rem; color: #64748b; font-weight: 500;">Profs vérifiés</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #166534; text-transform: uppercase;">Récompenses payées</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #15803d; margin-top: 0.5rem;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
+                    </div>
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 1.5rem;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #1e40af; text-transform: uppercase;">Récompenses en attente</div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #1d4ed8; margin-top: 0.5rem;">{{ ambassador_stats.total_pending_amount }} FCFA</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if ambassador_stats.referrals %}
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem;">Dernières recommandations</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Date</th>
+                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Professeur</th>
+                                <th style="padding: 1rem 0; color: #64748b; font-weight: 600;">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ref in ambassador_stats.referrals %}
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 1rem 0; color: #334155;">{{ ref.created_at|date:"d M Y" }}</td>
+                                <td style="padding: 1rem 0; font-weight: 500; color: #0f172a;">
+                                    {% if ref.referred_teacher %}
+                                        {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
+                                    {% else %}
+                                        Compte en création
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem 0;">
+                                    <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; 
+                                        {% if ref.status == 'VERIFIED' or ref.status == 'REWARD_PENDING' or ref.status == 'REWARD_PAID' %}background: #dcfce7; color: #166534;
+                                        {% elif ref.status == 'REJECTED' %}background: #fee2e2; color: #991b1b;
+                                        {% else %}background: #f1f5f9; color: #475569;{% endif %}">
+                                        {{ ref.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <div id="section-settings" class="dash-section" style="display:none; padding: 1.5rem;">
             <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
