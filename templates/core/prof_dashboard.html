@@ -32,9 +32,9 @@
                 Modifier mon profil
             </a>
 
-            <a href="javascript:void(0)" onclick="showSection('section-ambassadeur', this); closeMobileMenu();" style="display: flex !important; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #2563eb; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2);">
+            <a href="javascript:void(0)" onclick="alert('Le programme Ambassadeur sera lancé très prochainement !'); return false;" style="display: flex !important; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #64748b; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: #f1f5f9; border: 1px solid #e2e8f0; cursor: not-allowed; opacity: 0.7;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                Programme Ambassadeur
+                Programme Ambassadeur (Bientôt)
             </a>
 
             <hr style="border: none; border-top: 1px solid var(--dash-border); margin: 0.5rem 0;">
@@ -287,8 +287,8 @@
                 #section-ambassadeur .amb-table th, #section-ambassadeur .amb-table td { padding: 0.6rem 0.5rem; font-size: 0.75rem; }
             }
         </style>
-        <div id="section-ambassadeur" class="dash-section" style="display:none; height: 100%; padding-bottom: 5rem;">
-            <div style="display: flex; flex-direction: column; min-height: calc(100vh - 180px);">
+        <div id="section-ambassadeur" class="dash-section" style="display:none; padding-bottom: 5rem;">
+            <div>
                 <h2 class="amb-title">Programme Ambassadeur</h2>
                 <p class="amb-desc" style="margin-bottom: 0.5rem;">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
                 <p style="font-size: 0.85rem; color: var(--dash-text-muted); margin-bottom: 1.5rem;">
