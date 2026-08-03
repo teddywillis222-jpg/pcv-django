@@ -41,6 +41,6 @@ def ambassador_landing_page(request, referral_code):
         'referrer_profile': referrer_profile,
     }
     
-    return render(request, 'referrals/landing.html', context)
-
-
+    response = render(request, 'referrals/landing.html', context)
+    response.set_cookie('pcv_referral_id', referral.id, max_age=30*24*60*60)
+    return response

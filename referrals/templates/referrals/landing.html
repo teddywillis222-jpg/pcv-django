@@ -1,781 +1,476 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Vous avez été recommandé | Prof Chez Vous{% endblock %}
+{% block title %}Invitation Privée | Prof Chez Vous{% endblock %}
 
-{% block extra_css %}
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-    /* ===== Landing Page – Programme Ambassadeur ===== */
-    .landing-page {
-        font-family: 'Raleway', 'Plus Jakarta Sans', sans-serif;
-        color: #1e293b;
+    :root {
+        --primary: #16a34a;
+        --primary-light: #dcfce7;
+        --primary-dark: #15803d;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --bg-body: #f8fafc;
+        --bg-surface: #ffffff;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --radius-lg: 16px;
+        --radius-md: 12px;
+    }
+
+    body {
+        font-family: 'Raleway', sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
         line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
     }
 
-    /* ---------- Hero ---------- */
-    .landing-hero {
-        position: relative;
-        padding: 7rem 1.5rem 5rem;
-        background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 60%, #dcfce7 100%);
-        text-align: center;
-        overflow: hidden;
-    }
-    .landing-hero::before {
-        content: '';
-        position: absolute;
-        top: -120px;
-        right: -120px;
-        width: 360px;
-        height: 360px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(22,163,74,0.08) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .landing-hero .badge-invite {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1.25rem;
-        border-radius: 999px;
-        background: #dcfce7;
-        color: #15803d;
-        font-weight: 700;
-        font-size: 0.85rem;
-        margin-bottom: 1.5rem;
-    }
-    .landing-hero h1 {
-        font-size: clamp(1.75rem, 5vw, 3rem);
-        font-weight: 800;
+    h1, h2, h3, h4 {
+        font-family: 'Outfit', sans-serif;
+        color: var(--text-main);
         line-height: 1.2;
-        margin-bottom: 1.25rem;
-        color: #0f172a;
     }
-    .landing-hero h1 span {
-        color: #16a34a;
+
+    .landing-app-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0;
+        background: var(--bg-body);
+        min-height: 100vh;
+        box-shadow: 0 0 40px rgba(0,0,0,0.02);
     }
-    .landing-hero .hero-desc {
-        font-size: 1.1rem;
-        color: #475569;
-        max-width: 640px;
-        margin: 0 auto 2rem;
+
+    /* --- HERO --- */
+    .hero {
+        background: linear-gradient(135deg, var(--bg-surface) 0%, var(--primary-light) 100%);
+        padding: 3rem 1.5rem 2.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
     }
-    .landing-hero .hero-cta {
+
+    .badge-invite {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 1rem 2.5rem;
-        background: #16a34a;
-        color: #fff;
-        border-radius: 1rem;
+        background-color: var(--primary);
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
         font-weight: 700;
-        font-size: 1.1rem;
-        text-decoration: none;
-        box-shadow: 0 8px 24px rgba(22,163,74,0.25);
-        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
     }
-    .landing-hero .hero-cta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(22,163,74,0.35);
-    }
-    .landing-hero .hero-cta svg {
-        width: 18px;
-        height: 18px;
-        stroke: currentColor;
-        stroke-width: 2.5;
-        fill: none;
+    .badge-invite svg {
+        width: 14px;
+        height: 14px;
     }
 
-    /* ---------- Container ---------- */
-    .landing-container {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 0 1rem;
-    }
-    .landing-container-full {
-        max-width: 960px;
-        margin: 0 auto;
-    }
-
-    /* ---------- Section Commune ---------- */
-    .landing-section {
-        padding: 4rem 0; /* Padding left/right handled by containers */
-    }
-    .landing-section.bg-light {
-        background: #f8fafc;
-    }
-    .landing-section.bg-white {
-        background: #ffffff;
-    }
-    .landing-section.bg-dark {
-        background: #0f172a;
-        color: #fff;
-    }
-    .landing-section.bg-green {
-        background: #16a34a;
-        color: #fff;
-    }
-    .landing-section-title {
-        font-size: clamp(1.5rem, 4vw, 2rem);
+    .hero h1 {
+        font-size: 2rem;
         font-weight: 800;
-        text-align: center;
-        margin-bottom: 0.75rem;
-        padding: 0 1rem;
-    }
-    .landing-section-subtitle {
-        text-align: center;
-        color: #64748b;
-        margin-bottom: 2.5rem;
-        font-size: 1rem;
-        padding: 0 1rem;
-    }
-    .landing-section.bg-dark .landing-section-subtitle,
-    .landing-section.bg-green .landing-section-subtitle {
-        color: rgba(255,255,255,0.7);
-    }
-
-    /* ---------- Horizontal Swipe (Mobile) ---------- */
-    .swipe-container {
-        display: grid;
-    }
-    @media (max-width: 640px) {
-        .swipe-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            padding-bottom: 1.5rem;
-            padding-left: 1rem;
-            padding-right: 1.5rem;
-            gap: 1rem;
-            scroll-behavior: smooth;
-        }
-        .swipe-container::-webkit-scrollbar {
-            display: none;
-        }
-        .swipe-item {
-            scroll-snap-align: center;
-            flex-shrink: 0;
-            width: 85vw; /* Each card takes up 85% of screen width */
-            max-width: 320px;
-        }
-    }
-
-    /* ---------- Section 2 – Pourquoi ---------- */
-    .why-card {
-        background: #faf8f5;
-        border-radius: 1.25rem;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        max-width: 720px;
-        margin: 0 auto;
-    }
-    .why-card .why-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 1rem;
-        background: #dcfce7;
-        color: #16a34a;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-    }
-    .why-card .why-icon svg {
-        width: 28px;
-        height: 28px;
-        stroke: currentColor;
-        stroke-width: 2;
-        fill: none;
-    }
-    .why-card h2 {
-        font-size: 1.5rem;
-        font-weight: 800;
-        margin-bottom: 1.25rem;
-        color: #0f172a;
-    }
-    .why-card p {
-        color: #475569;
-        font-size: 1.05rem;
-        margin-bottom: 0.75rem;
-    }
-    .why-card p:last-child {
-        margin-bottom: 0;
-    }
-
-    /* ---------- Section 3 – Comment ça marche ---------- */
-    .steps-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-    }
-    .step-item {
-        text-align: center;
-        background: #faf8f5;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        border: 1px solid transparent;
-    }
-    @media (max-width: 640px) {
-        .step-item {
-            border-color: #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        }
-    }
-    .step-icon {
-        width: 72px;
-        height: 72px;
-        border-radius: 1.25rem;
-        background: #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        transition: background 0.3s, color 0.3s;
-    }
-    .step-icon svg {
-        width: 32px;
-        height: 32px;
-        stroke: #16a34a;
-        stroke-width: 2;
-        fill: none;
-        transition: stroke 0.3s;
-    }
-    .step-item:hover .step-icon {
-        background: #16a34a;
-    }
-    .step-item:hover .step-icon svg {
-        stroke: #fff;
-    }
-    .step-item h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #0f172a;
-    }
-    .step-item p {
-        font-size: 0.9rem;
-        color: #64748b;
-    }
-
-    /* ---------- Section 4 – Avantages ---------- */
-    .advantages-grid {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 1.5rem;
-    }
-    .advantage-card {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.12);
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        height: 100%; /* For uniform height in carousel */
-    }
-    .advantage-card .adv-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 0.75rem;
-        background: rgba(22,163,74,0.15);
-        color: #34d399;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         margin-bottom: 1rem;
+        letter-spacing: -0.02em;
     }
-    .advantage-card .adv-icon svg {
-        width: 22px;
-        height: 22px;
-        stroke: currentColor;
-        stroke-width: 2;
-        fill: none;
+
+    .hero p {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
     }
-    .advantage-card h3 {
-        font-size: 1.05rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-    .advantage-card p {
-        font-size: 0.875rem;
-        color: rgba(255,255,255,0.6);
-    }
-    .advantage-card.highlight {
-        grid-column: 1 / -1;
+
+    /* --- REFERRER CARD --- */
+    .referrer-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         gap: 1rem;
+        margin: 0 auto 2rem;
+        max-width: 400px;
+        box-shadow: var(--shadow-sm);
+        text-align: left;
     }
-    @media (max-width: 640px) {
-        .advantage-card.highlight {
-            flex-direction: column;
-            grid-column: auto;
-        }
-    }
-    .advantage-card.highlight .adv-icon {
-        background: rgba(52,211,153,0.15);
-        color: #6ee7b7;
+    
+    .referrer-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
         flex-shrink: 0;
     }
-    .advantage-card.highlight h3 {
-        color: #6ee7b7;
+    
+    .referrer-info h3 {
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+        color: var(--text-main);
     }
-    .advantage-card.highlight p {
-        color: rgba(255,255,255,0.75);
+    
+    .referrer-info p {
+        margin: 0 !important;
+        font-size: 0.85rem;
+        color: var(--text-muted);
     }
 
-    /* ---------- Section 5 – Processus ---------- */
-    .process-flow {
+    /* --- BUTTONS --- */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background-color: var(--primary);
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 1rem 2rem;
+        border-radius: 100px;
+        text-decoration: none;
+        width: 100%;
+        max-width: 350px;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+    }
+    .btn-primary:active {
+        transform: scale(0.98);
+    }
+
+    /* --- SECTIONS --- */
+    .section {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .section-title svg {
+        color: var(--primary);
+        width: 24px;
+        height: 24px;
+    }
+
+    /* --- CARDS (Adapted from doc-card) --- */
+    .doc-list {
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 0 1rem;
     }
-    @media (min-width: 640px) {
-        .process-flow {
-            flex-direction: row;
-            gap: 2rem;
-            padding: 0;
-        }
-    }
-    .process-step {
-        background: #faf8f5;
-        border: 1px solid #e2e8f0;
-        border-radius: 1.25rem;
+
+    .doc-card {
+        background: var(--bg-surface);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
-        text-align: center;
-        flex: 1;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
     }
-    .process-step .step-num {
-        width: 44px;
-        height: 44px;
+
+    .doc-card-col {
+        flex-direction: column;
+    }
+
+    .doc-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .doc-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .doc-content h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .doc-content p {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* --- PROCESS STEPS --- */
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
-        font-size: 1.1rem;
-        margin: 0 auto 1rem;
-    }
-    .process-step .step-num.green {
-        background: #dcfce7;
-        color: #16a34a;
-    }
-    .process-step h4 {
         font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #0f172a;
-    }
-    .process-step p {
-        font-size: 0.875rem;
-        color: #64748b;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        margin-top: 2px;
     }
 
-    /* ---------- Section 6 – FAQ ---------- */
-    .faq-list {
-        max-width: 720px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0 1rem;
-    }
-    .faq-item {
-        background: #faf8f5;
-        border: 1px solid #e2e8f0;
-        border-radius: 1rem;
+    /* --- FAQ ACCORDEON --- */
+    details {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin-bottom: 0.75rem;
         overflow: hidden;
     }
-    .faq-item summary {
+
+    summary {
+        padding: 1.25rem 1.5rem;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 1.05rem;
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1.25rem 1.5rem;
-        cursor: pointer;
-        font-weight: 700;
-        color: #0f172a;
         list-style: none;
-        user-select: none;
     }
-    .faq-item summary::-webkit-details-marker {
+
+    summary::-webkit-details-marker {
         display: none;
     }
-    .faq-item summary .chevron {
-        transition: transform 0.2s;
+
+    summary::after {
+        content: "";
         width: 20px;
         height: 20px;
-        stroke: #94a3b8;
-        stroke-width: 2;
-        fill: none;
-        flex-shrink: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        transition: transform 0.2s;
     }
-    .faq-item[open] summary .chevron {
+
+    details[open] summary::after {
         transform: rotate(180deg);
     }
-    .faq-item .faq-answer {
-        padding: 0 1.5rem 1.25rem;
-        color: #475569;
+
+    details[open] summary {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .faq-content {
+        padding: 1.25rem 1.5rem;
+        color: var(--text-muted);
         font-size: 0.95rem;
     }
 
-    /* ---------- Section 7 – CTA Final ---------- */
-    .cta-section {
+    /* --- BOTTOM CTA --- */
+    .bottom-cta {
         text-align: center;
-    }
-    .referrer-card {
-        background: #16a34a;
-        border: none;
-        box-shadow: 0 10px 25px rgba(22,163,74,0.25);
-        color: #fff;
-        border-radius: 1.5rem;
-        padding: 1.5rem;
-        display: inline-block;
-        margin-bottom: 2.5rem;
-        max-width: 420px;
-        width: 100%;
-    }
-    .referrer-card .referrer-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-weight: 700;
-        color: rgba(255,255,255,0.9);
-        margin-bottom: 1rem;
-    }
-    .referrer-card .referrer-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        text-align: left;
-    }
-    .referrer-card .referrer-avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #fff;
-        flex-shrink: 0;
-    }
-    .referrer-card .referrer-avatar-placeholder {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: #fff;
-        color: #16a34a;
-        border: 2px solid #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-    .referrer-card .referrer-name {
-        font-weight: 700;
-        font-size: 1.1rem;
-    }
-    .referrer-card .referrer-subject {
-        font-size: 0.85rem;
-        color: rgba(255,255,255,0.9);
-    }
-    .referrer-card .referrer-badge {
-        font-size: 0.75rem;
-        color: #fef08a;
-        margin-top: 0.25rem;
-    }
-    .cta-section h2 {
-        font-size: clamp(1.5rem, 4vw, 2.25rem);
-        font-weight: 800;
-        margin-bottom: 2rem;
-    }
-    .cta-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 1.25rem 3rem;
-        background: #16a34a;
-        color: #fff;
-        border-radius: 1rem;
-        font-weight: 800;
-        font-size: 1.15rem;
-        text-decoration: none;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .cta-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.2);
-    }
-    .cta-btn svg {
-        width: 20px;
-        height: 20px;
-        stroke: currentColor;
-        stroke-width: 2.5;
-        fill: none;
-    }
-    .cta-sub {
-        color: #64748b;
-        font-size: 0.875rem;
-        margin-top: 1.25rem;
+        padding: 3rem 1.5rem 4rem;
+        background: var(--bg-surface);
+        border-top: 1px solid var(--border-color);
     }
 
-    /* ---------- Mobile Refinements ---------- */
-    @media (max-width: 640px) {
-        .landing-hero {
-            padding: 3rem 1.25rem 2rem;
-            text-align: left;
-        }
-        .landing-hero .hero-desc {
-            margin-left: 0;
-            margin-right: 0;
-        }
-        .landing-section {
-            padding: 1.5rem 0;
-        }
-        .landing-section-subtitle {
-            margin-bottom: 1.5rem;
-        }
-        .why-card, .process-step, .faq-item, .referrer-card, .swipe-item {
-            min-width: 320px;
-        }
-        .why-card {
-            padding: 1.5rem 1.25rem;
-            margin: 0 auto;
-        }
-        .referrer-card {
-            padding: 1.25rem;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .swipe-container {
-            padding-right: 3rem;
-            scroll-padding-left: 1rem;
-        }
+    .bottom-cta h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
     }
-</style>
 </style>
 {% endblock %}
 
 {% block content %}
-<main class="landing-page">
+<div class="landing-app-container">
 
-    <!-- Section 1 — Hero -->
-    <section class="landing-hero">
-        <div class="landing-container">
-            <div class="badge-invite">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                Invitation privée
-            </div>
-            <h1>Vous avez été recommandé par un professeur de <span>Prof Chez Vous</span>.</h1>
-            <p class="hero-desc">
-                Si vous êtes ici, c'est qu'un enseignant déjà membre de Prof Chez Vous estime que votre profil pourrait enrichir notre communauté de professeurs vérifiés.
-            </p>
-            <a href="#cta-final" class="hero-cta">
-                Découvrir Prof Chez Vous
-                <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-            </a>
+    <!-- Section 1 : Hero -->
+    <header class="hero">
+        <div class="badge-invite">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Invitation privée
         </div>
-    </section>
+        
+        <h1>Vous avez été recommandé(e)</h1>
+        <p>Rejoignez le réseau d'excellence de Prof Chez Vous sur la recommandation exclusive d'un de nos enseignants.</p>
 
-    <!-- Section 2 — Pourquoi cette recommandation ? -->
-    <section class="landing-section bg-light">
-        <div class="landing-container">
-            <div class="why-card">
-                <div class="why-icon">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <!-- Carte Parrain -->
+        <div class="referrer-card">
+            {% if referrer_profile and referrer_profile.photo %}
+                <img src="{{ referrer_profile.photo.url }}" alt="{{ referrer.get_full_name }}" class="referrer-avatar">
+            {% else %}
+                <div class="referrer-avatar">
+                    {{ referrer.first_name|first|upper }}{{ referrer.last_name|first|upper }}
                 </div>
-                <h2>Pourquoi cette recommandation ?</h2>
+            {% endif %}
+            <div class="referrer-info">
+                <h3>{{ referrer.get_full_name|default:referrer.username }}</h3>
+                <p>Professeur certifié(e) chez Prof Chez Vous</p>
+            </div>
+        </div>
+
+        <a href="{% url 'signup' %}?role=PROF" class="btn-primary">
+            Créer mon compte professeur
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </header>
+
+    <!-- Section 2 : Pourquoi -->
+    <section class="section">
+        <h2 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Pourquoi cette recommandation ?
+        </h2>
+        
+        <div class="doc-card doc-card-col">
+            <div class="doc-content">
                 <p>Ce n'est pas une publicité, c'est une <strong>recommandation personnelle</strong>.</p>
+                <br>
                 <p>Chez Prof Chez Vous, nous privilégions la <strong>qualité des enseignants</strong>. Nos ambassadeurs — les professeurs déjà validés — choisissent soigneusement les collègues qu'ils jugent compétents, sérieux et dignes de confiance pour rejoindre la plateforme.</p>
             </div>
         </div>
     </section>
 
-    <!-- Section 3 — Comment ça marche ? -->
-    <section class="landing-section bg-white">
-        <div class="landing-container">
-            <h2 class="landing-section-title">Comment ça marche ?</h2>
-            <p class="landing-section-subtitle">Rejoindre notre communauté se fait en quelques étapes simples.</p>
-            
-            <div class="steps-grid swipe-container">
-                <!-- Étape 1 -->
-                <div class="step-item swipe-item">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-                    </div>
-                    <h3>1. Création du compte</h3>
-                    <p>Créez votre compte en quelques clics via le lien sécurisé.</p>
+    <!-- Section 3 : Avantages -->
+    <section class="section" style="background: var(--bg-surface); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+        <h2 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Vos Avantages
+        </h2>
+        
+        <div class="doc-list">
+            <div class="doc-card">
+                <div class="doc-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
-                <!-- Étape 2 -->
-                <div class="step-item swipe-item">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <h3>2. Vérification</h3>
-                    <p>Nous vérifions vos compétences et vos documents (CNI, diplômes).</p>
+                <div class="doc-content">
+                    <h3>Traitement Prioritaire</h3>
+                    <p>Votre candidature passera en tête de liste car vous avez été recommandé par un membre de confiance.</p>
                 </div>
-                <!-- Étape 3 -->
-                <div class="step-item swipe-item">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    </div>
-                    <h3>3. Profil en ligne</h3>
-                    <p>Votre profil est validé et mis en avant auprès des parents.</p>
+            </div>
+
+            <div class="doc-card">
+                <div class="doc-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 </div>
-                <!-- Étape 4 -->
-                <div class="step-item swipe-item">
-                    <div class="step-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <h3>4. Réception des demandes</h3>
-                    <p>Les parents intéressés vous contactent directement via la plateforme.</p>
+                <div class="doc-content">
+                    <h3>Nouveaux Élèves</h3>
+                    <p>Développez votre clientèle et augmentez vos revenus avec des parents qui recherchent l'excellence.</p>
+                </div>
+            </div>
+
+            <div class="doc-card">
+                <div class="doc-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="doc-content">
+                    <h3>Totale Flexibilité</h3>
+                    <p>Gérez vos horaires et vos disponibilités comme vous le souhaitez, sans aucune contrainte.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section 4 — Avantages d'un profil vérifié -->
-    <section class="landing-section bg-dark">
-        <div class="landing-container">
-            <h2 class="landing-section-title">Les avantages d'un profil vérifié</h2>
-            <p class="landing-section-subtitle">&nbsp;</p>
+    <!-- Section 4 : Processus -->
+    <section class="section">
+        <h2 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Le processus de vérification
+        </h2>
+        
+        <div class="doc-list">
+            <div class="doc-card">
+                <div class="step-number">1</div>
+                <div class="doc-content">
+                    <h3>Créez votre compte</h3>
+                    <p>Inscrivez-vous en 1 minute. C'est rapide et 100% gratuit.</p>
+                </div>
+            </div>
             
-            <div class="advantages-grid swipe-container">
-                <div class="advantage-card swipe-item">
-                    <div class="adv-icon">
-                        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    </div>
-                    <h3>Badge Confiance</h3>
-                    <p>Rassure les parents sur votre identité et vos compétences.</p>
+            <div class="doc-card">
+                <div class="step-number">2</div>
+                <div class="doc-content">
+                    <h3>Complétez votre profil</h3>
+                    <p>Renseignez vos diplômes, votre méthodologie et vos tarifs.</p>
                 </div>
-                
-                <div class="advantage-card swipe-item">
-                    <div class="adv-icon">
-                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </div>
-                    <h3>Plus de visibilité</h3>
-                    <p>Votre profil est mis en avant dans les résultats de recherche.</p>
-                </div>
-                
-                <div class="advantage-card swipe-item">
-                    <div class="adv-icon">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
-                    </div>
-                    <h3>Relation organisée</h3>
-                    <p>Outils dédiés pour gérer vos engagements et vos élèves.</p>
-                </div>
+            </div>
 
-                <div class="advantage-card swipe-item">
-                    <div class="adv-icon">
-                        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
-                    <h3>Journal de séance</h3>
-                    <p>Faites un compte rendu professionnel aux parents après chaque cours.</p>
+            <div class="doc-card">
+                <div class="step-number">3</div>
+                <div class="doc-content">
+                    <h3>Entretien et Validation</h3>
+                    <p>Notre équipe valide votre profil (un processus plus rapide pour les profs recommandés).</p>
                 </div>
-                
-                <div class="advantage-card swipe-item highlight">
-                    <div class="adv-icon">
-                        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                    </div>
-                    <div>
-                        <h3>Aucune commission</h3>
-                        <p>Nous ne prenons <strong>aucune commission</strong> sur vos cours. Vous convenez de vos tarifs directement avec les parents et vous gardez 100% de vos revenus.</p>
-                    </div>
+            </div>
+
+            <div class="doc-card">
+                <div class="step-number">4</div>
+                <div class="doc-content">
+                    <h3>Commencez à enseigner</h3>
+                    <p>Vous êtes visible par les parents et recevez vos premières demandes.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section 5 — Processus de vérification -->
-    <section class="landing-section bg-light">
-        <div class="landing-container">
-            <h2 class="landing-section-title">Notre processus de vérification</h2>
-            <p class="landing-section-subtitle">&nbsp;</p>
-            
-            <div class="process-flow">
-                <div class="process-step">
-                    <div class="step-num blue">1</div>
-                    <h4>Documents</h4>
-                    <p>Soumission de votre CNI et de vos diplômes/attestations.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-num blue">2</div>
-                    <h4>Contrôle manuel</h4>
-                    <p>Notre équipe pédagogique examine attentivement chaque dossier.</p>
-                </div>
-                <div class="process-step">
-                    <div class="step-num green">3</div>
-                    <h4>Validation</h4>
-                    <p>Obtention du badge et visibilité maximale sur la plateforme.</p>
-                </div>
+    <!-- Section 5 : FAQ -->
+    <section class="section" style="background: var(--bg-surface); border-top: 1px solid var(--border-color);">
+        <h2 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Questions fréquentes
+        </h2>
+        
+        <details>
+            <summary>Est-ce vraiment gratuit ?</summary>
+            <div class="faq-content">
+                Oui. L'inscription sur Prof Chez Vous est totalement gratuite pour les professeurs.
             </div>
-        </div>
+        </details>
+
+        <details>
+            <summary>Qui fixe les tarifs des cours ?</summary>
+            <div class="faq-content">
+                Vous fixez vous-même vos tarifs sur votre profil. Vous êtes libre de demander la rémunération que vous estimez juste.
+            </div>
+        </details>
+
+        <details>
+            <summary>Pourquoi dois-je fournir mes diplômes ?</summary>
+            <div class="faq-content">
+                Prof Chez Vous garantit l'excellence aux parents. Nous vérifions l'identité et les diplômes de chaque professeur pour maintenir ce standard de qualité élevé.
+            </div>
+        </details>
     </section>
 
-    <!-- Section 6 — FAQ -->
-    <section class="landing-section bg-white">
-        <div class="landing-container">
-            <h2 class="landing-section-title">Questions fréquentes</h2>
-            <p class="landing-section-subtitle">&nbsp;</p>
-            
-            <div class="faq-list">
-                <details class="faq-item">
-                    <summary>
-                        <span>Est-ce vraiment gratuit ?</span>
-                        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-                    </summary>
-                    <div class="faq-answer">
-                        L'inscription et la création de profil sont totalement gratuites. Nous ne prenons aucune commission sur vos revenus.
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary>
-                        <span>Quels documents sont nécessaires ?</span>
-                        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-                    </summary>
-                    <div class="faq-answer">
-                        Une pièce d'identité (CNI, Passeport, LEPI) et la copie de vos diplômes ou attestations pertinents.
-                    </div>
-                </details>
-            </div>
-        </div>
-    </section>
+    <!-- Footer CTA -->
+    <footer class="bottom-cta">
+        <h2>Prêt(e) à nous rejoindre ?</h2>
+        <a href="{% url 'signup' %}?role=PROF" class="btn-primary" style="margin: 0 auto;">
+            Créer mon compte professeur
+        </a>
+    </footer>
 
-    <!-- Section 7 — CTA Final -->
-    <section id="cta-final" class="landing-section bg-light cta-section">
-        <div class="landing-container">
-            
-            {% if referrer_profile %}
-            <div class="referrer-card">
-                <div class="referrer-label">Vous avez été recommandé par :</div>
-                <div class="referrer-info">
-                    {% if referrer_profile.photo_de_profil %}
-                        <img src="{{ referrer_profile.photo_de_profil.url }}" alt="{{ referrer_profile.prenom }}" class="referrer-avatar">
-                    {% else %}
-                        <div class="referrer-avatar-placeholder">
-                            {{ referrer_profile.prenom|slice:":1" }}{{ referrer_profile.nom|slice:":1" }}
-                        </div>
-                    {% endif %}
-                    <div>
-                        <div class="referrer-name">{{ referrer_profile.prenom }} {{ referrer_profile.nom }}</div>
-                        <div class="referrer-subject">Professeur vérifié en {{ referrer_profile.matiere_enseignee }}</div>
-                        <div class="referrer-badge">★ Membre de Prof Chez Vous</div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <h2>Prêt à rejoindre Prof Chez Vous ?</h2>
-            
-            <a href="{% url 'signup' %}?role=PROF" class="cta-btn">
-                Créer mon compte
-                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-            <p class="cta-sub">Inscription gratuite. Aucune commission.</p>
-        </div>
-    </section>
-
-</main>
+</div>
 {% endblock %}
