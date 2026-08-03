@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Conditions Générales du Programme Ambassadeurs | Prof Chez Vous{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #16a34a;
+        --text-main: #0f172a;
+        --text-muted: #475569;
+        --bg-body: #f8fafc;
+        --bg-surface: #ffffff;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Raleway', sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 {
+        font-family: 'Outfit', sans-serif;
+        color: var(--text-main);
+    }
+
+    .cgu-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        background: var(--bg-surface);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+    }
+
+    .cgu-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .cgu-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .cgu-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .cgu-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .cgu-section h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .cgu-section h2 span {
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+
+    .cgu-section p, .cgu-section li {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cgu-section ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cgu-section li {
+        margin-bottom: 0.5rem;
+    }
+
+    .cgu-important-box {
+        background: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 1.25rem;
+        border-radius: 0 8px 8px 0;
+        margin-top: 2rem;
+    }
+    
+    .cgu-important-box p {
+        margin: 0;
+        color: #1e40af;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    /* Mobile optimization: tighter margins to save space */
+    @media (max-width: 768px) {
+        .cgu-container {
+            margin: 0;
+            padding: 1.5rem 1rem;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+            box-shadow: none;
+        }
+        
+        .cgu-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        .cgu-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .cgu-section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .cgu-section {
+            margin-bottom: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cgu-container">
+    <div class="cgu-header">
+        <h1>Conditions générales du Programme Ambassadeurs</h1>
+        <p>Dernière mise à jour : 3 Août 2026</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>1.</span> Objet du programme</h2>
+        <p>Le Programme Ambassadeurs de Prof Chez Vous permet aux professeurs vérifiés de recommander d'autres enseignants susceptibles de rejoindre la plateforme.</p>
+        <p>Lorsqu'une recommandation aboutit à la vérification complète d'un nouveau professeur, l'Ambassadeur peut bénéficier d'une récompense conformément aux présentes conditions.</p>
+        <p>Le programme a pour objectif de favoriser la croissance qualitative de la communauté des enseignants de Prof Chez Vous.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>2.</span> Définitions</h2>
+        <ul>
+            <li><strong>Ambassadeur</strong> : Professeur vérifié participant au programme.</li>
+            <li><strong>Professeur recommandé</strong> : Professeur ayant rejoint Prof Chez Vous à partir du lien personnel de l'Ambassadeur.</li>
+            <li><strong>Vérification</strong> : Processus officiel de validation effectué par l'équipe Prof Chez Vous.</li>
+            <li><strong>Récompense</strong> : Prime attribuée à l'Ambassadeur lorsqu'une recommandation remplit toutes les conditions.</li>
+        </ul>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>3.</span> Conditions pour devenir Ambassadeur</h2>
+        <p>Pour participer au programme, il faut :</p>
+        <ul>
+            <li>posséder un compte Prof Chez Vous ;</li>
+            <li>avoir un profil entièrement complété ;</li>
+            <li>être officiellement vérifié ;</li>
+            <li>respecter les Conditions Générales d'Utilisation de Prof Chez Vous.</li>
+        </ul>
+        <p>Prof Chez Vous se réserve le droit de suspendre l'accès au programme à tout moment.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>4.</span> Fonctionnement</h2>
+        <ul>
+            <li>Chaque Ambassadeur reçoit un lien personnel.</li>
+            <li>Ce lien peut être partagé librement.</li>
+            <li>Le professeur recommandé doit utiliser ce lien pour rejoindre Prof Chez Vous.</li>
+            <li>Une seule recommandation est associée à un professeur.</li>
+            <li>Le premier lien utilisé est définitif.</li>
+        </ul>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>5.</span> Conditions d'obtention de la récompense</h2>
+        <p>Une récompense est accordée uniquement lorsque le professeur recommandé :</p>
+        <ul>
+            <li>crée son compte via le lien Ambassadeur ;</li>
+            <li>complète intégralement son profil ;</li>
+            <li>fournit tous les justificatifs demandés ;</li>
+            <li>réussit le processus de vérification.</li>
+        </ul>
+        <p>Aucune récompense n'est accordée avant cette étape.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>6.</span> Montant de la récompense</h2>
+        <p>Le montant de la récompense est fixé par Prof Chez Vous.</p>
+        <p>Il peut évoluer dans le temps.</p>
+        <p>Toute modification s'applique uniquement aux futures recommandations. Les récompenses déjà générées ne sont pas affectées.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>7.</span> Paiement</h2>
+        <p>Les récompenses sont versées selon les modalités définies par Prof Chez Vous.</p>
+        <p>Le versement peut être :</p>
+        <ul>
+            <li>Mobile Money ;</li>
+            <li>virement ;</li>
+            <li>ou tout autre moyen communiqué ultérieurement.</li>
+        </ul>
+        <p>Prof Chez Vous peut regrouper plusieurs récompenses avant paiement.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>8.</span> Recommandations autorisées</h2>
+        <p>L'Ambassadeur s'engage à recommander uniquement :</p>
+        <ul>
+            <li>des enseignants réels ;</li>
+            <li>des personnes qu'il connaît ou dont il peut raisonnablement apprécier le sérieux.</li>
+        </ul>
+        <p>Le programme n'a pas vocation à encourager les inscriptions massives sans lien réel avec la profession.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>9.</span> Interdictions</h2>
+        <p>Sont notamment interdits :</p>
+        <ul>
+            <li>créer plusieurs comptes ;</li>
+            <li>s'auto-parrainer ;</li>
+            <li>utiliser plusieurs identités ;</li>
+            <li>usurper l'identité d'un tiers ;</li>
+            <li>acheter des recommandations ;</li>
+            <li>diffuser des informations trompeuses sur Prof Chez Vous ;</li>
+            <li>modifier ou détourner le lien Ambassadeur ;</li>
+            <li>utiliser des robots ou outils automatisés.</li>
+        </ul>
+        <p>Toute tentative de fraude entraîne l'annulation immédiate des récompenses.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>10.</span> Vérification des recommandations</h2>
+        <p>Prof Chez Vous reste seul juge de la validité d'une recommandation.</p>
+        <p>Une recommandation peut être refusée si :</p>
+        <ul>
+            <li>les informations sont fausses ;</li>
+            <li>le professeur ne satisfait pas aux critères de qualité ;</li>
+            <li>une fraude est suspectée.</li>
+        </ul>
+        <p>Les décisions de Prof Chez Vous sont définitives.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>11.</span> Suspension ou suppression</h2>
+        <p>Prof Chez Vous peut suspendre :</p>
+        <ul>
+            <li>un Ambassadeur ;</li>
+            <li>une récompense ;</li>
+            <li>une recommandation.</li>
+        </ul>
+        <p>sans préavis en cas de fraude ou de non-respect des présentes conditions.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>12.</span> Modification du programme</h2>
+        <p>Prof Chez Vous peut :</p>
+        <ul>
+            <li>modifier les règles ;</li>
+            <li>modifier les récompenses ;</li>
+            <li>suspendre temporairement le programme ;</li>
+            <li>mettre fin au programme.</li>
+        </ul>
+        <p>Ces modifications n'affectent pas les récompenses déjà validées, sauf en cas de fraude.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>13.</span> Protection des données</h2>
+        <p>Les données collectées dans le cadre du programme sont traitées conformément à la politique de confidentialité de Prof Chez Vous.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>14.</span> Acceptation</h2>
+        <p>La participation au Programme Ambassadeurs vaut acceptation pleine et entière des présentes conditions.</p>
+    </div>
+
+    <div class="cgu-section">
+        <h2><span>15.</span> Contact</h2>
+        <p>Toute question relative au Programme Ambassadeurs peut être adressée à : <br><strong>contact@profchezvousapp.com</strong></p>
+    </div>
+
+    <div class="cgu-important-box">
+        <p>Le Programme Ambassadeurs est un programme de recommandation qualitative et non un programme de recrutement massif. Prof Chez Vous valorise la qualité des enseignants recommandés plutôt que leur nombre. Toute utilisation contraire à cet esprit pourra entraîner la suspension du compte Ambassadeur, même en l'absence d'une fraude technique.</p>
+    </div>
+</div>
+{% endblock %}

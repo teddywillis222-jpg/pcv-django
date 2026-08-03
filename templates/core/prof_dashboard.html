@@ -259,7 +259,7 @@
 
         {% if ambassador_stats %}
         <style>
-            #section-ambassadeur .amb-title { font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0 0 0.25rem 0; }
+            #section-ambassadeur .amb-title { font-size: 1.4rem; font-weight: 900; color: var(--dash-text); margin: 0 0 0.25rem 0; }
             #section-ambassadeur .amb-desc { color: var(--dash-text-muted); font-size: 0.9rem; margin: 0 0 1.25rem 0; }
             #section-ambassadeur .amb-link-box { background: #f8fafc; border: 1px solid var(--dash-border); border-radius: 12px; padding: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem; }
             #section-ambassadeur .amb-link-label { font-size: 0.75rem; font-weight: 700; color: var(--dash-text-muted); text-transform: uppercase; margin-bottom: 0.35rem; }
@@ -292,84 +292,93 @@
                 #section-ambassadeur .amb-table th, #section-ambassadeur .amb-table td { padding: 0.6rem 0.5rem; font-size: 0.75rem; }
             }
         </style>
-        <div id="section-ambassadeur" class="dash-section" style="display:none;">
-            <h2 class="amb-title">Programme Ambassadeur</h2>
-            <p class="amb-desc">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
-            
-            <div class="amb-link-box">
-                <div>
-                    <div class="amb-link-label">Votre lien personnel</div>
-                    <div class="amb-link-url" id="referral-link">https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/</div>
+        <div id="section-ambassadeur" class="dash-section" style="display:none; height: 100%;">
+            <div style="display: flex; flex-direction: column; min-height: calc(100vh - 180px);">
+                <h2 class="amb-title">Programme Ambassadeur</h2>
+                <p class="amb-desc">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
+                
+                <div class="amb-link-box">
+                    <div>
+                        <div class="amb-link-label">Votre lien personnel</div>
+                        <div class="amb-link-url" id="referral-link">https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/</div>
+                    </div>
+                    <button class="amb-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText.trim()).then(() => alert('Lien copié !'))">
+                        Copier le lien
+                    </button>
                 </div>
-                <button class="amb-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText.trim()).then(() => alert('Lien copié !'))">
-                    Copier le lien
-                </button>
-            </div>
-            
-            <div class="amb-stats-grid">
-                <div class="amb-stat">
-                    <div class="amb-stat-val">{{ ambassador_stats.visits_count }}</div>
-                    <div class="amb-stat-label">Visites du lien</div>
+                
+                <div class="amb-stats-grid">
+                    <div class="amb-stat">
+                        <div class="amb-stat-val">{{ ambassador_stats.visits_count }}</div>
+                        <div class="amb-stat-label">Visites du lien</div>
+                    </div>
+                    <div class="amb-stat">
+                        <div class="amb-stat-val">{{ ambassador_stats.accounts_count }}</div>
+                        <div class="amb-stat-label">Comptes créés</div>
+                    </div>
+                    <div class="amb-stat">
+                        <div class="amb-stat-val">{{ ambassador_stats.verified_count }}</div>
+                        <div class="amb-stat-label">Profs vérifiés</div>
+                    </div>
                 </div>
-                <div class="amb-stat">
-                    <div class="amb-stat-val">{{ ambassador_stats.accounts_count }}</div>
-                    <div class="amb-stat-label">Comptes créés</div>
+                
+                <div class="amb-rewards-grid">
+                    <div class="amb-reward" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                        <div class="amb-reward-label" style="color: #166534;">Récompenses payées</div>
+                        <div class="amb-reward-val" style="color: #15803d;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
+                    </div>
+                    <div class="amb-reward" style="background: #eff6ff; border: 1px solid #bfdbfe;">
+                        <div class="amb-reward-label" style="color: #1e40af;">En attente</div>
+                        <div class="amb-reward-val" style="color: #1d4ed8;">{{ ambassador_stats.total_pending_amount }} FCFA</div>
+                    </div>
                 </div>
-                <div class="amb-stat">
-                    <div class="amb-stat-val">{{ ambassador_stats.verified_count }}</div>
-                    <div class="amb-stat-label">Profs vérifiés</div>
-                </div>
-            </div>
-            
-            <div class="amb-rewards-grid">
-                <div class="amb-reward" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
-                    <div class="amb-reward-label" style="color: #166534;">Récompenses payées</div>
-                    <div class="amb-reward-val" style="color: #15803d;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
-                </div>
-                <div class="amb-reward" style="background: #eff6ff; border: 1px solid #bfdbfe;">
-                    <div class="amb-reward-label" style="color: #1e40af;">En attente</div>
-                    <div class="amb-reward-val" style="color: #1d4ed8;">{{ ambassador_stats.total_pending_amount }} FCFA</div>
-                </div>
-            </div>
 
-            {% if ambassador_stats.referrals %}
-            <div class="amb-table-wrap">
-                <h3 class="amb-table-title">Dernières recommandations</h3>
-                <div style="overflow-x: auto;">
-                    <table class="amb-table">
-                        <thead>
-                            <tr style="border-bottom: 1px solid var(--dash-border);">
-                                <th>Date</th>
-                                <th>Professeur</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for ref in ambassador_stats.referrals %}
-                            <tr>
-                                <td>{{ ref.created_at|date:"d M Y" }}</td>
-                                <td style="font-weight: 500; color: #0f172a;">
-                                    {% if ref.referred_teacher %}
-                                        {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
-                                    {% else %}
-                                        Compte en création
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span style="padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; 
-                                        {% if ref.status == 'VERIFIED' or ref.status == 'REWARD_PENDING' or ref.status == 'REWARD_PAID' %}background: #dcfce7; color: #166534;
-                                        {% elif ref.status == 'REJECTED' %}background: #fee2e2; color: #991b1b;
-                                        {% else %}background: #f1f5f9; color: #475569;{% endif %}">
-                                        {{ ref.get_status_display }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                {% if ambassador_stats.referrals %}
+                <div class="amb-table-wrap" style="margin-bottom: 2rem;">
+                    <h3 class="amb-table-title">Dernières recommandations</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="amb-table">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--dash-border);">
+                                    <th>Date</th>
+                                    <th>Professeur</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ref in ambassador_stats.referrals %}
+                                <tr>
+                                    <td>{{ ref.created_at|date:"d M Y" }}</td>
+                                    <td style="font-weight: 500; color: #0f172a;">
+                                        {% if ref.referred_teacher %}
+                                            {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
+                                        {% else %}
+                                            Compte en création
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span style="padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; 
+                                            {% if ref.status == 'VERIFIED' or ref.status == 'REWARD_PENDING' or ref.status == 'REWARD_PAID' %}background: #dcfce7; color: #166534;
+                                            {% elif ref.status == 'REJECTED' %}background: #fee2e2; color: #991b1b;
+                                            {% else %}background: #f1f5f9; color: #475569;{% endif %}">
+                                            {{ ref.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Footer / CGU -->
+                <div style="margin-top: auto; padding: 1rem 0; text-align: center;">
+                    <p style="font-size: 0.85rem; color: var(--dash-text-muted);">
+                        En participant, vous acceptez les <a href="{% url 'referrals:cgu' %}" target="_blank" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Conditions générales du Programme Ambassadeurs</a>.
+                    </p>
                 </div>
             </div>
-            {% endif %}
         </div>
         {% endif %}
 
