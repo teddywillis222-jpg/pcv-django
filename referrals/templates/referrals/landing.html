@@ -163,7 +163,7 @@
 
     /* ---------- Section 2 – Pourquoi ---------- */
     .why-card {
-        background: #fff;
+        background: #faf8f5;
         border-radius: 1.25rem;
         padding: 2.5rem 2rem;
         box-shadow: 0 8px 30px rgba(0,0,0,0.06);
@@ -212,7 +212,7 @@
     }
     .step-item {
         text-align: center;
-        background: #fff;
+        background: #faf8f5;
         border-radius: 1rem;
         padding: 1.5rem;
         border: 1px solid transparent;
@@ -339,7 +339,7 @@
         }
     }
     .process-step {
-        background: #fff;
+        background: #faf8f5;
         border: 1px solid #e2e8f0;
         border-radius: 1.25rem;
         padding: 1.5rem;
@@ -382,7 +382,7 @@
         padding: 0 1rem;
     }
     .faq-item {
-        background: #f8fafc;
+        background: #faf8f5;
         border: 1px solid #e2e8f0;
         border-radius: 1rem;
         overflow: hidden;
@@ -424,9 +424,10 @@
         text-align: center;
     }
     .referrer-card {
-        background: rgba(255,255,255,0.12);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255,255,255,0.2);
+        background: #16a34a;
+        border: none;
+        box-shadow: 0 10px 25px rgba(22,163,74,0.25);
+        color: #fff;
         border-radius: 1.5rem;
         padding: 1.5rem;
         display: inline-block;
@@ -439,7 +440,7 @@
         text-transform: uppercase;
         letter-spacing: 0.08em;
         font-weight: 700;
-        color: rgba(255,255,255,0.7);
+        color: rgba(255,255,255,0.9);
         margin-bottom: 1rem;
     }
     .referrer-card .referrer-info {
@@ -460,7 +461,8 @@
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: #15803d;
+        background: #fff;
+        color: #16a34a;
         border: 2px solid #fff;
         display: flex;
         align-items: center;
@@ -475,11 +477,11 @@
     }
     .referrer-card .referrer-subject {
         font-size: 0.85rem;
-        color: rgba(255,255,255,0.7);
+        color: rgba(255,255,255,0.9);
     }
     .referrer-card .referrer-badge {
         font-size: 0.75rem;
-        color: #fbbf24;
+        color: #fef08a;
         margin-top: 0.25rem;
     }
     .cta-section h2 {
@@ -492,8 +494,8 @@
         align-items: center;
         gap: 0.5rem;
         padding: 1.25rem 3rem;
-        background: #fff;
-        color: #16a34a;
+        background: #16a34a;
+        color: #fff;
         border-radius: 1rem;
         font-weight: 800;
         font-size: 1.15rem;
@@ -513,7 +515,7 @@
         fill: none;
     }
     .cta-sub {
-        color: rgba(255,255,255,0.65);
+        color: #64748b;
         font-size: 0.875rem;
         margin-top: 1.25rem;
     }
@@ -521,17 +523,34 @@
     /* ---------- Mobile Refinements ---------- */
     @media (max-width: 640px) {
         .landing-hero {
-            padding: 4rem 1rem 3rem;
+            padding: 3rem 1.25rem 2rem;
+            text-align: left;
+        }
+        .landing-hero .hero-desc {
+            margin-left: 0;
+            margin-right: 0;
         }
         .landing-section {
-            padding: 2.5rem 0; /* No side padding, containers handle it */
+            padding: 1.5rem 0;
+        }
+        .landing-section-subtitle {
+            margin-bottom: 1.5rem;
+        }
+        .why-card, .process-step, .faq-item, .referrer-card, .swipe-item {
+            min-width: 320px;
         }
         .why-card {
             padding: 1.5rem 1.25rem;
-            margin: 0 1rem;
+            margin: 0 auto;
         }
         .referrer-card {
             padding: 1.25rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .swipe-container {
+            padding-right: 3rem;
+            scroll-padding-left: 1rem;
         }
     }
 </style>
@@ -725,7 +744,7 @@
     </section>
 
     <!-- Section 7 — CTA Final -->
-    <section id="cta-final" class="landing-section bg-blue cta-section">
+    <section id="cta-final" class="landing-section bg-light cta-section">
         <div class="landing-container">
             
             {% if referrer_profile %}
