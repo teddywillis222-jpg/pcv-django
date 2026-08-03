@@ -63,6 +63,7 @@ def handle_teacher_profile_update(sender, instance, created, **kwargs):
                 reward_amount = ReferralProgram.get_current_amount()
                 
                 Reward.objects.create(
+                    referral=referral,
                     teacher=referral.referrer,
                     amount=reward_amount,
                     status='PENDING',
