@@ -758,7 +758,7 @@ def recherche(request):
 
     if localisation:
 
-        professeurs = professeurs.filter(ville_quartier=localisation)
+        professeurs = professeurs.filter(quartiers_couverts__id=localisation)
 
     if classe:
 
@@ -880,11 +880,20 @@ def recherche(request):
 
 
 
-    if matiere and localisation:
+    localisation_name = ""
+    if localisation:
+        from .models import Quartier
+        try:
+            q = Quartier.objects.get(id=localisation)
+            localisation_name = f"{q.nom} - {q.ville}"
+        except Quartier.DoesNotExist:
+            pass
 
-        seo_title = f"Meilleurs Professeurs de {matiere} à {localisation} | ProfChezVous"
+    if matiere and localisation_name:
 
-        seo_description = f"Découvrez nos professeurs de {matiere} certifiés disponibles à {localisation}. Soutien scolaire de qualité à domicile."
+        seo_title = f"Meilleurs Professeurs de {matiere} à {localisation_name} | ProfChezVous"
+
+        seo_description = f"Découvrez nos professeurs de {matiere} certifiés disponibles à {localisation_name}. Soutien scolaire de qualité à domicile."
 
     elif matiere:
 
@@ -892,11 +901,11 @@ def recherche(request):
 
         seo_description = f"Trouvez un professeur de {matiere} compétent pour des cours à domicile partout au Bénin. Tous niveaux."
 
-    elif localisation:
+    elif localisation_name:
 
-        seo_title = f"Professeurs particuliers à {localisation} | ProfChezVous"
+        seo_title = f"Professeurs particuliers à {localisation_name} | ProfChezVous"
 
-        seo_description = f"Besoin d'un prof à {localisation} ? Découvrez notre sélection d'enseignants vérifiés pour vos enfants."
+        seo_description = f"Besoin d'un prof à {localisation_name} ? Découvrez notre sélection d'enseignants vérifiés pour vos enfants."
 
 
 
@@ -907,6 +916,8 @@ def recherche(request):
         'matiere': matiere,
 
         'localisation': localisation,
+        
+        'localisation_name': localisation_name,
 
         'classe': classe,
 
@@ -927,6 +938,12 @@ def recherche(request):
         'seo_description': seo_description,
 
     }
+
+    # Quartiers dynamiques : seulement ceux avec au moins un prof validé
+    from .models import Quartier
+    context['quartiers_disponibles'] = Quartier.objects.filter(
+        professeurs__statut_de_validation=ValidationStatus.VALIDE
+    ).distinct().order_by('ville', 'nom')
 
     
 
@@ -1562,7 +1579,7 @@ def prof_create_profile(request):
 
             teacher.save()
 
-            
+            form.save_m2m()  # Sauvegarde des M2M (quartiers_couverts, etc.)
 
             from .models import Diplome
 
@@ -2274,7 +2291,7 @@ def parent_dashboard(request):
 
         score_annotation = score_annotation + Case(
 
-            When(ville_quartier=parent.quartier_ville, then=Value(1)),
+            When(quartiers_couverts=parent.quartier_ville, then=Value(1)),
 
             default=Value(0),
 
@@ -2616,7 +2633,7 @@ def apprenant_dashboard(request):
 
         score_annotation = score_annotation + Case(
 
-            When(ville_quartier=apprenant.quartier_ville, then=Value(1)),
+            When(quartiers_couverts=apprenant.quartier_ville, then=Value(1)),
 
             default=Value(0),
 
@@ -3038,7 +3055,7 @@ def seo_directory_page(request, subject_slug, city_slug):
 
         .filter(statut_de_validation=ValidationStatus.VALIDE)
 
-        .filter(ville_quartier=city_name)
+        .filter(quartiers_couverts__nom__icontains=city_name)
 
         .filter(matiere_enseignee__icontains=subject_name)
 
@@ -3112,7 +3129,7 @@ def seo_directory_page(request, subject_slug, city_slug):
 
         teachers_qs = TeacherProfile.objects.select_related('user').filter(
 
-            statut_de_validation=ValidationStatus.VALIDE, ville_quartier=city_name
+            statut_de_validation=ValidationStatus.VALIDE, quartiers_couverts__nom__icontains=city_name
 
         )
 
@@ -3580,7 +3597,7 @@ def professeur_detail(request, teacher_slug):
 
         # Priorité 2: Même ville/quartier
 
-        same_loc = related_teachers.filter(ville_quartier=teacher.ville_quartier)
+        same_loc = related_teachers.filter(quartiers_couverts__in=teacher.quartiers_couverts.all())
 
         related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
 
@@ -3652,7 +3669,7 @@ def api_teacher_profile(request, teacher_slug):
 
         else:
 
-            same_loc = related_teachers.filter(ville_quartier=teacher.ville_quartier)
+            same_loc = related_teachers.filter(quartiers_couverts__in=teacher.quartiers_couverts.all())
 
             related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
 

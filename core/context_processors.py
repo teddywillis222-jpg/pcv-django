@@ -1,10 +1,13 @@
 from django.conf import settings
-from .choices import Localisation, Matiere, ClassLevel, CourseMode, SupportCategory, PriceRange
+from .choices import Matiere, ClassLevel, CourseMode, SupportCategory, PriceRange
+from .models import Quartier
 
 def global_choices(request):
     """Fournit les choix standardisés à tous les templates."""
+    quartiers = Quartier.objects.all().order_by('ville', 'nom')
     return {
-        'LOCALISATION_CHOICES': Localisation.get_choices(),
+        'LOCALISATION_CHOICES': [(q.id, f"{q.nom} - {q.ville}") for q in quartiers],
+        'quartiers_all': quartiers,
         'MATIERE_LISTE': Matiere.LISTE,
         'MATIERE_CHOICES': Matiere.get_choices(),
         'CLASS_LEVEL_CHOICES': ClassLevel.get_choices(),
@@ -13,3 +16,4 @@ def global_choices(request):
         'PRICE_RANGE_CHOICES': PriceRange.CHOICES,
         'SITE_DOMAIN': settings.SITE_DOMAIN,
     }
+

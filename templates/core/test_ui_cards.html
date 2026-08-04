@@ -329,7 +329,12 @@
                     
                     <div class="info-text-group">
                         <p class="info-text info-subjects">{{ teacher.matiere_enseignee|default:"Mathématiques, Physique" }}</p>
-                        <p class="info-text">📍 {{ teacher.ville_quartier|default:"Cotonou (Fidjrossè)" }}</p>
+                        <p class="info-text" title="{% for q in teacher.quartiers_couverts.all %}{{ q.nom }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                            📍 {{ teacher.first_quartier.nom|default:"Cotonou (Fidjrossè)" }}
+                            {% if teacher.extra_quartiers_count > 0 %}
+                            <span style="font-size: 0.75rem; color: #64748b; margin-left: 4px;">(+{{ teacher.extra_quartiers_count }})</span>
+                            {% endif %}
+                        </p>
                     </div>
 
                     <!-- L'ACCROCHE (HOOK) -->
@@ -379,7 +384,12 @@
                     
                     <div class="info-text-group">
                         <p class="info-text info-subjects">{{ teacher.matiere_enseignee|default:"SVT, Physique-Chimie" }}</p>
-                        <p class="info-text">📍 {{ teacher.ville_quartier|default:"Abomey-Calavi" }}</p>
+                        <p class="info-text" title="{% for q in teacher.quartiers_couverts.all %}{{ q.nom }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                            📍 {{ teacher.first_quartier.nom|default:"Abomey-Calavi" }}
+                            {% if teacher.extra_quartiers_count > 0 %}
+                            <span style="font-size: 0.75rem; color: #64748b; margin-left: 4px;">(+{{ teacher.extra_quartiers_count }})</span>
+                            {% endif %}
+                        </p>
                     </div>
 
                     <!-- L'ACCROCHE (HOOK) -->

@@ -153,6 +153,19 @@ def clean_subjects(subjects):
 
 
 
+class Quartier(models.Model):
+    """Modèle représentant un quartier avec sa ville associée."""
+    nom = models.CharField(max_length=100)
+    ville = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ('nom', 'ville')
+        ordering = ['ville', 'nom']
+
+    def __str__(self):
+        return f"{self.nom} - {self.ville}"
+
+
 class CustomChoice(models.Model):
     """Stocke les options personnalisées ajoutées par les utilisateurs (Matières, Localisations, Classes)."""
     category = models.CharField(max_length=50, db_index=True)
@@ -393,15 +406,7 @@ class Parent(models.Model):
 
     profession = models.CharField(max_length=150, blank=True)
 
-    quartier_ville = models.CharField(
-
-        max_length=150,
-
-        choices=Localisation.CHOICES,
-
-        blank=True
-
-    )
+    quartier_ville = models.ForeignKey(Quartier, on_delete=models.SET_NULL, null=True, blank=True, related_name='parents')
 
     photo_profil = models.ImageField(
 
@@ -545,17 +550,7 @@ class Enfant(models.Model):
 
     # 3. Logistique et localisation
 
-    quartier_ville = models.CharField(
-
-        max_length=150,
-
-        choices=Localisation.CHOICES,
-
-        blank=True,
-
-        help_text="Format Â« Quartier - Ville Â» pour matching avec professeurs",
-
-    )
+    quartier_ville = models.ForeignKey(Quartier, on_delete=models.SET_NULL, null=True, blank=True, related_name='enfants', help_text="Sélectionnez le quartier pour le matching")
 
     mode_de_cours = models.CharField(
 
@@ -769,11 +764,13 @@ class Apprenant(models.Model):
 
     # 3. Logistique et localisation
 
-    quartier_ville = models.CharField(
-        max_length=150,
-        choices=Localisation.CHOICES,
+    quartier_ville = models.ForeignKey(
+        Quartier,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        help_text="Format Â« Quartier - Ville Â» pour matching",
+        related_name='apprenants',
+        help_text="Sélectionnez le quartier pour le matching"
     )
 
     preference_de_cours = models.CharField(
@@ -1115,13 +1112,7 @@ class TeacherProfile(models.Model):
 
     )
 
-    ville_quartier = models.CharField(
-
-        max_length=150,
-
-        help_text="Format Â« Quartier - Ville Â»"
-
-    )
+    quartiers_couverts = models.ManyToManyField(Quartier, related_name='professeurs')
 
     disponibilites = models.ManyToManyField(
 
@@ -1342,7 +1333,7 @@ class TeacherProfile(models.Model):
 
             'annees_d_experience', 'classes_expertise', 'modes_de_cours',
 
-            'ville_quartier', 'tarifs_par_classe', 'telephone_whatsapp'
+            'tarifs_par_classe', 'telephone_whatsapp'
 
         ]
 
@@ -1355,6 +1346,10 @@ class TeacherProfile(models.Model):
                 filled += 1
         
 
+        # On ajoute des points pour les quartiers couverts (M2M)
+        if self.pk and self.quartiers_couverts.exists():
+            filled += 1
+
         # On ajoute des points pour les diplômes
         if self.diplomes.exists():
             filled += 1
@@ -1363,8 +1358,8 @@ class TeacherProfile(models.Model):
         if self.disponibilites.exists() or self.grille_disponibilites:
             filled += 1
 
-        # Nombre total de champs = len(fields_to_check) + 1 (diplômes) + 1 (disponibilités)
-        total_fields = len(fields_to_check) + 2
+        # Nombre total de champs = len(fields_to_check) + 1 (quartiers) + 1 (diplômes) + 1 (disponibilités)
+        total_fields = len(fields_to_check) + 3
         return int((filled / total_fields) * 100)
 
 
@@ -1681,7 +1676,7 @@ class TeacherProfile(models.Model):
 
             from django.utils.text import slugify
 
-            base_slug = slugify(f"{self.prenom} {self.nom} {self.matiere_enseignee} {self.ville_quartier}")
+            base_slug = slugify(f"{self.prenom} {self.nom} {self.matiere_enseignee}")
 
             if not base_slug:
 
@@ -1779,6 +1774,19 @@ class TeacherProfile(models.Model):
         if not self.matiere_enseignee:
             return []
         return [m.strip() for m in self.matiere_enseignee.split(',') if m.strip()]
+
+    @property
+    def first_quartier(self):
+        if not self.pk:
+            return None
+        return self.quartiers_couverts.first()
+    
+    @property
+    def extra_quartiers_count(self):
+        if not self.pk:
+            return 0
+        count = self.quartiers_couverts.count()
+        return count - 1 if count > 1 else 0
 
 
 

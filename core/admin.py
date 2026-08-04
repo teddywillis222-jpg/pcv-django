@@ -110,9 +110,10 @@ delete_teacher_profiles_and_users.short_description = "🗑️ Supprimer profils
 
 @admin.register(TeacherProfile)
 class TeacherProfileAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'prenom', 'user_email', 'statut_de_validation', 'ville_quartier', 'user_date_joined')
+    list_display = ('nom', 'prenom', 'user_email', 'statut_de_validation', 'get_quartiers', 'user_date_joined')
     list_filter = ('statut_de_validation', 'matiere_enseignee')
-    search_fields = ('nom', 'prenom', 'matiere_enseignee', 'ville_quartier', 'user__email')
+    search_fields = ('nom', 'prenom', 'matiere_enseignee', 'quartiers_couverts__nom', 'user__email')
+    filter_horizontal = ('quartiers_couverts',)
     ordering = ('-user__date_joined',)
     actions = [delete_teacher_profiles_and_users]
 
@@ -123,6 +124,15 @@ class TeacherProfileAdmin(admin.ModelAdmin):
     @admin.display(description='Inscrit le', ordering='user__date_joined')
     def user_date_joined(self, obj):
         return obj.user.date_joined.strftime('%d/%m/%Y') if obj.user else '—'
+
+    @admin.display(description='Quartiers')
+    def get_quartiers(self, obj):
+        quartiers = obj.quartiers_couverts.all()[:3]
+        names = [str(q) for q in quartiers]
+        total = obj.quartiers_couverts.count()
+        if total > 3:
+            return ', '.join(names) + f' (+{total - 3})'
+        return ', '.join(names) if names else '—'
 
 
 # ──────────────────────────────────────────────

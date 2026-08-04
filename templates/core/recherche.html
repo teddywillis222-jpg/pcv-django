@@ -590,8 +590,8 @@ select.pcv-multi-select,
                         <div class="filter-group">
                             <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)" data-allow-create="false">
                                 <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
-                                {% for loc_val, loc_label in LOCALISATION_CHOICES %}
-                                <option value="{{ loc_val }}" {% if localisation == loc_val %}selected{% endif %}>{{ loc_label }}</option>
+                                {% for quartier in quartiers_disponibles %}
+                                <option value="{{ quartier.id }}" {% if localisation == quartier.id|stringformat:"s" %}selected{% endif %}>{{ quartier.nom }} - {{ quartier.ville }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -654,12 +654,12 @@ select.pcv-multi-select,
     
     <!-- Résultats de Recherche -->
     <h1 class="search-title" style="margin-top: 2.5rem; margin-bottom: 1.5rem;">
-        {% if matiere and localisation %}
-            Cours de {{ matiere }} à {{ localisation }}
+        {% if matiere and localisation_name %}
+            Cours de {{ matiere }} à {{ localisation_name }}
         {% elif matiere %}
             Professeurs de {{ matiere }}
-        {% elif localisation %}
-            Professeurs à {{ localisation }}
+        {% elif localisation_name %}
+            Professeurs à {{ localisation_name }}
         {% else %}
             Professeurs disponibles
         {% endif %}
@@ -673,7 +673,7 @@ select.pcv-multi-select,
             {% endfor %}
 
             <!-- BLOC APPEL A L'ACTION GLOBAL (Permanent et Compact) -->
-            <div id="no-results-block" style="grid-column: 1 / -1; width: 100%; max-width: 100%; padding: 0 0.5rem; box-sizing: border-box;" data-matiere="{{ matiere }}" data-localisation="{{ localisation }}">
+            <div id="no-results-block" style="grid-column: 1 / -1; width: 100%; max-width: 100%; padding: 0 0.5rem; box-sizing: border-box;" data-matiere="{{ matiere }}" data-localisation="{{ localisation_name }}">
                 <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #a7f3d0; border-radius: 1.25rem; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; max-width: 900px; margin: 1.5rem auto;">
                     <div style="text-align: center;">
                         <h3 style="font-size: 1.15rem; color: #065f46; font-weight: 800; margin-bottom: 0.5rem;">
@@ -773,12 +773,12 @@ select.pcv-multi-select,
                 Pourquoi choisir un répétiteur avec Prof Chez Vous ?
             </h2>
             <p style="color: #475569; line-height: 1.6; margin-bottom: 1.5rem;">
-                {% if matiere and localisation %}
-                    Vous recherchez des <strong>cours particuliers de {{ matiere }} à {{ localisation }}</strong> ? Notre plateforme vous met en relation avec des enseignants qualifiés et rigoureusement vérifiés. L'accompagnement personnalisé est la clé de la réussite scolaire.
+                {% if matiere and localisation_name %}
+                    Vous recherchez des <strong>cours particuliers de {{ matiere }} à {{ localisation_name }}</strong> ? Notre plateforme vous met en relation avec des enseignants qualifiés et rigoureusement vérifiés. L'accompagnement personnalisé est la clé de la réussite scolaire.
                 {% elif matiere %}
                     Nos <strong>professeurs de {{ matiere }}</strong> accompagnent votre enfant avec une pédagogie adaptée à ses besoins. Qu'il s'agisse de remise à niveau ou de perfectionnement, nous vérifions méticuleusement chaque profil pour vous garantir un apprentissage de qualité.
-                {% elif localisation %}
-                    Trouvez rapidement un <strong>répétiteur de confiance à {{ localisation }}</strong>. Nous sélectionnons les meilleurs profils près de chez vous pour offrir à votre enfant un suivi régulier et adapté à ses objectifs scolaires.
+                {% elif localisation_name %}
+                    Trouvez rapidement un <strong>répétiteur de confiance à {{ localisation_name }}</strong>. Nous sélectionnons les meilleurs profils près de chez vous pour offrir à votre enfant un suivi régulier et adapté à ses objectifs scolaires.
                 {% else %}
                     Prof Chez Vous est la référence pour trouver un répétiteur de confiance au Bénin. Notre communauté d'enseignants passionnés est évaluée et certifiée pour garantir un accompagnement d'excellence à votre enfant, quelle que soit la matière ou la classe.
                 {% endif %}

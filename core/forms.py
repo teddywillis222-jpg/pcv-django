@@ -273,8 +273,8 @@ class FinalisationCompteForm(forms.Form):
 
 
 class ParentForm(forms.ModelForm):
-    quartier_ville = forms.ChoiceField(
-        choices=Localisation.CHOICES,
+    quartier_ville = forms.ModelChoiceField(
+        queryset=None,
         required=True,
         widget=forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'})
     )
@@ -285,6 +285,8 @@ class ParentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from .models import Quartier
+        self.fields['quartier_ville'].queryset = Quartier.objects.all()
         self.fields['nom'].widget.attrs['readonly'] = True
         self.fields['nom'].widget.attrs['class'] = 'bg-gray-100'
 
@@ -356,7 +358,9 @@ class EnfantForm(forms.ModelForm):
         for field in ["prenom", "classe", "quartier_ville", "mode_de_cours"]:
             self.fields[field].required = True
             
-        self.fields["quartier_ville"].widget = forms.Select(choices=Localisation.CHOICES, attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'})
+        from .models import Quartier
+        self.fields["quartier_ville"].queryset = Quartier.objects.all()
+        self.fields["quartier_ville"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
         self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
         self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '100'})
 
@@ -425,8 +429,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
         required=False
     )
     
-    quartier_ville = forms.ChoiceField(
-        choices=Localisation.CHOICES,
+    quartier_ville = forms.ModelChoiceField(
+        queryset=None,
         widget=forms.Select(attrs={'class': 'pcv-multi-select', 'data-allow-create': 'false'}),
         required=True
     )
@@ -453,6 +457,8 @@ class ApprenantCreateProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from .models import Quartier
+        self.fields['quartier_ville'].queryset = Quartier.objects.all()
         
         classe_choices = [("", "Ex : 4ème")] + list(self.fields["classe"].choices)[1:]
         self.fields["classe"].choices = classe_choices
@@ -520,7 +526,15 @@ class TeacherProfileForm(forms.ModelForm):
             'placeholder': 'Autres classes (Optionnel)'
         })
     )
-    ville_quartier = DynamicChoiceField(choices=Localisation.CHOICES, required=True, widget=forms.Select(attrs={'class': 'pcv-multi-select'}))
+    quartiers_couverts = forms.ModelMultipleChoiceField(
+        queryset=None,
+        required=True,
+        widget=forms.SelectMultiple(attrs={
+            'class': 'pcv-multi-select allow-multiple',
+            'data-allow-create': 'false',
+            'placeholder': 'Quartiers couverts'
+        })
+    )
     categories_de_soutien = forms.MultipleChoiceField(
         choices=SupportCategory.CHOICES,
         required=True,
@@ -562,7 +576,7 @@ class TeacherProfileForm(forms.ModelForm):
             "email",
             "nom",
             "telephone_whatsapp",
-            "ville_quartier",
+            "quartiers_couverts",
             "matiere_enseignee",
             "classes_expertise",
             "classes_enseignees",
@@ -584,6 +598,12 @@ class TeacherProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         is_editing = kwargs.pop('is_editing', False)
         super().__init__(*args, **kwargs)
+        from .models import Quartier
+        self.fields['quartiers_couverts'].queryset = Quartier.objects.all()
+        self.fields['quartiers_couverts'].widget.attrs.update({
+            'class': 'pcv-multi-select allow-multiple',
+            'placeholder': 'Quartiers couverts (ex: Agla, Fidjrossè...)'
+        })
         self.fields["email"].widget.attrs["readonly"] = True
         self.fields["nom"].widget.attrs["readonly"] = True
 
@@ -608,7 +628,7 @@ class TeacherProfileForm(forms.ModelForm):
             if isinstance(self.instance.matiere_enseignee, str):
                 self.initial['matiere_enseignee'] = [m.strip() for m in self.instance.matiere_enseignee.split(',')]
         
-        for field_name in ["email", "nom", "telephone_whatsapp", "categories_de_soutien", "matiere_enseignee", "ville_quartier", "photo_de_profil", "fichier_cni"]:
+        for field_name in ["email", "nom", "telephone_whatsapp", "categories_de_soutien", "matiere_enseignee", "quartiers_couverts", "photo_de_profil", "fichier_cni"]:
             if field_name in self.fields:
                 if field_name == "photo_de_profil" and self.instance and getattr(self.instance, "photo_de_profil", None):
                     self.fields[field_name].required = False
