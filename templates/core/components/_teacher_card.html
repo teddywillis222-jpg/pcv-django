@@ -57,11 +57,19 @@
             <!-- Subjects & Location -->
             <div class="info-text-group">
                 <p class="info-text info-subjects">{{ teacher.matiere_enseignee }}</p>
-                <p class="info-text info-meta" title="{% for q in teacher.quartiers_couverts.all %}{{ q.nom }} ({{ q.ville }}){% if not forloop.last %}, {% endif %}{% endfor %}">
+                <p class="info-text info-meta" title="{% for q in teacher.quartiers_couverts.all %}{{ q.nom }}{% if not forloop.last %}, {% endif %}{% endfor %}">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px; vertical-align:middle; display:inline-block;"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
-                    {{ teacher.first_quartier.nom|default:"Non spécifié" }}
-                    {% if teacher.extra_quartiers_count > 0 %}
-                    <span style="font-size: 0.7rem; color: #16a34a; font-weight: 600; margin-left: 3px;">(+{{ teacher.extra_quartiers_count }})</span>
+                    {% if searched_quartier_id %}
+                        {% for q in teacher.quartiers_couverts.all %}
+                            {% if q.id == searched_quartier_id %}
+                                {{ q.nom }} <span style="font-size: 0.65rem; color: #16a34a; font-weight: 700; margin-left: 3px;">✅ Couvre votre zone</span>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {{ teacher.first_quartier.nom|default:"Non spécifié" }}
+                        {% if teacher.extra_quartiers_count > 0 %}
+                        <span style="font-size: 0.7rem; color: #16a34a; font-weight: 600; margin-left: 3px;">(+{{ teacher.extra_quartiers_count }})</span>
+                        {% endif %}
                     {% endif %}
                 </p>
                 <div class="info-classes-premium">

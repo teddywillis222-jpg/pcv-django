@@ -885,7 +885,7 @@ def recherche(request):
         from .models import Quartier
         try:
             q = Quartier.objects.get(id=localisation)
-            localisation_name = f"{q.nom} - {q.ville}"
+            localisation_name = q.nom
         except Quartier.DoesNotExist:
             pass
 
@@ -937,6 +937,7 @@ def recherche(request):
 
         'seo_description': seo_description,
 
+        'searched_quartier_id': int(localisation) if localisation else None,
     }
 
     # Quartiers dynamiques : seulement ceux avec au moins un prof validé
