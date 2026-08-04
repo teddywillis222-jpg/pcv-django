@@ -588,8 +588,8 @@ select.pcv-multi-select,
                         </div>
                         
                         <div class="filter-group">
-                            <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier / Ville (Ex : Agla - Cotonou)" data-allow-create="false">
-                                <option value="">Quartier / Ville (Ex : Agla - Cotonou)</option>
+                            <select id="localisation" name="localisation" class="pcv-multi-select" placeholder="Quartier (Ex: Agla, Fidjrossè...)" data-allow-create="false">
+                                <option value="">Quartier (Ex: Agla, Fidjrossè...)</option>
                                 {% for quartier in quartiers_disponibles %}
                                 <option value="{{ quartier.id }}" {% if localisation == quartier.id|stringformat:"s" %}selected{% endif %}>{{ quartier.nom }}</option>
                                 {% endfor %}

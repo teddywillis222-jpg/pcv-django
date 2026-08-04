@@ -6,7 +6,7 @@ def global_choices(request):
     """Fournit les choix standardisés à tous les templates."""
     quartiers = Quartier.objects.all().order_by('ville', 'nom')
     return {
-        'LOCALISATION_CHOICES': [(q.id, f"{q.nom} - {q.ville}") for q in quartiers],
+        'LOCALISATION_CHOICES': [(q.id, q.nom) for q in quartiers],
         'quartiers_all': quartiers,
         'MATIERE_LISTE': Matiere.LISTE,
         'MATIERE_CHOICES': Matiere.get_choices(),

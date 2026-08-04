@@ -163,7 +163,7 @@ class Quartier(models.Model):
         ordering = ['ville', 'nom']
 
     def __str__(self):
-        return f"{self.nom} - {self.ville}"
+        return self.nom
 
 
 class CustomChoice(models.Model):
