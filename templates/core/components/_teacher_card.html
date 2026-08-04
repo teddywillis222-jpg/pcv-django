@@ -62,7 +62,7 @@
                     {% if searched_quartier_id %}
                         {% for q in teacher.quartiers_couverts.all %}
                             {% if q.id == searched_quartier_id %}
-                                {{ q.nom }} <span style="font-size: 0.65rem; color: #16a34a; font-weight: 700; margin-left: 3px;">✅ Couvre votre zone</span>
+                                {{ q.nom }} <span class="badge-zone-match">✅ Couvre votre zone</span>
                             {% endif %}
                         {% endfor %}
                     {% else %}
