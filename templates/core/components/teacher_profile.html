@@ -284,12 +284,13 @@
                     {% endif %}
                 </div>
                 <div>
-                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Lieu</span>
-                    <span style="font-weight: 600; color: #0f172a;" title="{% for q in teacher.quartiers_couverts.all %}{{ q.nom }}{% if not forloop.last %}, {% endif %}{% endfor %}">
-                        {{ teacher.first_quartier.nom|default:"Non spécifié" }}
-                        {% if teacher.extra_quartiers_count > 0 %}
-                        <span style="font-size: 0.8rem; color: #64748b; font-weight: normal;">(+{{ teacher.extra_quartiers_count }} zones)</span>
-                        {% endif %}
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Quartier(s) couvert(s)</span>
+                    <span style="font-weight: 600; color: #0f172a; display: block; overflow-wrap: break-word; line-height: 1.4;">
+                        {% for q in teacher.quartiers_couverts.all %}
+                            {{ q.nom }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            Non spécifié
+                        {% endfor %}
                     </span>
                 </div>
                 <div>
