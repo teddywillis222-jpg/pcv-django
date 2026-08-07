@@ -850,10 +850,17 @@
                             Modifier mon profil
                         </a>
                         
+                        {% if user.email == 'teddywillis222@gmail.com' or user.email == 'hergenicetonato@gmail.com' %}
+                        <a href="{% url 'referrals:cgu' %}" class="sidebar-menu-item" onclick="closeMobileMenu()" style="color: #16a34a; font-weight: 600;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            Programme Ambassadeur
+                        </a>
+                        {% else %}
                         <a href="javascript:void(0)" class="sidebar-menu-item" onclick="alert('Le programme Ambassadeur sera lancé très prochainement !'); closeMobileMenu();" style="color: #64748b; opacity: 0.7; cursor: not-allowed;">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             Programme Ambassadeur (Bientôt)
                         </a>
+                        {% endif %}
                         
                         {% if '/dashboard/' in request.path %}
                             <a href="javascript:void(0)" class="sidebar-menu-item" onclick="showSection('section-settings', this); closeMobileMenu();">
