@@ -2050,7 +2050,7 @@ def prof_dashboard(request):
 
             'ambassador': ambassador,
 
-            'visits_count': referrals.filter(status='VISITED').count(),
+            'visits_count': referrals.exclude(visited_at__isnull=True).count(),
 
             'accounts_count': referrals.filter(status__in=['ACCOUNT_CREATED', 'PROFILE_COMPLETED', 'UNDER_REVIEW', 'VERIFIED', 'REWARD_PENDING', 'REWARD_PAID']).count(),
 
