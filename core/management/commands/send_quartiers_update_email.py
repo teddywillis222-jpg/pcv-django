@@ -9,9 +9,22 @@ import time
 class Command(BaseCommand):
     help = 'Envoie un e-mail à tous les professeurs validés pour leur annoncer la fonctionnalité des quartiers multiples.'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--test',
+            type=str,
+            help='Adresse e-mail de test pour envoyer un seul exemplaire de vérification.',
+        )
+
     def handle(self, *args, **options):
+        test_email = options.get('test')
+        
         # Récupérer uniquement les professeurs approuvés
-        professeurs = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).exclude(user__email='')
+        if test_email:
+            professeurs = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).exclude(user__email='')[:1]
+            self.stdout.write(self.style.WARNING(f"MODE TEST ACTIF : L'e-mail sera envoyé uniquement à {test_email}"))
+        else:
+            professeurs = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).exclude(user__email='')
         
         total_profs = professeurs.count()
         self.stdout.write(self.style.SUCCESS(f'Préparation de l\'envoi à {total_profs} professeurs validés.'))
@@ -70,7 +83,7 @@ class Command(BaseCommand):
                     subject=subject,
                     message=plain_message,
                     from_email=from_email,
-                    recipient_list=[prof.user.email],
+                    recipient_list=[test_email] if test_email else [prof.user.email],
                     html_message=html_message,
                     connection=connection,
                     fail_silently=False,
