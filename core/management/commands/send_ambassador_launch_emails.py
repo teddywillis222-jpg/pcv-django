@@ -79,7 +79,7 @@ class Command(BaseCommand):
                     <p>Votre rôle est donc simple : identifier des enseignants que vous seriez vous-même prêt à recommander.</p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://profchezvousapp.com/dashboard/#section-ambassadeur" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">👉 Accéder au Programme Ambassadeurs</a>
+                        <a href="https://profchezvousapp.com/prof/dashboard/#section-ambassadeur" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">👉 Accéder au Programme Ambassadeurs</a>
                     </div>
                     
                     <p style="background-color: #f1f5f9; padding: 15px; border-radius: 4px; font-size: 0.9em;">
@@ -110,7 +110,7 @@ class Command(BaseCommand):
                     </ol>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://profchezvousapp.com/professeur/creer-profil/" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">👉 Compléter mon profil / Finaliser mon inscription</a>
+                        <a href="https://profchezvousapp.com/prof/create-profile/" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">👉 Compléter mon profil / Finaliser mon inscription</a>
                     </div>
                     
                     <p>Une fois votre profil complété et votre vérification terminée, vous pourrez pleinement profiter des fonctionnalités réservées aux professeurs vérifiés, dont le Programme Ambassadeurs.</p>
