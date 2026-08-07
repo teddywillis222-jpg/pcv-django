@@ -150,8 +150,16 @@
         transition: transform 0.2s, box-shadow 0.2s;
         border: none;
     }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+        background-color: #15803d; /* Darker green */
+        color: white !important;
+    }
     .btn-primary:active {
-        transform: scale(0.98);
+        transform: scale(0.98) translateY(0);
+        box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+        color: white !important;
     }
 
     /* --- SECTIONS --- */
@@ -314,12 +322,12 @@
         </div>
         
         <h1>Vous avez été recommandé(e)</h1>
-        <p>Rejoignez le réseau d'excellence de Prof Chez Vous sur la recommandation exclusive d'un de nos enseignants.</p>
+        <p>Donnez à votre activité de professeur une présence professionnelle et gagnez en visibilité auprès des parents et apprenants.</p>
 
         <!-- Carte Parrain -->
         <div class="referrer-card">
-            {% if referrer_profile and referrer_profile.photo %}
-                <img src="{{ referrer_profile.photo.url }}" alt="{{ referrer.get_full_name }}" class="referrer-avatar">
+            {% if referrer_profile and referrer_profile.photo_de_profil %}
+                <img src="{{ referrer_profile.photo_de_profil.url }}" alt="{{ referrer.get_full_name }}" class="referrer-avatar">
             {% else %}
                 <div class="referrer-avatar">
                     {{ referrer.first_name|first|upper }}{{ referrer.last_name|first|upper }}
@@ -420,7 +428,7 @@
             <div class="doc-card">
                 <div class="step-number">3</div>
                 <div class="doc-content">
-                    <h3>Entretien et Validation</h3>
+                    <h3>Validation</h3>
                     <p>Notre équipe valide votre profil (un processus plus rapide pour les profs recommandés).</p>
                 </div>
             </div>
