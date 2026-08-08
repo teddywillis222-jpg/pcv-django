@@ -318,7 +318,7 @@
         navButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const target = e.currentTarget.dataset.target;
-                if (['accueil', 'professeurs', 'ressources', 'faqs'].includes(target)) {
+                if (['accueil', 'professeurs', 'ressources', 'faqs', 'ambassadeurs'].includes(target)) {
                     loadSection(target);
                 } else {
                     contentDiv.innerHTML = `<div class="card"><h2 style="margin:0">Section ${target} en cours de développement...</h2></div>`;
