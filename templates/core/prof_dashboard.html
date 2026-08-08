@@ -32,17 +32,10 @@
                 Modifier mon profil
             </a>
 
-            {% if user.email == 'teddywillis222@gmail.com' or user.email == 'hergenicetonato@gmail.com' %}
             <a href="javascript:void(0)" onclick="showSection('section-ambassadeur', this); closeMobileMenu();" class="dash-menu-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #16a34a; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: #f0fdf4; border: 1px solid #bbf7d0;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 Programme Ambassadeur
             </a>
-            {% else %}
-            <a href="javascript:void(0)" onclick="alert('Le programme Ambassadeur sera lancé très prochainement !'); return false;" style="display: flex !important; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #64748b; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: #f1f5f9; border: 1px solid #e2e8f0; cursor: not-allowed; opacity: 0.7;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                Programme Ambassadeur (Bientôt)
-            </a>
-            {% endif %}
 
             <hr style="border: none; border-top: 1px solid var(--dash-border); margin: 0.5rem 0;">
             <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dash-text-muted); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & Paramètres</div>
