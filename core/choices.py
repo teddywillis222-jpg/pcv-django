@@ -112,7 +112,8 @@ class Matiere:
                 choices.append((group, group_choices))
             return choices
         else:
-            return [(m, m) for m in d]
+            # Fallback robuste : si d n'est pas un dict, on crée un optgroup par défaut
+            return [("Toutes les matières", [(m, m) for m in d])]
 
 Matiere.LISTE = Matiere.get_flat_liste()
 

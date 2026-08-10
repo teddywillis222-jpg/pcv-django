@@ -380,7 +380,7 @@ SUIVI_RIGOUREUX_JOURS_RECENCE = int(os.getenv('SUIVI_RIGOUREUX_JOURS_RECENCE', '
 
 LOCALISATIONS_FILE = os.path.join(BASE_DIR, 'core', 'localisations.json')
 
-MATIERES_FILE = os.path.join(BASE_DIR, 'core', 'matieres.json')
+MATIERES_FILE = os.path.join(BASE_DIR, 'config', 'matieres_structurees.json')
 
 # ParamÃ¨tres Premium
 
