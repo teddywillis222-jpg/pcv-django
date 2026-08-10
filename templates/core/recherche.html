@@ -581,8 +581,12 @@ select.pcv-multi-select,
                         <div class="filter-group">
                             <select id="matiere" name="matiere" class="pcv-multi-select" placeholder="Matière (Ex: Mathématiques, Français...)" data-allow-create="false">
                                 <option value="">Matière (Ex: Mathématiques, Français...)</option>
-                                {% for mat_val, mat_label in MATIERE_CHOICES %}
-                                <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
+                                {% for group_label, group_items in MATIERE_CHOICES %}
+                                <optgroup label="{{ group_label }}">
+                                    {% for mat_val, mat_label in group_items %}
+                                    <option value="{{ mat_val }}" {% if matiere == mat_val %}selected{% endif %}>{{ mat_label }}</option>
+                                    {% endfor %}
+                                </optgroup>
                                 {% endfor %}
                             </select>
                         </div>

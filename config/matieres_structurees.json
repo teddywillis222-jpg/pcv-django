@@ -1,0 +1,55 @@
+{
+  "Anglais": [
+    "Anglais (Soutien scolaire général)",
+    "Anglais (Conversation et expression orale)",
+    "Anglais (Grammaire et conjugaison)",
+    "Anglais (Préparation aux examens)",
+    "Anglais des affaires"
+  ],
+  "Français": [
+    "Français (Soutien scolaire général)",
+    "Français (Lecture et écriture / Alphabétisation)",
+    "Français (Grammaire, orthographe et conjugaison)",
+    "Français (Préparation aux examens)",
+    "FLE (Français Langue Étrangère)"
+  ],
+  "Mathématiques": [
+    "Mathématiques (Soutien scolaire général)",
+    "Mathématiques (Algèbre et Analyse)",
+    "Mathématiques (Géométrie)",
+    "Mathématiques (Préparation aux concours)"
+  ],
+  "PCT (Physique Chimie et Technologie)": [
+    "PCT (Soutien scolaire général)",
+    "PCT (Mécanique et Électricité)",
+    "PCT (Chimie)",
+    "PCT (Préparation aux examens)"
+  ],
+  "SVT (Sciences de la Vie et de la Terre)": [
+    "SVT (Soutien scolaire général)",
+    "SVT (Préparation aux examens)"
+  ],
+  "Histoire-Géographie": [
+    "Histoire-Géographie (Soutien scolaire général)",
+    "Histoire-Géographie (Préparation aux examens)"
+  ],
+  "Philosophie": [
+    "Philosophie (Soutien scolaire général)",
+    "Philosophie (Préparation aux examens)"
+  ],
+  "Autres Langues": [
+    "Espagnol",
+    "Allemand",
+    "Arabe"
+  ],
+  "Informatique & Technologies": [
+    "Initiation Informatique",
+    "Programmation / Codage",
+    "Bureautique"
+  ],
+  "Accompagnement général": [
+    "Aide aux devoirs (Toutes matières primaire/collège)",
+    "Méthodologie et Organisation du travail",
+    "Coaching scolaire"
+  ]
+}

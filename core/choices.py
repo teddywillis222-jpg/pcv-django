@@ -51,46 +51,70 @@ class SupportCategory:
 
 
 class Matiere:
-    """Liste de 100 matières standardisées pour les suggestions."""
-    _liste = None
+    """Liste hiérarchisée des matières."""
+    _dict = None
+    _flat_liste = None
 
     @classmethod
-    def load_liste(cls):
-        if cls._liste is not None:
-            return cls._liste
+    def load_dict(cls):
+        if cls._dict is not None:
+            return cls._dict
         
         filepath = getattr(settings, 'MATIERES_FILE', None)
+        if not filepath:
+            filepath = os.path.join(settings.BASE_DIR, 'config', 'matieres_structurees.json')
+            
         if filepath and os.path.exists(filepath):
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
-                    cls._liste = json.load(f)
-                    return cls._liste
+                    cls._dict = json.load(f)
+                    return cls._dict
             except Exception:
                 pass
         
         # Fallback minimal
-        return ["Mathématiques", "Français", "Anglais", "Physique", "Chimie", "SVT"]
+        cls._dict = {
+            "Mathématiques": ["Mathématiques (Soutien scolaire général)"],
+            "Français": ["Français (Soutien scolaire général)"],
+            "Anglais": ["Anglais (Soutien scolaire général)"],
+            "PCT": ["PCT (Physique Chimie et Technologie)"],
+            "SVT": ["SVT (Sciences de la Vie et de la Terre)"]
+        }
+        return cls._dict
+
+    @classmethod
+    def get_flat_liste(cls):
+        if cls._flat_liste is not None:
+            return cls._flat_liste
+        
+        d = cls.load_dict()
+        flat = []
+        if isinstance(d, dict):
+            for group, items in d.items():
+                flat.extend(items)
+        elif isinstance(d, list):
+            flat = d
+        cls._flat_liste = flat
+        return cls._flat_liste
 
     @property
     def LISTE(self):
-        return self.load_liste()
+        return self.get_flat_liste()
     
     @classmethod
     def get_choices(cls):
-        """Retourne la liste triée par ordre alphabétique pour les Select, incluant les ajouts dynamiques."""
-        base_list = set(cls.load_liste())
-        try:
-            from django.apps import apps
-            CustomChoice = apps.get_model('core', 'CustomChoice')
-            customs = CustomChoice.objects.filter(category='matiere').values_list('value', flat=True)
-            for c in customs:
-                base_list.add(c)
-        except Exception:
-            pass
-        sorted_list = sorted(list(base_list))
-        return [(m, m) for m in sorted_list]
+        """Retourne la liste groupée par catégorie (Optgroups) pour les formulaires."""
+        d = cls.load_dict()
+        if isinstance(d, dict):
+            choices = []
+            for group, items in d.items():
+                group_choices = [(item, item) for item in items]
+                choices.append((group, group_choices))
+            return choices
+        else:
+            return [(m, m) for m in d]
 
-Matiere.LISTE = Matiere.load_liste()
+Matiere.LISTE = Matiere.get_flat_liste()
 
 
 # --- Classe / niveau (partout : Enfant, Engagement, TeacherProfile) ---
@@ -454,11 +478,15 @@ class BesoinPrioritaire:
 
 
 def validate_matieres_max_5(value):
-    """Liste de matières, maximum 5."""
+    """Liste de matières, maximum 5, validation stricte."""
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste de matières.")
     if len(value) > 5:
         raise ValidationError("Maximum 5 matières autorisées.")
+    valid = set(Matiere.LISTE)
+    for v in value:
+        if v not in valid:
+            raise ValidationError(f"Matière invalide : {v}")
 
 
 # --- Apprenant ---
@@ -558,11 +586,15 @@ def validate_creneaux_disponibilites(value):
 
 
 def validate_matieres_recherchees_max_5(value):
-    """Liste de matières recherchées, maximum 5."""
+    """Liste de matières recherchées, maximum 5, validation stricte."""
     if not isinstance(value, list):
         raise ValidationError("Doit être une liste de matières.")
     if len(value) > 5:
         raise ValidationError("Maximum 5 matières autorisées.")
+    valid = set(Matiere.LISTE)
+    for v in value:
+        if v not in valid:
+            raise ValidationError(f"Matière invalide : {v}")
 
 
 # --- Message ---

@@ -517,8 +517,12 @@ p {
                     <div style="flex: 1; min-width: 0;">
                         <select name="matiere" class="pcv-multi-select" placeholder="Matière ?" data-allow-create="false">
                             <option value="">Matière ?</option>
-                            {% for val, label in MATIERE_CHOICES %}
-                            <option value="{{ val }}">{{ label }}</option>
+                            {% for group_label, group_items in MATIERE_CHOICES %}
+                            <optgroup label="{{ group_label }}">
+                                {% for val, label in group_items %}
+                                <option value="{{ val }}">{{ label }}</option>
+                                {% endfor %}
+                            </optgroup>
                             {% endfor %}
                         </select>
                     </div>

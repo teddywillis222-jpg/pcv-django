@@ -1776,6 +1776,20 @@ class TeacherProfile(models.Model):
         return [m.strip() for m in self.matiere_enseignee.split(',') if m.strip()]
 
     @property
+    def short_matieres(self):
+        import re
+        if not self.matiere_enseignee:
+            return ""
+        matieres = [m.strip() for m in self.matiere_enseignee.split(',') if m.strip()]
+        short_list = []
+        for m in matieres:
+            # Enlever le texte entre parenthèses
+            short_m = re.sub(r'\s*\(.*?\)', '', m).strip()
+            if short_m and short_m not in short_list:
+                short_list.append(short_m)
+        return ", ".join(short_list)
+
+    @property
     def first_quartier(self):
         if not self.pk:
             return None
@@ -1787,6 +1801,12 @@ class TeacherProfile(models.Model):
             return 0
         count = self.quartiers_couverts.count()
         return count - 1 if count > 1 else 0
+
+    @property
+    def quartiers_couverts_ids(self):
+        if not self.pk:
+            return []
+        return [q.id for q in self.quartiers_couverts.all()]
 
 
 
