@@ -5407,10 +5407,12 @@ from django.db.models import Avg, Count
 from .models import Evaluation
 
 
-
+@login_required
 def debug_admin_pcv(request):
 
-    """Point d'entrée du dashboard administrateur (sans authentification pour tests)"""
+    """Point d'entrée du dashboard administrateur"""
+    if not request.user.is_superuser:
+        return redirect('home')
 
     return render(request, "core/admin_dashboard/base.html")
 
