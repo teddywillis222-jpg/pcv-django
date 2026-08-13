@@ -13,7 +13,7 @@
 <meta property="og:title" content="{{ teacher.prenom }} {{ teacher.nom }} - Prof Chez Vous">
 <meta property="og:description" content="Professeur de {{ teacher.matiere_enseignee }} pour le(s) niveau(x) : {% for c in readable_classes %}{{ c }}{% if not forloop.last %}, {% endif %}{% empty %}Tous niveaux{% endfor %}.">
 {% if teacher.photo_de_profil %}
-    {% if "http" in teacher.photo_de_profil.url %}
+    {% if "http" in teacher.photo_de_profil.url or "res.cloudinary.com" in teacher.photo_de_profil.url %}
         <meta property="og:image" content="{{ teacher.photo_de_profil.url|cloudinary_og }}">
     {% else %}
         <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ teacher.photo_de_profil.url|cloudinary_og }}">

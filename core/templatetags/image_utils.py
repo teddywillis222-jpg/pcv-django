@@ -62,11 +62,20 @@ def cloudinary_og(url):
     Transforme une URL Cloudinary pour servir une image Open Graph (Facebook, WhatsApp).
     Oblige le format JPEG (f_jpg) car Facebook gère mal les WebP.
     Centre sur le visage (g_face) avec une dimension carrée idéale (600x600).
+    Force l'URL absolue HTTPS.
     """
     if not url:
         return url
     
     url = str(url)
+    
+    # Si c'est une URL Cloudinary, on force le HTTPS
+    if 'res.cloudinary.com' in url:
+        if url.startswith('//'):
+            url = 'https:' + url
+        elif url.startswith('http://'):
+            url = url.replace('http://', 'https://')
+            
     if 'cloudinary' not in url and 'res.cloudinary.com' not in url:
         return url
     
@@ -83,4 +92,3 @@ def cloudinary_og(url):
     url = re.sub(r'\.webp$', '.jpg', url, flags=re.IGNORECASE)
     
     return url
-
