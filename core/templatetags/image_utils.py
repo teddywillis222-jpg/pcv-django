@@ -43,12 +43,11 @@ def cloudinary_optimized(url, dimensions="400x500"):
     
     # Insérer la transformation après /upload/
     # Pattern : .../upload/... → .../upload/<transformation>/...
-    # Si des transformations existent déjà, on les remplace
+    # On préserve la version (v1234/) si elle existe
     if '/upload/' in url:
-        # Vérifier s'il y a déjà des transformations (pattern: /upload/v1234/ ou /upload/w_xxx/)
         url = re.sub(
-            r'/upload/(?:v\d+/)?',
-            f'/upload/{transformation}/',
+            r'/upload/(v\d+/)?',
+            lambda m: f'/upload/{transformation}/' + (m.group(1) or ''),
             url,
             count=1
         )
@@ -81,8 +80,8 @@ def cloudinary_og(url):
     transformation = "w_600,h_600,c_fill,g_face,f_jpg,q_auto"
     if '/upload/' in url:
         url = re.sub(
-            r'/upload/(?:v\d+/)?',
-            f'/upload/{transformation}/',
+            r'/upload/(v\d+/)?',
+            lambda m: f'/upload/{transformation}/' + (m.group(1) or ''),
             url,
             count=1
         )
