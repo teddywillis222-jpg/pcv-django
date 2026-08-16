@@ -3536,6 +3536,58 @@ def professeur_detail(request, teacher_slug):
 
         
 
+    # --- Open Graph : calcul serveur de l'URL image pour Facebook/WhatsApp/LinkedIn ---
+    # On utilise le SDK Cloudinary pour générer l'URL avec transformations,
+    # ce qui est plus fiable que la manipulation regex côté template.
+    og_image_width = 1200
+    og_image_height = 630
+    og_image_url = None
+
+    if teacher.photo_de_profil:
+        try:
+            raw_url = teacher.photo_de_profil.url
+            if raw_url and 'res.cloudinary.com' in str(raw_url):
+                try:
+                    import cloudinary.utils
+                    # Extraire le public_id depuis le nom stocké en DB
+                    # django-cloudinary-storage stocke le chemin relatif (ex: "teachers/profile_photos/IMG.webp")
+                    # Le public_id Cloudinary est préfixé par le MEDIA_URL directory
+                    stored_name = teacher.photo_de_profil.name
+                    # Retirer l'extension pour obtenir le public_id
+                    import os
+                    public_id_base = os.path.splitext(stored_name)[0]
+                    # django-cloudinary-storage préfixe automatiquement avec "media/"
+                    # (ou ce qui est configuré dans CLOUDINARY_STORAGE['MEDIA_TAG'])
+                    public_id = f"media/{public_id_base}" if not public_id_base.startswith('media/') else public_id_base
+                    
+                    og_image_url, _ = cloudinary.utils.cloudinary_url(
+                        public_id,
+                        width=og_image_width,
+                        height=og_image_height,
+                        crop="fill",
+                        gravity="face",
+                        format="jpg",
+                        quality="auto",
+                        secure=True
+                    )
+                except Exception:
+                    # Fallback : utiliser l'URL brute avec injection de transformation
+                    from core.templatetags.image_utils import cloudinary_og
+                    og_image_url = cloudinary_og(raw_url)
+            elif raw_url:
+                # Image locale (pas Cloudinary)
+                og_image_url = request.build_absolute_uri(raw_url)
+                og_image_width = 800
+                og_image_height = 1000
+        except Exception:
+            og_image_url = None
+
+    if not og_image_url:
+        from django.templatetags.static import static
+        og_image_url = request.build_absolute_uri(static('core/images/logo_pr.jpg'))
+        og_image_width = 500
+        og_image_height = 500
+
     context = {
 
         'teacher': teacher,
@@ -3570,7 +3622,13 @@ def professeur_detail(request, teacher_slug):
 
         'existing_conversation_id': existing_conversation_id,
 
-        'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+        'days_list': ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+
+        'og_image_url': og_image_url,
+
+        'og_image_width': og_image_width,
+
+        'og_image_height': og_image_height,
 
     }
 
