@@ -3552,19 +3552,22 @@ def professeur_detail(request, teacher_slug):
                     import re
                     import os
                     
-                    # Extraire le public_id directement de l'URL existante (plus fiable que .name)
-                    # Ex: .../image/upload/v1/media/teachers/profile_photos/IMG.webp -> media/teachers/profile_photos/IMG
+                    # Extraire le public_id directement de l'URL existante ou du nom
                     raw_str = str(raw_url)
                     parts = raw_str.split('/upload/')
                     if len(parts) == 2:
                         path = parts[1]
-                        path = re.sub(r'^v\d+/', '', path) # Retirer la version si présente
-                        public_id = os.path.splitext(path)[0] # Retirer l'extension
+                        path = re.sub(r'^v\d+/', '', path)
+                        public_id = os.path.splitext(path)[0]
                     else:
-                        # Fallback (devrait jamais arriver)
                         public_id = os.path.splitext(teacher.photo_de_profil.name)[0]
                         if not public_id.startswith('media/'):
                             public_id = f"media/{public_id}"
+                    
+                    # CORRECTIF MAJEUR : Si la base de données a perdu le dossier parent, on le force
+                    # (Cloudinary stocke bien dans teachers/profile_photos/ mais la DB renvoie parfois media/IMG_...)
+                    if 'teachers/profile_photos/' not in public_id:
+                        public_id = public_id.replace('media/', 'media/teachers/profile_photos/')
                     
                     og_image_url, _ = cloudinary.utils.cloudinary_url(
                         public_id,
