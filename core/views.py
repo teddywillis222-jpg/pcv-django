@@ -3549,16 +3549,22 @@ def professeur_detail(request, teacher_slug):
             if raw_url and 'res.cloudinary.com' in str(raw_url):
                 try:
                     import cloudinary.utils
-                    # Extraire le public_id depuis le nom stocké en DB
-                    # django-cloudinary-storage stocke le chemin relatif (ex: "teachers/profile_photos/IMG.webp")
-                    # Le public_id Cloudinary est préfixé par le MEDIA_URL directory
-                    stored_name = teacher.photo_de_profil.name
-                    # Retirer l'extension pour obtenir le public_id
+                    import re
                     import os
-                    public_id_base = os.path.splitext(stored_name)[0]
-                    # django-cloudinary-storage préfixe automatiquement avec "media/"
-                    # (ou ce qui est configuré dans CLOUDINARY_STORAGE['MEDIA_TAG'])
-                    public_id = f"media/{public_id_base}" if not public_id_base.startswith('media/') else public_id_base
+                    
+                    # Extraire le public_id directement de l'URL existante (plus fiable que .name)
+                    # Ex: .../image/upload/v1/media/teachers/profile_photos/IMG.webp -> media/teachers/profile_photos/IMG
+                    raw_str = str(raw_url)
+                    parts = raw_str.split('/upload/')
+                    if len(parts) == 2:
+                        path = parts[1]
+                        path = re.sub(r'^v\d+/', '', path) # Retirer la version si présente
+                        public_id = os.path.splitext(path)[0] # Retirer l'extension
+                    else:
+                        # Fallback (devrait jamais arriver)
+                        public_id = os.path.splitext(teacher.photo_de_profil.name)[0]
+                        if not public_id.startswith('media/'):
+                            public_id = f"media/{public_id}"
                     
                     og_image_url, _ = cloudinary.utils.cloudinary_url(
                         public_id,

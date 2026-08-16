@@ -49,6 +49,10 @@ def _inject_cloudinary_transformation(url, transformation):
     if f'/upload/{transformation}/' not in url:
         url = url.replace('/upload/', f'/upload/{transformation}/', 1)
 
+    # Forcer .jpg pour Facebook si demandé (f_jpg)
+    if 'f_jpg' in transformation and url.endswith('.webp'):
+        url = url[:-5] + '.jpg'
+
     return url
 
 
