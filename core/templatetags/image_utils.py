@@ -8,7 +8,6 @@ import re
 
 register = template.Library()
 
-
 @register.filter(name='cloudinary_optimized')
 def cloudinary_optimized(url, dimensions="400x500"):
     """
@@ -87,8 +86,5 @@ def cloudinary_og(url):
             url,
             count=1
         )
-    
-    # En plus, remplacer l'extension .webp par .jpg à la fin de l'URL pour plus de sécurité
-    url = re.sub(r'\.webp$', '.jpg', url, flags=re.IGNORECASE)
     
     return url
