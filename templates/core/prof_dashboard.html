@@ -1114,80 +1114,77 @@
 </style>
 
 <script>
-    (function() {
-        // CSRF token directement depuis Django (fiable à 100%)
-        const CSRF_TOKEN = '{{ csrf_token }}';
-        
-        function markPopupAsSeen() {
-            return fetch('/api/prof/popup-partage-vu/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': CSRF_TOKEN,
-                    'Content-Type': 'application/json'
-                }
-            }).catch(e => console.warn("Erreur marquage popup", e));
+    function getShareCsrfToken() {
+        if (typeof getCookie === 'function') {
+            return getCookie('csrftoken');
         }
+        const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        return tokenInput ? tokenInput.value : '';
+    }
 
-        function dismissSharePopup() {
-            const popup = document.getElementById('share-profile-popup');
-            if (popup) {
-                popup.style.opacity = '0';
-                popup.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => popup.remove(), 300);
-                markPopupAsSeen();
+    function markPopupAsSeen() {
+        fetch('/api/prof/popup-partage-vu/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getShareCsrfToken(),
+                'Content-Type': 'application/json'
             }
-        }
+        }).catch(e => console.warn("Erreur marquage popup", e));
+    }
 
-        function copyProfileLinkPopup(link) {
+    function dismissSharePopup() {
+        const popup = document.getElementById('share-profile-popup');
+        if (popup) {
+            popup.style.opacity = '0';
+            popup.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (popup.parentNode) popup.parentNode.removeChild(popup);
+            }, 300);
+            markPopupAsSeen();
+        }
+    }
+
+    function copyProfileLinkPopup(link) {
+        if (navigator.clipboard) {
             navigator.clipboard.writeText(link).then(() => {
                 const btn = document.getElementById('copy-link-btn');
                 const textEl = document.getElementById('copy-link-text-popup');
-                const originalText = textEl.textContent;
-                
-                btn.style.borderColor = "#16a34a";
-                btn.style.color = "#16a34a";
-                textEl.textContent = "Lien copié ! ✓";
-                
-                setTimeout(() => {
-                    btn.style.borderColor = "#e2e8f0";
-                    btn.style.color = "#334155";
-                    textEl.textContent = originalText;
-                }, 2500);
-                
-                // Marquer comme vu et fermer
+                if (btn && textEl) {
+                    const originalText = textEl.textContent;
+                    btn.style.borderColor = "#16a34a";
+                    btn.style.color = "#16a34a";
+                    textEl.textContent = "Lien copié ! ✓";
+                    setTimeout(() => {
+                        btn.style.borderColor = "#e2e8f0";
+                        btn.style.color = "#334155";
+                        textEl.textContent = originalText;
+                    }, 2500);
+                }
                 markPopupAsSeen();
                 setTimeout(dismissSharePopup, 2000);
             });
         }
+    }
 
-        function shareSocial(network) {
-            const profileUrl = '{{ request.scheme }}://{{ request.get_host }}{% url "professeur_detail" teacher.slug %}';
-            const url = encodeURIComponent(profileUrl);
-            const text = encodeURIComponent("Découvrez mon profil sur Prof Chez Vous et réservez des cours avec moi !");
-            
-            let shareUrl = '';
-            if (network === 'facebook') {
-                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-            } else if (network === 'whatsapp') {
-                shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
-            } else if (network === 'linkedin') {
-                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
-            }
-            
-            if (shareUrl) {
-                // Marquer comme vu AVANT d'ouvrir l'onglet
-                markPopupAsSeen();
-                
-                // Ouvrir dans le même onglet (pas de page vide au retour)
-                window.location.href = shareUrl;
-            }
+    function shareSocial(network) {
+        const profileUrl = '{{ request.scheme }}://{{ request.get_host }}{% url "professeur_detail" teacher.slug %}';
+        const url = encodeURIComponent(profileUrl);
+        const text = encodeURIComponent("Découvrez mon profil sur Prof Chez Vous et réservez des cours avec moi !");
+        
+        let shareUrl = '';
+        if (network === 'facebook') {
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        } else if (network === 'whatsapp') {
+            shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+        } else if (network === 'linkedin') {
+            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
         }
-
-        // Exposer les fonctions globalement pour les onclick inline
-        window.dismissSharePopup = dismissSharePopup;
-        window.copyProfileLinkPopup = copyProfileLinkPopup;
-        window.shareSocial = shareSocial;
-    })();
+        
+        if (shareUrl) {
+            markPopupAsSeen();
+            window.location.href = shareUrl;
+        }
+    }
 </script>
 {% endif %}
 
