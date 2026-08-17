@@ -1001,11 +1001,7 @@ class TeacherProfile(models.Model):
 
         on_delete=models.CASCADE,
 
-        related_name="teacher_profile",
-
     )
-
-
 
     # 1. Informations de base
 
