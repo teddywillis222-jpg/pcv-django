@@ -5441,7 +5441,7 @@ def api_mark_popup_partage_vu(request):
 
     """API pour marquer le popup d'incitation au partage comme vu par le professeur."""
 
-    if request.user.role != 'PROFESSEUR':
+    if not hasattr(request.user, 'role') or request.user.role != 'PROFESSEUR':
 
         return JsonResponse({'error': 'Action non autorisée'}, status=403)
 
@@ -5453,12 +5453,14 @@ def api_mark_popup_partage_vu(request):
 
         prof.popup_partage_vu = True
 
-        prof.save()
+        prof.save(update_fields=['popup_partage_vu'])
 
         return JsonResponse({'success': True})
 
     except Exception as e:
 
+        import traceback
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
 
 

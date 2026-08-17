@@ -1004,7 +1004,7 @@
         if (!event.target.closest('.options-btn')) {
             document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
         }
-        if (event.target.classList.contains('modal-overlay')) {
+        if (event.target.classList.contains('modal-overlay') && event.target.id !== 'share-profile-popup') {
             closeEngModal();
         }
     }
@@ -1114,74 +1114,80 @@
 </style>
 
 <script>
-    function markPopupAsSeen() {
-        fetch('/api/prof/popup-partage-vu/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : (typeof getCookie === 'function' ? getCookie('csrftoken') : ''),
-                'Content-Type': 'application/json'
+    (function() {
+        // CSRF token directement depuis Django (fiable à 100%)
+        const CSRF_TOKEN = '{{ csrf_token }}';
+        
+        function markPopupAsSeen() {
+            return fetch('/api/prof/popup-partage-vu/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': CSRF_TOKEN,
+                    'Content-Type': 'application/json'
+                }
+            }).catch(e => console.warn("Erreur marquage popup", e));
+        }
+
+        function dismissSharePopup() {
+            const popup = document.getElementById('share-profile-popup');
+            if (popup) {
+                popup.style.opacity = '0';
+                popup.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => popup.remove(), 300);
+                markPopupAsSeen();
             }
-        }).catch(e => console.warn("Erreur marquage popup", e));
-    }
-
-    function dismissSharePopup() {
-        const popup = document.getElementById('share-profile-popup');
-        if (popup) {
-            popup.style.opacity = '0';
-            popup.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => popup.remove(), 300);
-            markPopupAsSeen();
         }
-    }
 
-    function copyProfileLinkPopup(link) {
-        navigator.clipboard.writeText(link).then(() => {
-            const btn = document.getElementById('copy-link-btn');
-            const textEl = document.getElementById('copy-link-text-popup');
-            const originalText = textEl.textContent;
-            
-            btn.style.borderColor = "#16a34a";
-            btn.style.color = "#16a34a";
-            textEl.textContent = "Lien copié ! ✓";
-            
-            setTimeout(() => {
-                btn.style.borderColor = "#e2e8f0";
-                btn.style.color = "#334155";
-                textEl.textContent = originalText;
-            }, 2500);
-            
-            setTimeout(dismissSharePopup, 2000);
-        });
-    }
+        function copyProfileLinkPopup(link) {
+            navigator.clipboard.writeText(link).then(() => {
+                const btn = document.getElementById('copy-link-btn');
+                const textEl = document.getElementById('copy-link-text-popup');
+                const originalText = textEl.textContent;
+                
+                btn.style.borderColor = "#16a34a";
+                btn.style.color = "#16a34a";
+                textEl.textContent = "Lien copié ! ✓";
+                
+                setTimeout(() => {
+                    btn.style.borderColor = "#e2e8f0";
+                    btn.style.color = "#334155";
+                    textEl.textContent = originalText;
+                }, 2500);
+                
+                // Marquer comme vu et fermer
+                markPopupAsSeen();
+                setTimeout(dismissSharePopup, 2000);
+            });
+        }
 
-    function shareSocial(network) {
-        const url = encodeURIComponent('{{ request.scheme }}://{{ request.get_host }}{% url 'professeur_detail' teacher.slug %}');
-        const text = encodeURIComponent("Découvrez mon profil sur Prof Chez Vous et réservez des cours avec moi !");
-        
-        let shareUrl = '';
-        if (network === 'facebook') {
-            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-        } else if (network === 'whatsapp') {
-            shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
-        } else if (network === 'linkedin') {
-            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        function shareSocial(network) {
+            const profileUrl = '{{ request.scheme }}://{{ request.get_host }}{% url "professeur_detail" teacher.slug %}';
+            const url = encodeURIComponent(profileUrl);
+            const text = encodeURIComponent("Découvrez mon profil sur Prof Chez Vous et réservez des cours avec moi !");
+            
+            let shareUrl = '';
+            if (network === 'facebook') {
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            } else if (network === 'whatsapp') {
+                shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+            } else if (network === 'linkedin') {
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+            }
+            
+            if (shareUrl) {
+                // Marquer comme vu AVANT d'ouvrir l'onglet
+                markPopupAsSeen();
+                
+                // Ouvrir dans le même onglet (pas de page vide au retour)
+                window.location.href = shareUrl;
+            }
         }
-        
-        if (shareUrl) {
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-            setTimeout(dismissSharePopup, 1000);
-        }
-    }
-    
-    // Assurer que le clic extérieur ne ferme pas (en interceptant le clic sur l'overlay si nécessaire)
-    // Mais puisque nous n'ajoutons pas d'écouteur sur '.modal-overlay' global pour CET ID, il ne se fermera pas
-    // Sauf si un écouteur global existe déjà. Pour bloquer, on stoppe la propagation sur le modal content
-    const sharePopupContent = document.querySelector('#share-profile-popup .modal-content');
-    if (sharePopupContent) {
-        sharePopupContent.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
+
+        // Exposer les fonctions globalement pour les onclick inline
+        window.dismissSharePopup = dismissSharePopup;
+        window.copyProfileLinkPopup = copyProfileLinkPopup;
+        window.shareSocial = shareSocial;
+    })();
 </script>
 {% endif %}
 
