@@ -260,9 +260,15 @@ def home(request):
 
     top_professeurs = annotate_teachers_with_ratings(top_professeurs)
 
+    from .models import Quartier
+    quartiers_disponibles = Quartier.objects.filter(
+        professeurs__statut_de_validation=ValidationStatus.VALIDE
+    ).distinct().order_by('ville', 'nom')
 
-
-    return render(request, "core/home.html", {"top_professeurs": top_professeurs})
+    return render(request, "core/home.html", {
+        "top_professeurs": top_professeurs,
+        "quartiers_disponibles": quartiers_disponibles,
+    })
 
 
 

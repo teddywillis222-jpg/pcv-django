@@ -402,7 +402,7 @@ p {
         min-height: 70vh;
         border-radius: 0;
         justify-content: center;
-            padding-top: 6rem; /* réduit pour remonter le contenu de la hero */
+        padding-top: 3rem; /* réduit pour remonter le contenu de la hero */
         padding-bottom: 4rem;
     }
     .hero-content {
@@ -497,7 +497,7 @@ p {
 <!-- HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
-        <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; padding: 0.4rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; margin-top: 4.5rem; margin-bottom: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.1); letter-spacing: 0.3px;">
+        <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; padding: 0.4rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; margin-top: 1.5rem; margin-bottom: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.1); letter-spacing: 0.3px;">
             ⚡ Trouvez un professeur particulier en moins de deux minutes
         </div>
         <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
@@ -531,8 +531,8 @@ p {
                 <div class="search-input-group">
                     <select name="localisation" class="pcv-multi-select" placeholder="Dans quel quartier ?" data-allow-create="false">
                         <option value="">Dans quel quartier ?</option>
-                        {% for code, label in LOCALISATION_CHOICES %}
-                        <option value="{{ code }}">{{ label }}</option>
+                        {% for quartier in quartiers_disponibles %}
+                        <option value="{{ quartier.id }}">{{ quartier.nom }}</option>
                         {% endfor %}
                     </select>
                 </div>
