@@ -67,16 +67,20 @@ class SeoDirectorySitemap(Sitemap):
 
     def items(self):
         """Retourne toutes les combinaisons possibles de matières et de villes"""
-        from .choices import Matiere, Localisation
+        from .choices import Matiere
+        from .models import Quartier
         from django.utils.text import slugify
+        
+        villes = Quartier.objects.exclude(ville='').values_list('ville', flat=True).distinct()
         
         combinations = []
         for mat in Matiere.LISTE:
-            for loc_key, loc_val in Localisation.CHOICES:
-                combinations.append({
-                    'subject_slug': slugify(mat),
-                    'city_slug': slugify(loc_val)
-                })
+            for ville in villes:
+                if ville:
+                    combinations.append({
+                        'subject_slug': slugify(mat),
+                        'city_slug': slugify(ville)
+                    })
         return combinations
 
     def location(self, item):

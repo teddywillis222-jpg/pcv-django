@@ -3030,42 +3030,27 @@ def seo_directory_page(request, subject_slug, city_slug):
 
             
 
-    for loc_key, loc_val in Localisation.CHOICES:
-
-        if slugify(loc_val) == city_slug:
-
-            city_name = loc_val
-
+    from .models import Quartier
+    villes = Quartier.objects.exclude(ville='').values_list('ville', flat=True).distinct()
+    for v in villes:
+        if slugify(v) == city_slug:
+            city_name = v
             break
 
-            
-
     if not city_name:
-
         raise Http404("Ville non reconnue")
-
     if not subject_name:
-
         raise Http404("Matière non reconnue")
 
-        
-
     # ── 2. Queryset optimisé (Anti N+1) ──
-
     queryset = (
-
         TeacherProfile.objects
-
         .select_related('user')                 # FK directe → 1 JOIN
-
         .prefetch_related('parents_favoris')     # M2M favoris → 1 requête séparée
-
         .filter(statut_de_validation=ValidationStatus.VALIDE)
-
-        .filter(quartiers_couverts__nom__icontains=city_name)
-
+        .filter(quartiers_couverts__ville__iexact=city_name)
         .filter(matiere_enseignee__icontains=subject_name)
-
+        .distinct()
     )
 
     
@@ -3135,10 +3120,8 @@ def seo_directory_page(request, subject_slug, city_slug):
     if not teachers_qs.exists() and not classe_filter and not prix_filter:
 
         teachers_qs = TeacherProfile.objects.select_related('user').filter(
-
-            statut_de_validation=ValidationStatus.VALIDE, quartiers_couverts__nom__icontains=city_name
-
-        )
+            statut_de_validation=ValidationStatus.VALIDE, quartiers_couverts__ville__iexact=city_name
+        ).distinct()
 
         fallback_active = True
 
@@ -3216,7 +3199,7 @@ def seo_directory_page(request, subject_slug, city_slug):
 
     # ── 5. Maillage interne ──
 
-    all_cities = [c[1] for c in Localisation.CHOICES if slugify(c[1]) != city_slug]
+    all_cities = [v for v in villes if slugify(v) != city_slug]
 
     random.shuffle(all_cities)
 
