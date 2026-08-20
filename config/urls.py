@@ -164,6 +164,7 @@ urlpatterns = [
     
     # Interface Admin Custom
     path("admin-outils/creer-annonce/", core_views.create_announcement, name="create_announcement"),
+    path("admin-outils/reset-stats-mensuelles/", core_views.reset_stats_mensuelles, name="reset_stats_mensuelles"),
 
     # Help Center
     path("centre-daide/", include("help_center.urls")),
