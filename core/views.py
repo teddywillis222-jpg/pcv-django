@@ -245,29 +245,29 @@ def home(request):
     from .choices import ValidationStatus
 
     from django.db.models import F
+    import random
 
-    
+    # On récupère les profils complets et validés (QuerySet pour annotation)
+    profs_qs = TeacherProfile.objects.select_related('user').filter(
+        statut_de_validation=ValidationStatus.VALIDE,
+        profil_complet=True
+    )[:20]
 
-    # On récupère 24 professeurs validés aléatoirement (ou les plus récents)
+    # Annotation des notes/avis (nécessite un QuerySet, pas une liste)
+    profs_qs = annotate_teachers_with_ratings(profs_qs)
 
-    top_professeurs = TeacherProfile.objects.select_related('user').filter(
+    # Conversion en liste + mélange rapide en Python
+    # (beaucoup plus rapide que order_by('?') qui fait un ORDER BY RANDOM() en SQL)
+    valid_profs = list(profs_qs)
 
-        statut_de_validation=ValidationStatus.VALIDE
-
-    ).order_by('-profil_complet', '?')[:24]
-
-
-
-    top_professeurs = annotate_teachers_with_ratings(top_professeurs)
-
-    from .models import Quartier
-    quartiers_disponibles = Quartier.objects.filter(
-        professeurs__statut_de_validation=ValidationStatus.VALIDE
-    ).distinct().order_by('ville', 'nom')
+    if len(valid_profs) > 8:
+        top_professeurs = random.sample(valid_profs, 8)
+    else:
+        top_professeurs = valid_profs
+        random.shuffle(top_professeurs)
 
     return render(request, "core/home.html", {
         "top_professeurs": top_professeurs,
-        "quartiers_disponibles": quartiers_disponibles,
     })
 
 

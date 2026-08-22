@@ -6,6 +6,7 @@
             <img src="{{ teacher.photo_de_profil.url|cloudinary_optimized:'400x500' }}" 
                  alt="{{ teacher.prenom }} {{ teacher.nom }}" 
                  class="teacher-photo"
+                 loading="lazy"
                  decoding="async"
                  width="400" height="500">
         {% else %}

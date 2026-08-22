@@ -29,14 +29,17 @@
     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
 
     
-    <!-- Google Fonts - Raleway -->
+    <!-- Google Fonts - Raleway (non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
     
     <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'core/css/teacher_card.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" />
+    <!-- Tom Select CSS : chargé en non-bloquant, activé seulement quand nécessaire -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" media="print" onload="this.media='all'" />
     {% block extra_css %}{% endblock %}
     {% block meta_seo %}{% endblock %}
     {% block extra_head %}{% endblock %}
@@ -628,9 +631,9 @@
             }
         }
     </style>
-    <!-- intl-tel-input for Premium Phone Fields -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css">
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js"></script>
+    <!-- intl-tel-input for Premium Phone Fields (non-blocking) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/css/intlTelInput.css" media="print" onload="this.media='all'">
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.10/build/js/intlTelInput.min.js" defer></script>
     <style>
         /* Custom styles for intl-tel-input to match our premium design */
         .iti { width: 100%; display: block; margin-bottom: 1rem; }
@@ -1382,7 +1385,7 @@
 {% block extra_js %}{% endblock %}
     
     <!-- Script Global pour Tom Select -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js" defer></script>
     <script>
         function initGlobalTomSelects() {
             const selects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');

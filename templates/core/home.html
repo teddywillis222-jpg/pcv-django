@@ -489,67 +489,223 @@ p {
         margin: 0 auto;
     }
 }
+
+/* Hero Buttons */
+.hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+    align-items: center;
+}
+.btn-hero-primary {
+    background: var(--brand-success);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 999px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+}
+.btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    color: white;
+}
+.hero-secondary-text {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+.btn-hero-secondary {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    backdrop-filter: blur(5px);
+    transition: background 0.2s;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+}
+.btn-hero-secondary:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+@media (min-width: 768px) {
+    .hero-actions {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-end;
+    }
+    .hero-actions > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Rentree Encart */
+.rentree-encart {
+    background: linear-gradient(135deg, #e0f2fe, #f0fdf4);
+    border: 1px solid #bae6fd;
+    border-radius: 24px;
+    padding: 2.5rem 1.5rem;
+    margin: 0 1rem;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.rentree-encart h2 {
+    color: #0369a1;
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+.rentree-encart p {
+    color: #334155;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.rentree-encart ul {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+    color: #475569;
+    list-style: none;
+    padding: 0;
+}
+.rentree-encart ul li {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+@media (min-width: 768px) {
+    .rentree-encart {
+        padding: 4rem;
+        margin: 0 auto;
+        max-width: 900px;
+    }
+}
+
 </style>
 {% endblock %}
 
+
 {% block content %}
 
-<!-- HERO SECTION -->
+<!-- 1. HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
         <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; padding: 0.4rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; margin-top: 1.5rem; margin-bottom: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.1); letter-spacing: 0.3px;">
-            ⚡ Trouvez un professeur particulier en moins de deux minutes
+            ⚡ Trouvez votre professeur en moins de 2 minutes
         </div>
         <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
-        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur, dans tous les quartiers de Cotonou et au-delà.</p>
+        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur. 100% profils vérifiés.</p>
         
-        <div class="search-box">
-            <form action="{% url 'recherche' %}" method="GET" class="search-form">
-                <div class="search-input-group" style="display: flex; gap: 0.5rem;">
-                    <div style="flex: 1; min-width: 0;">
-                        <select name="classe" class="pcv-multi-select" placeholder="Classe ?" data-allow-create="false">
-                            <option value="">Classe ?</option>
-                            {% for val, label in CLASS_LEVEL_CHOICES %}
-                            <option value="{{ val }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <select name="matiere" class="pcv-multi-select" placeholder="Matière ?" data-allow-create="false">
-                            <option value="">Matière ?</option>
-                            {% for group_label, group_items in MATIERE_CHOICES %}
-                            <optgroup label="{{ group_label }}">
-                                {% for val, label in group_items %}
-                                <option value="{{ val }}">{{ label }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="search-input-group">
-                    <select name="localisation" class="pcv-multi-select" placeholder="Dans quel quartier ?" data-allow-create="false">
-                        <option value="">Dans quel quartier ?</option>
-                        {% for quartier in quartiers_disponibles %}
-                        <option value="{{ quartier.id }}">{{ quartier.nom }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn-search">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <span class="desktop-only" style="margin-left: 8px;">Rechercher</span>
-                </button>
-            </form>
+        <div class="hero-actions">
+            <div>
+                <a href="{% url 'recherche' %}" class="btn-hero-primary">👀 Explorer les profils vérifiés</a>
+            </div>
+            <div>
+                <span class="hero-secondary-text">Pas de besoin immédiat ?</span>
+                <a href="{% url 'signup' %}?role=parent" class="btn-hero-secondary">Créer mon compte (Pour plus tard)</a>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- COMMENT ÇA MARCHE (HORIZONTAL SWIPE) -->
+<!-- 2. PROFESSEURS DISPONIBLES (HORIZONTAL SWIPE) -->
+<section class="section-mobile bg-white">
+    <div class="section-mobile-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h2>Professeurs à la une</h2>
+            <p>Sélectionnés pour leur excellence</p>
+        </div>
+        <a href="{% url 'recherche' %}" style="color: var(--brand-success); font-weight: 700; text-decoration: none; font-size: 0.9rem;">Tout voir</a>
+    </div>
+    
+    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
+        <button class="scroll-arrow left" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: -320, behavior: 'smooth'})">❮</button>
+        <div class="swipe-container" id="profScroll">
+            {% for prof in top_professeurs %}
+                <div class="swipe-item prof-card-mobile">
+                    {% include "core/components/_teacher_card.html" with teacher=prof %}
+                </div>
+            {% empty %}
+                <div style="padding: 2rem; text-align: center; color: var(--slate-500); width: 100%;">
+                    Aucun professeur disponible.
+                </div>
+            {% endfor %}
+        </div>
+        <button class="scroll-arrow right" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: 320, behavior: 'smooth'})">❯</button>
+    </div>
+</section>
+
+<!-- 3. LA DIFFERENCE (HORIZONTAL SWIPE) -->
+<section class="section-mobile bg-slate-50">
+    <div class="section-mobile-header">
+        <h2>La différence Prof Chez Vous</h2>
+        <p>Pourquoi nous sommes n°1</p>
+    </div>
+    
+    <div class="swipe-container">
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #10b981;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+            </div>
+            <h3>Sélection stricte</h3>
+            <p>Diplômes vérifiés et tests de compétences. Seuls les meilleurs enseignent à vos enfants.</p>
+        </div>
+        
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #3b82f6;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+            <h3>Cadre sécurisé</h3>
+            <p>Engagements contractuels clairs et transparents protégeant aussi bien les parents que les professeurs.</p>
+        </div>
+        
+        <div class="swipe-item diff-card-mobile">
+            <div class="diff-icon-m" style="color: #8b5cf6;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+            </div>
+            <h3>Suivi en direct</h3>
+            <p>Tableau de bord interactif pour suivre la progression, le paiement et les objectifs atteints.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 4. NOUVEAU BLOC : PREPAREZ LA RENTREE -->
+<section class="section-mobile bg-white">
+    <div class="rentree-encart">
+        <h2>Préparez la rentrée sans pression</h2>
+        <p>N'attendez pas les premières difficultés. Inscrivez-vous gratuitement aujourd'hui pour être prêt le jour où votre enfant aura besoin d'un coup de pouce.</p>
+        <ul>
+            <li>✅ Accédez aux CV détaillés et vidéos des enseignants</li>
+            <li>✅ Comparez à tête reposée sans engagement</li>
+            <li>✅ Sauvegardez vos professeurs favoris pour plus tard</li>
+        </ul>
+        <a href="{% url 'signup' %}?role=parent" class="btn-hero-primary" style="margin: 0 auto; background: #0369a1; box-shadow: 0 4px 15px rgba(3, 105, 161, 0.3);">Créer mon Espace Parent</a>
+    </div>
+</section>
+
+<!-- 5. COMMENT ÇA MARCHE (HORIZONTAL SWIPE) -->
 <section class="section-mobile bg-slate-50">
     <div class="section-mobile-header">
         <h2>Comment ça marche ?</h2>
@@ -595,34 +751,7 @@ p {
     </div>
 </section>
 
-<!-- PROFESSEURS DISPONIBLES (HORIZONTAL SWIPE) -->
-<section class="section-mobile bg-white">
-    <div class="section-mobile-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
-        <div>
-            <h2>Professeurs à la une</h2>
-            <p>Sélectionnés pour leur excellence</p>
-        </div>
-        <a href="{% url 'recherche' %}" style="color: var(--brand-success); font-weight: 700; text-decoration: none; font-size: 0.9rem;">Tout voir</a>
-    </div>
-    
-    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
-        <button class="scroll-arrow left" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: -320, behavior: 'smooth'})">❮</button>
-        <div class="swipe-container" id="profScroll">
-            {% for prof in top_professeurs %}
-                <div class="swipe-item prof-card-mobile">
-                    {% include "core/components/_teacher_card.html" with teacher=prof %}
-                </div>
-            {% empty %}
-                <div style="padding: 2rem; text-align: center; color: var(--slate-500); width: 100%;">
-                    Aucun professeur disponible.
-                </div>
-            {% endfor %}
-        </div>
-        <button class="scroll-arrow right" style="display: none;" onclick="document.getElementById('profScroll').scrollBy({left: 320, behavior: 'smooth'})">❯</button>
-    </div>
-</section>
-
-<!-- RECHERCHES POPULAIRES (CHIPS) -->
+<!-- 6. RECHERCHES POPULAIRES (CHIPS) -->
 <section class="section-mobile bg-white">
     <div class="section-mobile-header">
         <h2>Recherches rapides</h2>
@@ -639,7 +768,7 @@ p {
 
         <!-- Matières -->
         <a href="{% url 'recherche' %}?matiere=Mathématiques" class="chip">🧮 Mathématiques</a>
-        <a href="{% url 'recherche' %}?matiere=Physique-Chimie" class="chip">🔬 Physique-Chimie</a>
+        <a href="{% url 'recherche' %}?matiere=PCT" class="chip">🔬 PCT</a>
         <a href="{% url 'recherche' %}?matiere=Français" class="chip">📖 Français</a>
         <a href="{% url 'recherche' %}?matiere=Anglais" class="chip">🇬🇧 Anglais</a>
         <a href="{% url 'recherche' %}?matiere=SVT" class="chip">🧬 SVT</a>
@@ -653,45 +782,15 @@ p {
     </div>
 </section>
 
-<!-- LA DIFFERENCE (HORIZONTAL SWIPE) -->
-<section class="section-mobile bg-slate-50">
-    <div class="section-mobile-header">
-        <h2>La différence Prof Chez Vous</h2>
-        <p>Pourquoi nous sommes n°1</p>
-    </div>
-    
-    <div class="swipe-container">
-        <div class="swipe-item diff-card-mobile">
-            <div class="diff-icon-m" style="color: #10b981;">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
-            </div>
-            <h3>Sélection stricte</h3>
-            <p>Diplômes vérifiés et tests de compétences. Seuls les meilleurs enseignent à vos enfants.</p>
-        </div>
-        
-        <div class="swipe-item diff-card-mobile">
-            <div class="diff-icon-m" style="color: #3b82f6;">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-            </div>
-            <h3>Cadre sécurisé</h3>
-            <p>Engagements contractuels clairs et transparents protégeant aussi bien les parents que les professeurs.</p>
-        </div>
-        
-        <div class="swipe-item diff-card-mobile">
-            <div class="diff-icon-m" style="color: #8b5cf6;">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-            </div>
-            <h3>Suivi en direct</h3>
-            <p>Tableau de bord interactif pour suivre la progression, le paiement et les objectifs atteints.</p>
-        </div>
-    </div>
-</section>
-
-<!-- CTA FINAL -->
+<!-- 7. CTA FINAL -->
 <section class="cta-mobile">
     <h2>Prêt à exceller ?</h2>
-    <p>Trouvez le professeur parfait dès aujourd'hui.</p>
-    <a href="{% url 'recherche' %}" class="btn-primary-m">Rechercher un prof</a>
+    <p>Trouvez le professeur parfait ou préparez la rentrée sereinement.</p>
+    <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+        <a href="{% url 'recherche' %}" class="btn-primary-m">Rechercher un prof</a>
+        <a href="{% url 'signup' %}?role=parent" class="btn-hero-secondary" style="border-color: rgba(255,255,255,0.5);">Créer mon Espace Parent gratuit</a>
+    </div>
 </section>
 
 {% endblock %}
+
