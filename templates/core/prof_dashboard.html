@@ -64,7 +64,8 @@
     <main class="dash-main">
         {% include "core/components/_announcement_card.html" %}
 
-        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton) -->
+        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton avec état dynamique) -->
+        {% if site_config.allow_teacher_video_submissions %}
         <a href="{% url 'prof_video_presentation' %}" id="video-promo-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.08); text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;"
            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(22, 163, 74, 0.15)'; this.style.borderColor='#4ade80';"
            onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 5px rgba(22, 163, 74, 0.08)'; this.style.borderColor='#86efac';">
@@ -74,18 +75,18 @@
                 </div>
                 <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                        <h4 style="margin: 0; color: #14532d; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em;">
-                            Vidéos de présentation
+                        <h4 style="margin: 0; color: #14532d; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <span>Vidéos de présentation</span>
+                            {% if teacher.videos.exists %}
+                            <span style="background: #16a34a; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+                                {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
+                            </span>
+                            {% else %}
+                            <span style="background: #eab308; color: #713f12; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+                                Booster mon profil
+                            </span>
+                            {% endif %}
                         </h4>
-                        {% if teacher.videos.exists %}
-                        <span style="background: #16a34a; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
-                            {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
-                        </span>
-                        {% else %}
-                        <span style="background: #eab308; color: #713f12; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
-                            Booster mon profil
-                        </span>
-                        {% endif %}
                     </div>
                     <p style="margin: 0.2rem 0 0; color: #166534; font-size: 0.825rem; font-weight: 500; line-height: 1.35;">
                         {% if teacher.videos.exists %}
@@ -103,6 +104,38 @@
                 </svg>
             </div>
         </a>
+        {% else %}
+        <!-- Version verrouillée/désactivée par l'admin : encart informatif non cliquable -->
+        <div id="video-promo-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; opacity: 0.85; cursor: not-allowed;">
+            <div style="display: flex; align-items: center; gap: 0.95rem;">
+                <div style="width: 40px; height: 40px; border-radius: 12px; background: #94a3b8; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                    🎬
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <h4 style="margin: 0; color: #475569; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <span>Vidéos de présentation</span>
+                            {% if teacher.videos.exists %}
+                            <span style="background: #94a3b8; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+                                {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
+                            </span>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <p style="margin: 0.2rem 0 0; color: #64748b; font-size: 0.825rem; font-weight: 500; line-height: 1.35;">
+                        La soumission et gestion des vidéos est temporairement fermée pour maintenance.
+                    </p>
+                </div>
+            </div>
+            <div style="color: #64748b; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem; background: #f1f5f9; padding: 6px 12px; border-radius: 9999px; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Fermé</span>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="dash-header">
             <div class="dash-header-top">

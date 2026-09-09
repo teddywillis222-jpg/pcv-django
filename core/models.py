@@ -2916,3 +2916,30 @@ class ProfileReaction(models.Model):
     def __str__(self):
         return f"Like sur {self.section} de {self.professeur}"
 
+
+class SiteConfiguration(models.Model):
+    """
+    Paramètres globaux configurables de la plateforme PCV.
+    Contient notamment l'activation/désactivation de la soumission de vidéos par les professeurs.
+    """
+    allow_teacher_video_submissions = models.BooleanField(
+        default=True,
+        verbose_name="Autoriser les professeurs à ajouter/gérer leurs vidéos de présentation",
+        help_text="Si décoché, le bouton d'accès sur le dashboard prof est désactivé et l'accès à la page de soumission est bloqué."
+    )
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Dernière mise à jour")
+
+    class Meta:
+        verbose_name = "Configuration du site"
+        verbose_name_plural = "Configuration du site"
+
+    def __str__(self):
+        return "Configuration Globale du Site"
+
+    @classmethod
+    def get_solo(cls):
+        """Récupère l'instance unique ou la crée si inexistante."""
+        config, _ = cls.objects.get_or_create(id=1)
+        return config
+
+

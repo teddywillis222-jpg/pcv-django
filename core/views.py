@@ -1843,6 +1843,11 @@ def prof_video_presentation(request):
     if profile.role != Profile.ROLE_PROF:
         return redirect("home")
 
+    site_config = SiteConfiguration.get_solo()
+    if not site_config.allow_teacher_video_submissions:
+        messages.warning(request, "La soumission et la gestion des vidéos de présentation sont temporairement désactivées par l'administration.")
+        return redirect("teacher_dashboard")
+
     if request.method == "POST":
         form = TeacherVideoSubmissionForm(request.POST)
         if form.is_valid():
@@ -5686,8 +5691,32 @@ def admin_api_videos(request):
         'count_valide': count_valide,
         'count_refuse': count_refuse,
         'TeacherVideo': TeacherVideo,
+        'site_config': SiteConfiguration.get_solo(),
     }
     return render(request, "core/admin_dashboard/partials/videos.html", context)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def admin_api_toggle_video_feature(request):
+    """Bascule (active/désactive) l'accès des professeurs à la soumission et gestion des vidéos."""
+    config = SiteConfiguration.get_solo()
+    action = request.POST.get('action')
+
+    if action == 'toggle':
+        config.allow_teacher_video_submissions = not config.allow_teacher_video_submissions
+        config.save()
+    elif action == 'set':
+        state = request.POST.get('state') == 'true'
+        config.allow_teacher_video_submissions = state
+        config.save()
+
+    status_str = "débloquée (active)" if config.allow_teacher_video_submissions else "bloquée (désactivée)"
+    return JsonResponse({
+        'success': True,
+        'allow_teacher_video_submissions': config.allow_teacher_video_submissions,
+        'message': f"Fonctionnalité des vidéos professeur {status_str}."
+    })
 
 
 @csrf_exempt
@@ -5740,6 +5769,7 @@ def admin_api_video_action(request, video_id):
         })
 
     return JsonResponse({'error': 'Action non reconnue.'}, status=400)
+
 
 
 

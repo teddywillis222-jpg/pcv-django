@@ -184,7 +184,7 @@ class FAQProfesseurAdmin(admin.ModelAdmin):
     search_fields = ('question', 'reponse')
 
 
-from .models import SearchAlert
+from .models import SearchAlert, SiteConfiguration
 
 @admin.register(SearchAlert)
 class SearchAlertAdmin(admin.ModelAdmin):
@@ -192,5 +192,11 @@ class SearchAlertAdmin(admin.ModelAdmin):
     list_filter = ('resolved', 'created_at')
     search_fields = ('matiere', 'localisation', 'contact_info')
     list_editable = ('resolved',)
+
+
+@admin.register(SiteConfiguration)
+class SiteConfigurationAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'allow_teacher_video_submissions', 'updated_at')
+    list_editable = ('allow_teacher_video_submissions',)
 
 

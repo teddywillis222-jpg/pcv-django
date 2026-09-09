@@ -1,3 +1,38 @@
+<!-- Bannière Contrôle Global : Activer / Bloquer l'encart bouton vidéo prof -->
+<div class="card" style="margin-bottom: 2rem; padding: 1.25rem 1.5rem; background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="width: 44px; height: 44px; border-radius: 12px; background: {% if site_config.allow_teacher_video_submissions %}#dcfce7; color: #166534;{% else %}#fee2e2; color: #991b1b;{% endif %} display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
+            {% if site_config.allow_teacher_video_submissions %}🟢{% else %}🔴{% endif %}
+        </div>
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <h4 style="margin: 0; font-size: 1rem; color: #0f172a; font-weight: 700;">
+                    Accès professeur aux Vidéos de présentation
+                </h4>
+                <span id="featureStatusBadge" style="font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px; {% if site_config.allow_teacher_video_submissions %}background: #dcfce7; color: #166534;{% else %}background: #fee2e2; color: #991b1b;{% endif %}">
+                    {% if site_config.allow_teacher_video_submissions %}Débloqué (Actif){% else %}Bloqué (Inactif){% endif %}
+                </span>
+            </div>
+            <p style="margin: 0.25rem 0 0; font-size: 0.825rem; color: var(--text-muted);">
+                Contrôle l'interactivité de l'encart dans le dashboard enseignant. Si désactivé, l'encart n'agit plus comme un bouton cliquable et l'accès est verrouillé.
+            </p>
+        </div>
+    </div>
+
+    <!-- Switch Toggle Interactif -->
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: #334155; cursor: pointer;" for="videoFeatureToggle">
+            {% if site_config.allow_teacher_video_submissions %}Activer l'accès{% else %}Débloquer l'accès{% endif %}
+        </label>
+        <label class="switch" style="position: relative; display: inline-block; width: 48px; height: 26px; cursor: pointer; margin: 0;">
+            <input type="checkbox" id="videoFeatureToggle" {% if site_config.allow_teacher_video_submissions %}checked{% endif %} onchange="toggleVideoFeature(this.checked)" style="opacity: 0; width: 0; height: 0;">
+            <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: {% if site_config.allow_teacher_video_submissions %}#10b981{% else %}#cbd5e1{% endif %}; transition: .3s; border-radius: 34px;">
+                <span class="slider-thumb" style="position: absolute; content: ''; height: 20px; width: 20px; left: {% if site_config.allow_teacher_video_submissions %}24px{% else %}3px{% endif %}; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+            </span>
+        </label>
+    </div>
+</div>
+
 <!-- Filtres de statut & Barre de recherche -->
 <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
     <div style="display: flex; gap: 0.75rem; border-bottom: 2px solid var(--border-color); overflow-x: auto; padding-bottom: 2px;">
@@ -21,6 +56,7 @@
         <button onclick="searchVideos()" class="btn btn-outline" style="padding: 0.5rem 0.85rem;">🔍</button>
     </div>
 </div>
+
 
 <!-- Grille des Vidéos -->
 <div class="admin-videos-grid">
@@ -260,5 +296,49 @@
             return;
         }
         actionVideo(videoId, 'refuser', suggestions);
+    }
+
+
+    function toggleVideoFeature(isChecked) {
+        const formData = new FormData();
+        formData.append('action', 'set');
+        formData.append('state', isChecked ? 'true' : 'false');
+
+        fetch('/debug-admin-pcv/api/videos/toggle-feature/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                const badge = document.getElementById('featureStatusBadge');
+                const slider = document.querySelector('.slider');
+                const thumb = document.querySelector('.slider-thumb');
+                if (data.allow_teacher_video_submissions) {
+                    if (badge) {
+                        badge.innerText = 'Débloqué (Actif)';
+                        badge.style.background = '#dcfce7';
+                        badge.style.color = '#166534';
+                    }
+                    if (slider) slider.style.backgroundColor = '#10b981';
+                    if (thumb) thumb.style.left = '24px';
+                } else {
+                    if (badge) {
+                        badge.innerText = 'Bloqué (Inactif)';
+                        badge.style.background = '#fee2e2';
+                        badge.style.color = '#991b1b';
+                    }
+                    if (slider) slider.style.backgroundColor = '#cbd5e1';
+                    if (thumb) thumb.style.left = '3px';
+                }
+            } else {
+                showToast("Erreur lors de la mise à jour.", 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Erreur toggleVideoFeature:', err);
+            showToast("Une erreur réseau est survenue.", 'error');
+        });
     }
 </script>

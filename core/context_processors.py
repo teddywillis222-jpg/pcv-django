@@ -1,6 +1,6 @@
 from django.conf import settings
 from .choices import Matiere, ClassLevel, CourseMode, SupportCategory, PriceRange
-from .models import Quartier
+from .models import Quartier, SiteConfiguration
 
 def global_choices(request):
     """Fournit les choix standardisés à tous les templates."""
@@ -15,5 +15,7 @@ def global_choices(request):
         'SUPPORT_CATEGORY_CHOICES': SupportCategory.CHOICES,
         'PRICE_RANGE_CHOICES': PriceRange.CHOICES,
         'SITE_DOMAIN': settings.SITE_DOMAIN,
+        'site_config': SiteConfiguration.get_solo(),
     }
+
 

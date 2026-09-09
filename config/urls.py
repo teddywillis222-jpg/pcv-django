@@ -145,6 +145,7 @@ urlpatterns = [
     path("debug-admin-pcv/api/professeurs/", core_views.admin_api_professeurs, name="admin_api_professeurs"),
     path("debug-admin-pcv/api/professeurs/<int:prof_id>/action/", core_views.admin_api_prof_action, name="admin_api_prof_action"),
     path("debug-admin-pcv/api/videos/", core_views.admin_api_videos, name="admin_api_videos"),
+    path("debug-admin-pcv/api/videos/toggle-feature/", core_views.admin_api_toggle_video_feature, name="admin_api_toggle_video_feature"),
     path("debug-admin-pcv/api/videos/<int:video_id>/action/", core_views.admin_api_video_action, name="admin_api_video_action"),
     
     # Nouvelles API pour l'admin custom (Ressources & FAQ)
