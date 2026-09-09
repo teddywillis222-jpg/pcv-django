@@ -24,7 +24,7 @@ def formater_telephone_benin(numero):
     return f"+229{cleaned}"
 
 
-from .models import Apprenant, Enfant, Parent, Profile
+from .models import Apprenant, Enfant, Parent, Profile, TeacherVideo, TeacherProfile
 from .choices import ClassLevel, CourseMode, Localisation, Matiere
 
 class DynamicSelectMultiple(forms.SelectMultiple):
@@ -360,9 +360,10 @@ class EnfantForm(forms.ModelForm):
             
         from .models import Quartier
         self.fields["quartier_ville"].queryset = Quartier.objects.all()
-        self.fields["quartier_ville"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
-        self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false'})
-        self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '100'})
+        self.fields["quartier_ville"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '300', 'placeholder': 'Sélectionnez un quartier'})
+        self.fields["mode_de_cours"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'placeholder': 'Sélectionnez le mode de cours'})
+        self.fields["classe"].widget.attrs.update({'class': 'pcv-multi-select', 'data-allow-create': 'false', 'data-max-options': '100', 'placeholder': 'Sélectionnez une classe'})
+        self.fields["matieres_predefinies"].widget.attrs.update({'class': 'form-input pcv-multi-select allow-multiple', 'data-max-items': '5', 'data-allow-create': 'false', 'data-max-options': '200', 'placeholder': 'Ex: Mathématiques, Physique...'})
 
 
 
@@ -763,57 +764,73 @@ class TeacherVideoPresentationForm(forms.ModelForm):
         }
 
 
-class YouTubeVideoForm(forms.ModelForm):
-    """Formulaire de test pour l'intégration vidéo via lien YouTube."""
+class TeacherVideoSubmissionForm(forms.ModelForm):
+    """Formulaire permettant au professeur de soumettre une vidéo YouTube de présentation."""
     
-    # We display an URLInput, but we save to youtube_video_id
-    youtube_url_input = forms.URLField(
-        label='Lien de votre vidéo YouTube',
+    titre = forms.CharField(
+        label="Titre ou description courte",
         required=False,
-        widget=forms.URLInput(attrs={
+        max_length=150,
+        widget=forms.TextInput(attrs={
             'class': 'form-input',
-            'placeholder': 'https://www.youtube.com/watch?v=...',
-            'id': 'id_youtube_video_url'  # keep same ID for JS
+            'placeholder': 'Ex: Présentation générale, Méthodologie en Mathématiques...',
         })
     )
 
-    autorise_utilisation_video_promo = forms.BooleanField(
+    youtube_url_input = forms.URLField(
+        label='Lien de votre vidéo YouTube',
+        required=True,
+        widget=forms.URLInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'https://www.youtube.com/watch?v=... ou https://youtu.be/...',
+            'id': 'id_youtube_video_url'
+        })
+    )
+
+    autorise_utilisation_promo = forms.BooleanField(
         label="J'autorise Prof Chez Vous à utiliser des extraits de cette vidéo de présentation à des fins promotionnelles (réseaux sociaux, publicités) pour mettre en valeur mon profil et la plateforme.",
         required=False,
+        initial=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
     class Meta:
-        model = TeacherProfile
-        fields = ['youtube_video_id', 'autorise_utilisation_video_promo']
-        # We don't display youtube_video_id directly, we only display youtube_url_input
-        widgets = {'youtube_video_id': forms.HiddenInput()}
+        model = TeacherVideo
+        fields = ['titre', 'youtube_url', 'youtube_video_id', 'autorise_utilisation_promo']
+        widgets = {
+            'youtube_url': forms.HiddenInput(),
+            'youtube_video_id': forms.HiddenInput(),
+        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Pre-fill the URL input if the ID exists
-        if self.instance and self.instance.youtube_video_id:
-            self.fields['youtube_url_input'].initial = f"https://www.youtube.com/watch?v={self.instance.youtube_video_id}"
-
-    def clean_youtube_url_input(self):
-        import re
-        url = self.cleaned_data.get('youtube_url_input')
+    def clean(self):
+        cleaned_data = super().clean()
+        url = cleaned_data.get('youtube_url_input')
         if url:
             url = url.strip()
-            # Strict regex to extract exactly 11 alphanumeric characters
+            import re
             youtube_pattern = re.compile(
                 r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
             )
             match = youtube_pattern.search(url)
             if not match:
-                raise forms.ValidationError(
+                self.add_error(
+                    'youtube_url_input',
                     "Ce lien ne semble pas être une URL YouTube valide. "
                     "Collez un lien du type : https://www.youtube.com/watch?v=XXXXX ou https://youtu.be/XXXXX"
                 )
-            return match.group(1) # Return just the 11 char ID
-        return ""
+            else:
+                video_id = match.group(1)
+                cleaned_data['youtube_video_id'] = video_id
+                cleaned_data['youtube_url'] = f"https://www.youtube.com/watch?v={video_id}"
+        return cleaned_data
 
-    def save(self, commit=True):
-        # Map the cleaned URL input (which is now just the ID) to the model field
-        self.instance.youtube_video_id = self.cleaned_data.get('youtube_url_input', '')
-        return super().save(commit)
+    def save(self, teacher, commit=True):
+        instance = super().save(commit=False)
+        instance.teacher = teacher
+        instance.youtube_url = self.cleaned_data.get('youtube_url')
+        instance.youtube_video_id = self.cleaned_data.get('youtube_video_id')
+        instance.statut_validation = TeacherVideo.STATUT_EN_ATTENTE
+        if commit:
+            instance.save()
+        return instance
+

@@ -1,0 +1,261 @@
+<!-- Filtres de statut & Barre de recherche -->
+<div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <div style="display: flex; gap: 0.75rem; border-bottom: 2px solid var(--border-color); overflow-x: auto; padding-bottom: 2px;">
+        <button class="filter-btn {% if statut_actif == 'EN_ATTENTE' %}active{% endif %}" onclick="loadVideos('EN_ATTENTE')">
+            En attente <span style="background: #fef3c7; color: #92400e; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin-left: 0.35rem;">{{ count_attente }}</span>
+        </button>
+        <button class="filter-btn {% if statut_actif == 'VALIDE' %}active{% endif %}" onclick="loadVideos('VALIDE')">
+            Validées <span style="background: #dcfce7; color: #166534; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin-left: 0.35rem;">{{ count_valide }}</span>
+        </button>
+        <button class="filter-btn {% if statut_actif == 'REFUSE' %}active{% endif %}" onclick="loadVideos('REFUSE')">
+            Refusées <span style="background: #fee2e2; color: #991b1b; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; margin-left: 0.35rem;">{{ count_refuse }}</span>
+        </button>
+        <button class="filter-btn {% if statut_actif == 'ALL' %}active{% endif %}" onclick="loadVideos('ALL')">
+            Toutes
+        </button>
+    </div>
+
+    <!-- Recherche -->
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <input type="text" id="videoSearchInput" value="{{ search_query }}" placeholder="Rechercher par nom de prof..." style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.9rem; min-width: 240px;" onkeyup="if(event.key === 'Enter') searchVideos()">
+        <button onclick="searchVideos()" class="btn btn-outline" style="padding: 0.5rem 0.85rem;">🔍</button>
+    </div>
+</div>
+
+<!-- Grille des Vidéos -->
+<div class="admin-videos-grid">
+    {% for video in videos %}
+    <div class="card" style="display: flex; flex-direction: column; overflow: hidden; padding: 0; border-radius: 16px; border: 1px solid var(--border-color); height: 100%;">
+        
+        <!-- En-tête Professeur -->
+        <div style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; background: #f8fafc; border-bottom: 1px solid #f1f5f9;">
+            {% if video.teacher.photo_de_profil %}
+                <img src="{{ video.teacher.photo_de_profil.url }}" alt="Photo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-green);">
+            {% else %}
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: #e2e8f0; display:flex; align-items:center; justify-content:center; color:#64748b; font-size: 0.75rem; font-weight: 700;">Prof</div>
+            {% endif %}
+            <div style="flex: 1; min-width: 0;">
+                <h3 style="margin: 0; font-size: 1.05rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ video.teacher.prenom }} {{ video.teacher.nom }}
+                </h3>
+                <p style="margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ video.teacher.matiere_enseignee }}
+                </p>
+                <span style="display: block; font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem;">
+                    Soumis le {{ video.date_soumission|date:"d/m/Y à H:i" }}
+                </span>
+            </div>
+            <div>
+                {% if video.statut_validation == 'VALIDE' %}
+                    <span style="background: #dcfce7; color: #166534; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Validée</span>
+                {% elif video.statut_validation == 'REFUSE' %}
+                    <span style="background: #fee2e2; color: #991b1b; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">Refusée</span>
+                {% else %}
+                    <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">En attente</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Lecteur Vidéo YouTube Intégré -->
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; background: #000; overflow: hidden;">
+            <iframe 
+                src="{{ video.embed_url }}" 
+                title="{{ video.titre|default:'Vidéo' }}" 
+                style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Informations & Description -->
+        <div style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <strong style="font-size: 0.95rem; color: #0f172a;">
+                    {{ video.titre|default:"Sans titre particulier" }}
+                </strong>
+                {% if video.autorise_utilisation_promo %}
+                    <span title="Autorisation promo accordée" style="font-size: 0.75rem; background: #eff6ff; color: #1d4ed8; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 600;">Promo OK</span>
+                {% endif %}
+            </div>
+
+            <a href="{{ video.youtube_url }}" target="_blank" rel="noopener" style="font-size: 0.8rem; color: #3b82f6; text-decoration: none; word-break: break-all; margin-bottom: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                Ouvrir sur YouTube ↗
+            </a>
+
+            <!-- Suggestions déjà enregistrées si refusée -->
+            {% if video.statut_validation == 'REFUSE' and video.motif_refus_suggestions %}
+            <div style="margin-top: 0.5rem; background: #fff7ed; border-left: 3px solid #f97316; padding: 0.6rem 0.85rem; border-radius: 4px; font-size: 0.8rem; color: #9a3412;">
+                <strong>Dernier motif / conseils :</strong>
+                <p style="margin: 0.25rem 0 0; white-space: pre-line;">{{ video.motif_refus_suggestions }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Actions de Modération -->
+            <div style="margin-top: auto; padding-top: 1rem; display: flex; gap: 0.75rem; border-top: 1px solid #f1f5f9;">
+                {% if video.statut_validation != 'VALIDE' %}
+                    <button onclick="actionVideo({{ video.id }}, 'valider')" class="btn btn-primary" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.875rem;">
+                        ✅ Valider
+                    </button>
+                {% endif %}
+                
+                <button onclick="openRejectModal({{ video.id }}, '{{ video.teacher.prenom|escapejs }} {{ video.teacher.nom|escapejs }}')" class="btn btn-danger" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.875rem;">
+                    ❌ Refuser & Conseiller
+                </button>
+            </div>
+
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted); background: var(--card-bg); border-radius: 0.5rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🎬</div>
+        <h3 style="margin: 0 0 0.5rem; color: #1e293b;">Aucune vidéo trouvée</h3>
+        <p style="margin: 0;">Aucune vidéo ne correspond au filtre actif "{{ statut_actif }}".</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal pour formuler le refus et les suggestions -->
+<div id="videoRejectModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: white; border-radius: 16px; max-width: 550px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); overflow: hidden; animation: slideInModal 0.25s ease-out;">
+        <div style="padding: 1.25rem 1.5rem; background: #fef2f2; border-bottom: 1px solid #fee2e2; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.15rem; color: #991b1b; font-weight: 800;">
+                Suggestions d'amélioration
+            </h3>
+            <button onclick="closeRejectModal()" style="background: none; border: none; font-size: 1.25rem; color: #991b1b; cursor: pointer;">✕</button>
+        </div>
+        
+        <div style="padding: 1.5rem;">
+            <p style="margin: 0 0 1rem; font-size: 0.9rem; color: #475569;">
+                Ces remarques seront <strong style="color: #0f172a;">immédiatement envoyées par email</strong> à <span id="rejectProfName" style="font-weight: 700; color: #0f172a;"></span> et s'afficheront également dans son tableau de bord pour l'aider à peaufiner sa vidéo.
+            </p>
+
+            <input type="hidden" id="rejectVideoId" value="">
+            
+            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem;">
+                Détail des conseils & axes d'amélioration :
+            </label>
+            <textarea id="rejectSuggestions" rows="5" placeholder="Ex: Cadrage un peu trop sombre, bruit de fond audible au début, penser à regarder l'objectif de la caméra, son un peu faible..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 10px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; resize: vertical;"></textarea>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button onclick="closeRejectModal()" class="btn btn-outline" style="padding: 0.65rem 1.25rem;">
+                    Annuler
+                </button>
+                <button onclick="submitRejectVideo()" class="btn btn-danger" style="padding: 0.65rem 1.25rem;">
+                    Envoyer les suggestions par email
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-videos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+    .filter-btn {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0.75rem 1.25rem;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .filter-btn:hover { color: #0f172a; }
+    .filter-btn.active {
+        color: var(--primary-green);
+        border-bottom-color: var(--primary-green);
+    }
+    @keyframes slideInModal {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+<script>
+    function loadVideos(statut, search = '') {
+        const contentDiv = document.getElementById('admin-content');
+        contentDiv.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>';
+        
+        let url = `/debug-admin-pcv/api/videos/?statut=${statut}&t=${new Date().getTime()}`;
+        if (search) {
+            url += `&q=${encodeURIComponent(search)}`;
+        }
+
+        fetch(url, { cache: 'no-store' })
+            .then(res => res.text())
+            .then(html => {
+                contentDiv.innerHTML = html;
+                const scripts = contentDiv.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.text = script.text;
+                    document.body.appendChild(newScript).parentNode.removeChild(newScript);
+                });
+            })
+            .catch(err => {
+                console.error('Erreur loadVideos:', err);
+                contentDiv.innerHTML = '<div class="card" style="color:red">Erreur lors du chargement des vidéos.</div>';
+            });
+    }
+
+    function searchVideos() {
+        const query = document.getElementById('videoSearchInput').value.trim();
+        loadVideos('{{ statut_actif }}', query);
+    }
+
+    function actionVideo(videoId, action, suggestions = '') {
+        const formData = new FormData();
+        formData.append('action', action);
+        if (suggestions) {
+            formData.append('suggestions', suggestions);
+        }
+
+        fetch(`/debug-admin-pcv/api/videos/${videoId}/action/`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                closeRejectModal();
+                loadVideos('{{ statut_actif }}');
+            } else {
+                showToast(data.error || 'Erreur lors du traitement.', 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Erreur actionVideo:', err);
+            showToast("Une erreur réseau est survenue.", 'error');
+        });
+    }
+
+    function openRejectModal(videoId, profName) {
+        document.getElementById('rejectVideoId').value = videoId;
+        document.getElementById('rejectProfName').innerText = profName;
+        document.getElementById('rejectSuggestions').value = '';
+        document.getElementById('videoRejectModal').style.display = 'flex';
+    }
+
+    function closeRejectModal() {
+        document.getElementById('videoRejectModal').style.display = 'none';
+    }
+
+    function submitRejectVideo() {
+        const videoId = document.getElementById('rejectVideoId').value;
+        const suggestions = document.getElementById('rejectSuggestions').value.trim();
+        if (!suggestions) {
+            alert("Veuillez formuler au moins une recommandation ou un motif.");
+            return;
+        }
+        actionVideo(videoId, 'refuser', suggestions);
+    }
+</script>

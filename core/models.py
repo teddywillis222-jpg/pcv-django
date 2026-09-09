@@ -1315,9 +1315,11 @@ class TeacherProfile(models.Model):
 
         return None
 
-
-
     @property
+    def validated_videos(self):
+        """Retourne la liste des vidéos YouTube validées par l'administrateur, ordonnées pour l'affichage."""
+        return self.videos.filter(statut_validation="VALIDE").order_by("ordre", "-date_validation", "-date_soumission")
+
 
     def completion_percentage(self):
 
@@ -1798,14 +1800,100 @@ class TeacherProfile(models.Model):
         count = self.quartiers_couverts.count()
         return count - 1 if count > 1 else 0
 
+
+class TeacherVideo(models.Model):
+    """
+    Vidéo de présentation d'un professeur soumise via un lien YouTube.
+    Nécessite la validation par un administrateur avant affichage public.
+    """
+    STATUT_EN_ATTENTE = "EN_ATTENTE"
+    STATUT_VALIDE = "VALIDE"
+    STATUT_REFUSE = "REFUSE"
+
+    STATUT_CHOICES = [
+        (STATUT_EN_ATTENTE, "En attente"),
+        (STATUT_VALIDE, "Validée"),
+        (STATUT_REFUSE, "Refusée"),
+    ]
+
+    teacher = models.ForeignKey(
+        TeacherProfile,
+        on_delete=models.CASCADE,
+        related_name="videos",
+        verbose_name="Professeur"
+    )
+    titre = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Titre de la vidéo",
+        help_text="Ex : Présentation générale, Méthodologie en Mathématiques"
+    )
+    youtube_url = models.URLField(
+        verbose_name="URL de la vidéo YouTube",
+        help_text="Lien complet ou raccourci YouTube"
+    )
+    youtube_video_id = models.CharField(
+        max_length=20,
+        verbose_name="Identifiant YouTube"
+    )
+    statut_validation = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default=STATUT_EN_ATTENTE,
+        verbose_name="Statut de modération"
+    )
+    motif_refus_suggestions = models.TextField(
+        blank=True,
+        verbose_name="Suggestions d'amélioration / Motifs de refus",
+        help_text="Transmis par email au professeur pour l'aider à peaufiner sa vidéo."
+    )
+    date_soumission = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Date de soumission"
+    )
+    date_validation = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Date de validation / refus"
+    )
+    valide_par = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="videos_moderees",
+        verbose_name="Modéré par"
+    )
+    ordre = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Ordre d'affichage"
+    )
+    autorise_utilisation_promo = models.BooleanField(
+        default=False,
+        verbose_name="Autorise l'utilisation à des fins promotionnelles"
+    )
+
+    class Meta:
+        verbose_name = "Vidéo de professeur"
+        verbose_name_plural = "Vidéos de professeurs"
+        ordering = ["ordre", "-date_validation", "-date_soumission"]
+
+    def __str__(self):
+        return f"Vidéo [{self.get_statut_validation_display()}] - {self.teacher.prenom} {self.teacher.nom} ({self.titre or self.youtube_video_id})"
+
     @property
-    def quartiers_couverts_ids(self):
-        if not self.pk:
-            return []
-        return [q.id for q in self.quartiers_couverts.all()]
+    def embed_url(self):
+        """Retourne l'URL YouTube embed sécurisée et conforme nocookie."""
+        if not self.youtube_video_id:
+            return ""
+        return f"https://www.youtube-nocookie.com/embed/{self.youtube_video_id}?enablejsapi=1&origin=https://profchezvousapp.com"
 
-
-
+    @property
+    def thumbnail_url(self):
+        """Miniature officielle haute qualité de YouTube."""
+        if not self.youtube_video_id:
+            return ""
+        return f"https://img.youtube.com/vi/{self.youtube_video_id}/hqdefault.jpg"
 
 
 class Conversation(models.Model):

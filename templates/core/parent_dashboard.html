@@ -1062,10 +1062,56 @@
 <div id="sheetOverlay" class="sheet-overlay" onclick="closeChildSheet()"></div>
 <div id="childSheet" class="bottom-sheet">
     <style>
-        #childSheet .form-group input,
-        #childSheet .form-group select {
-            height: 50px !important;
+        #childSheet .form-group {
+            margin-bottom: 1.1rem;
+        }
+        #childSheet .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: #1e293b;
+        }
+        #childSheet .form-group > input {
+            width: 100%;
+            height: 48px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
             box-sizing: border-box;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #childSheet .form-group > input:focus {
+            border-color: var(--primary);
+        }
+        #childSheet .ts-wrapper {
+            margin-bottom: 0 !important;
+            width: 100% !important;
+        }
+        #childSheet .ts-wrapper .ts-control {
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            min-height: 48px !important;
+            padding: 0.4rem 0.75rem !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            flex-wrap: wrap !important;
+            font-size: 0.95rem !important;
+        }
+        #childSheet .ts-wrapper.focus .ts-control {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1) !important;
+        }
+        #childSheet .ts-wrapper .ts-control input {
+            height: auto !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            font-size: 0.95rem !important;
         }
     </style>
     <div class="sheet-header">
@@ -1079,25 +1125,35 @@
             <div class="form-group">
                 <label>Prénom de l'enfant <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.prenom }}
+                {% if enfant_form.prenom.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">{{ enfant_form.prenom.errors.0 }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label>Classe <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.classe }}
+                {% if enfant_form.classe.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">{{ enfant_form.classe.errors.0 }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label>Quartier de résidence <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.quartier_ville }}
+                {% if enfant_form.quartier_ville.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">{{ enfant_form.quartier_ville.errors.0 }}</div>{% endif %}
             </div>
             <div class="form-group">
                 <label>Mode de cours <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.mode_de_cours }}
+                {% if enfant_form.mode_de_cours.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">{{ enfant_form.mode_de_cours.errors.0 }}</div>{% endif %}
             </div>
             <div class="form-group">
-                <label>Matières <span style="color: #ef4444;">*</span></label>
+                <label>Matières nécessitant appui (Max 5) <span style="color: #ef4444;">*</span></label>
                 {{ enfant_form.matieres_predefinies }}
+                {% if enfant_form.matieres_predefinies.errors %}<div style="color: #ef4444; font-size: 0.8rem; margin-top: 4px;">{{ enfant_form.matieres_predefinies.errors.0 }}</div>{% endif %}
             </div>
+            {% if enfant_form.non_field_errors %}
+            <div style="background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 0.75rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.85rem;">
+                {{ enfant_form.non_field_errors.0 }}
+            </div>
+            {% endif %}
             <button type="submit"
-                style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
+                style="width: 100%; padding: 0.95rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; margin-top: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3); transition: all 0.2s;">
                 Enregistrer l'enfant
             </button>
         </form>
@@ -1472,28 +1528,26 @@
         const overlay = document.getElementById('sheetOverlay');
         sheet.classList.add('active');
         overlay.classList.add('active');
-        // Wait for sheet to be visible, then init TomSelect on its fields
         setTimeout(function() {
             if (typeof initGlobalTomSelects === 'function') {
                 initGlobalTomSelects();
             }
-            // Ensure all dropdowns are closed after init (prevent auto-open)
-            sheet.querySelectorAll('.pcv-multi-select, .multi-select').forEach(function(el) {
-                if (el.tomselect) {
-                    el.tomselect.close();
-                    el.tomselect.blur();
-                }
-            });
-        }, 100);
+        }, 50);
     }
     
     function openTeacherProfile(slug) {
         window.location.href = `/professeur/${slug}/`;
     }
 
+    {% if has_child_form_errors %}
+    document.addEventListener('DOMContentLoaded', function() {
+        openChildSheet();
+    });
+    {% endif %}
+
     // Center the active kid in the selector on load (mobile-friendly)
     document.addEventListener('DOMContentLoaded', function () {
-        const active = document.querySelector('.kids-selector .kid-item.active');
+        const active = document.querySelector('.kids-selector .kid-card-horizontal.active');
         if (active && typeof active.scrollIntoView === 'function') {
             active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }

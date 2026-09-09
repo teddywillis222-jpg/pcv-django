@@ -347,6 +347,103 @@ L'équipe Prof Chez Vous."""
         logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
     except Exception as e:
         logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
-            
     return True
+
+
+def send_video_approved_email(video):
+    """
+    Notifie le professeur par email que sa vidéo a été validée et est désormais visible.
+    """
+    user = video.teacher.user
+    if not user.email:
+        logger.warning("Aucun email pour le professeur %s (vidéo id=%s), email ignoré.", user.username, video.id)
+        return False
+
+    prof_name = f"{video.teacher.prenom} {video.teacher.nom}".strip() or user.username
+    titre_video = video.titre or "Vidéo de présentation"
+    profile_url = get_full_url(reverse("professeur_detail", kwargs={"teacher_slug": video.teacher.slug}))
+
+    sujet = "Félicitations ! Votre vidéo de présentation est validée – Prof Chez Vous"
+    message = f"""Bonjour {prof_name},
+
+Excellente nouvelle ! L'équipe pédagogique de Prof Chez Vous vient de valider votre vidéo "{titre_video}".
+
+Elle est dès à présent visible en tête de votre profil public par tous les parents et apprenants consultant votre fiche.
+
+Cette vidéo renforce considérablement l'attractivité de votre profil et permet aux familles de découvrir votre approche et votre personnalité avant de réserver leur premier cours d'essai.
+
+Consulter votre profil public :
+{profile_url}
+
+Merci pour votre engagement et votre rigueur,
+
+Cordialement,
+L'équipe Prof Chez Vous."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de validation vidéo envoyé avec succès à %s (vidéo %s).", user.email, video.id)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de validation vidéo à %s : %s", user.email, e, exc_info=True)
+        return False
+
+
+def send_video_rejected_email(video, suggestions):
+    """
+    Notifie le professeur par email que sa vidéo nécessite des améliorations, avec les conseils de l'admin.
+    """
+    user = video.teacher.user
+    if not user.email:
+        logger.warning("Aucun email pour le professeur %s (vidéo id=%s), email ignoré.", user.username, video.id)
+        return False
+
+    prof_name = f"{video.teacher.prenom} {video.teacher.nom}".strip() or user.username
+    titre_video = video.titre or "Vidéo de présentation"
+    upload_url = get_full_url(reverse("prof_video_presentation"))
+
+    sujet = "Votre vidéo de présentation nécessite quelques ajustements – Prof Chez Vous"
+    message = f"""Bonjour {prof_name},
+
+Nous vous remercions pour la soumission de votre vidéo "{titre_video}".
+
+Afin de garantir le plus haut niveau d'excellence et de maximiser vos chances de convaincre les parents, notre équipe a visionné attentivement votre vidéo. 
+
+Celle-ci n'a pas pu être validée en l'état, mais voici nos retours et suggestions pour vous aider à la perfectionner :
+
+--------------------------------------------------
+CONSEILS & SUGGESTIONS DE L'ÉQUIPE :
+{suggestions}
+--------------------------------------------------
+
+Comment faire pour soumettre votre vidéo corrigée ?
+1. Rendez-vous dans votre espace de gestion vidéo :
+{upload_url}
+2. Soumettez votre nouveau lien YouTube une fois les ajustements réalisés.
+
+Notre équipe se fera un plaisir de l'examiner à nouveau avec la plus grande bienveillance.
+
+À très vite,
+L'équipe Prof Chez Vous."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        logger.info("Email de refus/suggestions vidéo envoyé avec succès à %s (vidéo %s).", user.email, video.id)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email de suggestions vidéo à %s : %s", user.email, e, exc_info=True)
+        return False
+
 

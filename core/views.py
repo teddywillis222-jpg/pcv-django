@@ -1829,68 +1829,63 @@ def prof_edit_profile(request):
 @login_required
 
 def prof_video_presentation(request):
-
-    """Page officielle d'intégration vidéo via lien YouTube."""
-
-    from .forms import YouTubeVideoForm
-
-
+    """Page de gestion et de soumission multi-vidéos YouTube du professeur."""
+    from .forms import TeacherVideoSubmissionForm
+    from .models import TeacherVideo
+    from django.contrib import messages
 
     try:
-
         profile = request.user.profile
-
         teacher = request.user.teacher_profile
-
     except (Profile.DoesNotExist, TeacherProfile.DoesNotExist):
-
         return redirect("home")
-
-
 
     if profile.role != Profile.ROLE_PROF:
-
         return redirect("home")
 
-
-
-    # Si on soumet le formulaire, on l'ignore car le bouton est désactivé (Bientôt disponible)
-
     if request.method == "POST":
-
-        form = YouTubeVideoForm(request.POST, instance=teacher)
-
+        form = TeacherVideoSubmissionForm(request.POST)
         if form.is_valid():
-
-            # Uncomment form.save() quand la fonctionnalité sera officiellement activée
-
-            # form.save()
-
-            from django.contrib import messages
-
-            messages.success(request, "Aperçu de la vidéo généré avec succès ! L'enregistrement sera activé très prochainement.")
-
+            video = form.save(teacher=teacher)
+            messages.success(
+                request,
+                "Votre vidéo a été soumise avec succès ! Elle est désormais en cours d'examen par notre équipe. "
+                "Vous recevrez une notification par email dès qu'elle sera validée."
+            )
             return redirect("prof_video_presentation")
-
+        else:
+            messages.error(request, "Une erreur est survenue lors de la soumission de votre lien vidéo.")
     else:
+        form = TeacherVideoSubmissionForm()
 
-        form = YouTubeVideoForm(instance=teacher)
-
-
-
-    embed_url = teacher.video_embed_url if teacher.youtube_video_id else None
-
-
+    # Liste ordonnée des vidéos du professeur
+    videos = teacher.videos.all().order_by("-date_soumission")
 
     return render(request, "core/prof_video_presentation.html", {
-
         "form": form,
-
         "teacher": teacher,
-
-        "embed_url": embed_url,
-
+        "videos": videos,
+        "ValidationStatus": ValidationStatus,
     })
+
+
+@login_required
+def prof_delete_video(request, video_id):
+    """Permet au professeur de supprimer une de ses vidéos."""
+    from .models import TeacherVideo
+    from django.contrib import messages
+
+    if request.method == "POST":
+        try:
+            teacher = request.user.teacher_profile
+            video = TeacherVideo.objects.get(id=video_id, teacher=teacher)
+            video.delete()
+            messages.success(request, "La vidéo a été supprimée avec succès.")
+        except (TeacherProfile.DoesNotExist, TeacherVideo.DoesNotExist):
+            messages.error(request, "Vidéo introuvable ou action non autorisée.")
+
+    return redirect("prof_video_presentation")
+
 
 
 
@@ -2202,23 +2197,19 @@ def parent_dashboard(request):
 
 
 
+    has_child_form_errors = False
     if request.method == "POST":
-
         enfant_form = EnfantForm(request.POST)
-
         if enfant_form.is_valid():
-
             enfant = enfant_form.save(commit=False)
-
             enfant.parent = parent
-
             enfant.save()
-
-            # redirection vers le dashboard avec le nouvel enfant sélectionné
-
             from django.urls import reverse
-
             return redirect(f"{reverse('parent_dashboard')}?enfant_id={enfant.id}")
+        else:
+            has_child_form_errors = True
+    else:
+        enfant_form = EnfantForm()
 
 
 
@@ -2355,10 +2346,6 @@ def parent_dashboard(request):
 
     abonnement = getattr(parent, "abonnement", None)
 
-    enfant_form = EnfantForm()
-
-
-
     # Annotation des ratings + badge Suivi Rigoureux, puis tri : certifiés, badge, note
 
     favoris = annotate_teachers_with_ratings(favoris).order_by(
@@ -2398,6 +2385,8 @@ def parent_dashboard(request):
         "favoris": favoris,
 
         "enfant_form": enfant_form,
+
+        "has_child_form_errors": has_child_form_errors,
 
         "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
 
@@ -5682,9 +5671,97 @@ def admin_api_prof_action(request, prof_id):
 
         return JsonResponse({'success': True, 'message': 'Note enregistr\u00e9e et email envoy\u00e9.'})
 
-        
+    return JsonResponse({'error': 'Action non reconnue.'}, status=400)
+
+
+def admin_api_videos(request):
+    """Retourne le HTML partiel pour la modération des vidéos selon le filtre de statut."""
+    from .models import TeacherVideo
+    statut = request.GET.get('statut', TeacherVideo.STATUT_EN_ATTENTE)
+    search = request.GET.get('q', '').strip()
+
+    videos = TeacherVideo.objects.select_related('teacher', 'teacher__user')
+
+    if statut in [TeacherVideo.STATUT_EN_ATTENTE, TeacherVideo.STATUT_VALIDE, TeacherVideo.STATUT_REFUSE]:
+        videos = videos.filter(statut_validation=statut)
+
+    if search:
+        videos = videos.filter(
+            models.Q(teacher__nom__icontains=search) |
+            models.Q(teacher__prenom__icontains=search) |
+            models.Q(titre__icontains=search)
+        )
+
+    videos = videos.order_by('-date_soumission')
+
+    # Compteurs pour les badges de filtres
+    count_attente = TeacherVideo.objects.filter(statut_validation=TeacherVideo.STATUT_EN_ATTENTE).count()
+    count_valide = TeacherVideo.objects.filter(statut_validation=TeacherVideo.STATUT_VALIDE).count()
+    count_refuse = TeacherVideo.objects.filter(statut_validation=TeacherVideo.STATUT_REFUSE).count()
+
+    context = {
+        'videos': videos,
+        'statut_actif': statut,
+        'search_query': search,
+        'count_attente': count_attente,
+        'count_valide': count_valide,
+        'count_refuse': count_refuse,
+        'TeacherVideo': TeacherVideo,
+    }
+    return render(request, "core/admin_dashboard/partials/videos.html", context)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def admin_api_video_action(request, video_id):
+    """Action de modération d'une vidéo (valider ou refuser avec suggestions)."""
+    from .models import TeacherVideo
+    from .utils_emails import send_video_approved_email, send_video_rejected_email
+    import threading
+
+    video = get_object_or_404(TeacherVideo, id=video_id)
+    action = request.POST.get('action')
+
+    if action == 'valider':
+        video.statut_validation = TeacherVideo.STATUT_VALIDE
+        video.date_validation = timezone.now()
+        if request.user.is_authenticated:
+            video.valide_par = request.user
+        video.save()
+
+        # Envoi d'email de validation en arrière-plan
+        threading.Thread(target=send_video_approved_email, args=(video,)).start()
+
+        return JsonResponse({
+            'success': True,
+            'message': f"La vidéo de {video.teacher.prenom} {video.teacher.nom} a été validée avec succès. Un email de confirmation lui a été envoyé."
+        })
+
+    elif action == 'refuser':
+        suggestions = request.POST.get('suggestions', '').strip()
+        if not suggestions:
+            return JsonResponse({
+                'success': False,
+                'error': "Veuillez préciser vos conseils et axes d'amélioration pour le professeur."
+            }, status=400)
+
+        video.statut_validation = TeacherVideo.STATUT_REFUSE
+        video.motif_refus_suggestions = suggestions
+        video.date_validation = timezone.now()
+        if request.user.is_authenticated:
+            video.valide_par = request.user
+        video.save()
+
+        # Envoi d'email de refus/suggestions en arrière-plan
+        threading.Thread(target=send_video_rejected_email, args=(video, suggestions)).start()
+
+        return JsonResponse({
+            'success': True,
+            'message': f"La vidéo a été refusée. Les suggestions d'amélioration ont été envoyées par email à {video.teacher.prenom} {video.teacher.nom}."
+        })
 
     return JsonResponse({'error': 'Action non reconnue.'}, status=400)
+
 
 
 

@@ -70,6 +70,7 @@ urlpatterns = [
     path("prof/dashboard/", core_views.prof_dashboard, name="prof_dashboard"),
     path("prof/edit-profile/", core_views.prof_edit_profile, name="prof_edit_profile"),
     path("prof/video-presentation/", core_views.prof_video_presentation, name="prof_video_presentation"),
+    path("prof/video-presentation/<int:video_id>/delete/", core_views.prof_delete_video, name="prof_delete_video"),
     path("prof/stats/", core_views.prof_stats_view, name="prof_stats"),
     path("api/prof/popup-partage-vu/", core_views.api_mark_popup_partage_vu, name="api_mark_popup_partage_vu"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
@@ -143,6 +144,8 @@ urlpatterns = [
     path("debug-admin-pcv/api/accueil/", core_views.admin_api_accueil, name="admin_api_accueil"),
     path("debug-admin-pcv/api/professeurs/", core_views.admin_api_professeurs, name="admin_api_professeurs"),
     path("debug-admin-pcv/api/professeurs/<int:prof_id>/action/", core_views.admin_api_prof_action, name="admin_api_prof_action"),
+    path("debug-admin-pcv/api/videos/", core_views.admin_api_videos, name="admin_api_videos"),
+    path("debug-admin-pcv/api/videos/<int:video_id>/action/", core_views.admin_api_video_action, name="admin_api_video_action"),
     
     # Nouvelles API pour l'admin custom (Ressources & FAQ)
     path("debug-admin-pcv/api/ressources/", core_views.admin_api_ressources, name="admin_api_ressources"),

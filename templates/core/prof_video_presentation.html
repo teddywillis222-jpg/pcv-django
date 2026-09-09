@@ -1,61 +1,37 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Vidéo de présentation - Prof Chez Vous{% endblock %}
+{% block title %}Mes vidéos de présentation - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
 <style>
-    .video-container {
-        max-width: 700px;
+    .video-page-wrapper {
+        max-width: 850px;
         margin: 0 auto;
         padding: 1.5rem;
+    }
+
+    .video-container {
         background: white;
         border-radius: 20px;
         box-shadow: var(--dash-shadow);
         border: 1px solid var(--dash-border);
+        padding: 2rem;
+        margin-bottom: 2rem;
     }
     
     @media (max-width: 640px) {
+        .video-page-wrapper {
+            padding: 1rem 0;
+        }
         .video-container {
             border-radius: 0;
-            border: none;
+            border-left: none;
+            border-right: none;
             box-shadow: none;
             padding: 1.5rem 1rem;
-            margin-left: -1rem;
-            margin-right: -1rem;
-            width: calc(100% + 2rem);
         }
-    }
-
-    .info-card {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-left: 4px solid var(--dash-accent);
-        padding: 1.25rem;
-        border-radius: 0 12px 12px 0;
-        margin-bottom: 2rem;
-    }
-
-    .info-card h3 {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .info-card ul {
-        margin: 0;
-        padding-left: 1.25rem;
-        color: #334155;
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-
-    .info-card li {
-        margin-bottom: 0.5rem;
     }
 
     .form-group {
@@ -87,10 +63,17 @@
         box-shadow: 0 0 0 3px var(--dash-accent-soft);
     }
 
-    .video-preview {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #e2e8f0;
+    .video-card-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .video-card-item:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
     .iframe-wrapper {
@@ -98,9 +81,7 @@
         padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
         height: 0;
         overflow: hidden;
-        border-radius: 12px;
         background: #000;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .iframe-wrapper iframe {
@@ -112,152 +93,223 @@
         border: 0;
     }
 
-    .remove-link {
+    .status-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #dc2626;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0.5rem 0;
-        transition: opacity 0.2s;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 700;
     }
-    .remove-link:hover {
-        opacity: 0.7;
+    .badge-attente {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
     }
-    .btn-disabled {
-        background: #e2e8f0 !important;
-        color: #94a3b8 !important;
-        border: none !important;
-        cursor: not-allowed !important;
-        box-shadow: none !important;
+    .badge-valide {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+    .badge-refuse {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .admin-feedback-box {
+        background: #fff7ed;
+        border-left: 4px solid #f97316;
+        padding: 1rem 1.25rem;
+        border-radius: 0 10px 10px 0;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #9a3412;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="dash-main" style="padding-top: 25px; margin-top: 0;">
-    <div class="video-container">
+    <div class="video-page-wrapper">
+        
         <!-- Header -->
-        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
-            <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            </a>
-            <div>
-                <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">Ma vidéo de présentation</h1>
-                <p style="font-size: 0.875rem; color: #64748b;">Mettez toutes les chances de votre côté avec YouTube.</p>
+        <div class="video-container" style="margin-bottom: 1.5rem; padding: 1.5rem 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px; text-decoration: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </a>
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">Mes vidéos de présentation</h1>
+                    <p style="font-size: 0.875rem; color: #64748b; margin: 0.25rem 0 0;">Présentez-vous, montrez votre pédagogie et attirez plus d'élèves grâce à YouTube.</p>
+                </div>
             </div>
         </div>
 
         {% if messages %}
         {% for message in messages %}
-        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; font-weight: 600; color: #166534;">
-            <span style="font-size: 1.2rem;">✅</span>
+        <div style="background: {% if message.tags == 'success' %}#f0fdf4{% else %}#fef2f2{% endif %}; border: 1px solid {% if message.tags == 'success' %}#86efac{% else %}#fca5a5{% endif %}; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; font-weight: 600; color: {% if message.tags == 'success' %}#166534{% else %}#991b1b{% endif %};">
+            <span style="font-size: 1.2rem;">{% if message.tags == 'success' %}✅{% else %}⚠️{% endif %}</span>
             <span>{{ message }}</span>
         </div>
         {% endfor %}
         {% endif %}
 
-        <!-- Teasing Banner (Mode Préparation) -->
-        <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 16px; padding: 1.25rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);">
-            <div style="font-size: 1.5rem; margin-top: 0.1rem;">🔒</div>
-            <div>
-                <h3 style="color: #1e40af; font-size: 1.05rem; font-weight: 800; margin: 0 0 0.25rem;">Mode Préparation</h3>
-                <p style="color: #1e3a8a; font-size: 0.9rem; margin: 0; line-height: 1.5; font-weight: 500;">
-                    L'espace de mise en valeur de votre profil ouvrira très bientôt. Profitez de ce temps pour concevoir votre vidéo YouTube !
-                </p>
-            </div>
-        </div>
-
-        <!-- Consignes (Guide de Création) -->
-        <div class="info-card" style="margin-bottom: 1.5rem;">
-            <h3><span>💡</span> Guide de Création : Liberté & Innovation</h3>
-            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 1rem;">Vous avez une liberté totale pour captiver les parents en moins de 60 secondes. Voici quelques idées inspirantes :</p>
-            <ul style="list-style-type: none; padding-left: 0;">
-                <li style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>Face caméra :</strong> Se présenter, partager sa passion pour l'enseignement et sa méthode pour redonner confiance aux élèves.</li>
-                <li style="margin-bottom: 0.75rem; display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>En action :</strong> Se filmer en train d'expliquer un concept clé au tableau, ou partager un extrait dynamique d'une séance de travail avec un apprenant.</li>
-                <li style="display: flex; gap: 0.5rem;"><span style="color:var(--dash-accent);">❯</span> <strong>Créatif :</strong> Montrer les supports pédagogiques innovants ou les outils que vous utilisez pour rendre les cours captivants.</li>
-            </ul>
-        </div>
-
-        <!-- Rappel & Consignes YouTube -->
-        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 2rem; color: #1e40af; font-size: 0.85rem; line-height: 1.6;">
-            <strong>💡 Paramètres de confidentialité obligatoires sur YouTube :</strong>
-            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem;">
-                <li>Assurez-vous que votre vidéo est en mode <strong>Publique</strong> ou <strong>Non répertoriée</strong>. (Le mode "Non répertoriée" est idéal : la vidéo ne sera pas trouvée sur YouTube, mais vos élèves pourront la lire ici).</li>
-                <li>Vérifiez dans les paramètres avancés de YouTube Studio que l'option <strong>"Autoriser l'intégration"</strong> est bien cochée.</li>
-            </ul>
-        </div>
-
-        <!-- Formulaire -->
-        <form method="POST">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label class="form-label" for="id_youtube_video_url">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.25rem;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.6C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
-                    Lien de votre vidéo YouTube
-                </label>
-                {{ form.youtube_url_input }}
-                {{ form.youtube_video_id }}
-                {% if form.youtube_url_input.errors %}
-                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.5rem;">
-                    {{ form.youtube_url_input.errors }}
+        <!-- Formulaire d'ajout d'une nouvelle vidéo -->
+        <div class="video-container">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    ➕
                 </div>
-                {% endif %}
-            </div>
-
-            <!-- Autorisation promo -->
-            <div class="form-group" style="margin-top: 1.5rem; background: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 0.85rem; cursor: pointer;" onclick="document.getElementById('{{ form.autorise_utilisation_video_promo.id_for_label }}').click();">
-                <style>
-                    input[type="checkbox"].form-check-input {
-                        width: 1.25rem;
-                        height: 1.25rem;
-                        cursor: pointer;
-                        accent-color: var(--dash-accent);
-                    }
-                </style>
-                <div style="padding-top: 0.2rem;">
-                    {{ form.autorise_utilisation_video_promo }}
+                <div>
+                    <h2 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0;">Ajouter une vidéo</h2>
+                    <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Vous pouvez ajouter plusieurs vidéos (présentation générale, explications de cours, etc.).</p>
                 </div>
-                <label for="{{ form.autorise_utilisation_video_promo.id_for_label }}" style="font-size: 0.95rem; color: #334155; cursor: pointer; line-height: 1.5; margin: 0; font-weight: 500;" onclick="event.stopPropagation();">
-                    J'autorise Prof Chez Vous à utiliser des extraits de cette vidéo de présentation à des fins promotionnelles (réseaux sociaux, publicités) pour mettre en valeur mon profil et la plateforme.
-                </label>
             </div>
 
-            <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
-                <button type="submit" class="btn-dash btn-dash-primary btn-disabled" disabled style="flex: 2; height: 56px; font-size: 1.1rem; border-radius: 16px;">
-                    Enregistrer (Bientôt disponible)
-                </button>
-                <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 56px; font-size: 1.1rem; border-radius: 16px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
-                    Retour au tableau
-                </a>
-            </div>
-        </form>
+            <form method="POST" id="videoForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.titre.id_for_label }}">
+                        Titre ou thème de la vidéo (optionnel)
+                    </label>
+                    {{ form.titre }}
+                    {% if form.titre.errors %}
+                    <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.4rem;">{{ form.titre.errors }}</div>
+                    {% endif %}
+                </div>
 
-        <!-- Aperçu conditionnel (après enregistrement) -->
-        {% if embed_url %}
-        <div class="video-preview">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Aperçu de votre vidéo actuelle</h3>
-            </div>
-            <div class="iframe-wrapper">
-                <iframe 
-                    src="{{ embed_url }}" 
-                    title="Vidéo de présentation" 
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.75rem; text-align: center;">
-                C'est exactement ce que les visiteurs verront sur votre profil.
-            </p>
+                <div class="form-group">
+                    <label class="form-label" for="id_youtube_video_url">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.25rem; color: #ef4444;"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.6C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+                        Lien de votre vidéo YouTube <span style="color: #ef4444;">*</span>
+                    </label>
+                    {{ form.youtube_url_input }}
+                    {% if form.youtube_url_input.errors %}
+                    <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.4rem;">{{ form.youtube_url_input.errors }}</div>
+                    {% endif %}
+                    <small style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.4rem;">
+                        Formats acceptés : lien classique, lien court <code>youtu.be</code> ou YouTube Shorts. Veillez à ce que la vidéo soit en mode <strong>Non répertoriée</strong> ou <strong>Publique</strong> avec l'option "Autoriser l'intégration" activée.
+                    </small>
+                </div>
+
+                <!-- Aperçu dynamique lors de la saisie -->
+                <div id="livePreviewContainer" style="display: none; margin-bottom: 1.5rem;">
+                    <label class="form-label">Aperçu immédiat :</label>
+                    <div class="iframe-wrapper" style="border-radius: 12px;">
+                        <iframe id="livePreviewIframe" src="" title="Aperçu YouTube" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <!-- Autorisation promo -->
+                <div class="form-group" style="background: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 0.85rem;">
+                    <style>
+                        input[type="checkbox"].form-check-input {
+                            width: 1.25rem;
+                            height: 1.25rem;
+                            cursor: pointer;
+                            accent-color: var(--dash-accent);
+                        }
+                    </style>
+                    <div style="padding-top: 0.2rem;">
+                        {{ form.autorise_utilisation_promo }}
+                    </div>
+                    <label for="{{ form.autorise_utilisation_promo.id_for_label }}" style="font-size: 0.9rem; color: #334155; cursor: pointer; line-height: 1.5; margin: 0; font-weight: 500;">
+                        J'autorise Prof Chez Vous à utiliser des extraits de cette vidéo à des fins promotionnelles (réseaux sociaux, publicités) pour mettre en valeur mon profil d'enseignant.
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn-dash btn-dash-primary" style="flex: 2; height: 50px; font-size: 1.05rem; border-radius: 14px;">
+                        Soumettre pour validation
+                    </button>
+                    <a href="{% url 'prof_dashboard' %}" class="btn-dash btn-dash-outline" style="flex: 1; height: 50px; font-size: 1.05rem; border-radius: 14px; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                        Retour
+                    </a>
+                </div>
+            </form>
         </div>
-        {% endif %}
+
+        <!-- Liste des vidéos déjà soumises -->
+        <div class="video-container">
+            <h2 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>Vidéos soumises ({{ videos.count }})</span>
+            </h2>
+
+            {% if videos %}
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    {% for v in videos %}
+                    <div class="video-card-item">
+                        <div style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; background: #fafafa; border-bottom: 1px solid #f1f5f9;">
+                            <div>
+                                <h3 style="margin: 0 0 0.4rem; font-size: 1.05rem; color: #0f172a; font-weight: 700;">
+                                    {{ v.titre|default:"Vidéo de présentation" }}
+                                </h3>
+                                <span style="font-size: 0.8rem; color: #64748b;">
+                                    Soumise le {{ v.date_soumission|date:"d F Y à H:i" }}
+                                </span>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                {% if v.statut_validation == 'VALIDE' %}
+                                    <span class="status-badge badge-valide">
+                                        <span>●</span> Validée (En ligne sur profil)
+                                    </span>
+                                {% elif v.statut_validation == 'REFUSE' %}
+                                    <span class="status-badge badge-refuse">
+                                        <span>●</span> À améliorer
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge badge-attente">
+                                        <span>●</span> En cours d'examen
+                                    </span>
+                                {% endif %}
+
+                                <form method="POST" action="{% url 'prof_delete_video' v.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette vidéo ?');" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" title="Supprimer la vidéo" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.4rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Lecteur vidéo -->
+                        <div class="iframe-wrapper">
+                            <iframe 
+                                src="{{ v.embed_url }}" 
+                                title="{{ v.titre|default:'Vidéo' }}" 
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+
+                        <!-- Feedback de l'admin si refusée -->
+                        {% if v.statut_validation == 'REFUSE' and v.motif_refus_suggestions %}
+                        <div style="padding: 1.25rem; background: #fffaf0;">
+                            <div class="admin-feedback-box">
+                                <strong style="display: block; margin-bottom: 0.4rem; font-size: 0.95rem;">💡 Recommandations de l'équipe :</strong>
+                                <p style="margin: 0; white-space: pre-line; line-height: 1.5;">{{ v.motif_refus_suggestions }}</p>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #64748b; margin-top: 0.75rem; margin-bottom: 0;">
+                                💡 Vous pouvez peaufiner votre vidéo ou en enregistrer une nouvelle en tenant compte de ces conseils, puis la soumettre via le formulaire ci-dessus !
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 3rem 1rem; color: #94a3b8; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎬</div>
+                    <p style="font-size: 1rem; font-weight: 600; color: #475569; margin: 0 0 0.5rem;">Vous n'avez pas encore soumis de vidéo.</p>
+                    <p style="font-size: 0.85rem; margin: 0;">Ajoutez votre premier lien YouTube à l'aide du formulaire ci-dessus pour captiver vos futurs élèves !</p>
+                </div>
+            {% endif %}
+        </div>
 
     </div>
 </div>
@@ -265,57 +317,26 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const urlInput = document.getElementById('id_youtube_video_url');
-        const formContainer = document.querySelector('.video-container');
-        
+        const previewContainer = document.getElementById('livePreviewContainer');
+        const previewIframe = document.getElementById('livePreviewIframe');
+
         if (urlInput) {
             urlInput.addEventListener('input', function(e) {
                 const url = e.target.value.trim();
                 const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
                 const match = url.match(youtubePattern);
-                
+
                 if (match && match[1]) {
                     const videoId = match[1];
-                    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
-                    
-                    let existingPreview = document.querySelector('.video-preview');
-                    
-                    if (existingPreview) {
-                        const iframe = existingPreview.querySelector('iframe');
-                        if (iframe && iframe.src !== embedUrl) {
-                            iframe.src = embedUrl;
-                            const title = existingPreview.querySelector('h3');
-                            if (title) title.innerText = "Aperçu de votre nouvelle vidéo (Test)";
-                        }
-                    } else {
-                        const previewHtml = `
-                        <div class="video-preview dynamic-preview" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Aperçu dynamique (Test)</h3>
-                            </div>
-                            <div class="iframe-wrapper">
-                                <iframe 
-                                    src="${embedUrl}" 
-                                    title="Vidéo de présentation" 
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.75rem; text-align: center;">
-                                L'enregistrement sera activé prochainement. Ceci est un aperçu.
-                            </p>
-                        </div>
-                        `;
-                        formContainer.insertAdjacentHTML('beforeend', previewHtml);
-                    }
+                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
+                    previewContainer.style.display = 'block';
                 } else {
-                    const dynamicPreview = document.querySelector('.dynamic-preview');
-                    if (dynamicPreview) {
-                        dynamicPreview.remove();
-                    }
+                    previewContainer.style.display = 'none';
+                    previewIframe.src = '';
                 }
             });
         }
     });
 </script>
 {% endblock %}
+
