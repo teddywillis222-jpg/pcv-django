@@ -64,6 +64,46 @@
     <main class="dash-main">
         {% include "core/components/_announcement_card.html" %}
 
+        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton) -->
+        <a href="{% url 'prof_video_presentation' %}" id="video-promo-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.08); text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;"
+           onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(22, 163, 74, 0.15)'; this.style.borderColor='#4ade80';"
+           onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 5px rgba(22, 163, 74, 0.08)'; this.style.borderColor='#86efac';">
+            <div style="display: flex; align-items: center; gap: 0.95rem;">
+                <div style="width: 40px; height: 40px; border-radius: 12px; background: #16a34a; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.3);">
+                    🎬
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <h4 style="margin: 0; color: #14532d; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em;">
+                            Vidéos de présentation
+                        </h4>
+                        {% if teacher.videos.exists %}
+                        <span style="background: #16a34a; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+                            {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
+                        </span>
+                        {% else %}
+                        <span style="background: #eab308; color: #713f12; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
+                            Booster mon profil
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p style="margin: 0.2rem 0 0; color: #166534; font-size: 0.825rem; font-weight: 500; line-height: 1.35;">
+                        {% if teacher.videos.exists %}
+                        Gérer, ajouter ou supprimer vos vidéos de présentation pour valoriser votre profil auprès des parents.
+                        {% else %}
+                        Ajoutez votre première vidéo YouTube pour captiver les familles et multiplier vos demandes de cours !
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div style="color: #16a34a; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; background: #ffffff; padding: 6px 12px; border-radius: 9999px; border: 1px solid #bbf7d0; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                <span>Gérer</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </div>
+        </a>
+
         <div class="dash-header">
             <div class="dash-header-top">
                 <div class="teacher-avatar-wrapper" style="position: relative; display: inline-block;">
@@ -97,19 +137,7 @@
         </div>
 
         <div id="section-main" class="dash-section">
-            
-            {% if not teacher.video_presentation %}
-            <a href="{% url 'prof_video_presentation' %}" style="text-decoration: none; display: block; margin-bottom: 1.5rem;">
-                <div style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border: 1px solid #99f6e4; border-radius: 12px; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: 0 2px 4px rgba(20, 184, 166, 0.1); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 6px rgba(20, 184, 166, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 4px rgba(20, 184, 166, 0.1)';">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="font-size: 1.2rem;">🚀</span>
-                        <h3 style="color: #0f766e; font-size: 0.95rem; font-weight: 800; margin: 0;">Vidéo de présentation (Bientôt)</h3>
-                        <span style="background: #0d9488; color: white; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">Nouveau</span>
-                    </div>
-                    <div style="color: #0d9488; font-weight: 900; font-size: 1.2rem;">❯</div>
-                </div>
-            </a>
-            {% endif %}
+
 
             <!-- Stats Link & Grid -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">

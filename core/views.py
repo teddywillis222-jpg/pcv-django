@@ -3589,57 +3589,36 @@ def api_teacher_profile(request, teacher_slug):
 
         from .choices import CourseMode, ClassLevel
 
-        teacher = TeacherProfile.objects.select_related('user').get(slug=teacher_slug)
-
-        
+        teacher = TeacherProfile.objects.select_related('user').prefetch_related(
+            'videos',
+            'quartiers_couverts',
+            'diplomes',
+            'engagements'
+        ).get(slug=teacher_slug)
 
         track_teacher_view(request, teacher)
 
-        
-
         # Calcul des stats sécurisé
-
         from django.db.models import Avg, Count
 
-        
-
         engs_stats = teacher.engagements.exclude(temps_reponse_prof__isnull=True)
-
         temps_moyen_reponse = engs_stats.aggregate(avg=Avg('temps_reponse_prof'))['avg'] if engs_stats.exists() else None
 
-            
-
         engagements_actifs = teacher.engagements.filter(
-
             statut_general__in=[StatutGeneral.EN_COURS, StatutGeneral.CONFIRME, StatutGeneral.FINALISE]
-
         ).count()
 
-
-
-        # Professeurs similaires pour le Side Panel
-
+        # Professeurs similaires pour le Side Panel (optimisé sans order_by('?'))
         related_teachers = TeacherProfile.objects.filter(
-
             statut_de_validation=ValidationStatus.VALIDE
-
-        ).exclude(id=teacher.id)
-
-        
+        ).exclude(id=teacher.id).select_related('user').prefetch_related('quartiers_couverts')
 
         same_matiere = related_teachers.filter(matiere_enseignee__icontains=teacher.matiere_enseignee)
-
         if same_matiere.count() >= 4:
-
-            related_teachers = same_matiere.order_by('?')[:4]
-
+            related_teachers = same_matiere.order_by('-id')[:4]
         else:
-
             same_loc = related_teachers.filter(quartiers_couverts__in=teacher.quartiers_couverts.all())
-
-            related_teachers = (same_matiere | same_loc).distinct().order_by('?')[:4]
-
-        
+            related_teachers = (same_matiere | same_loc).distinct().order_by('-id')[:4]
 
         related_teachers = annotate_teachers_with_ratings(related_teachers)
 

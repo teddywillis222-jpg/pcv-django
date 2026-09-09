@@ -329,8 +329,9 @@
 
 <script>
     function getYouTubeId(url) {
+        if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-        const match = url.match(regExp);
+        const match = url.trim().match(regExp);
         return (match && match[2].length === 11) ? match[2] : null;
     }
 
@@ -339,19 +340,41 @@
         const previewContainer = document.getElementById('livePreviewContainer');
         const previewIframe = document.getElementById('livePreviewIframe');
 
-        if (urlInput) {
-            urlInput.addEventListener('input', function(e) {
-                const url = e.target.value.trim();
-                const videoId = getYouTubeId(url);
+        let debounceTimeout = null;
 
-                if (videoId) {
-                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
-                    previewContainer.style.display = 'block';
-                } else {
-                    previewContainer.style.display = 'none';
-                    previewIframe.src = '';
+        function updatePreview() {
+            if (!urlInput) return;
+            const url = urlInput.value.trim();
+            const videoId = getYouTubeId(url);
+
+            if (videoId) {
+                const targetSrc = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
+                if (previewIframe.src !== targetSrc) {
+                    previewIframe.src = targetSrc;
                 }
+                previewContainer.style.display = 'block';
+            } else {
+                previewContainer.style.display = 'none';
+                previewIframe.src = '';
+            }
+        }
+
+        if (urlInput) {
+            // Événement input avec léger debounce (150ms) pour laisser le paste se stabiliser
+            urlInput.addEventListener('input', function() {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(updatePreview, 150);
             });
+
+            // Événement paste dédié
+            urlInput.addEventListener('paste', function(e) {
+                setTimeout(updatePreview, 50);
+            });
+
+            // Déclencher si déjà pré-rempli
+            if (urlInput.value) {
+                updatePreview();
+            }
         }
     });
 </script>
