@@ -1850,7 +1850,7 @@ def prof_video_presentation(request):
     site_config = SiteConfiguration.get_solo()
     if not site_config.allow_teacher_video_submissions:
         messages.warning(request, "La soumission et la gestion des vidéos de présentation sont temporairement désactivées par l'administration.")
-        return redirect("teacher_dashboard")
+        return redirect("prof_dashboard")
 
     if request.method == "POST":
         form = TeacherVideoSubmissionForm(request.POST)
@@ -2079,8 +2079,7 @@ def prof_dashboard(request):
         }
 
     context['ambassador_stats'] = ambassador_stats
-
-
+    context['site_config'] = SiteConfiguration.get_solo()
 
     return render(request, "core/prof_dashboard.html", context)
 
