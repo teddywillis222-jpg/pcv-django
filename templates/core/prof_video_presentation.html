@@ -199,7 +199,15 @@
                 <div id="livePreviewContainer" style="display: none; margin-bottom: 1.5rem;">
                     <label class="form-label">Aperçu immédiat :</label>
                     <div class="iframe-wrapper" style="border-radius: 12px;">
-                        <iframe id="livePreviewIframe" src="" title="Aperçu YouTube" allowfullscreen></iframe>
+                        <iframe 
+                            id="livePreviewIframe" 
+                            src="" 
+                            title="Aperçu YouTube" 
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                        </iframe>
                     </div>
                 </div>
 
@@ -281,8 +289,9 @@
                             <iframe 
                                 src="{{ v.embed_url }}" 
                                 title="{{ v.titre|default:'Vidéo' }}" 
-                                referrerpolicy="strict-origin-when-cross-origin"
+                                frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin"
                                 allowfullscreen>
                             </iframe>
                         </div>
@@ -315,6 +324,12 @@
 </div>
 
 <script>
+    function getYouTubeId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const urlInput = document.getElementById('id_youtube_video_url');
         const previewContainer = document.getElementById('livePreviewContainer');
@@ -323,12 +338,11 @@
         if (urlInput) {
             urlInput.addEventListener('input', function(e) {
                 const url = e.target.value.trim();
-                const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-                const match = url.match(youtubePattern);
+                const videoId = getYouTubeId(url);
 
-                if (match && match[1]) {
-                    const videoId = match[1];
-                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
+                if (videoId) {
+                    const currentOrigin = window.location.origin;
+                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=${encodeURIComponent(currentOrigin)}`;
                     previewContainer.style.display = 'block';
                 } else {
                     previewContainer.style.display = 'none';

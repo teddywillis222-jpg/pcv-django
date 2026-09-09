@@ -796,11 +796,7 @@ class TeacherVideoSubmissionForm(forms.ModelForm):
 
     class Meta:
         model = TeacherVideo
-        fields = ['titre', 'youtube_url', 'youtube_video_id', 'autorise_utilisation_promo']
-        widgets = {
-            'youtube_url': forms.HiddenInput(),
-            'youtube_video_id': forms.HiddenInput(),
-        }
+        fields = ['titre', 'autorise_utilisation_promo']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -808,20 +804,21 @@ class TeacherVideoSubmissionForm(forms.ModelForm):
         if url:
             url = url.strip()
             import re
-            youtube_pattern = re.compile(
-                r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
+            # Regex demandée pour extraire l'ID 11 caractères
+            reg_exp = re.compile(
+                r'^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*'
             )
-            match = youtube_pattern.search(url)
-            if not match:
+            match = reg_exp.match(url)
+            if match and len(match.group(2)) == 11:
+                video_id = match.group(2)
+                cleaned_data['youtube_video_id'] = video_id
+                cleaned_data['youtube_url'] = f"https://www.youtube.com/watch?v={video_id}"
+            else:
                 self.add_error(
                     'youtube_url_input',
                     "Ce lien ne semble pas être une URL YouTube valide. "
                     "Collez un lien du type : https://www.youtube.com/watch?v=XXXXX ou https://youtu.be/XXXXX"
                 )
-            else:
-                video_id = match.group(1)
-                cleaned_data['youtube_video_id'] = video_id
-                cleaned_data['youtube_url'] = f"https://www.youtube.com/watch?v={video_id}"
         return cleaned_data
 
     def save(self, teacher, commit=True):
