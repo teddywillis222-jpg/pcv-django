@@ -734,10 +734,8 @@ def recherche(request):
 
     from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
 
-    professeurs = TeacherProfile.objects.select_related('user').filter(
-
+    professeurs = TeacherProfile.objects.select_related('user').prefetch_related('quartiers_couverts').filter(
         statut_de_validation=ValidationStatus.VALIDE
-
     )
 
     
@@ -5703,82 +5701,44 @@ def profil_eleve(request, type_eleve, id_eleve):
 
 
     if type_eleve == 'enfant':
-
-        enfant = get_object_or_404(Enfant, id=id_eleve)
-
+        enfant = get_object_or_404(Enfant.objects.select_related('quartier_ville', 'parent'), id=id_eleve)
         
-
         if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
-
             is_owner = True
-
         elif not is_teacher:
-
             raise Http404("Profil introuvable ou accès refusé.")
-
             
-
         obj_text = enfant.objectif_principal
-
         objectifs = []
-
         difficultes = []
-
         if obj_text and "DIFFICULTÉS:" in obj_text:
-
             parts = obj_text.split("DIFFICULTÉS:")
-
             obj_str = parts[0].replace("OBJECTIFS:", "").strip()
-
             diff_str = parts[1].strip()
-
             objectifs = [o.strip() for o in obj_str.split(',') if o.strip()]
-
             difficultes = [d.strip() for d in diff_str.split(',') if d.strip()]
-
         elif obj_text:
-
             objectifs = [obj_text]
 
-
-
         if not difficultes and enfant.besoin_prioritaire:
-
             difficultes = [enfant.besoin_prioritaire]
 
-
-
         # Map objectives to display names
-
         objectifs = [obj_dict.get(o, o) for o in objectifs]
 
-
-
         eleve_data = {
-
             'type': 'enfant',
-
             'id': enfant.id,
-
             'nom': enfant.prenom,
-
             'photo_url': None,
-
             'quartier_ville': enfant.quartier_ville,
-
             'classe': enfant.get_classe_display() if hasattr(enfant, 'get_classe_display') else enfant.classe,
-
             'matieres': enfant.matieres,
-
             'difficultes': difficultes,
-
             'objectifs': objectifs
-
         }
-
     elif type_eleve == 'apprenant':
-
-        apprenant = get_object_or_404(Apprenant, id=id_eleve)
+        apprenant = get_object_or_404(Apprenant.objects.select_related('quartier_ville', 'user'), id=id_eleve)
 
         
 
