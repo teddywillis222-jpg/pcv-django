@@ -793,10 +793,14 @@
             <section class="kids-selector" aria-label="Sélecteur d'enfants">
                 {% for enfant in enfants %}
                 <div tabindex="0" role="button" class="kid-item {% if enfant.id == active_enfant.id %}active{% else %}inactive{% endif %}"
-                    onclick="location.href='?enfant_id={{ enfant.id }}'" onkeydown="if(event.key==='Enter'){ location.href='?enfant_id={{ enfant.id }}' }">
+                    onclick="{% if enfant.id == active_enfant.id %}location.href='{% url 'profil_eleve' type_eleve='enfant' id_eleve=enfant.id %}'{% else %}location.href='?enfant_id={{ enfant.id }}'{% endif %}"
+                    onkeydown="if(event.key==='Enter'){ {% if enfant.id == active_enfant.id %}location.href='{% url 'profil_eleve' type_eleve='enfant' id_eleve=enfant.id %}'{% else %}location.href='?enfant_id={{ enfant.id }}'{% endif %} }">
                     <div class="kid-avatar">{{ enfant.prenom|first|upper }}</div>
                     <div class="kid-name">{{ enfant.prenom }}</div>
                     <div class="kid-class">{{ enfant.get_classe_display }}</div>
+                    {% if enfant.id == active_enfant.id %}
+                    <div style="font-size: 0.65rem; font-weight: 700; color: var(--primary); margin-top: 2px;">Voir profil</div>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </section>
