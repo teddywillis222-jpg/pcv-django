@@ -350,6 +350,29 @@
         color: white !important;
     }
 
+    .btn-find-prof-inline {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.75rem;
+        background: var(--primary-soft);
+        color: var(--primary-dark);
+        border: 1.5px dashed var(--primary);
+        border-radius: 14px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-decoration: none !important;
+        white-space: nowrap;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+    }
+    .btn-find-prof-inline:hover {
+        background: var(--primary);
+        color: white !important;
+        border-style: solid;
+    }
+
     /* Carousel end arrow (app-like) */
     .carousel-end-arrow {
         flex: 0 0 auto;
@@ -815,9 +838,9 @@
                 </div>
             </section>
 
-            <!-- Enfants Selector -->
-            <div style="margin-bottom: 0.25rem; padding-top: 0.25rem;">
-                <h3 style="font-size: 0.95rem; font-weight: 700; color: #475569; margin: 0 0 0.5rem 0.5rem;">Mes enfants</h3>
+            <!-- Enfants Selector & CTA -->
+            <div style="margin-bottom: 0.15rem; padding-top: 0.15rem;">
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: #475569; margin: 0 0 0.25rem 0.5rem;">Mes enfants</h3>
             </div>
 
             <!-- Kids selector: Horizontal Cards -->
@@ -838,20 +861,18 @@
                     </a>
                 </div>
                 {% endfor %}
-            </section>
-            <div class="section-separator" aria-hidden="true" style="margin-top: 0.5rem;"></div>
 
-            {% if enfants and not engagements_essais_programmes and not engagements_essais_confirmes and not engagements_finalises and not engagements_termines %}
-            <div style="margin: 1rem 0; padding: 0 0.5rem;">
-                <a href="{% url 'recherche' %}" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem 1rem; background: var(--primary-soft); color: var(--primary-dark); border-radius: 14px; font-weight: 700; text-decoration: none; border: 1px dashed var(--primary); transition: all 0.2s; box-shadow: 0 2px 4px rgba(22, 163, 74, 0.05);" onmouseover="this.style.background='var(--primary)'; this.style.color='white';" onmouseout="this.style.background='var(--primary-soft)'; this.style.color='var(--primary-dark)';">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    Trouver un professeur pour {{ active_enfant.prenom }}
+                {% if enfants and not engagements_essais_programmes and not engagements_essais_confirmes and not engagements_finalises and not engagements_termines %}
+                <a href="{% url 'recherche' %}" class="btn-find-prof-inline">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Trouver un prof pour {{ active_enfant.prenom }}
                 </a>
-            </div>
-            {% endif %}
+                {% endif %}
+            </section>
+            <div class="section-separator" aria-hidden="true" style="margin-top: 0.25rem;"></div>
 
             <!-- Recommandations -->
-            <section style="margin-top: 0.6rem;">
+            <section style="margin-top: 0.35rem;">
                 <div class="section-header">
                     <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations pour {{ active_enfant.prenom }}</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
