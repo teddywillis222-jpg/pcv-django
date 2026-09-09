@@ -272,28 +272,66 @@
 /* Info Bottom */
 .info-bottom {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-top: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+    width: 100%;
 }
 
 .price-block {
     display: flex;
     align-items: baseline;
-    gap: 2px;
+    gap: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .price-amount {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
 }
 
 .price-currency {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: #64748b;
+}
+
+.btn-card-full-action {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.5rem;
+    background: var(--primary-soft, #dcfce7);
+    color: var(--primary-dark, #15803d);
+    border: 1px solid rgba(22, 163, 74, 0.25);
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.teacher-card.premium-card:hover .btn-card-full-action {
+    background: var(--primary, #16a34a);
+    color: #ffffff !important;
+    border-color: var(--primary, #16a34a);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.btn-card-full-action svg {
+    transition: transform 0.2s ease;
+}
+
+.teacher-card.premium-card:hover .btn-card-full-action svg {
+    transform: translateX(3px);
 }
 
 /* Action Arrow — Circular Emerald Button */

@@ -107,27 +107,26 @@
             {{ teacher.presentation|default:"Professeur qualifié et passionné. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir une progression constante."|striptags }}
         </div>
 
-        <div class="info-bottom info-bottom-subtle">
+        <div class="info-bottom">
             <!-- Price -->
             <div class="price-block">
                 {% if teacher.a_des_tarifs_multiples %}
-                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">Dès</span>
+                    <span class="price-label" style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-right: 0.2rem;">Dès</span>
                     <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
                 {% elif teacher.tarif_minimum %}
-                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">Dès</span>
+                    <span class="price-label" style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-right: 0.2rem;">Dès</span>
                     <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
                 {% else %}
-                    <span class="price-label" style="font-size: 0.85rem; color: #64748b; font-weight: 500; margin-right: 0.25rem;">Dès</span>
+                    <span class="price-label" style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-right: 0.2rem;">Dès</span>
                     <span class="price-amount">3 000</span>
                 {% endif %}
                 <span class="price-currency">F/h</span>
             </div>
             
-            <!-- Action Arrow Vibrant Circle -->
-            <div class="action-circle-btn arrow-action" role="button" tabindex="0" aria-label="Découvrir le profil complet" title="Découvrir le profil complet">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+            <!-- Full Width Action Button -->
+            <div class="btn-card-full-action">
+                <span>Voir le profil complet</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
         </div>
     </div>
