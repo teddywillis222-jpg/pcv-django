@@ -201,11 +201,13 @@
                     <div class="iframe-wrapper" style="border-radius: 12px;">
                         <iframe 
                             id="livePreviewIframe" 
+                            width="100%"
+                            height="315"
                             src="" 
                             title="Aperçu YouTube" 
-                            frameborder="0"
+                            frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            referrerpolicy="strict-origin-when-cross-origin"
+                            referrerpolicy="strict-origin-when-cross-origin" 
                             allowfullscreen>
                         </iframe>
                     </div>
@@ -287,11 +289,13 @@
                         <!-- Lecteur vidéo -->
                         <div class="iframe-wrapper">
                             <iframe 
+                                width="100%"
+                                height="315"
                                 src="{{ v.embed_url }}" 
                                 title="{{ v.titre|default:'Vidéo' }}" 
-                                frameborder="0"
+                                frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                referrerpolicy="strict-origin-when-cross-origin"
+                                referrerpolicy="strict-origin-when-cross-origin" 
                                 allowfullscreen>
                             </iframe>
                         </div>
@@ -341,8 +345,7 @@
                 const videoId = getYouTubeId(url);
 
                 if (videoId) {
-                    const currentOrigin = window.location.origin;
-                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=${encodeURIComponent(currentOrigin)}`;
+                    previewIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&origin=https://profchezvousapp.com`;
                     previewContainer.style.display = 'block';
                 } else {
                     previewContainer.style.display = 'none';

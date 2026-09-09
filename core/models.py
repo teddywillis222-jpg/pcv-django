@@ -1883,10 +1883,11 @@ class TeacherVideo(models.Model):
 
     @property
     def embed_url(self):
-        """Retourne l'URL YouTube embed sécurisée et conforme nocookie."""
+        """Retourne l'URL YouTube embed sécurisée et conforme nocookie avec origin du domaine."""
         if not self.youtube_video_id:
             return ""
-        return f"https://www.youtube-nocookie.com/embed/{self.youtube_video_id}"
+        return f"https://www.youtube-nocookie.com/embed/{self.youtube_video_id}?enablejsapi=1&origin=https://profchezvousapp.com"
+
 
 
     @property
