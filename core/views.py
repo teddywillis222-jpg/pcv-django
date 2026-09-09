@@ -44,9 +44,13 @@ from .forms import (
 
 from .choices import TypeAbonnement, StatutGeneral, EngagementType, ValidationStatus, Localisation, CourseMode
 
-from .models import Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile, Engagement, Message, ProfessorAnnouncement, ProfileReaction
+from .models import (
+    Abonnement, Apprenant, Enfant, Parent, Profile, TeacherProfile,
+    Engagement, Message, ProfessorAnnouncement, ProfileReaction, SiteConfiguration
+)
 
 from django.db.models import Q
+
 
 from django.template.loader import render_to_string
 
