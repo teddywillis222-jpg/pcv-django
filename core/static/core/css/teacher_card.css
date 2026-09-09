@@ -9,10 +9,10 @@
     cursor: pointer;
     display: flex;
     flex-direction: row; /* Horizontal layout by default */
-    padding: 1rem;
-    gap: 1rem;
+    padding: 1.1rem;
+    gap: 1.1rem;
     width: 100%;
-    height: 290px; /* Increased height for uniformity with hook */
+    height: 305px; /* Slightly increased height for better breathing room */
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
     position: relative;
@@ -119,13 +119,13 @@
     flex-direction: column;
     justify-content: space-between;
     min-width: 0; /* Important for truncation */
-    padding: 0.5rem 0; /* More vertical breathing */
+    padding: 0.35rem 0; /* Generous vertical breathing */
 }
 
 .info-top {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem; /* Increased spacing between name/subjects/badges */
+    gap: 0.65rem; /* Balanced spacing between name/subjects/badges */
 }
 
 .name-badge-row {
@@ -156,7 +156,7 @@
 .info-text-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* Generous spacing between matière/location/classes */
+    gap: 0.55rem; /* Spacing between matière/location/classes */
 }
 
 .info-text {
@@ -368,7 +368,7 @@
     color: #64748b;
     font-style: italic;
     line-height: 1.4;
-    margin: 0.4rem 0 0.1rem; /* Slightly more top margin */
+    margin: 0.55rem 0 0.2rem;
     width: 100%;
     padding-right: 0.5rem;
     
