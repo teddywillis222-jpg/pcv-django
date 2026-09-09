@@ -2241,72 +2241,33 @@ def parent_dashboard(request):
 
 
     # 2. Recommandations dynamiques basées sur l'enfant actif et le parent
-
     from django.db.models import Q, Case, When, Value, IntegerField
-
     recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
-
     
-
-    score_annotation = Value(0, output_field=IntegerField())
-
-    
-
-    # Critère 1: Matières faibles (3 points)
-
+    q_matieres = Q()
     if active_enfant and active_enfant.matieres:
-
-        q_matieres = Q()
-
         for mat in active_enfant.matieres:
-
             q_matieres |= Q(matiere_enseignee__icontains=mat)
 
-        score_annotation = score_annotation + Case(
-
-            When(q_matieres, then=Value(3)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-        
-
-    # Critère 2: Classe en commun (2 points, 5 si expertise)
-
+    q_classe_expert = Q()
+    q_classe_enseignee = Q()
     if active_enfant and active_enfant.classe:
+        q_classe_expert = Q(classes_expertise__icontains=active_enfant.classe)
+        q_classe_enseignee = Q(classes_enseignees__icontains=active_enfant.classe)
 
-        score_annotation = score_annotation + Case(
+    q_quartier = Q()
+    if parent.quartier_ville_id:
+        # Utilisation de id__in pour éviter les duplications dues au LEFT JOIN du ManyToMany
+        prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
+            quartier_id=parent.quartier_ville_id
+        ).values_list('teacherprofile_id', flat=True)
+        q_quartier = Q(id__in=prof_ids_in_quartier)
 
-            When(classes_expertise__icontains=active_enfant.classe, then=Value(5)),
-
-            When(classes_enseignees__icontains=active_enfant.classe, then=Value(2)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-        
-
-    # Critère 3: Ville / Quartier du parent (1 point)
-
-    if parent.quartier_ville:
-
-        score_annotation = score_annotation + Case(
-
-            When(quartiers_couverts=parent.quartier_ville, then=Value(1)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-
+    score_annotation = (
+        Case(When(q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
+        Case(When(q_classe_expert, then=Value(5)), When(q_classe_enseignee, then=Value(2)), default=Value(0), output_field=IntegerField()) +
+        Case(When(q_quartier, then=Value(1)), default=Value(0), output_field=IntegerField())
+    )
 
     # Appliquer l'annotation et trier par score décroissant
 
@@ -2583,72 +2544,33 @@ def apprenant_dashboard(request):
 
 
     # 1. Recommandations dynamiques basées sur la classe, matières et localisation de l'apprenant
-
     from django.db.models import Q, Case, When, Value, IntegerField
-
     base_recommandations = TeacherProfile.objects.filter(statut_de_validation=ValidationStatus.VALIDE).select_related('user')
-
     
-
-    score_annotation = Value(0, output_field=IntegerField())
-
-    
-
-    # Critère 1: Matières recherchées (3 points)
-
+    q_matieres = Q()
     if apprenant.matieres_recherchees:
-
-        q_matieres = Q()
-
         for mat in apprenant.matieres_recherchees:
-
             q_matieres |= Q(matiere_enseignee__icontains=mat)
 
-        score_annotation = score_annotation + Case(
-
-            When(q_matieres, then=Value(3)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-        
-
-    # Critère 2: Classe en commun (2 points, 5 si expertise)
-
+    q_classe_expert = Q()
+    q_classe_enseignee = Q()
     if apprenant.classe:
+        q_classe_expert = Q(classes_expertise__icontains=apprenant.classe)
+        q_classe_enseignee = Q(classes_enseignees__icontains=apprenant.classe)
 
-        score_annotation = score_annotation + Case(
+    q_quartier = Q()
+    if apprenant.quartier_ville_id:
+        # Utilisation de id__in pour éviter les duplications dues au LEFT JOIN du ManyToMany
+        prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
+            quartier_id=apprenant.quartier_ville_id
+        ).values_list('teacherprofile_id', flat=True)
+        q_quartier = Q(id__in=prof_ids_in_quartier)
 
-            When(classes_expertise__icontains=apprenant.classe, then=Value(5)),
-
-            When(classes_enseignees__icontains=apprenant.classe, then=Value(2)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-        
-
-    # Critère 3: Ville / Quartier (1 point)
-
-    if apprenant.quartier_ville:
-
-        score_annotation = score_annotation + Case(
-
-            When(quartiers_couverts=apprenant.quartier_ville, then=Value(1)),
-
-            default=Value(0),
-
-            output_field=IntegerField()
-
-        )
-
-    
+    score_annotation = (
+        Case(When(q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
+        Case(When(q_classe_expert, then=Value(5)), When(q_classe_enseignee, then=Value(2)), default=Value(0), output_field=IntegerField()) +
+        Case(When(q_quartier, then=Value(1)), default=Value(0), output_field=IntegerField())
+    )
 
     # Appliquer le score et limiter aux 8 meilleurs résultats
 
