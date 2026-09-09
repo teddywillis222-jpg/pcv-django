@@ -2230,6 +2230,19 @@ class Engagement(models.Model):
 
     masque_pour_parent = models.BooleanField(default=False)
 
+    @property
+    def get_localisation_display(self):
+        """Retourne le nom lisible de la localisation (quartier) au lieu d'un ID numérique."""
+        if not self.localisation_option:
+            return ""
+        loc_str = str(self.localisation_option).strip()
+        if loc_str.isdigit():
+            from .models import Quartier
+            q = Quartier.objects.filter(id=int(loc_str)).first()
+            if q:
+                return f"{q.nom} ({q.ville})" if q.ville else q.nom
+        return loc_str
+
 
 
     # 7. Suivi et qualitÃ© (journal_sÃ©ance_liÃ© = Liste_SÃ©ances via engagement.seances)

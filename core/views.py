@@ -4030,7 +4030,13 @@ def api_engagement(request):
 
         engagement.mode_de_cours = data.get('course_mode', '')
 
-        engagement.localisation_option = data.get('localisation', '')
+        loc_val = str(data.get('localisation', '')).strip()
+        if loc_val.isdigit():
+            from .models import Quartier
+            q = Quartier.objects.filter(id=int(loc_val)).first()
+            if q:
+                loc_val = f"{q.nom} ({q.ville})" if q.ville else q.nom
+        engagement.localisation_option = loc_val
 
         # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
 
@@ -5248,7 +5254,13 @@ def api_update_engagement(request, engagement_id):
 
         engagement.duree_mois = data.get('duree_mois', engagement.duree_mois)
 
-        engagement.localisation_option = data.get('localisation', engagement.localisation_option)
+        loc_val = str(data.get('localisation', engagement.localisation_option)).strip()
+        if loc_val.isdigit():
+            from .models import Quartier
+            q = Quartier.objects.filter(id=int(loc_val)).first()
+            if q:
+                loc_val = f"{q.nom} ({q.ville})" if q.ville else q.nom
+        engagement.localisation_option = loc_val
 
         # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
 
@@ -6440,7 +6452,7 @@ def api_engagement_details(request, engagement_id):
 
         'mode_raw': engagement.mode_de_cours,
 
-        'lieu': engagement.localisation_option,
+        'lieu': engagement.get_localisation_display,
 
         'indications_geographiques': engagement.indications_geographiques,
 

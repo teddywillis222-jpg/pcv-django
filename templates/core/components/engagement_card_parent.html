@@ -48,7 +48,7 @@
         {% else %}
             <div>
                 <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📍 Quartier</span>
-                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.localisation_option|default:"Non précisé" }}</span>
+                <span style="color: var(--text-dark); font-weight: 600;">{{ eng.get_localisation_display|default:"Non précisé" }}</span>
             </div>
             <div>
                 <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">📑 Type</span>
