@@ -190,9 +190,7 @@
                     {% if form.youtube_url_input.errors %}
                     <div style="color: #dc2626; font-size: 0.85rem; margin-top: 0.4rem;">{{ form.youtube_url_input.errors }}</div>
                     {% endif %}
-                    <small style="display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.4rem;">
-                        Formats acceptés : lien classique, lien court <code>youtu.be</code> ou YouTube Shorts. Veillez à ce que la vidéo soit en mode <strong>Non répertoriée</strong> ou <strong>Publique</strong> avec l'option "Autoriser l'intégration" activée.
-                    </small>
+
                 </div>
 
                 <!-- Aperçu dynamique lors de la saisie -->
@@ -211,6 +209,17 @@
                             allowfullscreen>
                         </iframe>
                     </div>
+                </div>
+
+                <!-- Conseils de dernières minutes -->
+                <div style="background: #e0f2fe; padding: 1.25rem; border-radius: 12px; border: 1px solid #bae6fd; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: #0369a1; margin: 0 0 0.75rem;">📋 Checklist avant de soumettre :</h3>
+                    <ul style="margin: 0; padding-left: 1.5rem; color: #0c4a6e; font-size: 0.9rem; line-height: 1.6;">
+                        <li>Votre image est nette et le son est parfaitement audible.</li>
+                        <li>L'arrière-plan est propre, bien éclairé et professionnel.</li>
+                        <li>La vidéo est configurée en mode <strong>Publique</strong> ou <strong>Non répertoriée</strong> sur YouTube.</li>
+                        <li>L'option <strong>Autoriser l'intégration</strong> est bien cochée dans les paramètres YouTube.</li>
+                    </ul>
                 </div>
 
                 <!-- Autorisation promo -->
