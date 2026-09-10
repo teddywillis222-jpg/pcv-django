@@ -168,6 +168,17 @@
                 </div>
             </div>
 
+            <!-- Petit guide pour se lancer -->
+            <div style="background: #f0fdf4; padding: 1.25rem; border-radius: 12px; border: 1px solid #bbf7d0; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: #166534; margin: 0 0 0.5rem;">💡 Quelques repères pour votre vidéo</h3>
+                <p style="margin: 0 0 0.5rem; font-size: 0.9rem; color: #15803d;">Pas besoin d'être un pro du montage ! L'essentiel est de rester vous-même. Assurez-vous simplement que :</p>
+                <ul style="margin: 0; padding-left: 1.5rem; color: #15803d; font-size: 0.9rem; line-height: 1.6;">
+                    <li>On vous entend bien (un endroit calme suffit).</li>
+                    <li>On vous voit clairement (un peu de lumière face à vous).</li>
+                    <li>Sur YouTube, la vidéo est en <strong>Publique</strong> ou <strong>Non répertoriée</strong>, et l'option "Autoriser l'intégration" est cochée.</li>
+                </ul>
+            </div>
+
             <form method="POST" id="videoForm">
                 {% csrf_token %}
                 
@@ -211,16 +222,6 @@
                     </div>
                 </div>
 
-                <!-- Conseils de dernières minutes -->
-                <div style="background: #e0f2fe; padding: 1.25rem; border-radius: 12px; border: 1px solid #bae6fd; margin-bottom: 1.5rem;">
-                    <h3 style="font-size: 1rem; font-weight: 700; color: #0369a1; margin: 0 0 0.75rem;">📋 Checklist avant de soumettre :</h3>
-                    <ul style="margin: 0; padding-left: 1.5rem; color: #0c4a6e; font-size: 0.9rem; line-height: 1.6;">
-                        <li>Votre image est nette et le son est parfaitement audible.</li>
-                        <li>L'arrière-plan est propre, bien éclairé et professionnel.</li>
-                        <li>La vidéo est configurée en mode <strong>Publique</strong> ou <strong>Non répertoriée</strong> sur YouTube.</li>
-                        <li>L'option <strong>Autoriser l'intégration</strong> est bien cochée dans les paramètres YouTube.</li>
-                    </ul>
-                </div>
 
                 <!-- Autorisation promo -->
                 <div class="form-group" style="background: #f8fafc; padding: 1rem 1.25rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 0.85rem;">
