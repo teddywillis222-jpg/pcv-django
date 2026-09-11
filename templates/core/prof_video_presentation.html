@@ -136,14 +136,31 @@
         
         <!-- Header -->
         <div class="video-container" style="margin-bottom: 1.5rem; padding: 1.5rem 2rem;">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px; text-decoration: none;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                </a>
-                <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">Mes vidéos de présentation</h1>
-                    <p style="font-size: 0.875rem; color: #64748b; margin: 0.25rem 0 0;">Présentez-vous, montrez votre pédagogie et attirez plus d'élèves grâce à YouTube.</p>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <a href="{% url 'prof_dashboard' %}" style="color: var(--dash-text-muted); display: flex; padding: 0.5rem; background: #f8fafc; border-radius: 10px; text-decoration: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </a>
+                    <div>
+                        <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0;">Mes vidéos de présentation</h1>
+                        <p style="font-size: 0.875rem; color: #64748b; margin: 0.25rem 0 0;">Présentez-vous, montrez votre pédagogie et attirez plus d'élèves grâce à YouTube.</p>
+                    </div>
                 </div>
+                {% if guide_video %}
+                <div>
+                    {% if guide_video.fichier_pdf %}
+                    <a href="{% url 'download_ressource_prof' guide_video.id %}" download style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.55rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; color: #16a34a; border: 1.5px solid #bbf7d0; background: #f0fdf4; transition: all 0.2s;" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Guide vidéo (PDF)
+                    </a>
+                    {% elif guide_video.lien_externe %}
+                    <a href="{{ guide_video.lien_externe }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.55rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.85rem; text-decoration: none; color: #16a34a; border: 1.5px solid #bbf7d0; background: #f0fdf4; transition: all 0.2s;" onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Guide vidéo (PDF)
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -177,6 +194,25 @@
                     <li>On vous voit clairement (un peu de lumière face à vous).</li>
                     <li>Sur YouTube, la vidéo est en <strong>Publique</strong> ou <strong>Non répertoriée</strong>, et l'option "Autoriser l'intégration" est cochée.</li>
                 </ul>
+
+                {% if guide_video %}
+                <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed #86efac; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                    <span style="font-size: 0.85rem; color: #15803d; font-weight: 600;">
+                        Envie d'un coup de pouce pour structurer votre vidéo pas à pas ?
+                    </span>
+                    {% if guide_video.fichier_pdf %}
+                    <a href="{% url 'download_ressource_prof' guide_video.id %}" download style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.9rem; background: #16a34a; color: white; border-radius: 8px; font-weight: 700; font-size: 0.825rem; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Télécharger le guide pratique (PDF)
+                    </a>
+                    {% elif guide_video.lien_externe %}
+                    <a href="{{ guide_video.lien_externe }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.9rem; background: #16a34a; color: white; border-radius: 8px; font-weight: 700; font-size: 0.825rem; text-decoration: none; transition: background 0.2s;" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Télécharger le guide pratique (PDF)
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
 
             <form method="POST" id="videoForm">

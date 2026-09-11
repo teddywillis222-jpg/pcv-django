@@ -1870,11 +1870,24 @@ def prof_video_presentation(request):
     # Liste ordonnée des vidéos du professeur
     videos = teacher.videos.all().order_by("-date_soumission")
 
+    from django.core.cache import cache
+    guide_video = cache.get("guide_video_prof")
+    if guide_video is None:
+        from .models import RessourceProfesseur
+        from django.db.models import Q
+        guide_video = RessourceProfesseur.objects.filter(actif=True).filter(
+            Q(titre__icontains="vidéo") | Q(titre__icontains="video")
+        ).first()
+        cache.set("guide_video_prof", guide_video if guide_video else False, 86400)
+    elif guide_video is False:
+        guide_video = None
+
     return render(request, "core/prof_video_presentation.html", {
         "form": form,
         "teacher": teacher,
         "videos": videos,
         "ValidationStatus": ValidationStatus,
+        "guide_video": guide_video,
     })
 
 

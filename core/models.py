@@ -2851,6 +2851,16 @@ class RessourceProfesseur(models.Model):
     def __str__(self):
         return self.titre
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        from django.core.cache import cache
+        cache.delete("guide_video_prof")
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        from django.core.cache import cache
+        cache.delete("guide_video_prof")
+
 class FAQProfesseur(models.Model):
     question = models.CharField(max_length=255)
     reponse = models.TextField()
