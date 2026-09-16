@@ -45,6 +45,14 @@ MAINTENANCE_MODE = os.getenv('MAINTENANCE_MODE', 'False').lower() == 'true'
 # Emails des comptes de test (pour ignorer leurs actions dans les statistiques)
 TEST_ACCOUNT_EMAILS = [email.strip() for email in os.getenv('TEST_ACCOUNT_EMAILS', '').split(',') if email.strip()]
 
+# Profils professeurs recommandés mis en avant sur la page d'accueil (Top 4)
+RECOMMENDED_TEACHER_EMAILS = [
+    email.strip() for email in os.getenv(
+        'RECOMMENDED_TEACHER_EMAILS',
+        'attotinlambertabel@gmail.com,houndayimoise8@gmail.com,goutonkarim@gmail.com,lankougbededavid@gmail.com'
+    ).split(',') if email.strip()
+]
+
 # Allowed hosts pour Render et développement local
 
 ALLOWED_HOSTS = [

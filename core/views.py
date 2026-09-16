@@ -260,22 +260,38 @@ def home(request):
         Q(matiere_enseignee__icontains="Physique")
     )
 
-    # Récupération de la liste des emails de test configurés dans settings (.env)
+    # Récupération de la liste des emails recommandés et de test configurés dans settings
+    recommended_emails = getattr(settings, 'RECOMMENDED_TEACHER_EMAILS', [])
     test_emails = getattr(settings, 'TEST_ACCOUNT_EMAILS', [])
 
-    base_profs_qs = TeacherProfile.objects.select_related('user').filter(
-        statut_de_validation=ValidationStatus.VALIDE
-    ).filter(target_matieres_q)
+    top_professeurs = []
 
-    # Exclusion dynamique des comptes de test définis en configuration
-    if test_emails:
-        base_profs_qs = base_profs_qs.exclude(
-            Q(user__email__in=test_emails) | Q(email__in=test_emails)
+    # 1. Priorité aux 4 profils spécifiques choisis pour la vitrine d'accueil
+    if recommended_emails:
+        recommended_qs = TeacherProfile.objects.select_related('user').filter(
+            Q(user__email__in=recommended_emails) | Q(email__in=recommended_emails)
         )
+        if test_emails:
+            recommended_qs = recommended_qs.exclude(
+                Q(user__email__in=test_emails) | Q(email__in=test_emails)
+            )
+        top_professeurs = list(annotate_teachers_with_ratings(recommended_qs[:4]))
 
-    # Priorité absolue aux profils complétés à 100% (-profil_complet), puis tirage aléatoire (?)
-    # Les avis et évaluations sont annotés directement sur les 3 profils retenus
-    top_professeurs = list(annotate_teachers_with_ratings(base_profs_qs.order_by('-profil_complet', '?')[:3]))
+    # 2. Si les 4 profils ne sont pas tous trouvés (ex: environnement local), compléter jusqu'à 4
+    if len(top_professeurs) < 4:
+        existing_ids = [p.id for p in top_professeurs]
+        base_profs_qs = TeacherProfile.objects.select_related('user').filter(
+            statut_de_validation=ValidationStatus.VALIDE
+        ).filter(target_matieres_q).exclude(id__in=existing_ids)
+
+        if test_emails:
+            base_profs_qs = base_profs_qs.exclude(
+                Q(user__email__in=test_emails) | Q(email__in=test_emails)
+            )
+
+        needed = 4 - len(top_professeurs)
+        fillers = list(annotate_teachers_with_ratings(base_profs_qs.order_by('-profil_complet', '?')[:needed]))
+        top_professeurs.extend(fillers)
 
     quartiers_disponibles = Quartier.objects.filter(
         professeurs__statut_de_validation=ValidationStatus.VALIDE
