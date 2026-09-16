@@ -303,12 +303,17 @@ p {
 
 /* --- CONFIANCE (3 CARTES) --- */
 .trust-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 0 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.5rem 1.25rem 1.5rem 1.25rem;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+.trust-grid::-webkit-scrollbar {
+    display: none;
 }
 .trust-card {
     background: #ffffff;
@@ -319,6 +324,9 @@ p {
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
+    flex: 0 0 82vw;
+    max-width: 320px;
+    scroll-snap-align: start;
 }
 .trust-card:hover {
     transform: translateY(-3px);
@@ -351,12 +359,17 @@ p {
 
 /* --- COMMENT ÇA MARCHE (4 ETAPES) --- */
 .steps-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 0 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0.5rem 1.25rem 1.5rem 1.25rem;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+.steps-grid::-webkit-scrollbar {
+    display: none;
 }
 .step-card {
     background: #ffffff;
@@ -368,6 +381,9 @@ p {
     flex-direction: column;
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 80vw;
+    max-width: 300px;
+    scroll-snap-align: start;
 }
 .step-card:hover {
     transform: translateY(-3px);
@@ -604,11 +620,31 @@ p {
     .btn-search { margin-top: 0; flex: 0 0 auto; padding: 0 2rem; }
     
     .trust-grid {
+        display: grid;
         grid-template-columns: repeat(3, 1fr);
+        overflow-x: visible;
+        padding: 0 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        gap: 1.25rem;
+    }
+    .trust-card {
+        flex: none;
+        max-width: none;
     }
     
     .steps-grid {
+        display: grid;
         grid-template-columns: repeat(4, 1fr);
+        overflow-x: visible;
+        padding: 0 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        gap: 1.25rem;
+    }
+    .step-card {
+        flex: none;
+        max-width: none;
     }
     
     .prof-card-mobile {

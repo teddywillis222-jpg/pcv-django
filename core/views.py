@@ -249,9 +249,9 @@ def home(request):
     from .choices import ValidationStatus
     from .models import Quartier
     from django.db.models import Q
-    import random
+    from django.conf import settings
 
-    # Filtrer les profils vérifiés, complets à 100% dans les 4 matières clés : Maths, Anglais, SVT, PCT
+    # Matières cibles pour les profils recommandés sur la page d'accueil
     target_matieres_q = (
         Q(matiere_enseignee__icontains="Math") |
         Q(matiere_enseignee__icontains="Anglais") |
@@ -260,25 +260,22 @@ def home(request):
         Q(matiere_enseignee__icontains="Physique")
     )
 
-    profs_qs = TeacherProfile.objects.select_related('user').filter(
+    # Récupération de la liste des emails de test configurés dans settings (.env)
+    test_emails = getattr(settings, 'TEST_ACCOUNT_EMAILS', [])
+
+    base_profs_qs = TeacherProfile.objects.select_related('user').filter(
         statut_de_validation=ValidationStatus.VALIDE,
         profil_complet=True
     ).filter(target_matieres_q)
 
-    # Fallback pour environnement de test si aucun profil n'a encore profil_complet=True
-    if not profs_qs.exists():
-        profs_qs = TeacherProfile.objects.select_related('user').filter(
-            statut_de_validation=ValidationStatus.VALIDE
-        ).filter(target_matieres_q)
-        if not profs_qs.exists():
-            profs_qs = TeacherProfile.objects.select_related('user').all()
+    # Exclusion dynamique des comptes de test définis en configuration
+    if test_emails:
+        base_profs_qs = base_profs_qs.exclude(
+            Q(user__email__in=test_emails) | Q(email__in=test_emails)
+        )
 
-    # Annotation des notes et avis
-    profs_qs = annotate_teachers_with_ratings(profs_qs)
-
-    valid_profs = list(profs_qs)
-    random.shuffle(valid_profs)
-    top_professeurs = valid_profs[:3]
+    # Sélection aléatoire de 3 profils en base de données et annotation des avis
+    top_professeurs = list(annotate_teachers_with_ratings(base_profs_qs.order_by('?')[:3]))
 
     quartiers_disponibles = Quartier.objects.filter(
         professeurs__statut_de_validation=ValidationStatus.VALIDE
