@@ -148,6 +148,37 @@ p {
     max-width: 100%;
 }
 
+/* --- HERO BADGES STYLÉS --- */
+.hero-badges-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+.hero-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ffffff;
+    padding: 0.35rem 0.95rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    letter-spacing: 0.2px;
+}
+.hero-badge-pill .badge-check {
+    color: #4ade80;
+    font-weight: 800;
+    display: inline-flex;
+}
+
 /* --- RECHERCHE COMPONENT (GLASSMORPHISM) --- */
 .search-box {
     background: rgba(255, 255, 255, 0.1);
@@ -603,6 +634,9 @@ p {
     .hero-content {
         text-align: center;
     }
+    .hero-badges-wrapper {
+        justify-content: center;
+    }
     .hero-title {
         font-size: clamp(2.5rem, 5vw, 4rem);
         text-align: center;
@@ -684,11 +718,16 @@ p {
 <!-- 1. HERO SECTION -->
 <section class="hero-wrapper">
     <div class="hero-content">
-        <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #ffffff; padding: 0.4rem 1.25rem; border-radius: 9999px; font-weight: 600; font-size: 0.95rem; margin-top: 1.5rem; margin-bottom: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.1); letter-spacing: 0.3px;">
-            ⚡ Trouvez votre professeur en moins de 2 minutes
+        <div class="hero-badges-wrapper">
+            <div class="hero-badge-pill">
+                <span class="badge-check">✓</span> Profils vérifiés
+            </div>
+            <div class="hero-badge-pill">
+                <span class="badge-check">✓</span> Premier essai offert
+            </div>
         </div>
-        <h1 class="hero-title">Trouvez un professeur fiable à domicile au Bénin en toute confiance.</h1>
-        <p class="hero-subtitle">Prof Chez Vous est la plateforme éducative béninoise qui facilite des cours particuliers sécurisés, du primaire au supérieur. 100% profils vérifiés.</p>
+        <h1 class="hero-title">Trouvez le bon professeur pour votre enfant</h1>
+        <p class="hero-subtitle">Des professeurs vérifiés, à domicile, adaptés à son niveau, sa matière et votre quartier.</p>
         
         <!-- Bloc de recherche rétabli -->
         <div class="search-box" style="margin-top: 1.5rem;">

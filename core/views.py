@@ -264,8 +264,7 @@ def home(request):
     test_emails = getattr(settings, 'TEST_ACCOUNT_EMAILS', [])
 
     base_profs_qs = TeacherProfile.objects.select_related('user').filter(
-        statut_de_validation=ValidationStatus.VALIDE,
-        profil_complet=True
+        statut_de_validation=ValidationStatus.VALIDE
     ).filter(target_matieres_q)
 
     # Exclusion dynamique des comptes de test définis en configuration
@@ -274,8 +273,9 @@ def home(request):
             Q(user__email__in=test_emails) | Q(email__in=test_emails)
         )
 
-    # Sélection aléatoire de 3 profils en base de données et annotation des avis
-    top_professeurs = list(annotate_teachers_with_ratings(base_profs_qs.order_by('?')[:3]))
+    # Priorité absolue aux profils complétés à 100% (-profil_complet), puis tirage aléatoire (?)
+    # Les avis et évaluations sont annotés directement sur les 3 profils retenus
+    top_professeurs = list(annotate_teachers_with_ratings(base_profs_qs.order_by('-profil_complet', '?')[:3]))
 
     quartiers_disponibles = Quartier.objects.filter(
         professeurs__statut_de_validation=ValidationStatus.VALIDE

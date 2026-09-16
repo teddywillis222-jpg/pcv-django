@@ -1321,6 +1321,7 @@ class TeacherProfile(models.Model):
         return self.videos.filter(statut_validation="VALIDE").order_by("ordre", "-date_validation", "-date_soumission")
 
 
+    @property
     def completion_percentage(self):
 
         """Calcule le pourcentage de complétion du profil professeur."""
