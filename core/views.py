@@ -247,31 +247,46 @@ def home(request):
 
 
     from .choices import ValidationStatus
-
-    from django.db.models import F
+    from .models import Quartier
+    from django.db.models import Q
     import random
 
-    # On récupère les profils complets et validés (QuerySet pour annotation)
+    # Filtrer les profils vérifiés, complets à 100% dans les 4 matières clés : Maths, Anglais, SVT, PCT
+    target_matieres_q = (
+        Q(matiere_enseignee__icontains="Math") |
+        Q(matiere_enseignee__icontains="Anglais") |
+        Q(matiere_enseignee__icontains="SVT") |
+        Q(matiere_enseignee__icontains="PCT") |
+        Q(matiere_enseignee__icontains="Physique")
+    )
+
     profs_qs = TeacherProfile.objects.select_related('user').filter(
         statut_de_validation=ValidationStatus.VALIDE,
         profil_complet=True
-    )[:20]
+    ).filter(target_matieres_q)
 
-    # Annotation des notes/avis (nécessite un QuerySet, pas une liste)
+    # Fallback pour environnement de test si aucun profil n'a encore profil_complet=True
+    if not profs_qs.exists():
+        profs_qs = TeacherProfile.objects.select_related('user').filter(
+            statut_de_validation=ValidationStatus.VALIDE
+        ).filter(target_matieres_q)
+        if not profs_qs.exists():
+            profs_qs = TeacherProfile.objects.select_related('user').all()
+
+    # Annotation des notes et avis
     profs_qs = annotate_teachers_with_ratings(profs_qs)
 
-    # Conversion en liste + mélange rapide en Python
-    # (beaucoup plus rapide que order_by('?') qui fait un ORDER BY RANDOM() en SQL)
     valid_profs = list(profs_qs)
+    random.shuffle(valid_profs)
+    top_professeurs = valid_profs[:3]
 
-    if len(valid_profs) > 8:
-        top_professeurs = random.sample(valid_profs, 8)
-    else:
-        top_professeurs = valid_profs
-        random.shuffle(top_professeurs)
+    quartiers_disponibles = Quartier.objects.filter(
+        professeurs__statut_de_validation=ValidationStatus.VALIDE
+    ).distinct().order_by('ville', 'nom')
 
     return render(request, "core/home.html", {
         "top_professeurs": top_professeurs,
+        "quartiers_disponibles": quartiers_disponibles,
     })
 
 
