@@ -179,6 +179,30 @@ p {
     display: inline-flex;
 }
 
+.hero-sub-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-top: 1.25rem;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+.hero-sub-badge .badge-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: rgba(22, 163, 74, 0.25);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+    border-radius: 9999px;
+    color: #4ade80;
+    font-size: 0.75rem;
+}
+
 /* --- RECHERCHE COMPONENT (GLASSMORPHISM) --- */
 .search-box {
     background: rgba(255, 255, 255, 0.1);
@@ -772,6 +796,12 @@ p {
                     <span style="margin-left: 6px;">Rechercher</span>
                 </button>
             </form>
+        </div>
+        
+        <!-- Badge réassurance vitesse sous le formulaire -->
+        <div class="hero-sub-badge">
+            <span class="badge-icon">⚡</span>
+            <span>Trouvez votre professeur en moins de 2 minutes</span>
         </div>
     </div>
 </section>
