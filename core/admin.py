@@ -222,6 +222,11 @@ class ParentSelectionAdmin(admin.ModelAdmin):
         }),
     )
 
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "professeurs":
+            kwargs["queryset"] = db_field.related_model.objects.filter(statut_de_validation='APPROVED')
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+
     def voir_la_page(self, obj):
         url = obj.get_absolute_url()
         return format_html('<a href="{}" target="_blank" style="color: #10b981; font-weight: bold;">Ouvrir ↗4/a>', url)

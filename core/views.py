@@ -8339,16 +8339,14 @@ def reset_stats_mensuelles(request):
 def selection_personnalisee(request, uuid):
     from .models import ParentSelection
     from django.shortcuts import get_object_or_404, render
-    from django.db.models import Avg, Count
 
     selection = get_object_or_404(ParentSelection, id=uuid)
 
-    professeurs = selection.professeurs.filter(
-        statut_de_validation='APPROVED'
-    ).annotate(
-        note_moyenne=Avg('evaluations_recues__note'),
-        nombre_evaluations=Count('evaluations_recues'),
-    )
+    # Récupérer tous les profs liés (sans filtrer par statut, car l'admin les a choisis manuellement)
+    professeurs = selection.professeurs.all()
+
+    # Appliquer les mêmes annotations que la page de recherche (moyenne_avis, nombre_avis, etc.)
+    professeurs = annotate_teachers_with_ratings(professeurs)
 
     context = {
         "selection": selection,
@@ -8356,4 +8354,5 @@ def selection_personnalisee(request, uuid):
         "is_selection_page": True,
     }
     return render(request, 'core/selection_page.html', context)
+
 
