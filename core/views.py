@@ -1089,13 +1089,16 @@ def signup(request):
             
 
             role = form.cleaned_data["role"]
-
             telephone = form.cleaned_data["telephone"]
-
+            
             Profile.objects.create(user=user, role=role, telephone=telephone)
+            
+            # --- Création automatique du Profil Parent ---
+            if role == Profile.ROLE_PARENT:
+                from .models import Parent
+                Parent.objects.get_or_create(user=user)
 
             # Création automatique d'abonnement (Standard, 2000f)
-
             Abonnement.objects.create(
 
                 user=user,
@@ -4126,10 +4129,12 @@ def api_engagement(request):
         # Lier les enfants (ManyToManyField)
 
         enfant_id = data.get('enfant_id')
+        nouveau_prenom_enfant = data.get('nouveau_prenom_enfant')
+        
+        from .models import Enfant
+        enfant = None
 
         if enfant_id and str(enfant_id).isdigit():
-
-            from .models import Enfant
 
             try:
 
@@ -4137,17 +4142,25 @@ def api_engagement(request):
 
                 # Vérifier que l'enfant appartient bien au parent (sécurité)
 
-                if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
-
-                    engagement.enfants_concernes.clear()
-
-                    engagement.enfants_concernes.add(enfant)
+                if hasattr(request.user, 'parent') and enfant.parent != request.user.parent:
+                    enfant = None
 
             except (Enfant.DoesNotExist, ValueError):
 
                 pass
 
-        
+        if not enfant and nouveau_prenom_enfant and hasattr(request.user, 'parent'):
+            prenom = nouveau_prenom_enfant.strip()
+            if prenom:
+                enfant = Enfant.objects.create(
+                    parent=request.user.parent,
+                    prenom=prenom,
+                    classe_actuelle=data.get('classe', '')
+                )
+
+        if enfant:
+            engagement.enfants_concernes.clear()
+            engagement.enfants_concernes.add(enfant)
 
         # Fallback : si aucun enfant n'est lié et que le parent n'en a qu'un seul
 

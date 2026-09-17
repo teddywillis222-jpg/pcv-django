@@ -1310,38 +1310,62 @@
         }, { capture: true });
     </script>
 
-    <!-- Modal d'exhortation global (Premium Redesign) -->
+    <!-- Modal d'Inscription/Connexion Global -->
     <div id="authExhortationModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center; padding: 1rem; opacity: 0; transition: opacity 0.3s ease;">
-        <div class="auth-modal-content" style="background: white; border-radius: 24px; width: 100%; max-width: 420px; padding: 2.5rem 2rem; text-align: center; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <div class="auth-modal-content" style="background: white; border-radius: 24px; width: 100%; max-width: 420px; padding: 2.5rem 2rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
             
-            <button onclick="closeAuthModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s ease;" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#64748b';">
+            <button type="button" onclick="closeAuthModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s ease;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             
-            <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.15); transform: rotate(-5deg);">
-                <div style="background: white; width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; transform: rotate(5deg); box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        <path d="M12 8v4"/>
-                        <path d="M12 16h.01"/>
-                    </svg>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; text-align: center;">Créez votre compte</h3>
+            <p style="color: #475569; text-align: center; margin-bottom: 1.5rem; font-size: 0.95rem;">Inscrivez-vous pour interagir avec ce profil.</p>
+            
+            <form action="{% url 'signup' %}" method="post" id="globalSignupForm">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <input type="hidden" name="role" value="PARENT">
+                <input type="hidden" name="username" value="">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Prénom & Nom</label>
+                    <input type="text" name="first_name" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="Votre nom">
                 </div>
-            </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Email</label>
+                    <input type="email" name="email" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="votre@email.com">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">WhatsApp</label>
+                    <input type="tel" name="telephone" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="0102030405">
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Mot de passe</label>
+                    <input type="password" name="password" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="••••••••">
+                </div>
+                
+                <button type="submit" style="width: 100%; padding: 0.85rem; background: var(--primary, #16a34a); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    S'inscrire
+                </button>
+            </form>
+            <script>
+                document.getElementById('globalSignupForm').addEventListener('submit', function(e) {
+                    // Populate hidden username with email to satisfy Allauth if required
+                    const emailInput = this.querySelector('input[name="email"]');
+                    const usernameInput = this.querySelector('input[name="username"]');
+                    if(emailInput && usernameInput) {
+                        usernameInput.value = emailInput.value.split('@')[0] + Math.floor(Math.random() * 10000);
+                    }
+                });
+            </script>
             
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; letter-spacing: -0.025em;">Rejoignez-nous !</h3>
-            <p style="color: #475569; line-height: 1.6; margin-bottom: 2rem; font-size: 0.95rem;">
-                Vous devez être connecté pour interagir avec ce profil (favoris, proposition de cours, etc.). Créez votre compte gratuitement en quelques secondes.
+            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem; color: #475569;">
+                Déjà un compte ? 
+                <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" style="color: var(--primary, #16a34a); font-weight: 600; text-decoration: none;">Se connecter</a>
             </p>
-            
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="{% url 'signup' %}" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(22, 163, 74, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(22, 163, 74, 0.25)';">
-                    Créer un compte
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="{% url 'login' %}" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 1rem; background: #f8fafc; color: #334155; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: all 0.2s ease;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a';" onmouseout="this.style.background='#f8fafc'; this.style.color='#334155';">
-                    J'ai déjà un compte
-                </a>
-            </div>
         </div>
     </div>
     
