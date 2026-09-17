@@ -8346,8 +8346,8 @@ def selection_personnalisee(request, uuid):
     professeurs = selection.professeurs.filter(
         statut_de_validation='APPROVED'
     ).annotate(
-        note_moyenne=Avg('evaluations__note'),
-        nombre_evaluations=Count('evaluations'),
+        note_moyenne=Avg('evaluations_recues__note'),
+        nombre_evaluations=Count('evaluations_recues'),
     )
 
     context = {
