@@ -8335,3 +8335,25 @@ def reset_stats_mensuelles(request):
     </html>
     """
     return HttpResponse(html)
+
+def selection_personnalisee(request, uuid):
+    from .models import ParentSelection
+    from django.shortcuts import get_object_or_404, render
+    
+    selection = get_object_or_404(ParentSelection, id=uuid)
+    
+    professeurs = selection.professeurs.filter(status='VERIFIE') # Or whatever the active status is
+    try:
+        # Try to annotate ratings if possible, like in main search
+        from .views import annotate_teachers_with_ratings
+        professeurs = annotate_teachers_with_ratings(professeurs)
+    except ImportError:
+        pass
+        
+    context = {
+        "selection": selection,
+        "professeurs": professeurs,
+        "is_selection_page": True,
+        "hide_navbar_search": True  # For template customization
+    }
+    return render(request, 'core/selection_page.html', context)

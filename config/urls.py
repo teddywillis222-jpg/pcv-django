@@ -170,6 +170,9 @@ urlpatterns = [
     path("admin-outils/creer-annonce/", core_views.create_announcement, name="create_announcement"),
     path("admin-outils/reset-stats-mensuelles/", core_views.reset_stats_mensuelles, name="reset_stats_mensuelles"),
 
+    # WhatsApp Selection
+    path("selection/<uuid:uuid>/", core_views.selection_personnalisee, name="selection_personnalisee"),
+
     # Help Center
     path("centre-daide/", include("help_center.urls")),
 ]

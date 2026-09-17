@@ -200,3 +200,44 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
     list_editable = ('allow_teacher_video_submissions',)
 
 
+
+from .models import ParentSelection
+from django.utils.html import format_html
+
+@admin.register(ParentSelection)
+class ParentSelectionAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'date_creation', 'voir_la_page')
+    search_fields = ('nom_client_prospect',)
+    filter_horizontal = ('professeurs',)
+    readonly_fields = ('voir_la_page_detail', 'lien_a_copier')
+    fieldsets = (
+        ('Informations du Prospect', {
+            'fields': ('nom_client_prospect', 'message_personnalisé')
+        }),
+        ('Sélection', {
+            'fields': ('professeurs',)
+        }),
+        ('Partage (Ginéré après sauvegarde)', {
+            'fields': ('lien_a_copier', 'voir_la_page_detail')
+        }),
+    )
+
+    def voir_la_page(self, obj):
+        url = obj.get_absolute_url()
+        return format_html('<a href="{}" target="_blank" style="color: #10b981; font-weight: bold;">Ouvrir ↗4/a>', url)
+    voir_la_page.short_description = "Aperçu"
+
+    def voir_la_page_detail(self, obj):
+        if not obj.pk:
+            return "Veuillez d'abord sauvegarder la sélection."
+        url = obj.get_absolute_url()
+        return format_html('<a href="{}" target="_blank" class="button" style="background: #10b981; color: white;">Voir la page de sélection</a>', url)
+    voir_la_page_detail.short_description = "Lien direct"
+
+    def lien_a_copier(self, obj):
+        if not obj.pk:
+            return "Le lien apparaîtra après la sauvegarde."
+        domain = "profchezvousapp.com"
+        url = f"https://{domain}{obj.get_absolute_url()}"
+        return format_html('<input type="text" readonly value="{}" style="width: 100%; padding: 10px; font-weight: bold; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">', url)
+    lien_a_copier.short_description = "Lien à envoyer sur WhatsApp"
