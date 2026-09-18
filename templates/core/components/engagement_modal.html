@@ -33,7 +33,7 @@
             <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
-                    <select id="eng_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <select id="eng_matiere" name="matiere" multiple style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500; min-height: 2.5rem;" required>
                     </select>
                 </div>
                 <div>
@@ -192,7 +192,7 @@
             <div class="eng-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Matière <span style="color:#ef4444">*</span></label>
-                    <select id="essai_matiere" name="matiere" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500;" required>
+                    <select id="essai_matiere" name="matiere" multiple style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; background: #fff; font-weight: 500; min-height: 2.5rem;" required>
                     </select>
                 </div>
                 <div>
@@ -353,7 +353,7 @@ function populateFormSelects(prefix, teacherId, teacherName, matiere, isParent, 
         if (newEnfantField) newEnfantField.style.display = 'none';
     }
 
-    // Gérer la matière
+    // Gérer la matière (multi-select)
     const matiereSelect = document.getElementById(prefix + '_matiere');
     matiereSelect.innerHTML = '';
     const matList = matiere.split(',').map(s => s.trim()).filter(s => s !== '');
@@ -361,9 +361,19 @@ function populateFormSelects(prefix, teacherId, teacherName, matiere, isParent, 
         matiereSelect.add(new Option(matList[0], matList[0], true, true));
         matiereSelect.disabled = true;
     } else {
-        matiereSelect.add(new Option('Sélectionnez une matière', ''));
         matList.forEach(m => matiereSelect.add(new Option(m, m)));
         matiereSelect.disabled = false;
+    }
+    // Initialiser TomSelect pour un multi-select élégant
+    if (matiereSelect.tomselect) matiereSelect.tomselect.destroy();
+    if (matList.length > 1) {
+        new TomSelect('#' + prefix + '_matiere', {
+            plugins: ['remove_button'],
+            maxItems: null,
+            placeholder: 'Sélectionnez une ou plusieurs matières',
+            hidePlaceholder: true,
+            onInitialize: function() { this.close(); }
+        });
     }
 
     // Gérer la classe
@@ -565,7 +575,10 @@ async function submitEngagement(event, btnId) {
     let isValid = true;
     const requiredInputs = form.querySelectorAll('[required]');
     for (let input of requiredInputs) {
-        if (!input.value.trim() && !input.disabled) {
+        if (input.disabled) continue;
+        if (input.type === 'select-multiple') {
+            if (input.selectedOptions.length === 0) { isValid = false; break; }
+        } else if (!input.value.trim()) {
             isValid = false;
             break;
         }
@@ -584,6 +597,11 @@ async function submitEngagement(event, btnId) {
     
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    // Handle multi-select matiere: join all selected values with comma
+    const matiereValues = formData.getAll('matiere');
+    if (matiereValues.length > 0) {
+        data['matiere'] = matiereValues.join(', ');
+    }
     
     disabledInputs.forEach(input => input.disabled = true);
     

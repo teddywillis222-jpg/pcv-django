@@ -754,6 +754,7 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem;">
             <button style="display: block; width: 100%; border: none; padding: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%); color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: transform 0.2s, box-shadow 0.2s;" onclick="closeWelcomePricingModal().then(() => { window.location.href='{% url 'recherche' %}'; });" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(16, 185, 129, 0.3)'">Commencer</button>
+            <button style="display: block; width: 100%; border: 2px solid #e2e8f0; padding: 1rem; border-radius: 16px; background: transparent; color: #64748b; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;" onclick="closeWelcomePricingModal();" onmouseover="this.style.borderColor='#cbd5e1'; this.style.color='#475569'; this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='#64748b'; this.style.background='transparent';">J'ai compris, plus tard</button>
         </div>
     </div>
 </div>

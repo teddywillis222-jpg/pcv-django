@@ -200,9 +200,9 @@ window.addEventListener('popstate', function(event) {
                 
                 <!-- Nouveau conteneur enfant en bas (pleine largeur) -->
                 <div class="mt-auto p-3" style="background: #f8fafc; border-top: 1px solid #f1f5f9;">
-                    <button onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; border: none; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; cursor: pointer;">
+                    <a href="javascript:void(0)" onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none; width: 100% !important; box-sizing: border-box;">
                         Découvrir et essayer ce prof
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
