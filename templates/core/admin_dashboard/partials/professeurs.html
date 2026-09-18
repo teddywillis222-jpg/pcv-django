@@ -366,8 +366,15 @@
             body: formData
         })
         .then(res => {
-            if(!res.ok) throw new Error("Erreur HTTP " + res.status);
-            return res.json();
+            return res.json().then(data => {
+                if(!res.ok) {
+                    throw new Error(data.error || ("Erreur HTTP " + res.status));
+                }
+                return data;
+            }).catch(jsonErr => {
+                if(!res.ok) throw new Error("Erreur HTTP " + res.status);
+                throw jsonErr;
+            });
         })
         .then(data => {
             if(data.success) {
@@ -375,12 +382,12 @@
                 closeAllPanels();
                 loadProfesseurs('{{ statut_actif }}');
             } else {
-                showToast('Erreur API: ' + data.error, 'error');
+                showToast('Erreur API: ' + (data.error || 'Erreur inconnue'), 'error');
             }
         })
         .catch(err => {
             console.error('Erreur actionProf:', err);
-            showToast("Impossible d'exécuter l'action.", 'error');
+            showToast("Erreur: " + err.message, 'error');
         });
     }
 </script>

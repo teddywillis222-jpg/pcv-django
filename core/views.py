@@ -5670,49 +5670,59 @@ def admin_api_prof_action(request, prof_id):
 
     """Action sur un professeur (valider, refuser, incomplet, etc.)"""
 
-    prof = get_object_or_404(TeacherProfile, id=prof_id)
+    try:
 
-    action = request.POST.get('action')
+        prof = get_object_or_404(TeacherProfile, id=prof_id)
 
-    
-
-    if action == 'valider':
-
-        prof.statut_de_validation = ValidationStatus.VALIDE
-
-        prof.save()
-
-        # L'email de félicitations est envoyé automatiquement par le model save()
-
-        return JsonResponse({'success': True, 'message': 'Professeur valid\u00e9 avec succ\u00e8s.'})
+        action = request.POST.get('action')
 
         
 
-    elif action == 'incomplet':
+        if action == 'valider':
 
-        raison = request.POST.get('raison', 'Informations incomplètes.')
+            prof.statut_de_validation = ValidationStatus.VALIDE
 
-        prof.message_admin = raison
+            prof.save()
 
-        prof.statut_de_validation = ValidationStatus.INCOMPLET
+            # L'email de félicitations est envoyé automatiquement par le model save()
 
-        prof.save()
+            return JsonResponse({'success': True, 'message': 'Professeur valid\u00e9 avec succ\u00e8s.'})
 
-        # L'email de dossier incomplet est envoyé automatiquement par le model save()
+            
 
-        return JsonResponse({'success': True, 'message': 'Statut mis \u00e0 jour et email envoy\u00e9.'})
+        elif action == 'incomplet':
 
-        
+            raison = request.POST.get('raison', 'Informations incomplètes.')
 
-    elif action == 'valider_note':
+            prof.message_admin = raison
 
-        note = request.POST.get('note', '')
+            prof.statut_de_validation = ValidationStatus.INCOMPLET
 
-        print(f"[SIMULATION EMAIL] Email envoyé à {prof.email} avec la note d'évaluation: {note}")
+            prof.save()
 
-        return JsonResponse({'success': True, 'message': 'Note enregistr\u00e9e et email envoy\u00e9.'})
+            # L'email de dossier incomplet est envoyé automatiquement par le model save()
 
-    return JsonResponse({'error': 'Action non reconnue.'}, status=400)
+            return JsonResponse({'success': True, 'message': 'Statut mis \u00e0 jour et email envoy\u00e9.'})
+
+            
+
+        elif action == 'valider_note':
+
+            note = request.POST.get('note', '')
+
+            print(f"[SIMULATION EMAIL] Email envoyé à {prof.email} avec la note d'évaluation: {note}")
+
+            return JsonResponse({'success': True, 'message': 'Note enregistr\u00e9e et email envoy\u00e9.'})
+
+        return JsonResponse({'success': False, 'error': 'Action non reconnue.'}, status=400)
+
+    except Exception as e:
+
+        import traceback
+
+        traceback.print_exc()
+
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 def admin_api_videos(request):
