@@ -1318,8 +1318,8 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; text-align: center;">Créez votre compte</h3>
-            <p style="color: #475569; text-align: center; margin-bottom: 1.5rem; font-size: 0.95rem;">Inscrivez-vous pour interagir avec ce profil.</p>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; text-align: center;">Bienvenue ! 👋</h3>
+            <p style="color: #475569; text-align: center; margin-bottom: 1.5rem; font-size: 0.95rem;">Créez votre compte gratuitement en quelques secondes pour continuer et interagir avec ce professeur.</p>
             
             <form action="{% url 'signup' %}" method="post" id="globalSignupForm">
                 {% csrf_token %}
@@ -1328,7 +1328,7 @@
                 <input type="hidden" name="username" value="">
                 
                 <div style="margin-bottom: 1rem;">
-                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Prénom & Nom</label>
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Nom</label>
                     <input type="text" name="first_name" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="Votre nom">
                 </div>
                 
@@ -1344,7 +1344,7 @@
                 
                 <div style="margin-bottom: 1.5rem;">
                     <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Mot de passe</label>
-                    <input type="password" name="password" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="••••••••">
+                    <input type="text" name="password" required style="width:100%; padding: 0.75rem; border:1px solid #cbd5e1; border-radius: 8px;" placeholder="Créez votre mot de passe">
                 </div>
                 
                 <button type="submit" style="width: 100%; padding: 0.85rem; background: var(--primary, #16a34a); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">

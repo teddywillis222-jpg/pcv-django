@@ -4155,7 +4155,7 @@ def api_engagement(request):
                 enfant = Enfant.objects.create(
                     parent=request.user.parent,
                     prenom=prenom,
-                    classe_actuelle=data.get('classe', '')
+                    classe=data.get('classe', '')
                 )
 
         if enfant:
