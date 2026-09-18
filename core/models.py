@@ -1702,12 +1702,12 @@ class TeacherProfile(models.Model):
             try:
                 from PIL import Image
                 from io import BytesIO
-                from django.core.files.uploadedfile import InMemoryUploadedFile
+                from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
                 import os
 
                 # Ne traiter que les fichiers fraîchement uploadés (pas les noms de fichier Cloudinary existants)
                 photo_file = self.photo_de_profil
-                if hasattr(photo_file, 'read'):
+                if isinstance(photo_file.file, UploadedFile):
                     img = Image.open(photo_file)
                     img = img.convert('RGB')  # Gérer les PNG avec alpha
 
@@ -1723,6 +1723,9 @@ class TeacherProfile(models.Model):
 
                     # Reconstruire le nom de fichier avec extension .webp
                     original_name = os.path.splitext(photo_file.name)[0]
+                    # Nettoyer les extensions .webp multiples au cas où
+                    while original_name.endswith('.webp'):
+                        original_name = original_name[:-5]
                     new_name = f"{original_name}.webp"
 
                     self.photo_de_profil = InMemoryUploadedFile(
