@@ -1,7 +1,127 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sélection Sur Mesure - Prof Chez Vous{% endblock %}
+{% block title %}Sélection Sur Mesure - Prof Chez Vous
+<!-- CSS Side Panel -->
+<style>
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel.active { right: 0; }
+.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.side-panel-overlay.active { opacity: 1; visibility: visible; }
+.side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
+.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
+.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) {
+    .side-panel { width: 100% !important; right: -100% !important; }
+    .side-panel.active { right: 0 !important; }
+    .side-panel-content { padding: 1rem 8px; }
+    .side-panel-header { padding: 0.75rem 1rem !important; }
+    .side-panel-header h3 { font-size: 1.1rem !important; }
+}
+</style>
+
+<!-- Side Panel Overlay -->
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h2 style="margin: 0; font-size: 1.25rem;">Profil du professeur</h2>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent">
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    </div>
+</div>
+
+{% include 'core/components/engagement_modal.html' %}
+
+<!-- JS Side Panel -->
+<script>
+function openTeacherProfile(teacherSlug) {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    // Mettre à jour l'URL sans recharger
+    const currentUrl = new URL(window.location);
+    history.pushState({teacher: teacherSlug, page: 'selection'}, '', `/professeur/${teacherSlug}/`);
+    
+    sidePanel.classList.add('active');
+    overlay.classList.add('active');
+    
+    loadTeacherProfile(teacherSlug);
+}
+
+function closeSidePanel() {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    sidePanel.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Revenir à l'URL précédente (celle de la sélection)
+    history.back();
+}
+
+async function loadTeacherProfile(teacherSlug) {
+    const content = document.getElementById('sidePanelContent');
+    
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/teacher-profile/${teacherSlug}/`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors du chargement du profil');
+        }
+        
+        window.currentChildren = data.parent_children || [];
+        window.currentExistingEngagement = data.existing_engagement || null;
+        
+        content.innerHTML = data.html;
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #ef4444; font-weight: 600;">Oups !</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">${error.message}</p>
+                <button onclick="loadTeacherProfile('${teacherSlug}')" style="padding: 0.5rem 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    Réessayer
+                </button>
+            </div>
+        `;
+    }
+}
+
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.teacher) {
+        openTeacherProfile(event.state.teacher);
+    } else {
+        const sidePanel = document.getElementById('sidePanel');
+        const overlay = document.getElementById('sidePanelOverlay');
+        if(sidePanel) sidePanel.classList.remove('active');
+        if(overlay) overlay.classList.remove('active');
+    }
+});
+</script>
+
+{% endblock %}
 
 {% block content %}
 <style>
@@ -80,9 +200,9 @@
                 
                 <!-- Nouveau conteneur enfant en bas (pleine largeur) -->
                 <div class="mt-auto p-3" style="background: #f8fafc; border-top: 1px solid #f1f5f9;">
-                    <a href="{% url 'professeur_detail' teacher.slug %}" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none;">
+                    <button onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; border: none; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; cursor: pointer;">
                         Découvrir et essayer ce prof
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -105,4 +225,124 @@
         </a>
     </div>
 </div>
+
+<!-- CSS Side Panel -->
+<style>
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel.active { right: 0; }
+.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.side-panel-overlay.active { opacity: 1; visibility: visible; }
+.side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
+.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
+.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) {
+    .side-panel { width: 100% !important; right: -100% !important; }
+    .side-panel.active { right: 0 !important; }
+    .side-panel-content { padding: 1rem 8px; }
+    .side-panel-header { padding: 0.75rem 1rem !important; }
+    .side-panel-header h3 { font-size: 1.1rem !important; }
+}
+</style>
+
+<!-- Side Panel Overlay -->
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h2 style="margin: 0; font-size: 1.25rem;">Profil du professeur</h2>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent">
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    </div>
+</div>
+
+{% include 'core/components/engagement_modal.html' %}
+
+<!-- JS Side Panel -->
+<script>
+function openTeacherProfile(teacherSlug) {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    // Mettre à jour l'URL sans recharger
+    const currentUrl = new URL(window.location);
+    history.pushState({teacher: teacherSlug, page: 'selection'}, '', `/professeur/${teacherSlug}/`);
+    
+    sidePanel.classList.add('active');
+    overlay.classList.add('active');
+    
+    loadTeacherProfile(teacherSlug);
+}
+
+function closeSidePanel() {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    sidePanel.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Revenir à l'URL précédente (celle de la sélection)
+    history.back();
+}
+
+async function loadTeacherProfile(teacherSlug) {
+    const content = document.getElementById('sidePanelContent');
+    
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/teacher-profile/${teacherSlug}/`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors du chargement du profil');
+        }
+        
+        window.currentChildren = data.parent_children || [];
+        window.currentExistingEngagement = data.existing_engagement || null;
+        
+        content.innerHTML = data.html;
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #ef4444; font-weight: 600;">Oups !</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">${error.message}</p>
+                <button onclick="loadTeacherProfile('${teacherSlug}')" style="padding: 0.5rem 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    Réessayer
+                </button>
+            </div>
+        `;
+    }
+}
+
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.teacher) {
+        openTeacherProfile(event.state.teacher);
+    } else {
+        const sidePanel = document.getElementById('sidePanel');
+        const overlay = document.getElementById('sidePanelOverlay');
+        if(sidePanel) sidePanel.classList.remove('active');
+        if(overlay) overlay.classList.remove('active');
+    }
+});
+</script>
+
 {% endblock %}

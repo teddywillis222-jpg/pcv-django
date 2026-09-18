@@ -1294,7 +1294,7 @@
                 const slug = card.dataset.teacherSlug || card.getAttribute('data-teacher-slug');
                 if (!slug) return;
                 
-                const isSearchPage = window.location.pathname.includes('/recherche');
+                const isSearchPage = window.location.pathname.includes('/recherche') || window.location.pathname.includes('/selection');
 
                 if (isSearchPage && typeof openTeacherProfile === 'function') {
                     e.preventDefault();
