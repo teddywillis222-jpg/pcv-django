@@ -1430,7 +1430,7 @@
                     plugins: plugins,
                     create: allowCreate,
                     persist: false,
-                    dropdownParent: 'body',
+                    dropdownParent: select.closest('.modal-content') || select.closest('.side-panel') || 'body',
                     closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
                     maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1),
