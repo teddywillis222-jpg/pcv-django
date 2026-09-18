@@ -47,13 +47,14 @@
 
 <!-- JS Side Panel -->
 <script>
-let originalSelectionUrl = window.location.href;
+let _selectionOriginalUrl = window.location.href;
+
 function openTeacherProfile(teacherSlug) {
     const sidePanel = document.getElementById('sidePanel');
     const overlay = document.getElementById('sidePanelOverlay');
     
-    // Mettre à jour l'URL sans recharger
-    originalSelectionUrl = window.location.href;
+    // Sauvegarder l'URL de sélection avant de la modifier
+    _selectionOriginalUrl = window.location.href;
     history.pushState({teacher: teacherSlug, page: 'selection'}, '', `/professeur/${teacherSlug}/`);
     
     sidePanel.classList.add('active');
@@ -69,12 +70,232 @@ function closeSidePanel() {
     sidePanel.classList.remove('active');
     overlay.classList.remove('active');
     
-    // Revenir à l'URL de sélection originale
-    if (typeof originalSelectionUrl !== 'undefined') {
-        history.pushState({}, '', originalSelectionUrl);
-    } else {
-        history.back();
+    // Revenir à l'URL de sélection sans naviguer
+    history.pushState({}, '', _selectionOriginalUrl);
+}
+
+async function loadTeacherProfile(teacherSlug) {
+    const content = document.getElementById('sidePanelContent');
+    
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/teacher-profile/${teacherSlug}/`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors du chargement du profil');
+        }
+        
+        window.currentChildren = data.parent_children || [];
+        window.currentExistingEngagement = data.existing_engagement || null;
+        
+        content.innerHTML = data.html;
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #ef4444; font-weight: 600;">Oups !</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">${error.message}</p>
+                <button onclick="loadTeacherProfile('${teacherSlug}')" style="padding: 0.5rem 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    Réessayer
+                </button>
+            </div>
+        `;
     }
+}
+
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.teacher) {
+        openTeacherProfile(event.state.teacher);
+    } else {
+        const sidePanel = document.getElementById('sidePanel');
+        const overlay = document.getElementById('sidePanelOverlay');
+        if(sidePanel) sidePanel.classList.remove('active');
+        if(overlay) overlay.classList.remove('active');
+    }
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+<style>
+    .selection-header {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        text-align: center;
+        border: 1px solid #bbf7d0;
+    }
+    .selection-header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; margin-top: 0; }
+    .wa-footer-btn {
+        background: #25D366;
+        color: white;
+        border-radius: 50px;
+        padding: 10px 24px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .wa-footer-btn:hover { color: white; opacity: 0.9; }
+
+    /* Styles spécifiques pour la carte sur la page sélection */
+    .selection-card-wrapper {
+        display: flex;
+        flex-direction: column;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .selection-card-wrapper:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    /* Nettoyage de la carte originale pour l'intégrer proprement */
+    .custom-card-inner .teacher-card {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    /* Masquer le petit bouton par défaut de la carte */
+    .custom-card-inner .btn-card-full-action {
+        display: none !important;
+    }
+</style>
+
+<div class="container-fluid px-2 px-md-4 py-3" style="max-width: 1200px;">
+    <div class="selection-header">
+        <h1>
+            {% if selection.nom_client_prospect %}
+                Bonjour <strong style="color: var(--primary, #16a34a);">{{ selection.nom_client_prospect }}</strong> 👋
+            {% else %}
+                Votre sélection de professeurs
+            {% endif %}
+        </h1>
+        {% if selection.message_personnalise %}
+            <p class="mb-0" style="color:#4b5563; font-size: 1rem;">{{ selection.message_personnalise }}</p>
+        {% endif %}
+    </div>
+
+    <div class="row justify-content-center" style="row-gap: 2.5rem;">
+        {% for teacher in professeurs %}
+        <div class="col-md-6 col-lg-4 d-flex align-items-stretch" style="min-width: 335px; padding-bottom: 1rem;">
+            <div class="selection-card-wrapper w-100">
+                <div class="custom-card-inner">
+                    {% include 'core/components/_teacher_card.html' with teacher=teacher %}
+                </div>
+                
+                <!-- Nouveau conteneur enfant en bas (pleine largeur) -->
+                <div class="mt-auto p-3" style="background: #f8fafc; border-top: 1px solid #f1f5f9;">
+                    <a href="javascript:void(0)" onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none; width: 100% !important; box-sizing: border-box;">
+                        Découvrir et essayer ce prof
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <div class="col-12 text-center py-5" style="color:#9ca3af;">
+            <p>Aucun professeur n'a encore été ajouté à cette sélection.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <p style="color:#6b7280; margin-bottom:12px;">
+            Un profil vous intéresse ? Cliquez sur <strong>"Programmer l'essai"</strong> sur la carte du professeur.
+        </p>
+        <a href="https://wa.me/22997501241?text=Bonjour%2C+j%27ai+vu+la+s%C3%A9lection+de+professeurs+et+j%27ai+une+question."
+           class="wa-footer-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.12.554 4.11 1.522 5.836L0 24l6.336-1.492A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 01-5.003-1.373l-.36-.213-3.72.876.933-3.617-.234-.372A9.782 9.782 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
+            Une question ? Contactez-nous sur WhatsApp
+        </a>
+    </div>
+</div>
+
+<!-- CSS Side Panel -->
+<style>
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel.active { right: 0; }
+.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.side-panel-overlay.active { opacity: 1; visibility: visible; }
+.side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
+.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
+.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) {
+    .side-panel { width: 100% !important; right: -100% !important; }
+    .side-panel.active { right: 0 !important; }
+    .side-panel-content { padding: 1rem 8px; }
+    .side-panel-header { padding: 0.75rem 1rem !important; }
+    .side-panel-header h3 { font-size: 1.1rem !important; }
+}
+</style>
+
+<!-- Side Panel Overlay -->
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h2 style="margin: 0; font-size: 1.25rem;">Profil du professeur</h2>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent">
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    </div>
+</div>
+
+{% include 'core/components/engagement_modal.html' %}
+
+<!-- JS Side Panel -->
+<script>
+function openTeacherProfile(teacherSlug) {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    // Mettre à jour l'URL sans recharger
+    const currentUrl = new URL(window.location);
+    history.pushState({teacher: teacherSlug, page: 'selection'}, '', `/professeur/${teacherSlug}/`);
+    
+    sidePanel.classList.add('active');
+    overlay.classList.add('active');
+    
+    loadTeacherProfile(teacherSlug);
+}
+
+function closeSidePanel() {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    sidePanel.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Revenir à l'URL précédente (celle de la sélection)
+    history.back();
 }
 
 async function loadTeacherProfile(teacherSlug) {
