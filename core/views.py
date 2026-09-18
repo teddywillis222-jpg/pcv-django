@@ -990,7 +990,7 @@ def recherche(request):
 
 
 
-def send_activation_email(request, user):
+def send_activation_email(request, user, next_url=None):
 
     from django.contrib.auth.tokens import default_token_generator
 
@@ -1015,6 +1015,10 @@ def send_activation_email(request, user):
         reverse('activate_account', kwargs={'uidb64': uid, 'token': token})
 
     )
+
+    if next_url:
+        import urllib.parse
+        link += '?next=' + urllib.parse.quote(next_url)
 
     
 
@@ -1115,7 +1119,7 @@ def signup(request):
 
             # --- Génération et envoi du token ---
 
-            send_activation_email(request, user)
+            send_activation_email(request, user, next_url=next_url)
 
             
 
@@ -1257,7 +1261,11 @@ def activate_account(request, uidb64, token):
 
         
 
-        post_activation_redirect = request.session.pop('post_activation_redirect', None)
+        # Redirection : priorité session > query string > fallback
+        post_activation_redirect = (
+            request.session.pop('post_activation_redirect', None)
+            or request.GET.get('next')
+        )
 
         if post_activation_redirect:
 
@@ -1497,17 +1505,9 @@ def post_signup_redirect(request):
 
     elif profile.role == Profile.ROLE_PARENT:
 
-        parent = getattr(request.user, "parent", None)
+        # Profilage progressif : le parent n'a plus besoin de compléter de profil
 
-        # Si le parent existe et a au moins un enfant, dashboard direct
-
-        if parent and parent.enfants.exists():
-
-            return redirect("parent_dashboard")
-
-        # Sinon, création de profil (Parent + Premier enfant)
-
-        return redirect("parent_create_profile")
+        return redirect("parent_dashboard")
 
 
 
