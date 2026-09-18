@@ -2267,10 +2267,6 @@ def parent_dashboard(request):
 
     enfants = parent.enfants.all()
 
-    if not enfants.exists():
-
-        return redirect("parent_create_profile")
-
 
 
     # 1. Sélection de l'enfant actif (par URL, sinon le 1er par défaut)
@@ -2304,10 +2300,16 @@ def parent_dashboard(request):
         ).values_list('teacherprofile_id', flat=True)
         q_quartier = Q(id__in=prof_ids_in_quartier)
 
+    # Pour éviter l'erreur "An empty Q() can't be used as a When() condition", on les remplace par une condition toujours fausse si elles sont vides.
+    valid_q_matieres = q_matieres if q_matieres else Q(pk__isnull=True)
+    valid_q_classe_expert = q_classe_expert if q_classe_expert else Q(pk__isnull=True)
+    valid_q_classe_enseignee = q_classe_enseignee if q_classe_enseignee else Q(pk__isnull=True)
+    valid_q_quartier = q_quartier if q_quartier else Q(pk__isnull=True)
+
     score_annotation = (
-        Case(When(q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
-        Case(When(q_classe_expert, then=Value(5)), When(q_classe_enseignee, then=Value(2)), default=Value(0), output_field=IntegerField()) +
-        Case(When(q_quartier, then=Value(1)), default=Value(0), output_field=IntegerField())
+        Case(When(valid_q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
+        Case(When(valid_q_classe_expert, then=Value(5)), When(valid_q_classe_enseignee, then=Value(2)), default=Value(0), output_field=IntegerField()) +
+        Case(When(valid_q_quartier, then=Value(1)), default=Value(0), output_field=IntegerField())
     )
 
     # Appliquer l'annotation et trier par score décroissant
@@ -4044,18 +4046,22 @@ def api_engagement(request):
 
         engagement.type_engagement = type_eng
 
-        engagement.matiere = data.get('matiere', '')
+        raw_matiere = data.get('matiere', [])
+        if isinstance(raw_matiere, str):
+            raw_matiere = [raw_matiere] if raw_matiere else []
+        engagement.matiere = ', '.join(raw_matiere)
 
         engagement.classe = data.get('classe', '')
 
         engagement.mode_de_cours = data.get('course_mode', '')
 
         loc_val = str(data.get('localisation', '')).strip()
+        q_obj = None
         if loc_val.isdigit():
             from .models import Quartier
-            q = Quartier.objects.filter(id=int(loc_val)).first()
-            if q:
-                loc_val = f"{q.nom} ({q.ville})" if q.ville else q.nom
+            q_obj = Quartier.objects.filter(id=int(loc_val)).first()
+            if q_obj:
+                loc_val = f"{q_obj.nom} ({q_obj.ville})" if q_obj.ville else q_obj.nom
         engagement.localisation_option = loc_val
 
         # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
@@ -4155,7 +4161,10 @@ def api_engagement(request):
                 enfant = Enfant.objects.create(
                     parent=request.user.parent,
                     prenom=prenom,
-                    classe=data.get('classe', '')
+                    classe=data.get('classe', ''),
+                    matieres=raw_matiere,
+                    mode_de_cours=data.get('course_mode', ''),
+                    quartier_ville=q_obj
                 )
 
         if enfant:

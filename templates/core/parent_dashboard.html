@@ -860,12 +860,19 @@
                        Profil ➔
                     </a>
                 </div>
+                {% empty %}
+                <div style="background: white; border: 1px dashed #cbd5e1; border-radius: 16px; padding: 1.5rem; text-align: center; width: 100%;">
+                    <div style="color: #64748b; margin-bottom: 0.75rem; font-size: 0.95rem;">Vous n'avez pas encore enregistré d'enfant.</div>
+                    <button onclick="openChildSheet()" style="padding: 0.75rem 1.25rem; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        + Ajouter un enfant
+                    </button>
+                </div>
                 {% endfor %}
 
                 {% if enfants and not engagements_essais_programmes and not engagements_essais_confirmes and not engagements_finalises and not engagements_termines %}
                 <a href="{% url 'recherche' %}" class="btn-find-prof-inline">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    Trouver un prof pour {{ active_enfant.prenom }}
+                    {% if active_enfant %}Trouver un prof pour {{ active_enfant.prenom }}{% else %}Trouver un professeur{% endif %}
                 </a>
                 {% endif %}
             </section>
@@ -874,7 +881,7 @@
             <!-- Recommandations -->
             <section style="margin-top: 0.35rem;">
                 <div class="section-header">
-                    <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations pour {{ active_enfant.prenom }}</h2>
+                    <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations {% if active_enfant %}pour {{ active_enfant.prenom }}{% endif %}</h2>
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <!-- Scroll Buttons (Desktop Only) -->
                         <div class="scroll-controls" style="display: flex; gap: 0.5rem;">
@@ -910,7 +917,7 @@
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">
-                <h2 class="section-title" style="margin-bottom: 1rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements pour {{ active_enfant.prenom }}</h2>
+                <h2 class="section-title" style="margin-bottom: 1rem;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="3" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>Mes engagements {% if active_enfant %}pour {{ active_enfant.prenom }}{% endif %}</h2>
                 <div class="glass-tabs">
                     <button class="tab-pill active" onclick="switchTab(event, 'programmes')">
                         Essai programmé
@@ -943,7 +950,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             </div>
                             <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai programmé</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Trouvez le professeur idéal pour {{ active_enfant.prenom }} et réservez un cours d'essai gratuit !</p>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Trouvez le professeur idéal {% if active_enfant %}pour {{ active_enfant.prenom }} {% endif %}et réservez un cours d'essai gratuit !</p>
                             <a href="{% url 'recherche' %}" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">Découvrir nos professeurs</a>
                         </div>
                         {% endfor %}
@@ -971,7 +978,7 @@
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                             </div>
                             <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement finalisé</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Pas de contrat actif pour {{ active_enfant.prenom }}. Trouvez le prof idéal et lancez-vous !</p>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.5;">Pas de contrat actif {% if active_enfant %}pour {{ active_enfant.prenom }}{% endif %}. Trouvez le prof idéal et lancez-vous !</p>
                             <a href="{% url 'recherche' %}" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: white; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">Découvrir nos professeurs</a>
                         </div>
                         {% endfor %}

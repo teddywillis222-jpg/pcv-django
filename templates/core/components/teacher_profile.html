@@ -1,8 +1,8 @@
-<div class="teacher-profile">
+﻿<div class="teacher-profile">
 
-    <!-- ===== En-tête Profil : Photo + Nom + Badges + Étoiles ===== -->
+    <!-- ===== En-tÃªte Profil : Photo + Nom + Badges + Ã‰toiles ===== -->
     <div class="info-card" style="text-align: center; padding: 1.25rem 0.75rem 1rem; position: relative;">
-        <!-- Bouton Partager (en haut à droite, affiché sur la page profil uniquement si pas dans le side panel) -->
+        <!-- Bouton Partager (en haut Ã  droite, affichÃ© sur la page profil uniquement si pas dans le side panel) -->
         {% if not is_side_panel %}
         <button onclick="shareProfile()" class="share-profile-btn" style="position: absolute; top: 0.5rem; right: 0.5rem; background: #f1f5f9; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: all 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="Partager ce profil" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569';">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -18,12 +18,12 @@
         <!-- Photo de profil -->
         {% if teacher.photo_de_profil %}
             <div style="position: relative; width: 160px; height: 160px; margin: 0 auto 1rem;">
-                <!-- Placeholder par défaut (Initiales) -->
+                <!-- Placeholder par dÃ©faut (Initiales) -->
                 <div style="position: absolute; inset: 0; border-radius: 50%; background: #e2e8f0; border: 3px solid #e9eef5; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; color: #94a3b8; font-weight: 800; letter-spacing: -1px; z-index: 1;">
                     {{ teacher.prenom|first|upper }}{{ teacher.nom|first|upper }}
                 </div>
                 
-                <!-- Image réelle qui apparaît en fondu une fois chargée -->
+                <!-- Image rÃ©elle qui apparaÃ®t en fondu une fois chargÃ©e -->
                 <img src="{{ teacher.photo_de_profil.url }}" alt="{{ teacher.prenom }} {{ teacher.nom }}"
                      onclick="openZoom('{{ teacher.photo_de_profil.url }}')" 
                      onload="this.style.opacity='1'; this.style.zIndex='2';" 
@@ -46,7 +46,7 @@
                    display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
             {{ teacher.prenom }} {{ teacher.nom }}
             {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#16a34a" title="Certifié ProfChezVous">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#16a34a" title="CertifiÃ© ProfChezVous">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
             {% endif %}
@@ -57,11 +57,11 @@
             {% if teacher.statut_de_validation == 'APPROVED' or teacher.est_certifie %}
                 <span style="background: #dbeafe; color: #2563eb; padding: 0.25rem 0.75rem;
                              border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #bfdbfe;">
-                    ✓ Vérifié
+                    âœ“ VÃ©rifiÃ©
                 </span>
             {% endif %}
             {% if teacher.suivi_rigoureux %}
-                <span title="Ce professeur remplit régulièrement ses bilans de séances"
+                <span title="Ce professeur remplit rÃ©guliÃ¨rement ses bilans de sÃ©ances"
                       style="background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe;
                              padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem;
                              font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">
@@ -75,9 +75,9 @@
             </span>
         </div>
 
-        <!-- Étoiles -->
+        <!-- Ã‰toiles -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; color: #64748b; font-size: 0.9rem;">
-            <span style="color: #fbbf24; font-size: 1rem; letter-spacing: 1px;">★★★★★</span>
+            <span style="color: #fbbf24; font-size: 1rem; letter-spacing: 1px;">â˜…â˜…â˜…â˜…â˜…</span>
             <span style="font-weight: 600; color: #1e293b;">{{ teacher.moyenne_avis|default:"Nouveau" }}</span>
             <span>({{ teacher.nombre_avis|default:"0" }} avis)</span>
         </div>
@@ -87,8 +87,8 @@
     <div style="margin-bottom: 1.25rem;">
         <!-- Charte d'essai reassurance banner: shown only on teacher profile / side panel -->
         <div class="charte-banner" role="note" aria-label="Charte d'essai">
-            <span class="charte-icon">🛡️</span>
-            <span class="charte-text">Adhère à la Charte d'essai garantie</span>
+            <span class="charte-icon">ðŸ›¡ï¸</span>
+            <span class="charte-text">AdhÃ¨re Ã  la Charte d'essai garantie</span>
         </div>
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
@@ -105,9 +105,9 @@
                         data-is-premium="{{ is_premium|yesno:'true,false,false' }}"
                         data-essai-actif="{{ teacher.essai_gratuit_actif|yesno:'true,false,false' }}"
                         data-classes="{{ teacher.classes_enseignees|join:',' }}"
-                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000);">
-                        <span class="btn-default-text">✏️ Modifier l'essai programmé</span>
-                        <span class="btn-active-text" style="display: none;">⏳ Modification...</span>
+                        onclick="event.stopPropagation(); event.preventDefault(); this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); triggerEssaiModal(this);">
+                        <span class="btn-default-text">âœï¸ Modifier l'essai programmÃ©</span>
+                        <span class="btn-active-text" style="display: none;">â³ Modification...</span>
                     </button>
                 {% elif existing_engagement.statut_general == 'ESSAI_CONFIRME' or existing_engagement.statut_general == 'CONFIRME' or existing_engagement.statut_general == 'EN_COURS' %}
                     {% if existing_conversation_id %}
@@ -116,7 +116,7 @@
                                   background: var(--secondary); color: white; font-weight: 700; cursor: pointer;
                                   text-align: center; text-decoration: none; box-sizing: border-box;
                                   box-shadow: 0 3px 10px rgba(13,148,136,0.2); transition: all 0.25s;">
-                            💬 Rejoindre la conversation
+                            ðŸ’¬ Rejoindre la conversation
                         </a>
                     {% endif %}
                 {% elif existing_engagement.statut_general == 'ESSAI_REALISE' %}
@@ -125,7 +125,7 @@
                               background: #16a34a; color: white; font-weight: 700; cursor: pointer;
                               text-align: center; text-decoration: none; box-sizing: border-box;
                               box-shadow: 0 3px 10px rgba(22,163,74,0.2); transition: all 0.25s;">
-                        🤝 Finaliser l'engagement
+                        ðŸ¤ Finaliser l'engagement
                     </a>
                 {% else %}
                     {% if existing_conversation_id %}
@@ -134,7 +134,7 @@
                                   background: var(--secondary); color: white; font-weight: 700; cursor: pointer;
                                   text-align: center; text-decoration: none; box-sizing: border-box;
                                   box-shadow: 0 3px 10px rgba(13,148,136,0.2); transition: all 0.25s;">
-                            💬 Rejoindre la conversation
+                            ðŸ’¬ Rejoindre la conversation
                         </a>
                     {% endif %}
                 {% endif %}
@@ -151,14 +151,14 @@
                         data-is-premium="{{ is_premium|yesno:'true,false,false' }}"
                         data-essai-actif="{{ teacher.essai_gratuit_actif|yesno:'true,false,false' }}"
                         data-classes="{{ teacher.classes_enseignees|join:',' }}"
-                        onclick="this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000);">
-                        <span class="btn-default-text">🤝 Programmer mon essai</span>
-                        <span class="btn-active-text" style="display: none;">⏳ Ouverture...</span>
+                        onclick="event.stopPropagation(); event.preventDefault(); this.classList.add('loading'); setTimeout(() => this.classList.remove('loading'), 1000); triggerEssaiModal(this);">
+                        <span class="btn-default-text">ðŸ¤ Programmer mon essai</span>
+                        <span class="btn-active-text" style="display: none;">â³ Ouverture...</span>
                     </button>
                 {% else %}
                     <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Vous avez déjà utilisé votre essai gratuit</p>
-                        <p style="color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0;">Chaque compte bénéficie d'un seul essai gratuit à vie.</p>
+                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Vous avez dÃ©jÃ  utilisÃ© votre essai gratuit</p>
+                        <p style="color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0;">Chaque compte bÃ©nÃ©ficie d'un seul essai gratuit Ã  vie.</p>
                     </div>
                 {% endif %}
             {% endif %}
@@ -167,7 +167,7 @@
                            background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                            box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                 onclick="showAuthModal()">
-                <span class="btn-default-text">🤝 Programmer mon essai</span>
+                <span class="btn-default-text">ðŸ¤ Programmer mon essai</span>
             </button>
         {% endif %}
 
@@ -175,28 +175,28 @@
             <a href="{% url 'professeur_detail' teacher.slug %}"
                style="display: block; text-align: center; color: #64748b; text-decoration: underline;
                       font-weight: 500; margin-top: 0.75rem; font-size: 0.9rem;">
-                Voir le profil complet →
+                Voir le profil complet â†’
             </a>
         {% endif %}
     </div>
 
-    <!-- Informations Détaillées -->
+    <!-- Informations DÃ©taillÃ©es -->
     <div style="display: flex; flex-direction: column; gap: 1.25rem;">
         
         {% if teacher.validated_videos %}
         {% if user.is_authenticated and user.profile.role == 'PROF' and user.teacher_profile.id != teacher.id %}
-        <!-- Les professeurs ne peuvent pas voir les vidéos des autres professeurs -->
+        <!-- Les professeurs ne peuvent pas voir les vidÃ©os des autres professeurs -->
         {% else %}
-        <!-- Galerie / Carrousel horizontal de vidéos validées -->
+        <!-- Galerie / Carrousel horizontal de vidÃ©os validÃ©es -->
         <div class="info-card" style="padding: 1.25rem; border-radius: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #ef4444;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    <span>Vidéos de présentation ({{ teacher.validated_videos.count }})</span>
+                    <span>VidÃ©os de prÃ©sentation ({{ teacher.validated_videos.count }})</span>
                 </h3>
                 {% if teacher.validated_videos.count > 1 %}
                 <span style="font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 0.35rem;">
-                    <span>Glissez pour voir plus</span> ➔
+                    <span>Glissez pour voir plus</span> âž”
                 </span>
                 {% endif %}
             </div>
@@ -209,7 +209,7 @@
                             width="100%"
                             height="315"
                             src="{{ vid.embed_url }}" 
-                            title="{{ vid.titre|default:'Vidéo' }}" 
+                            title="{{ vid.titre|default:'VidÃ©o' }}" 
                             style="position: absolute; top:0; left:0; width:100%; height:100%; border:0;"
                             frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -230,14 +230,14 @@
         {% endif %}
         {% elif teacher.video_presentation %}
         {% if user.is_authenticated and user.profile.role == 'PROF' and user.teacher_profile.id != teacher.id %}
-        <!-- Les professeurs ne peuvent pas voir les vidéos des autres professeurs -->
+        <!-- Les professeurs ne peuvent pas voir les vidÃ©os des autres professeurs -->
         {% else %}
-        <!-- Fallback vidéo directe pour rétrocompatibilité -->
+        <!-- Fallback vidÃ©o directe pour rÃ©trocompatibilitÃ© -->
         <div class="info-card" style="padding: 0; overflow: hidden; background: #000; border-radius: 12px;">
             <div style="text-align: center;">
                 <video controls controlsList="nodownload" style="width: 100%; max-width: 100%; display: block;">
                     <source src="{{ teacher.video_presentation.url }}" type="video/mp4">
-                    Votre navigateur ne supporte pas la lecture de vidéos.
+                    Votre navigateur ne supporte pas la lecture de vidÃ©os.
                 </video>
             </div>
         </div>
@@ -249,59 +249,59 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    Présentation
+                    PrÃ©sentation
                 </h3>
                 <button onclick="toggleReaction({{ teacher.id }}, 'presentation', this)" class="reaction-btn" style="background: none; border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; color: #64748b; font-weight: 600;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">
-                    <span class="emoji">👍</span> <span class="count">{{ teacher.likes_presentation }}</span>
+                    <span class="emoji">ðŸ‘</span> <span class="count">{{ teacher.likes_presentation }}</span>
                 </button>
             </div>
             <div style="position: relative;">
                 <p style="color: #475569; line-height: 1.7; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                    {{ teacher.presentation|default:"Aucune présentation."|striptags }}
+                    {{ teacher.presentation|default:"Aucune prÃ©sentation."|striptags }}
                 </p>
                 {% if teacher.presentation and teacher.presentation|length > 120 %}
-                <button onclick="openTextModal('presentationModal-{{ teacher.id }}')" style="background: none; border: none; color: var(--success-600, #16a34a); font-weight: 600; cursor: pointer; padding: 0.5rem 0 0 0; font-size: 0.875rem;">Lire la présentation</button>
+                <button onclick="openTextModal('presentationModal-{{ teacher.id }}')" style="background: none; border: none; color: var(--success-600, #16a34a); font-weight: 600; cursor: pointer; padding: 0.5rem 0 0 0; font-size: 0.875rem;">Lire la prÃ©sentation</button>
                 {% endif %}
             </div>
         </div>
         
-        <!-- Méthodologie -->
+        <!-- MÃ©thodologie -->
         <div class="info-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    Méthodologie
+                    MÃ©thodologie
                 </h3>
                 <button onclick="toggleReaction({{ teacher.id }}, 'methodologie', this)" class="reaction-btn" style="background: none; border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; color: #64748b; font-weight: 600;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">
-                    <span class="emoji">👍</span> <span class="count">{{ teacher.likes_methodologie }}</span>
+                    <span class="emoji">ðŸ‘</span> <span class="count">{{ teacher.likes_methodologie }}</span>
                 </button>
             </div>
             <div style="position: relative;">
                 <p style="color: #475569; line-height: 1.7; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                    {{ teacher.methodologie|default:"Non renseignée."|striptags }}
+                    {{ teacher.methodologie|default:"Non renseignÃ©e."|striptags }}
                 </p>
                 {% if teacher.methodologie and teacher.methodologie|length > 120 %}
-                <button onclick="openTextModal('methodologieModal-{{ teacher.id }}')" style="background: none; border: none; color: var(--success-600, #16a34a); font-weight: 600; cursor: pointer; padding: 0.5rem 0 0 0; font-size: 0.875rem;">Lire la méthodologie</button>
+                <button onclick="openTextModal('methodologieModal-{{ teacher.id }}')" style="background: none; border: none; color: var(--success-600, #16a34a); font-weight: 600; cursor: pointer; padding: 0.5rem 0 0 0; font-size: 0.875rem;">Lire la mÃ©thodologie</button>
                 {% endif %}
             </div>
         </div>
 
-        <!-- Spécialités & Modalités -->
+        <!-- SpÃ©cialitÃ©s & ModalitÃ©s -->
 
         <div class="info-card">
             <h3 style="font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                Spécialités & Modalités
+                SpÃ©cialitÃ©s & ModalitÃ©s
             </h3>
             <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;">
 
                 <div>
-                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Matière(s)</span>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">MatiÃ¨re(s)</span>
                     <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem;">
                         {% for matiere in teacher.matieres_list %}
                             <span class="badge-matiere {% cycle 'badge-color-0' 'badge-color-1' 'badge-color-2' 'badge-color-3' 'badge-color-4' 'badge-color-5' %}">{{ matiere }}</span>
                         {% empty %}
-                            <span style="font-weight: 600; color: #0f172a;">Non défini</span>
+                            <span style="font-weight: 600; color: #0f172a;">Non dÃ©fini</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -311,7 +311,7 @@
                     {% if readable_expertise %}
                     <div style="margin-bottom: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
                         {% for c in readable_expertise %}
-                            <span title="Classe d'expertise" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; white-space: nowrap;">⭐ {{ c }}</span>
+                            <span title="Classe d'expertise" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; white-space: nowrap;">â­ {{ c }}</span>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -325,7 +325,7 @@
                     {% endif %}
                     
                     {% if not readable_expertise and not readable_classes %}
-                        <span style="font-weight: 600; color: #0f172a;">Non défini</span>
+                        <span style="font-weight: 600; color: #0f172a;">Non dÃ©fini</span>
                     {% endif %}
                 </div>
                 <div>
@@ -334,7 +334,7 @@
                         {% for q in teacher.quartiers_couverts.all %}
                             {{ q.nom }}{% if not forloop.last %}, {% endif %}
                         {% empty %}
-                            Non spécifié
+                            Non spÃ©cifiÃ©
                         {% endfor %}
                     </span>
                 </div>
@@ -344,7 +344,7 @@
                         {% for m in readable_modes %}
                             {{ m }}{% if not forloop.last %}, {% endif %}
                         {% empty %}
-                            Non défini
+                            Non dÃ©fini
                         {% endfor %}
                     </span>
                 </div>
@@ -354,7 +354,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
                     <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Tarif horaire par classe</span>
                     <div style="text-align: right;">
-                        <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Expérience</span>
+                        <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">ExpÃ©rience</span>
                         <span style="font-weight: 600; color: #0f172a;">{{ teacher.annees_d_experience }} ans</span>
                     </div>
                 </div>
@@ -378,7 +378,7 @@
             
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                 <div>
-                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Temps moyen de réponse</span>
+                    <span style="display: block; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Temps moyen de rÃ©ponse</span>
                     <span style="font-weight: 600; color: #0f172a;">
                         {% if temps_moyen_reponse %}
                             {% if temps_moyen_reponse < 60 %}
@@ -398,12 +398,12 @@
             </div>
         </div>
         
-        <!-- Disponibilités -->
+        <!-- DisponibilitÃ©s -->
         {% if teacher.grille_disponibilites %}
         <div>
             <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Disponibilités habituelles
+                DisponibilitÃ©s habituelles
             </h3>
             <div style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
@@ -421,17 +421,17 @@
                             <td style="padding: 0.75rem; font-weight: 600; color: #1e293b;">{{ day|slice:":3" }}.</td>
                             <td style="padding: 0.75rem; text-align: center;">
                                 {% with key=day|add:"_Matin" %}
-                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">●</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">○</span>{% endif %}
+                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">â—</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">â—‹</span>{% endif %}
                                 {% endwith %}
                             </td>
                             <td style="padding: 0.75rem; text-align: center;">
                                 {% with key=day|add:"_ApresMidi" %}
-                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">●</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">○</span>{% endif %}
+                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">â—</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">â—‹</span>{% endif %}
                                 {% endwith %}
                             </td>
                             <td style="padding: 0.75rem; text-align: center;">
                                 {% with key=day|add:"_Soir" %}
-                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">●</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">○</span>{% endif %}
+                                {% if key in teacher.grille_disponibilites %}<span style="color: #16a34a; font-size: 1.2rem;">â—</span>{% else %}<span style="color: #e2e8f0; font-size: 1.2rem;">â—‹</span>{% endif %}
                                 {% endwith %}
                             </td>
                         </tr>
@@ -440,22 +440,22 @@
                 </table>
             </div>
             <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem; font-style: italic;">
-                * Créneaux indicatifs à confirmer lors de l'engagement.
+                * CrÃ©neaux indicatifs Ã  confirmer lors de l'engagement.
             </p>
         </div>
         {% else %}
         <div>
             <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Disponibilités habituelles
+                DisponibilitÃ©s habituelles
             </h3>
             <p style="color: #64748b; padding: 1.5rem; background: #f8fafc; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin: 0; text-align: center;">
-                Aucune disponibilité renseignée pour le moment.
+                Aucune disponibilitÃ© renseignÃ©e pour le moment.
             </p>
         </div>
         {% endif %}
         
-        <!-- Évaluations -->
+        <!-- Ã‰valuations -->
         <div>
             <h3 style="font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -489,12 +489,12 @@
                                 </span>
                                 <span style="color: #fbbf24; font-size: 0.85rem; letter-spacing: -1px;">
                                     {% for i in "12345" %}
-                                        {% if forloop.counter <= eval.note %}★{% else %}☆{% endif %}
+                                        {% if forloop.counter <= eval.note %}â˜…{% else %}â˜†{% endif %}
                                     {% endfor %}
                                 </span>
                             </div>
                         <p style="color: #475569; font-size: 0.9rem; margin: 0; line-height: 1.5;">
-                            "{{ eval.commentaire|default:'Aucun commentaire détaillé.' }}"
+                            "{{ eval.commentaire|default:'Aucun commentaire dÃ©taillÃ©.' }}"
                         </p>
                         <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.5rem; text-align: right;">
                             {{ eval.date_evaluation|date:"d M Y" }}
@@ -504,7 +504,7 @@
                 </div>
             {% else %}
                 <p style="color: #64748b; text-align: center; padding: 2rem; background: #f8fafc; border-radius: 0.5rem; border: 1px dashed #cbd5e1; margin: 0;">
-                    Ce profil a été certifié par notre équipe. Soyez le premier parent à laisser un avis écrit après votre cours !
+                    Ce profil a Ã©tÃ© certifiÃ© par notre Ã©quipe. Soyez le premier parent Ã  laisser un avis Ã©crit aprÃ¨s votre cours !
                 </p>
             {% endif %}
         </div>
@@ -513,7 +513,7 @@
         
     </div>
 
-    <!-- ===== Professeurs Similaires — Design Premium ===== -->
+    <!-- ===== Professeurs Similaires â€” Design Premium ===== -->
     {% if related_teachers %}
     <div class="info-card" style="margin-top: 1.5rem; padding: 1.5rem 0 1.5rem 1.5rem; overflow: hidden;">
         <h3 style="font-size: 1rem; font-weight: 800; color: #1e293b; text-transform: uppercase;
@@ -534,7 +534,7 @@
 
 
 <style>
-/* Ajustements spécifiques pour le profil professeur */
+/* Ajustements spÃ©cifiques pour le profil professeur */
 .btn-reserver-essai {
     display: flex !important;
     align-items: center;
@@ -587,7 +587,7 @@
     }
     .info-grid-container {
         padding: 1rem !important;
-        margin: 0 -0.5rem; /* Augmente légèrement la largeur apparente */
+        margin: 0 -0.5rem; /* Augmente lÃ©gÃ¨rement la largeur apparente */
     }
 }
 @media (max-width: 576px) {
@@ -602,7 +602,7 @@
     }
 }
 
-/* Badges dynamiques pour matières */
+/* Badges dynamiques pour matiÃ¨res */
 .badge-matiere {
     display: inline-flex;
     align-items: center;
@@ -746,8 +746,8 @@
 <div class="text-modal-overlay" id="presentationModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'presentationModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
-            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Présentation</h3>
-            <button class="text-modal-close" onclick="closeTextModal('presentationModal-{{ teacher.id }}')">✕</button>
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> PrÃ©sentation</h3>
+            <button class="text-modal-close" onclick="closeTextModal('presentationModal-{{ teacher.id }}')">âœ•</button>
         </div>
         <div class="text-modal-body">
             {{ teacher.presentation|linebreaksbr }}
@@ -760,8 +760,8 @@
 <div class="text-modal-overlay" id="methodologieModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'methodologieModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
-            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Méthodologie</h3>
-            <button class="text-modal-close" onclick="closeTextModal('methodologieModal-{{ teacher.id }}')">✕</button>
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> MÃ©thodologie</h3>
+            <button class="text-modal-close" onclick="closeTextModal('methodologieModal-{{ teacher.id }}')">âœ•</button>
         </div>
         <div class="text-modal-body">
             {{ teacher.methodologie|linebreaksbr }}
@@ -781,7 +781,7 @@ function openTextModal(modalId) {
     }
     .info-grid-container {
         padding: 1rem !important;
-        margin: 0 -0.5rem; /* Augmente légèrement la largeur apparente */
+        margin: 0 -0.5rem; /* Augmente lÃ©gÃ¨rement la largeur apparente */
     }
 }
 @media (max-width: 576px) {
@@ -796,7 +796,7 @@ function openTextModal(modalId) {
     }
 }
 
-/* Badges dynamiques pour matières */
+/* Badges dynamiques pour matiÃ¨res */
 .badge-matiere {
     display: inline-flex;
     align-items: center;
@@ -940,8 +940,8 @@ function openTextModal(modalId) {
 <div class="text-modal-overlay" id="presentationModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'presentationModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
-            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Présentation</h3>
-            <button class="text-modal-close" onclick="closeTextModal('presentationModal-{{ teacher.id }}')">✕</button>
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> PrÃ©sentation</h3>
+            <button class="text-modal-close" onclick="closeTextModal('presentationModal-{{ teacher.id }}')">âœ•</button>
         </div>
         <div class="text-modal-body">
             {{ teacher.presentation|linebreaksbr }}
@@ -954,8 +954,8 @@ function openTextModal(modalId) {
 <div class="text-modal-overlay" id="methodologieModal-{{ teacher.id }}" onclick="overlayClickHandler(this, 'methodologieModal-{{ teacher.id }}', 'closeTextModal', event)">
     <div class="text-modal-content">
         <div class="text-modal-header">
-            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Méthodologie</h3>
-            <button class="text-modal-close" onclick="closeTextModal('methodologieModal-{{ teacher.id }}')">✕</button>
+            <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> MÃ©thodologie</h3>
+            <button class="text-modal-close" onclick="closeTextModal('methodologieModal-{{ teacher.id }}')">âœ•</button>
         </div>
         <div class="text-modal-body">
             {{ teacher.methodologie|linebreaksbr }}
@@ -963,5 +963,6 @@ function openTextModal(modalId) {
     </div>
 </div>
 {% endif %}
+
 
 
