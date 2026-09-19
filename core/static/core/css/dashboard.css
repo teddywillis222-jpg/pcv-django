@@ -30,7 +30,7 @@
 
 body {
     background-color: var(--dash-bg);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-sans, 'Raleway', sans-serif);
     color: var(--dash-text);
     line-height: 1.5;
 }
