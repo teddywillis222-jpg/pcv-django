@@ -1281,31 +1281,26 @@
             }
         }
 
-        // Global delegated handler for teacher card clicks and arrow actions
+        // Global delegated handler for teacher card compact clicks
         document.addEventListener('click', function(e) {
             // Ignore clicks on favorite buttons
             if (e.target.closest('.favorite-btn-glass')) {
                 return;
             }
 
-            // Clicks on whole card or arrow
-            const card = e.target.closest('.teacher-card, .teacher-card-compact');
-            if (card) {
-                const slug = card.dataset.teacherSlug || card.getAttribute('data-teacher-slug');
+            // Clicks on whole compact card
+            const cardCompact = e.target.closest('.teacher-card-compact');
+            if (cardCompact) {
+                const slug = cardCompact.dataset.teacherSlug || cardCompact.getAttribute('data-teacher-slug');
                 if (!slug) return;
                 
-                const isSearchPage = window.location.pathname.includes('/recherche') || window.location.pathname.includes('/selection');
-
-                if (isSearchPage && typeof openTeacherProfile === 'function') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openTeacherProfile(slug);
-                    return;
-                }
-
                 e.preventDefault();
                 e.stopPropagation();
-                window.location.href = `/professeur/${slug}/`;
+                if (typeof openTeacherProfile === 'function') {
+                    openTeacherProfile(slug);
+                } else {
+                    window.location.href = `/professeur/${slug}/`;
+                }
             }
         }, { capture: true });
     </script>
@@ -1642,5 +1637,7 @@
             }
         };
     </script>
+    
+    {% include 'core/components/_side_panel.html' %}
 </body>
 </html>

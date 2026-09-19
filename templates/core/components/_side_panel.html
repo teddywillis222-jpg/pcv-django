@@ -1,0 +1,120 @@
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+        <h2>Profil du professeur</h2>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="share-profile-btn" onclick="shareProfile()" style="background: #f1f5f9; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: all 0.2s ease;" title="Partager ce profil" onmouseover="this.style.background='#e2e8f0'; this.style.color='#0f172a';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569';">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+            </button>
+            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="side-panel-content" id="sidePanelContent">
+        <!-- Le contenu du profil sera chargé dynamiquement ici -->
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+function openTeacherProfile(teacherSlug) {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    // Mettre à jour l'URL sans recharger (optionnel si on ne veut pas pour toutes les pages, mais on le garde)
+    if (window.location.pathname.includes('/recherche') || window.location.pathname.includes('/selection')) {
+        history.pushState({ teacher: teacherSlug }, '', `/professeur/${teacherSlug}`);
+    }
+    
+    // Afficher le panneau
+    sidePanel.classList.add('active');
+    overlay.classList.add('active');
+    
+    // Charger le contenu du profil
+    loadTeacherProfile(teacherSlug);
+}
+
+function closeSidePanel() {
+    const sidePanel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('sidePanelOverlay');
+    
+    sidePanel.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Réinitialiser l'URL si sur la recherche
+    if (window.location.pathname.includes('/professeur/')) {
+        const isSearchPage = document.querySelector('.search-layout'); // Exemple pour identifier la recherche
+        if (isSearchPage) {
+            history.pushState({}, '', '/recherche/');
+        }
+    }
+}
+
+async function loadTeacherProfile(teacherSlug) {
+    const content = document.getElementById('sidePanelContent');
+    
+    // Afficher le loader
+    content.innerHTML = `
+        <div style="text-align: center; padding: 2rem;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--success-600); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="color: #64748b; margin-top: 1rem;">Chargement du profil...</p>
+        </div>
+    `;
+    
+    try {
+        // Appel API pour récupérer les données du professeur
+        const response = await fetch(`/api/teacher-profile/${teacherSlug}/`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erreur lors du chargement du profil');
+        }
+        
+        // Mise à jour des données globales pour le modal
+        window.currentChildren = data.parent_children || [];
+        window.currentExistingEngagement = data.existing_engagement || null;
+        
+        // Utiliser le composant HTML renvoyé par Django
+        content.innerHTML = data.html;
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <p style="color: #ef4444; font-weight: 600;">Oups !</p>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">${error.message}</p>
+                <button onclick="loadTeacherProfile('${teacherSlug}')" style="padding: 0.5rem 1rem; background: var(--success-600); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                    Réessayer
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Ensure escape key closes side panel
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeSidePanel();
+    }
+});
+</script>

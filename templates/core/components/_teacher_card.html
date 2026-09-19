@@ -107,9 +107,9 @@
             {{ teacher.presentation|default:"Professeur qualifié et passionné. Ma méthode pédagogique s'adapte au rythme de chaque élève pour garantir une progression constante."|striptags }}
         </div>
 
-        <div class="info-bottom">
+        <div class="info-bottom" style="display: flex; flex-direction: column; gap: 0.75rem;">
             <!-- Price -->
-            <div class="price-block">
+            <div class="price-block" style="margin-bottom: 0;">
                 {% if teacher.a_des_tarifs_multiples %}
                     <span class="price-label" style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-right: 0.2rem;">Dès</span>
                     <span class="price-amount">{{ teacher.tarif_minimum|floatformat:0 }}</span>
@@ -124,10 +124,9 @@
             </div>
             
             <!-- Explicit Action Button -->
-            <div class="btn-card-full-action">
-                <span>Voir le profil</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
+            <a href="javascript:void(0)" onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100 btn-decouvrir-prof" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none; width: 100% !important; box-sizing: border-box; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
+                Découvrir et essayer ce prof
+            </a>
         </div>
     </div>
 </div>
