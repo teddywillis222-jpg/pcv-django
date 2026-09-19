@@ -31,8 +31,21 @@
 </div>
 
 <style>
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel.active { right: 0; }
+.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.side-panel-overlay.active { opacity: 1; visibility: visible; }
+.side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
+.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
+.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) {
+    .side-panel { width: 100% !important; right: -100% !important; }
+    .side-panel.active { right: 0 !important; }
+    .side-panel-content { padding: 1rem 8px; }
+    .side-panel-header { padding: 0.75rem 1rem !important; }
+    .side-panel-header h2 { font-size: 1.1rem !important; }
 }
 </style>
 
