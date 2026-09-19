@@ -1123,7 +1123,7 @@
     </style>
     <div class="sheet-header">
         <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-dark);">Ajouter un enfant</h3>
-        <button onclick="closeChildSheet()"
+        <button type="button" onclick="closeChildSheet()"
             style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
     </div>
     <div class="sheet-body">
@@ -1205,8 +1205,40 @@
     }
 
     function closeChildSheet() {
-        document.getElementById('childSheet').classList.remove('active');
-        document.getElementById('sheetOverlay').classList.remove('active');
+        const sheet = document.getElementById('childSheet');
+        const overlay = document.getElementById('sheetOverlay');
+        if (!sheet || !overlay) return;
+
+        sheet.querySelectorAll('select').forEach(select => {
+            if (select.tomselect) select.tomselect.close();
+        });
+        sheet.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+
+    function initChildSheetTomSelects() {
+        const sheet = document.getElementById('childSheet');
+        if (!sheet || typeof TomSelect === 'undefined') return;
+
+        sheet.querySelectorAll('select.pcv-multi-select').forEach(select => {
+            if (select.tomselect) select.tomselect.destroy();
+
+            const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple');
+            const maxItems = select.getAttribute('data-max-items');
+            const maxOptions = select.getAttribute('data-max-options');
+
+            new TomSelect(select, {
+                plugins: isMultiple ? ['remove_button'] : ['dropdown_input'],
+                create: false,
+                persist: false,
+                dropdownParent: sheet,
+                closeAfterSelect: !isMultiple,
+                maxItems: maxItems ? parseInt(maxItems, 10) : (isMultiple ? null : 1),
+                maxOptions: maxOptions ? parseInt(maxOptions, 10) : 200,
+                placeholder: select.getAttribute('placeholder') || 'Sélectionnez ou tapez...',
+                openOnFocus: true
+            });
+        });
     }
 
     // Gestion de la limite des multiselects (5 max)
@@ -1533,13 +1565,10 @@
     function openChildSheet() {
         const sheet = document.getElementById('childSheet');
         const overlay = document.getElementById('sheetOverlay');
+        if (!sheet || !overlay) return;
         sheet.classList.add('active');
         overlay.classList.add('active');
-        setTimeout(function() {
-            if (typeof initGlobalTomSelects === 'function') {
-                initGlobalTomSelects();
-            }
-        }, 50);
+        requestAnimationFrame(initChildSheetTomSelects);
     }
     
     function openTeacherProfile(slug) {

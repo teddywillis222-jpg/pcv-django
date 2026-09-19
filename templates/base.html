@@ -480,6 +480,8 @@
             width: 280px;
             max-width: 85vw;
             height: 100vh;
+            height: 100dvh;
+            max-height: 100dvh;
             background: white;
             z-index: 2000;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -488,9 +490,11 @@
             justify-content: flex-start;
             align-items: flex-start;
             padding: 1.5rem;
-            padding-bottom: 6rem; /* Extra padding for mobile browser navbars */
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+            box-sizing: border-box;
             box-shadow: 4px 0 15px rgba(0,0,0,0.05);
             overflow-y: auto;
+            overscroll-behavior: contain;
         }
 
         .mobile-menu.active {
@@ -1409,6 +1413,7 @@
         function initGlobalTomSelects() {
             const selects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
             selects.forEach(select => {
+                if (select.closest('#childSheet')) return;
                 if (select.tomselect) return;
                 
                 const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple');
