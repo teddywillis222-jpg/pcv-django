@@ -1,7 +1,9 @@
 <style>
 .global-selection-card-wrapper {
-    max-width: 335px;
+    width: 100%;
+    max-width: 350px;
     margin: 0 auto;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     background: white;
@@ -152,11 +154,6 @@
                 {% endif %}
                 <span class="price-currency">F/h</span>
             </div>
-            
-            <!-- Explicit Action Button -->
-            <a href="javascript:void(0)" onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100 btn-decouvrir-prof" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none; width: 100% !important; box-sizing: border-box; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
-                Découvrir et essayer ce prof
-            </a>
         </div>
     </div>
 </div>
