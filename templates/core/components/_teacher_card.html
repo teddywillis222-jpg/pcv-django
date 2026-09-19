@@ -1,3 +1,31 @@
+<style>
+.global-selection-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.global-selection-card-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+.global-selection-card-wrapper .teacher-card {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+}
+.global-selection-card-wrapper .custom-card-inner {
+    flex: 1;
+}
+</style>
+<div class="global-selection-card-wrapper w-100">
+    <div class="custom-card-inner">
 <div class="teacher-card premium-card group" data-teacher-slug="{{ teacher.slug }}" data-prof-id="{{ teacher.id }}">
     {% load image_utils %}
     <!-- Left Photo Section (40% on mobile) -->
@@ -128,5 +156,13 @@
                 Découvrir et essayer ce prof
             </a>
         </div>
+    </div>
+</div>
+    </div>
+    <!-- Nouveau conteneur enfant en bas (pleine largeur) -->
+    <div class="mt-auto p-3" style="background: #f8fafc; border-top: 1px solid #f1f5f9;">
+        <a href="javascript:void(0)" onclick="openTeacherProfile('{{ teacher.slug }}')" class="btn w-100" style="background-color: var(--primary, #16a34a); color: white; font-weight: 700; padding: 12px 10px; border-radius: 8px; font-size: 1.05rem; display: block; text-align: center; text-decoration: none; width: 100% !important; box-sizing: border-box; transition: opacity 0.2s ease;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';">
+            Découvrir et essayer ce prof
+        </a>
     </div>
 </div>
