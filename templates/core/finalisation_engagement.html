@@ -86,16 +86,26 @@
                 <div class="form-group">
                     <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.95rem;">Durée d'une séance</label>
                     <select name="duree_seance" required class="premium-input">
+                        <option value="30_min" {% if engagement.duree_seance == '30_min' %}selected{% endif %}>30 minutes</option>
                         <option value="1_heure" {% if engagement.duree_seance == '1_heure' %}selected{% endif %}>1 heure</option>
                         <option value="1_heure_30" {% if engagement.duree_seance == '1_heure_30' %}selected{% endif %}>1 heure 30 min</option>
                         <option value="2_heures" {% if engagement.duree_seance == '2_heures' %}selected{% endif %}>2 heures</option>
+                        <option value="2_heures_30" {% if engagement.duree_seance == '2_heures_30' %}selected{% endif %}>2 heures 30 min</option>
+                        <option value="3_heures" {% if engagement.duree_seance == '3_heures' %}selected{% endif %}>3 heures</option>
+                        <option value="3_heures_30" {% if engagement.duree_seance == '3_heures_30' %}selected{% endif %}>3 heures 30 min</option>
+                        <option value="4_heures" {% if engagement.duree_seance == '4_heures' %}selected{% endif %}>4 heures</option>
+                        <option value="4_heures_30" {% if engagement.duree_seance == '4_heures_30' %}selected{% endif %}>4 heures 30 min</option>
+                        <option value="5_heures" {% if engagement.duree_seance == '5_heures' %}selected{% endif %}>5 heures</option>
                     </select>
                 </div>
 
-                <!-- Durée totale (Mois) -->
+                <!-- Durée de la collaboration (facultatif) -->
                 <div class="form-group" style="grid-column: 1 / -1;">
-                    <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.95rem;">Durée totale estimée (Mois)</label>
-                    <input type="number" name="duree_mois" min="1" max="12" value="{{ engagement.duree_mois|default:'3' }}" required class="premium-input" placeholder="Ex: 3">
+                    <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.95rem;">
+                        Durée de la collaboration
+                        <span style="font-weight: 400; color: #94a3b8; font-size: 0.85rem; margin-left: 6px;">(facultatif)</span>
+                    </label>
+                    <input type="number" name="duree_mois" min="1" max="24" value="{{ engagement.duree_mois|default:'' }}" class="premium-input" placeholder="Ex: 3 — Laissez vide si la durée n'est pas encore définie">
                 </div>
 
             </div>
