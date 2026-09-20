@@ -91,7 +91,7 @@
 
                 <!-- Modifier ma proposition -->
                 {% if eng.statut_general == 'ESSAI_PROGRAMME' and eng.professeur %}
-                <a href="{% url 'professeur_detail' eng.professeur.slug %}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
+                <a href="javascript:void(0)" onclick="openTeacherProfile('{{ eng.professeur.slug }}')" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
                     ✏️ Modifier ma proposition
                 </a>
                 {% endif %}

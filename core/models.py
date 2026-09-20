@@ -2688,6 +2688,22 @@ class Message(models.Model):
 
 
 
+    def save(self, *args, **kwargs):
+        if self.contenu_texte:
+            import re
+            
+            def replacer(match):
+                s = match.group(0)
+                digit_count = sum(1 for c in s if c.isdigit())
+                if digit_count >= 8:
+                    return '[NUMÉRO MASQUÉ]'
+                return s
+
+            pattern = r'\+?(?:\d[\s\.\-\(\)_]*){7,}\d'
+            self.contenu_texte = re.sub(pattern, replacer, self.contenu_texte)
+            
+        super().save(*args, **kwargs)
+
     def __str__(self):
 
         return f"Message #{self.id} (conv {self.conversation_id})"

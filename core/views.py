@@ -5069,6 +5069,16 @@ def api_send_message(request, conversation_id):
 
         
 
+        # Envoi d'email de notification au destinataire en arrière-plan
+        import threading
+        from .utils_emails import send_new_message_email
+        threading.Thread(
+            target=send_new_message_email,
+            args=(destinataire, request.user, message.contenu_texte, conversation.id)
+        ).start()
+
+        
+
         return JsonResponse({
 
             'success': True,

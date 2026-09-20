@@ -476,12 +476,10 @@
         .mobile-menu {
             position: fixed;
             top: 0;
+            bottom: 0; /* Ensures it respects the actual viewport */
             left: -100%;
             width: 280px;
             max-width: 85vw;
-            height: 100vh;
-            height: 100dvh;
-            max-height: 100dvh;
             background: white;
             z-index: 2000;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -490,10 +488,10 @@
             justify-content: flex-start;
             align-items: flex-start;
             padding: 1.5rem;
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-            box-sizing: border-box;
+            padding-bottom: 8rem; /* Extra padding to ensure logout button is visible above mobile bars */
             box-shadow: 4px 0 15px rgba(0,0,0,0.05);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
             overscroll-behavior: contain;
         }
 
@@ -1413,7 +1411,6 @@
         function initGlobalTomSelects() {
             const selects = document.querySelectorAll('.multi-select, .pcv-multi-select, .filter-input');
             selects.forEach(select => {
-                if (select.closest('#childSheet')) return;
                 if (select.tomselect) return;
                 
                 const isMultiple = select.hasAttribute('multiple') || select.classList.contains('allow-multiple');
@@ -1430,7 +1427,7 @@
                     plugins: plugins,
                     create: allowCreate,
                     persist: false,
-                    dropdownParent: select.closest('.modal-content') || select.closest('.side-panel') || 'body',
+                    dropdownParent: select.closest('.modal-content') || select.closest('.side-panel') || select.closest('.bottom-sheet') || 'body',
                     closeAfterSelect: (finalMaxItems === null || finalMaxItems > 1) ? false : true,
                     // Priorité au data-max-items, sinon on regarde allow-multiple ou multiple
                     maxItems: maxItemsAttr ? parseInt(maxItemsAttr) : (isMultiple ? null : 1),

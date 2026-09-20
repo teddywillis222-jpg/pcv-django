@@ -447,3 +447,60 @@ L'équipe Prof Chez Vous."""
         return False
 
 
+def send_new_message_email(destinataire_user, auteur_user, contenu_texte, conversation_id):
+    """
+    Envoie un email de notification au destinataire d'un nouveau message privé.
+    Le contenu est déjà nettoyé (numéros masqués) car le save() du modèle Message
+    s'en charge avant l'appel.
+    """
+    if not destinataire_user.email:
+        logger.warning(
+            "Pas d'email pour le destinataire %s (id=%s), notification de message ignorée.",
+            destinataire_user.username, destinataire_user.pk
+        )
+        return False
+
+    auteur_name = auteur_user.get_full_name() or auteur_user.first_name or auteur_user.username
+    dest_name = destinataire_user.get_full_name() or destinataire_user.first_name or destinataire_user.username
+
+    conversation_url = get_full_url(reverse("conversation_detail", kwargs={"conversation_id": conversation_id}))
+
+    # Tronquer le contenu si trop long pour l'email
+    contenu_apercu = contenu_texte[:300] if contenu_texte else "(fichier joint)"
+    if contenu_texte and len(contenu_texte) > 300:
+        contenu_apercu += "…"
+
+    sujet = f"Nouveau message de {auteur_name} – Prof Chez Vous"
+
+    message = f"""Bonjour {dest_name},
+
+{auteur_name} vient de vous envoyer un message sur Prof Chez Vous :
+
+« {contenu_apercu} »
+
+Cliquez sur le lien ci-dessous pour répondre directement :
+{conversation_url}
+
+À très vite,
+L'équipe Prof Chez Vous."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[destinataire_user.email],
+            fail_silently=False,
+        )
+        logger.info(
+            "Email de nouveau message envoyé à %s (conv %s, auteur %s).",
+            destinataire_user.email, conversation_id, auteur_user.pk
+        )
+        return True
+    except Exception as e:
+        logger.error(
+            "Échec d'envoi de l'email de message à %s (conv %s) : %s",
+            destinataire_user.email, conversation_id, e,
+            exc_info=True,
+        )
+        return False
