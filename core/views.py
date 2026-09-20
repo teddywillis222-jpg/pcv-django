@@ -4403,33 +4403,8 @@ def api_engagement_action(request, engagement_id):
 
             
 
-            # Message automatique pour essai
+            # Message automatique supprimé selon la demande
 
-            if engagement.type_engagement == EngagementType.ESSAI:
-
-                msg_texte = "J'ai bien confirmé notre séance d'essai. Préparez-vous pour notre rencontre !"
-
-                msg = Message.objects.create(
-
-                    conversation=conversation,
-
-                    auteur=engagement.professeur.user,
-
-                    destinataire=engagement.parent_apprenant,
-
-                    contenu_texte=msg_texte
-
-                )
-
-                conversation.dernier_message_texte = msg_texte
-
-                conversation.dernier_message_date = msg.date_envoi
-
-                conversation.dernier_message_auteur = engagement.professeur.user
-
-                conversation.save()
-
-            
 
             # Mise à jour du temps de réponse moyen (basé uniquement sur les essais)
 

@@ -59,11 +59,11 @@
 
     <!-- Footer : Bouton principal et Options -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #f1f5f9; gap: 0.75rem;">
-        {% if eng.statut_general == 'ESSAI_REALISE' %}
+        {% if eng.statut_general == 'ESSAI_REALISE' or eng.statut_general == 'ESSAI_CONFIRME' %}
             <a href="{% url 'finalisation_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
                 ✨ Engager ce professeur
             </a>
-        {% elif eng.statut_general != 'REFUSE' and eng.statut_general != 'ESSAI_PROGRAMME' and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'ESSAI_REALISE' and eng.type_engagement != 'ESSAI' %}
+        {% elif eng.statut_general != 'REFUSE' and eng.statut_general != 'ESSAI_PROGRAMME' and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'ESSAI_REALISE' and eng.statut_general != 'ESSAI_CONFIRME' and eng.type_engagement != 'ESSAI' %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none;">
                 Accéder à l'espace de l'engagement
             </a>
@@ -82,10 +82,10 @@
             </button>
             
             <div class="options-menu" style="display: none; position: absolute; bottom: 3.5rem; right: 0; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; width: 220px; border: 1px solid #f1f5f9; overflow: hidden;">
-                <!-- Accéder à l'espace de l'engagement (dans le menu si ESSAI_REALISE) -->
-                {% if eng.statut_general == 'ESSAI_REALISE' %}
-                <a href="{% url 'suivi_engagement' eng.id %}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                    📁 Accéder à l'espace de l'engagement
+                <!-- Engager ce professeur (dès la confirmation ou après la réalisation) -->
+                {% if eng.statut_general == 'ESSAI_REALISE' or eng.statut_general == 'ESSAI_CONFIRME' %}
+                <a href="{% url 'finalisation_engagement' eng.id %}" class="menu-item" style="display: block; padding: 0.85rem 1rem; color: #16a34a; text-decoration: none; font-size: 0.9rem; font-weight: 700; border-bottom: 1px solid #f1f5f9;">
+                    ✨ Engager ce professeur
                 </a>
                 {% endif %}
 
