@@ -2307,9 +2307,9 @@ def parent_dashboard(request):
     valid_q_quartier = q_quartier if q_quartier else Q(pk__isnull=True)
 
     score_annotation = (
-        Case(When(valid_q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
-        Case(When(valid_q_classe_expert, then=Value(5)), When(valid_q_classe_enseignee, then=Value(2)), default=Value(0), output_field=IntegerField()) +
-        Case(When(valid_q_quartier, then=Value(1)), default=Value(0), output_field=IntegerField())
+        Case(When(valid_q_matieres, then=Value(100)), default=Value(0), output_field=IntegerField()) +
+        Case(When(valid_q_classe_expert, then=Value(15)), When(valid_q_classe_enseignee, then=Value(5)), default=Value(0), output_field=IntegerField()) +
+        Case(When(valid_q_quartier, then=Value(2)), default=Value(0), output_field=IntegerField())
     )
 
     # Appliquer l'annotation et trier par score décroissant

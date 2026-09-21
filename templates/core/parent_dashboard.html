@@ -812,7 +812,7 @@
                             <h2 style="margin: 0 0 0.35rem 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 0.25rem;">
                                 <span style="flex-shrink: 0;">Bonjour,</span>
                                 <span title="{{ parent_details.nom }}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px; display: inline-block; vertical-align: bottom;">
-                                    {{ parent_details.user.first_name|default:parent_details.nom|truncatechars:8 }}
+                                    {{ parent_details.user.first_name|default:parent_details.nom|truncatechars:9 }}
                                 </span>
                                 <span style="flex-shrink: 0;">👋</span>
                             </h2>
@@ -1065,9 +1065,9 @@
     </div>
 </div>
 
-<!-- Bottom Sheet Ajouter Enfant -->
-<div id="sheetOverlay" class="sheet-overlay" onclick="closeChildSheet()"></div>
-<div id="childSheet" class="bottom-sheet">
+<!-- Modal Ajouter Enfant -->
+<div id="childSheet" class="modal-overlay" onclick="if(event.target === this) closeChildSheet()">
+    <div class="modal-content" style="max-width: 500px; width: 100%;">
     <style>
         #childSheet .form-group {
             margin-bottom: 1.1rem;
@@ -1165,6 +1165,7 @@
             </button>
         </form>
     </div>
+    </div>
 </div>
 
 <!-- Welcome Pricing Modal -->
@@ -1205,15 +1206,13 @@
     }
 
     function closeChildSheet() {
-        const sheet = document.getElementById('childSheet');
-        const overlay = document.getElementById('sheetOverlay');
-        if (!sheet || !overlay) return;
-
-        sheet.querySelectorAll('select').forEach(select => {
-            if (select.tomselect) select.tomselect.close();
-        });
-        sheet.classList.remove('active');
-        overlay.classList.remove('active');
+        const modal = document.getElementById('childSheet');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.querySelectorAll('select').forEach(select => {
+                if (select.tomselect) select.tomselect.close();
+            });
+        }
     }
 
     function initChildSheetTomSelects() {
@@ -1544,12 +1543,11 @@
     }
 
     function openChildSheet() {
-        const sheet = document.getElementById('childSheet');
-        const overlay = document.getElementById('sheetOverlay');
-        if (!sheet || !overlay) return;
-        sheet.classList.add('active');
-        overlay.classList.add('active');
-        requestAnimationFrame(initChildSheetTomSelects);
+        const modal = document.getElementById('childSheet');
+        if (modal) {
+            modal.style.display = 'flex';
+            requestAnimationFrame(initChildSheetTomSelects);
+        }
     }
     
     function openTeacherProfile(slug) {
