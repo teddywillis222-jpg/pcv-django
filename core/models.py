@@ -1695,50 +1695,10 @@ class TeacherProfile(models.Model):
 
         self.matiere_enseignee = clean_subjects(self.matiere_enseignee)
 
-        # ── Pipeline de compression d'image (Pillow) ──
-        # Redimensionne et convertit en WebP avant l'envoi à Cloudinary
-        # pour garantir des fichiers légers même sans transformation URL.
-        if self.photo_de_profil:
-            try:
-                from PIL import Image
-                from io import BytesIO
-                from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
-                import os
-
-                # Ne traiter que les fichiers fraîchement uploadés (pas les noms de fichier Cloudinary existants)
-                photo_file = self.photo_de_profil
-                if isinstance(photo_file.file, UploadedFile):
-                    img = Image.open(photo_file)
-                    img = img.convert('RGB')  # Gérer les PNG avec alpha
-
-                    # Redimensionner proportionnellement (max 800x1000)
-                    max_w, max_h = 800, 1000
-                    if img.width > max_w or img.height > max_h:
-                        img.thumbnail((max_w, max_h), Image.Resampling.LANCZOS)
-
-                    # Sauvegarder en WebP dans un buffer mémoire
-                    buffer = BytesIO()
-                    img.save(buffer, format='WEBP', quality=82)
-                    buffer.seek(0)
-
-                    # Reconstruire le nom de fichier avec extension .webp
-                    original_name = os.path.splitext(photo_file.name)[0]
-                    # Nettoyer les extensions .webp multiples au cas où
-                    while original_name.endswith('.webp'):
-                        original_name = original_name[:-5]
-                    new_name = f"{original_name}.webp"
-
-                    self.photo_de_profil = InMemoryUploadedFile(
-                        file=buffer,
-                        field_name='photo_de_profil',
-                        name=new_name,
-                        content_type='image/webp',
-                        size=buffer.getbuffer().nbytes,
-                        charset=None
-                    )
-            except Exception:
-                pass  # En cas d'erreur Pillow, on sauvegarde l'original sans bloquer
-
+        # ── L'image est envoyée brute à Cloudinary ──
+        # La compression/redimensionnement (WebP, etc.) sera gérée à la volée
+        # par les URLs Cloudinary via les templatetags (image_utils.py)
+        
         super().save(*args, **kwargs)
 
         

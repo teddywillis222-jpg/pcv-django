@@ -657,6 +657,17 @@ class TeacherProfileForm(forms.ModelForm):
             return ", ".join(matieres)
         return matieres
 
+    def clean_photo_de_profil(self):
+        photo = self.cleaned_data.get('photo_de_profil')
+        if photo and hasattr(photo, 'size'):
+            max_size = 5 * 1024 * 1024  # 5 Mo
+            if photo.size > max_size:
+                raise forms.ValidationError(
+                    f"La photo est trop lourde ({photo.size / (1024*1024):.1f} Mo). "
+                    "La taille maximale autorisée est de 5 Mo."
+                )
+        return photo
+
 
     def clean_classes_expertise(self):
         classes = self.cleaned_data.get('classes_expertise')

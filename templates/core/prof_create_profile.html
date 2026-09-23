@@ -464,6 +464,14 @@
 
             // --- DEBUT MODIFICATION UX PHOTO DE PROFIL ---
             const isPhotoProfil = (e.target.name === 'photo_de_profil' && file.type.startsWith('image/'));
+
+            // Limite de poids pour la photo de profil (5 Mo)
+            if (isPhotoProfil && file.size > 5 * 1024 * 1024) {
+                alert("La photo est trop lourde (" + (file.size/1024/1024).toFixed(1) + " Mo). La taille maximale autorisée est de 5 Mo. Veuillez choisir une photo moins lourde.");
+                e.target.value = '';
+                return;
+            }
+
             if (isPhotoProfil) {
                 const reader = new FileReader();
                 reader.onload = function(e_read) {
