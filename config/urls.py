@@ -141,6 +141,7 @@ urlpatterns = [
 
     # Admin Dashboard PCV (Test Route)
     path("debug-admin-pcv/", core_views.debug_admin_pcv, name="debug_admin_pcv"),
+    path("debug-admin-pcv/api/professeurs/<int:prof_id>/telecharger-photo/", core_views.admin_telecharger_photo_hd, name="admin_telecharger_photo_hd"),
     path("debug-admin-pcv/api/accueil/", core_views.admin_api_accueil, name="admin_api_accueil"),
     path("debug-admin-pcv/api/professeurs/", core_views.admin_api_professeurs, name="admin_api_professeurs"),
     path("debug-admin-pcv/api/professeurs/<int:prof_id>/action/", core_views.admin_api_prof_action, name="admin_api_prof_action"),

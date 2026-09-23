@@ -5426,6 +5426,44 @@ from django.db.models import Avg, Count
 from .models import Evaluation
 
 
+from django.http import FileResponse, Http404
+
+@login_required
+def admin_telecharger_photo_hd(request, prof_id):
+    if not request.user.is_superuser:
+        raise Http404("Accès refusé")
+    
+    prof = get_object_or_404(TeacherProfile, pk=prof_id)
+    if not prof.photo_de_profil:
+        raise Http404("Aucune photo disponible")
+    
+    # Ouvre le fichier original directement depuis le stockage (Cloudinary)
+    try:
+        import requests
+        from django.http import HttpResponse
+        
+        # Cloudinary direct stream to avoid potential 'open()' issues on remote storage
+        response = requests.get(prof.photo_de_profil.url, stream=True)
+        if response.status_code == 200:
+            file_ext = prof.photo_de_profil.name.split('.')[-1] if '.' in prof.photo_de_profil.name else 'jpg'
+            file_name = f"photo_hd_{prof.prenom}_{prof.nom}.{file_ext}"
+            
+            http_response = HttpResponse(response.raw, content_type=response.headers.get('content-type'))
+            http_response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+            return http_response
+        else:
+            raise Http404("Fichier distant introuvable")
+    except Exception as e:
+        # Fallback to standard Django FileResponse
+        file_ext = prof.photo_de_profil.name.split('.')[-1] if '.' in prof.photo_de_profil.name else 'jpg'
+        file_name = f"photo_hd_{prof.prenom}_{prof.nom}.{file_ext}"
+        return FileResponse(
+            prof.photo_de_profil.open('rb'), 
+            as_attachment=True, 
+            filename=file_name
+        )
+
+
 @login_required
 def debug_admin_pcv(request):
 

@@ -122,8 +122,9 @@
                     </div>
 
                     {% if prof.photo_de_profil %}
-                    <div style="text-align: right;">
+                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
                         <button onclick="viewDocument('viewer-container-{{ prof.id }}', '{{ prof.photo_de_profil.url }}')" style="background: none; border: none; color: var(--primary-green); font-weight: 600; font-size: 0.85rem; cursor: pointer; text-decoration: underline;">Voir la photo de profil</button>
+                        <a href="{% url 'admin_telecharger_photo_hd' prof.id %}" style="background-color: #28a745; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.8rem; display: inline-block;">📥 Télécharger en HD Originale</a>
                     </div>
                     {% endif %}
                 </div>
