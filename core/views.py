@@ -5679,11 +5679,12 @@ def admin_api_professeurs(request):
 
     statut = request.GET.get('statut', ValidationStatus.EN_ATTENTE)
 
-    # tri par date de création ou un autre critère pour avoir une liste consistante (user date_joined par ex)
-
-    professeurs = TeacherProfile.objects.filter(statut_de_validation=statut).order_by('-user__date_joined')
-
-    
+    # Optimisation N+1 (Évite les crashs si beaucoup de profils)
+    professeurs = TeacherProfile.objects.filter(
+        statut_de_validation=statut
+    ).select_related('user').prefetch_related(
+        'quartiers_couverts', 'diplomes'
+    ).order_by('-user__date_joined')
 
     context = {
 
