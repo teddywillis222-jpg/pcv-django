@@ -130,13 +130,21 @@
                     {% endif %}
                 {% endif %}
             {% else %}
-                {% if can_schedule_trial %}
+                {% if existing_conversation_id %}
+                    <a href="{% url 'conversation_detail' existing_conversation_id %}"
+                       style="display: block; width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                              background: var(--secondary); color: white; font-weight: 700; cursor: pointer;
+                              text-align: center; text-decoration: none; box-sizing: border-box;
+                              box-shadow: 0 3px 10px rgba(13,148,136,0.2); transition: all 0.25s;">
+                        💬 Rejoindre la conversation
+                    </a>
+                {% elif can_schedule_trial %}
                     <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
                         onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
-                        onclick="openEssaiForm({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:","}}');">
-                        🤝 Programmer mon essai
+                        onclick="openEssaiForm({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:\",\"}}');">
+                        🚀 Programmer mon essai
                     </button>
                 {% else %}
                     <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 12px; text-align: center;">

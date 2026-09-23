@@ -3976,7 +3976,12 @@ def api_engagement(request):
 
         type_eng = EngagementType.ESSAI if engagement_type_str == 'essai' else EngagementType.NORMAL
 
-        
+        if type_eng == EngagementType.ESSAI:
+            essais_utilises = request.user.engagements_client.filter(
+                type_engagement=EngagementType.ESSAI
+            ).count()
+            if essais_utilises >= 1:
+                return JsonResponse({'error': 'Vous avez déjà utilisé votre essai gratuit.'}, status=400)
 
         # Recherche d'un engagement existant non terminé
 
