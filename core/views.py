@@ -1101,6 +1101,9 @@ def signup(request):
             if role == Profile.ROLE_PARENT:
                 from .models import Parent
                 Parent.objects.get_or_create(user=user)
+            elif role == Profile.ROLE_APPRENANT:
+                from .models import Apprenant
+                Apprenant.objects.get_or_create(user=user)
 
             # Création automatique d'abonnement (Standard, 2000f)
             Abonnement.objects.create(
@@ -1512,18 +1515,9 @@ def post_signup_redirect(request):
 
 
     # --- RÔLE : APPRENANT (Élève autonome) ---
-
     elif profile.role == Profile.ROLE_APPRENANT:
-
-        apprenant = getattr(request.user, "apprenant", None)
-
-        # Si le profil métier existe, dashboard direct
-
-        if apprenant:
-
-            return redirect("apprenant_dashboard")
-
-        return redirect("apprenant_create_profile")
+        # Profilage progressif : l'apprenant n'a plus besoin de compléter de profil
+        return redirect("apprenant_dashboard")
 
 
 

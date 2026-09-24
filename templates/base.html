@@ -1321,8 +1321,21 @@
             <form action="{% url 'signup' %}" method="post" id="globalSignupForm">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                <input type="hidden" name="role" value="PARENT">
                 <input type="hidden" name="username" value="">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display:block; font-weight: 600; margin-bottom: 0.5rem; color:#334155;">Je suis :</label>
+                    <div style="display: flex; gap: 1rem;">
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">
+                            <input type="radio" name="role" value="PARENT" checked style="accent-color: var(--primary, #16a34a); width: 16px; height: 16px;">
+                            <span style="font-weight: 500; color: #1e293b;">Un Parent</span>
+                        </label>
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;">
+                            <input type="radio" name="role" value="APPRENANT" style="accent-color: var(--primary, #16a34a); width: 16px; height: 16px;">
+                            <span style="font-weight: 500; color: #1e293b;">Un Apprenant</span>
+                        </label>
+                    </div>
+                </div>
                 
                 <div style="margin-bottom: 1rem;">
                     <label style="display:block; font-weight: 600; margin-bottom: 0.25rem; color:#334155;">Nom</label>
