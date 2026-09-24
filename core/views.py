@@ -4184,12 +4184,22 @@ def api_engagement(request):
 
         engagement.save()
 
-
+        # --- PROFILAGE PROGRESSIF APPRENANT ---
+        if hasattr(request.user, 'apprenant') and request.user.profile.role == Profile.ROLE_APPRENANT:
+            apprenant = request.user.apprenant
+            # Mise à jour des informations si elles ne sont pas encore renseignées
+            if not apprenant.classe and data.get('classe'):
+                apprenant.classe = data.get('classe')
+            if not apprenant.matieres_recherchees and raw_matiere:
+                apprenant.matieres_recherchees = raw_matiere
+            if not apprenant.preference_de_cours and data.get('course_mode'):
+                apprenant.preference_de_cours = data.get('course_mode')
+            if not apprenant.quartier_ville and q_obj:
+                apprenant.quartier_ville = q_obj
+            apprenant.save()
 
         # --- DEBUT NOTIFICATION WHATSAPP PROFESSEUR ---
-
         if is_new_engagement:
-
             import threading
 
             from .services import send_whatsapp_notification
