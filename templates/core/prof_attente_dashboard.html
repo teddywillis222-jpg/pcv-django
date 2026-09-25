@@ -349,22 +349,6 @@
         }
     }
 </style>
-<script>
-    function openSidePanel() {
-        const overlay = document.getElementById('side-panel-overlay');
-        const panel = document.getElementById('side-panel');
-        document.body.style.overflow = 'hidden';
-        overlay.classList.add('show');
-        panel.classList.add('show');
-    }
-    function closeSidePanel() {
-        const overlay = document.getElementById('side-panel-overlay');
-        const panel = document.getElementById('side-panel');
-        overlay.classList.remove('show');
-        panel.classList.remove('show');
-        document.body.style.overflow = '';
-    }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -522,4 +506,21 @@
         </form>
     </div>
 </div>
+
+<script>
+    function openSidePanel() {
+        const overlay = document.getElementById('side-panel-overlay');
+        const panel = document.getElementById('side-panel');
+        document.body.style.overflow = 'hidden';
+        overlay.classList.add('show');
+        panel.classList.add('show');
+    }
+    function closeSidePanel() {
+        const overlay = document.getElementById('side-panel-overlay');
+        const panel = document.getElementById('side-panel');
+        overlay.classList.remove('show');
+        panel.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+</script>
 {% endblock %}
