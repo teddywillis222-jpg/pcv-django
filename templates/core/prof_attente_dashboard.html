@@ -179,7 +179,7 @@
     }
 
     /* Side Panel Overlay */
-    .side-panel-overlay {
+    .completion-side-panel-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -187,38 +187,37 @@
         bottom: 0;
         background: rgba(15, 23, 42, 0.5);
         backdrop-filter: blur(3px);
-        z-index: 1000;
+        z-index: 2999;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.35s ease, visibility 0.35s ease;
     }
-    .side-panel-overlay.show {
+    .completion-side-panel-overlay.active {
         opacity: 1;
         visibility: visible;
     }
 
     /* Side Panel */
-    .side-panel {
+    .completion-side-panel {
         position: fixed;
         top: 0;
-        right: 0;
+        right: -100%;
         width: 100%;
         max-width: 520px;
         height: 100%;
         background: var(--card-bg);
-        z-index: 1001;
-        transform: translateX(100%);
-        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 3000;
+        transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         flex-direction: column;
         box-shadow: -8px 0 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
     }
-    .side-panel.show {
-        transform: translateX(0);
+    .completion-side-panel.active {
+        right: 0;
     }
 
-    .side-panel-header {
+    .completion-side-panel-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -227,7 +226,7 @@
         flex-shrink: 0;
     }
 
-    .side-panel-body {
+    .completion-side-panel-body {
         flex: 1;
         overflow-y: auto;
         overflow-x: hidden;
@@ -235,7 +234,7 @@
         -webkit-overflow-scrolling: touch;
     }
 
-    .side-panel-close {
+    .completion-side-panel-close {
         background: #f1f5f9;
         border: none;
         width: 36px;
@@ -250,16 +249,16 @@
         flex-shrink: 0;
         transition: all 0.2s;
     }
-    .side-panel-close:hover {
+    .completion-side-panel-close:hover {
         background: #e2e8f0;
         color: var(--text-dark);
     }
 
     @media (max-width: 520px) {
-        .side-panel {
+        .completion-side-panel {
             max-width: 100%;
         }
-        .side-panel-body {
+        .completion-side-panel-body {
             padding: 1.25rem 1rem;
         }
     }
@@ -422,9 +421,9 @@
         </div>
         <div class="completion-btn-wrapper">
             {% if completion < 100 %} 
-                <button class="btn-complete" onclick="openSidePanel()" style="width: 100%; padding: 0.75rem 1.5rem; font-size: 0.95rem;">Compléter mon profil</button>
+                <button class="btn-complete" onclick="openCompletionSidePanel()" style="width: 100%; padding: 0.75rem 1.5rem; font-size: 0.95rem;">Compléter mon profil</button>
             {% else %}
-                <button class="btn-complete" onclick="openSidePanel()"
+                <button class="btn-complete" onclick="openCompletionSidePanel()"
                     style="background:#f1f5f9; color:#475569; box-shadow:none; width: 100%; padding: 0.75rem 1.5rem; font-size: 0.95rem;">Modifier ma vitrine</button>
             {% endif %}
         </div>
@@ -433,19 +432,19 @@
 </div>
 
 <!-- Side Panel Overlay -->
-<div class="side-panel-overlay" id="side-panel-overlay" onclick="closeSidePanel()"></div>
+<div class="completion-side-panel-overlay" id="completion-side-panel-overlay" onclick="closeCompletionSidePanel()"></div>
 
 <!-- Side Panel (Boost Conversion) -->
-<div class="side-panel" id="side-panel">
-    <div class="side-panel-header">
+<div class="completion-side-panel" id="completion-side-panel">
+    <div class="completion-side-panel-header">
         <div>
             <h2 style="margin: 0 0 0.25rem 0; font-weight: 800; font-size: 1.4rem; color: var(--text-dark);">Enrichissez votre vitrine</h2>
             <p style="margin: 0; color: var(--text-gray); font-size: 0.9rem;">Renseignez ces informations pour attirer les regards sur votre profil.</p>
         </div>
-        <button class="side-panel-close" onclick="closeSidePanel()">✕</button>
+        <button class="completion-side-panel-close" onclick="closeCompletionSidePanel()">✕</button>
     </div>
 
-    <div class="side-panel-body">
+    <div class="completion-side-panel-body">
         <form method="post" action="{% url 'prof_attente_dashboard' %}">
             {% csrf_token %}
 
@@ -508,18 +507,18 @@
 </div>
 
 <script>
-    function openSidePanel() {
-        const overlay = document.getElementById('side-panel-overlay');
-        const panel = document.getElementById('side-panel');
+    function openCompletionSidePanel() {
+        const overlay = document.getElementById('completion-side-panel-overlay');
+        const panel = document.getElementById('completion-side-panel');
         document.body.style.overflow = 'hidden';
-        overlay.classList.add('show');
-        panel.classList.add('show');
+        overlay.classList.add('active');
+        panel.classList.add('active');
     }
-    function closeSidePanel() {
-        const overlay = document.getElementById('side-panel-overlay');
-        const panel = document.getElementById('side-panel');
-        overlay.classList.remove('show');
-        panel.classList.remove('show');
+    function closeCompletionSidePanel() {
+        const overlay = document.getElementById('completion-side-panel-overlay');
+        const panel = document.getElementById('completion-side-panel');
+        overlay.classList.remove('active');
+        panel.classList.remove('active');
         document.body.style.overflow = '';
     }
 </script>
