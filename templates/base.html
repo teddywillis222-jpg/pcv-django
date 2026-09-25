@@ -755,8 +755,8 @@
             <div class="navbar-brand" style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark);">
                 Menu Principal
             </div>
-            <button class="mobile-menu-close" onclick="closeMobileMenu()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()" style="position: relative; z-index: 50; pointer-events: auto;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -1098,9 +1098,9 @@
             const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
             const toggleBtn = document.getElementById('mobileMenuToggle');
             
-            mobileMenu.classList.remove('active');
-            mobileMenuOverlay.classList.remove('active');
-            toggleBtn.classList.remove('active');
+            if (mobileMenu) mobileMenu.classList.remove('active');
+            if (mobileMenuOverlay) mobileMenuOverlay.classList.remove('active');
+            if (toggleBtn) toggleBtn.classList.remove('active');
             document.body.style.overflow = '';
         }
 
