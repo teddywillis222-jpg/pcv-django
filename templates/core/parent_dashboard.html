@@ -938,6 +938,7 @@
                         {% endif %}
                     </button>
                     <button class="tab-pill" onclick="switchTab(event, 'termines')">Terminé</button>
+                    <button class="tab-pill" onclick="switchTab(event, 'masques')">Masqués</button>
                 </div>
 
                 <div id="tab-content">
@@ -990,6 +991,16 @@
                         <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
                             <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Historique vide</h3>
                             <p style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.5;">Aucun engagement terminé pour le moment.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="masques" style="display: none;">
+                        {% for eng in engagements_masques %}
+                        {% include "core/components/engagement_card_parent.html" with eng=eng status_class="badge-termine" is_masque=True %}
+                        {% empty %}
+                        <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255, 255, 255, 0.6); border-radius: 16px; border: 1px dashed #cbd5e1; margin: 1rem 0;">
+                            <h3 style="font-size: 1.05rem; color: var(--text-dark); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement masqué</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); line-height: 1.5;">Vous n'avez masqué aucun engagement pour le moment.</p>
                         </div>
                         {% endfor %}
                     </div>
@@ -1467,28 +1478,26 @@
         btn.nextElementSibling.classList.toggle('active');
     }
 
-    async function masquerEngagement(engId, btnElement) {
-        if (!confirm("Voulez-vous vraiment masquer cet engagement de votre tableau de bord ?")) return;
+    async function masquerEngagement(engId, btnElement, action) {
+        if (action === 'demasquer') {
+            if (!confirm("Voulez-vous restaurer cet engagement ?")) return;
+        } else {
+            if (!confirm("Voulez-vous vraiment masquer cet engagement de votre tableau de bord ?")) return;
+        }
 
         try {
             const response = await fetch(`/api/engagement/${engId}/masquer/`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ action: action })
             });
             const data = await response.json();
             if (data.success) {
-                // Trouver la carte d'engagement et la masquer visuellement
-                const card = btnElement.closest('.engagement-card');
-                if (card) {
-                    card.style.transition = "all 0.3s ease";
-                    card.style.opacity = "0";
-                    card.style.height = "0";
-                    card.style.margin = "0";
-                    card.style.padding = "0";
-                    setTimeout(() => card.remove(), 300);
-                }
+                // Rafraichir pour afficher correctement les onglets
+                window.location.reload();
             } else {
                 alert("Erreur: " + data.error);
             }

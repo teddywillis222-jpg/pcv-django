@@ -2348,42 +2348,35 @@ def parent_dashboard(request):
 
     # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
 
-    engagements_base = request.user.engagements_client.filter(masque_par_parent=False).select_related(
-
+        engagements_base_all = request.user.engagements_client.select_related(
         'professeur', 'professeur__user'
-
     ).prefetch_related(
-
         'enfants_concernes', 'conversation', 'professeur__parents_favoris'
-
     )
-
     
-
-    # On filtre ceux de l'enfant actif OU ceux qui n'ont AUCUN enfant lié (orphelins)
-
+    engagements_base = engagements_base_all.filter(masque_par_parent=False)
+    engagements_base_masques = engagements_base_all.filter(masque_par_parent=True)
+    
     from django.db.models import Q
-
     engagements = engagements_base.filter(
-
         Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
-
     ).distinct().order_by("-date_creation")
-
+    
+    engagements_masques_qs = engagements_base_masques.filter(
+        Q(enfants_concernes=active_enfant) | Q(enfants_concernes__isnull=True)
+    ).distinct().order_by("-date_creation")
+    
     engagements_tous = list(engagements)
-
     for eng in engagements_tous:
-
+        eng.check_and_update_essai_status()
+        
+    engagements_masques_list = list(engagements_masques_qs)
+    for eng in engagements_masques_list:
         eng.check_and_update_essai_status()
 
-
-
     engs_essais_programmes = [e for e in engagements_tous if e.statut_general == StatutGeneral.ESSAI_PROGRAMME]
-
     engs_essais_confirmes = [e for e in engagements_tous if e.statut_general in [StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]]
-
     engs_finalises = [e for e in engagements_tous if e.statut_general == StatutGeneral.FINALISE]
-
     engs_termines = [e for e in engagements_tous if e.statut_general == StatutGeneral.TERMINE]
 
 
@@ -2425,6 +2418,7 @@ def parent_dashboard(request):
         "engagements_finalises": engs_finalises,
 
         "engagements_termines": engs_termines,
+        "engagements_masques": engagements_masques_list,
 
         "engagements_tous": engagements_tous,
 
@@ -2708,6 +2702,7 @@ def apprenant_dashboard(request):
         "engagements_finalises": engs_finalises,
 
         "engagements_termines": engs_termines,
+        "engagements_masques": engagements_masques_list,
 
         "engagements_tous": engagements_tous,
 
@@ -6525,7 +6520,19 @@ def masquer_engagement(request, eng_id):
 
         
 
-    engagement.masque_par_parent = True
+    try:
+        import json
+        data = json.loads(request.body)
+        action = data.get("action", "masquer")
+    except:
+        action = "masquer"
+
+    if action == "demasquer":
+        engagement.masque_par_parent = False
+        engagement.masque_pour_parent = False
+    else:
+        engagement.masque_par_parent = True
+        engagement.masque_pour_parent = True
 
     engagement.save()
 
@@ -6551,7 +6558,17 @@ def masquer_engagement_prof(request, eng_id):
 
         
 
-    engagement.masque_pour_professeur = True
+    try:
+        import json
+        data = json.loads(request.body)
+        action = data.get("action", "masquer")
+    except:
+        action = "masquer"
+
+    if action == "demasquer":
+        engagement.masque_pour_professeur = False
+    else:
+        engagement.masque_pour_professeur = True
 
     engagement.save()
 
