@@ -2348,7 +2348,7 @@ def parent_dashboard(request):
 
     # (Même si certains n'ont pas été correctement liés à un enfant lors de la création)
 
-        engagements_base_all = request.user.engagements_client.select_related(
+    engagements_base_all = request.user.engagements_client.select_related(
         'professeur', 'professeur__user'
     ).prefetch_related(
         'enfants_concernes', 'conversation', 'professeur__parents_favoris'
