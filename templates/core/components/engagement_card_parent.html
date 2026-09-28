@@ -1,4 +1,32 @@
 <div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
+    
+    <!-- Encart rectangulaire des actions rapides -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+        <div style="display: flex; gap: 0.4rem; background: #f8fafc; padding: 0.4rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+            
+            {% if eng.conversation %}
+            <a href="{% url 'conversation_detail' eng.conversation.id %}" title="Messagerie" style="background: white; border: 1px solid #e2e8f0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #16a34a; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='#f0fdf4'; this.style.borderColor='#bbf7d0';" onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0';">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </a>
+            {% endif %}
+
+            {% if eng.professeur %}
+            <button type="button" onclick="toggleFavoriteAjax(this, {{ eng.professeur.id }})" title="Favori" style="background: white; border: 1px solid #e2e8f0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #e11d48; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fff1f2';" onmouseout="this.style.background='white';">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if eng.professeur in favoris %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+            {% endif %}
+
+            <!-- Masquer -->
+            <button type="button" onclick="masquerEngagement('{{ eng.id }}', this, '{% if is_masque %}demasquer{% else %}masquer{% endif %}')" title="{% if is_masque %}Démasquer{% else %}Masquer{% endif %} l'engagement" style="background: white; border: 1px solid #e2e8f0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; border: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='white';">
+                {% if is_masque %}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                {% else %}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
     <!-- En-tête : Professeur et Statut -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
         <div style="flex: 1; min-width: 0;">
@@ -19,29 +47,6 @@
             </p>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
-            <div style="display: flex; gap: 0.4rem;">
-                
-                {% if eng.conversation %}
-                <a href="{% url 'conversation_detail' eng.conversation.id %}" title="Messagerie" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #f0fdf4; color: #16a34a; border: none; text-decoration: none; transition: background 0.2s;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                </a>
-                {% endif %}
-
-                {% if eng.professeur %}
-                <button type="button" onclick="toggleFavoriteAjax(this, {{ eng.professeur.id }})" title="Favori" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #fff1f2; color: #e11d48; border: none; cursor: pointer; transition: background 0.2s;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="{% if eng.professeur in favoris %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                </button>
-                {% endif %}
-
-                <!-- Masquer -->
-                <button type="button" onclick="masquerEngagement('{{ eng.id }}', this, '{% if is_masque %}demasquer{% else %}masquer{% endif %}')" title="{% if is_masque %}Démasquer{% else %}Masquer{% endif %} l'engagement" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; color: var(--text-gray); border: none; cursor: pointer; transition: background 0.2s;">
-                    {% if is_masque %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    {% else %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    {% endif %}
-                </button>
-            </div>
             <span class="eng-status-badge {{ status_class }}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
                 {% if eng.type_engagement == 'ESSAI' %}
                     {{ eng.essai_status_label }}
