@@ -4597,7 +4597,9 @@ def conversation_detail(request, conversation_id):
     
 
     eng = conversation.engagement_actif
-
+    if eng:
+        eng.check_and_update_essai_status()
+        
     # Déterminer le rôle
 
     user_role = request.user.profile.role if hasattr(request.user, 'profile') else None
@@ -5515,7 +5517,10 @@ def admin_api_accueil(request):
     
 
         engagements = Engagement.objects.all()
-
+        
+        # Mise à jour des statuts (Essai Confirmé -> Essai Réalisé) pour affichage frais dans le dashboard admin
+        for eng in engagements.filter(statut_general='ESSAI_CONFIRME', type_engagement='ESSAI'):
+            eng.check_and_update_essai_status()
         stats_engagements = engagements.values('statut_general').annotate(count=Count('id'))
 
         dict_engagements = {stat['statut_general']: stat['count'] for stat in stats_engagements}
@@ -8438,3 +8443,26 @@ def selection_personnalisee(request, uuid):
     return render(request, 'core/selection_page.html', context)
 
 
+
+def api_cron_check_essais(request):
+    """
+    Point d'entrée pour le service de Cron externe (ex: cron-job.org).
+    Sécurisé par un token statique.
+    """
+    from django.conf import settings
+    from django.http import JsonResponse
+    from django.core.management import call_command
+    
+    # Jeton de sécurité basique (peut être mis dans les variables d'environnement .env)
+    EXPECTED_TOKEN = getattr(settings, 'CRON_SECRET_TOKEN', 'eCxnh2J54foTuWMoeQtRU7BURLa8B7vs4u1q_OkO5uw')
+    
+    token = request.GET.get('token')
+    if token != EXPECTED_TOKEN:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+    try:
+        # Exécute la commande que nous avons créée précédemment
+        call_command('check_essais')
+        return JsonResponse({'success': True, 'message': 'Cron check_essais exécuté avec succès.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

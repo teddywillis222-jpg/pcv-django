@@ -504,3 +504,78 @@ L'équipe Prof Chez Vous."""
             exc_info=True,
         )
         return False
+
+def send_essai_realise_email(parent_user, engagement):
+    """
+    Email envoyé au parent ou apprenant lorsque l'essai passe au statut ESSAI_REALISE.
+    """
+    if not parent_user.email:
+        logger.warning("Aucun email pour %s (id=%s), notification de réalisation d'essai ignorée.", parent_user.username, parent_user.pk)
+        return False
+
+    dest_email = parent_user.email
+    prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip() or "Votre professeur"
+    prenom_destinataire = parent_user.first_name or "Cher(e) utilisateur"
+    
+    # Bouton d'officialisation
+    from django.urls import reverse
+    officialiser_url = get_full_url(reverse("finalisation_engagement", args=[engagement.id]))
+    
+    is_parent = hasattr(parent_user, 'parent')
+
+    if is_parent:
+        prenom_enfant = "votre enfant"
+        if engagement.enfants_concernes.exists():
+            prenom_enfant = engagement.enfants_concernes.first().prenom
+
+        sujet = "Votre essai est terminé : découvrez la suite sur Prof Chez Vous"
+        message = f"""Bonjour {prenom_destinataire},
+
+Votre séance d’essai avec {prof_name} a été réalisée. Si son approche pédagogique vous convient, vous pouvez désormais officialiser votre collaboration sur Prof Chez Vous.
+
+🎁 Offrez à {prenom_enfant} un suivi pédagogique dans la durée !
+
+En engageant officiellement le professeur sur la plateforme, vous débloquez son Cahier de Suivi Digital. Vous pourrez y consulter, après chaque séance, un bilan détaillé de sa progression, des notions abordées et des difficultés rencontrées.
+
+Un moyen concret de mieux comprendre son évolution et de l’accompagner tout au long de son apprentissage.
+
+👉 Officialiser ma collaboration :
+{officialiser_url}
+
+Nous restons à votre disposition si vous avez besoin d’aide pour la suite.
+
+L’équipe Prof Chez Vous
+Le bon professeur. Au bon moment."""
+    else:
+        sujet = "Et maintenant, comment poursuivre votre accompagnement sur Prof Chez Vous ?"
+        message = f"""Bonjour {prenom_destinataire},
+
+Votre séance d’essai avec {prof_name} est terminée. Si vous souhaitez poursuivre cet accompagnement, vous pouvez officialiser votre collaboration directement sur Prof Chez Vous.
+
+🎁 Profitez d’un suivi personnalisé pour progresser durablement !
+
+En engageant officiellement votre professeur sur la plateforme, vous débloquez votre Cahier de Suivi Digital. Après chaque séance, vous pourrez y retrouver un bilan de votre progression, les notions abordées et les points à améliorer.
+
+De quoi mieux mesurer vos acquis et garder une trace de votre évolution au fil des cours.
+
+👉 Officialiser ma collaboration :
+{officialiser_url}
+
+Bonne continuation dans vos apprentissages !
+
+L’équipe Prof Chez Vous
+Le bon professeur. Au bon moment."""
+
+    try:
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[dest_email],
+            fail_silently=False,
+        )
+        logger.info("Email d'essai réalisé envoyé avec succès à %s.", dest_email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email d'essai réalisé à %s : %s", dest_email, e, exc_info=True)
+        return False

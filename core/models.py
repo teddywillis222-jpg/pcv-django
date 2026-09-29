@@ -2419,9 +2419,15 @@ class Engagement(models.Model):
                 if timezone.now() >= dt_fin:
 
                     self.statut_general = StatutGeneral.ESSAI_REALISE
-
                     self.save(update_fields=['statut_general'])
-
+                    
+                    try:
+                        from core.utils_emails import send_essai_realise_email
+                        send_essai_realise_email(self.parent_apprenant, self)
+                    except Exception as e:
+                        import logging
+                        logging.getLogger(__name__).error("Failed to send essai réalisé email: %s", e)
+                        
                     return True
 
         return False
