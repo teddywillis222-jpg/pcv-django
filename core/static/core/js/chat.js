@@ -212,6 +212,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.messages && data.messages.length > 0) {
                 let hasNew = false;
                 const container = document.getElementById('messagesList');
+                const emptyPlaceholder = document.getElementById('empty-chat-placeholder');
+                if (emptyPlaceholder) emptyPlaceholder.style.display = 'none';
                 data.messages.forEach(msg => {
                     if (msg.id > config.lastMsgId) config.lastMsgId = msg.id;
                     if (document.querySelector(`.msg-bubble[data-id="${msg.id}"]`)) return;

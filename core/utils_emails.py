@@ -284,6 +284,8 @@ def send_essai_confirmed_email(parent_user, engagement):
     Email envoyé au parent ou apprenant lorsque le professeur confirme le cours d'essai.
     """
     if not parent_user.email:
+        import logging
+        logger = logging.getLogger(__name__)
         logger.warning("Aucun email pour %s (id=%s), notification de confirmation d'essai ignorée.", parent_user.username, parent_user.pk)
         return False
 
@@ -296,47 +298,75 @@ def send_essai_confirmed_email(parent_user, engagement):
     date_str = ""
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
+        from .utils import format_date_fr
         dt_local = tz.localtime(engagement.date_heure_essai)
         date_str = format_date_fr(dt_local)
 
     # Lien vers le bon espace selon le rôle
-    if hasattr(parent_user, 'parent'):
+    from django.urls import reverse
+    from .utils import get_full_url
+    is_parent = hasattr(parent_user, 'parent')
+    
+    if is_parent:
         dashboard_url = get_full_url(reverse("parent_dashboard"))
-    else:
-        dashboard_url = get_full_url(reverse("apprenant_dashboard"))
+        prenom_enfant = "votre enfant"
+        if engagement.enfants_concernes.exists():
+            prenom_enfant = engagement.enfants_concernes.first().prenom
+        
+        sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
+        message = f"""Bonjour {parent_name},
 
-    sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
-    message = f"""Bonjour {parent_name},
-
-Bonne nouvelle ! Le Professeur {prof_name} vient de confirmer votre cours d'essai.
+Bonne nouvelle ! Le professeur {prof_name} vient de confirmer votre cours d’essai.
 
 Récapitulatif :
-
-    Professeur : {prof_name}
-    Matière : {matiere}"""
-
-    if date_str:
-        message += f"""
-    Date et heure : {date_str}"""
-
-    message += f"""
+Professeur : {prof_name}
+Matière : {matiere}
+Date et heure : {date_str}
 
 Que faire maintenant ?
-
 1. Connectez-vous à votre espace pour consulter tous les détails de la séance.
 2. Préparez vos questions ou les points que vous souhaitez aborder durant ce premier cours.
 3. Profitez de cette séance pour évaluer la pédagogie du professeur et voir si le courant passe.
 
-Accéder à mon espace :
-{dashboard_url}
+🎁 Et si vous poursuivez cette collaboration ?
+En officialisant votre engagement sur Prof Chez Vous après l’essai, vous débloquez le Cahier de Suivi Digital de {prenom_enfant}. Vous pourrez ainsi consulter un bilan détaillé de sa progression après chaque séance et suivre son accompagnement dans la durée.
+
+👉 Accéder à mon espace : {dashboard_url}
 
 Nous vous souhaitons une excellente première séance !
 
 Cordialement,
+L'équipe Prof Chez Vous."""
+    else:
+        dashboard_url = get_full_url(reverse("apprenant_dashboard"))
+        sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
+        message = f"""Bonjour {parent_name},
 
+Bonne nouvelle ! Le professeur {prof_name} vient de confirmer votre cours d’essai.
+
+Récapitulatif :
+Professeur : {prof_name}
+Matière : {matiere}
+Date et heure : {date_str}
+
+Que faire maintenant ?
+1. Connectez-vous à votre espace pour consulter tous les détails de la séance.
+2. Préparez vos questions ou les points que vous souhaitez aborder durant ce premier cours.
+3. Profitez de cette séance pour évaluer la pédagogie du professeur et voir si le courant passe.
+
+🎁 Et si vous poursuivez cette collaboration ?
+En officialisant votre engagement sur Prof Chez Vous après l’essai, vous débloquez votre Cahier de Suivi Digital. Vous pourrez ainsi consulter un bilan détaillé de votre progression après chaque séance et suivre votre accompagnement dans la durée.
+
+👉 Accéder à mon espace : {dashboard_url}
+
+Nous vous souhaitons une excellente première séance !
+
+Cordialement,
 L'équipe Prof Chez Vous."""
 
     try:
+        from django.core.mail import send_mail
+        from django.conf import settings
         send_mail(
             subject=sujet,
             message=message,
@@ -344,8 +374,12 @@ L'équipe Prof Chez Vous."""
             recipient_list=[parent_email],
             fail_silently=False,
         )
+        import logging
+        logger = logging.getLogger(__name__)
         logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
     except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
         logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
     return True
 

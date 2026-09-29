@@ -110,16 +110,16 @@
             {% with eng=conversation.engagement_actif %}
                 {% if role == ROLE_PARENT or role == ROLE_APPRENANT %}
                     {% if eng.statut_general == 'ESSAI_CONFIRME' %}
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 0 1rem; text-align: center; color: #475569; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 1.5rem 1rem; text-align: center; color: #475569; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
                         🛡️ <strong>Votre sécurité avant tout.</strong> En officialisant vos cours sur la plateforme, vous bénéficiez de notre service de médiation et du remplacement gratuit du professeur en cas de besoin.
                     </div>
                     {% elif eng.statut_general == 'ESSAI_REALISE' %}
-                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 0 1rem; text-align: center; color: #166534; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
-                        💡 <strong>L'essai est terminé ?</strong> Si vous souhaitez poursuivre, <a href="{% url 'finalisation_engagement' eng.id %}" style="color: #15803d; font-weight: 700; text-decoration: underline;">officialisez ici votre collaboration</a> avec {{ eng.professeur.prenom }} pour débloquer l’espace de suivi de {% if eng.enfants_concernes.first %}{{ eng.enfants_concernes.first.prenom }}{% else %}l'élève{% endif %}.
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 1.5rem 1rem; text-align: center; color: #166534; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
+                        💡 <strong>L'essai est terminé ?</strong> Si vous souhaitez poursuivre, <a href="{% url 'finalisation_engagement' eng.id %}" style="color: #15803d; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px;">officialisez ici votre collaboration</a> avec {{ eng.professeur.prenom }} pour débloquer l’espace de suivi de {% if eng.enfants_concernes.first %}{{ eng.enfants_concernes.first.prenom }}{% else %}l'élève{% endif %}.
                     </div>
                     {% endif %}
                 {% elif role == ROLE_PROF %}
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 0 1rem; text-align: center; color: #475569; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem; margin: 1rem 1rem 1.5rem 1rem; text-align: center; color: #475569; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); line-height: 1.4;">
                         🤝 <strong>Vous n’êtes pas seul.</strong> Pour tout cours officialisé ici, Prof Chez Vous vous accompagne et facilite la résolution d'éventuels différends grâce à notre service de médiation.
                     </div>
                 {% endif %}

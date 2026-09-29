@@ -176,6 +176,9 @@ urlpatterns = [
 
     # Help Center
     path("centre-daide/", include("help_center.urls")),
+
+    # Cron externe (cron-job.org)
+    path("api/cron/check-essais/", core_views.api_cron_check_essais, name="api_cron_check_essais"),
 ]
 
 from django.conf import settings
