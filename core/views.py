@@ -3639,7 +3639,10 @@ def api_teacher_profile(request, teacher_slug):
             'engagements'
         ).get(slug=teacher_slug)
 
-        track_teacher_view(request, teacher)
+        is_new_view = track_teacher_view(request, teacher)
+        if is_new_view:
+            teacher.nb_vues_profil += 1
+            teacher.save(update_fields=['nb_vues_profil'])
 
         # Calcul des stats sécurisé
         from django.db.models import Avg, Count
