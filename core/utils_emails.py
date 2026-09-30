@@ -298,7 +298,6 @@ def send_essai_confirmed_email(parent_user, engagement):
     date_str = ""
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
-        from .utils import format_date_fr
         dt_local = tz.localtime(engagement.date_heure_essai)
         date_str = format_date_fr(dt_local)
 
