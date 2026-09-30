@@ -303,7 +303,6 @@ def send_essai_confirmed_email(parent_user, engagement):
 
     # Lien vers le bon espace selon le rôle
     from django.urls import reverse
-    from .utils import get_full_url
     is_parent = hasattr(parent_user, 'parent')
     
     if is_parent:
