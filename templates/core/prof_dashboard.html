@@ -792,7 +792,10 @@
         targetSection.style.display = 'block';
 
         // Scroll to top so the section is immediately visible in the viewport
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Use setTimeout to ensure body overflow is restored by closeMobileMenu first
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
 
         // Update nav active states
         document.querySelectorAll('.dash-sidebar nav a, .dash-bottom-nav .nav-item').forEach(a => {
