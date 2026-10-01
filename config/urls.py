@@ -73,6 +73,7 @@ urlpatterns = [
     path("prof/video-presentation/<int:video_id>/delete/", core_views.prof_delete_video, name="prof_delete_video"),
     path("prof/stats/", core_views.prof_stats_view, name="prof_stats"),
     path("api/prof/popup-partage-vu/", core_views.api_mark_popup_partage_vu, name="api_mark_popup_partage_vu"),
+    path("api/prof/visite-guidee-vue/", core_views.api_mark_visite_guidee_vue, name="api_mark_visite_guidee_vue"),
     path("parent/create-profile/", core_views.parent_create_profile, name="parent_create_profile"),
     path("parent/dashboard/", core_views.parent_dashboard, name="parent_dashboard"),
     path("apprenant/create-profile/", core_views.apprenant_create_profile, name="apprenant_create_profile"),

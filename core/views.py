@@ -2057,6 +2057,7 @@ def prof_dashboard(request):
         "badge_essais_confirmes": len(engs_essais_confirmes),
 
         "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
+        "show_visite_guidee": not teacher.a_vu_visite_guidee,
 
     }
 
@@ -8469,3 +8470,18 @@ def api_cron_check_essais(request):
         return JsonResponse({'success': True, 'message': 'Cron check_essais exécuté avec succès.'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+
+@login_required
+@require_POST
+def api_mark_visite_guidee_vue(request):
+    try:
+        profile = request.user.teacher_profile
+        profile.a_vu_visite_guidee = True
+        profile.save()
+        return JsonResponse({"status": "success"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)

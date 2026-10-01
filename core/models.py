@@ -1015,7 +1015,10 @@ class TeacherProfile(models.Model):
 
     telephone_whatsapp = models.CharField(max_length=50)
 
-
+    a_vu_visite_guidee = models.BooleanField(
+        default=False,
+        help_text="A vu la visite guidée du dashboard"
+    )
 
     # 2. PrÃ©sentation et mÃ©thodologie
 

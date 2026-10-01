@@ -6,6 +6,70 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+{% if show_visite_guidee %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
+<style>
+    /* Personnalisation du style Driver.js pour PCV */
+    .driver-popover {
+        border-radius: 16px !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important;
+        max-width: 340px !important;
+    }
+    .driver-popover-title {
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+    }
+    .driver-popover-description {
+        font-size: 0.88rem !important;
+        color: #475569 !important;
+        line-height: 1.55 !important;
+    }
+    .driver-popover-progress-text {
+        font-size: 0.75rem !important;
+        color: #94a3b8 !important;
+    }
+    .driver-popover-navigation-btns .driver-popover-next-btn {
+        background: #2563eb !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        padding: 0.4rem 1rem !important;
+        text-shadow: none !important;
+    }
+    .driver-popover-navigation-btns .driver-popover-prev-btn {
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+    }
+    /* Visite guidée – modale de fin */
+    .tour-completion-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 1000010; animation: tourFadeIn 0.3s ease;
+    }
+    .tour-completion-card {
+        background: #fff; border-radius: 20px; padding: 2rem 1.75rem;
+        max-width: 380px; width: 90%; text-align: center;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+        animation: tourSlideUp 0.4s ease;
+    }
+    .tour-completion-card .tour-emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .tour-completion-card h3 {
+        font-size: 1.15rem; font-weight: 800; color: #1e293b; margin: 0 0 0.5rem;
+    }
+    .tour-completion-card p {
+        font-size: 0.9rem; color: #475569; line-height: 1.55; margin: 0 0 1.25rem;
+    }
+    .tour-completion-card button {
+        background: #2563eb; color: #fff; border: none; border-radius: 12px;
+        padding: 0.7rem 1.5rem; font-size: 0.95rem; font-weight: 700;
+        cursor: pointer; transition: background 0.2s;
+    }
+    .tour-completion-card button:hover { background: #1d4ed8; }
+    @keyframes tourFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes tourSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -175,7 +239,7 @@
             <!-- Stats Link & Grid -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0;">Aperçu des performances</h2>
-                <a href="{% url 'prof_stats' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--dash-accent); text-decoration: none; padding: 0.4rem 0.8rem; background: #eff6ff; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                <a href="{% url 'prof_stats' %}" id="btn-voir-stats" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--dash-accent); text-decoration: none; padding: 0.4rem 0.8rem; background: #eff6ff; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
                     Voir toutes mes statistiques ❯
                 </a>
             </div>
@@ -184,12 +248,12 @@
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--dash-border); padding-right: 1rem;">
                         <div class="stat-value" style="color: var(--dash-accent);">{{ teacher.nombre_apparitions_mois }}</div>
                         <div class="stat-label">Vues</div>
-                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de fois où votre carte est apparue lors des recherches ce mois-ci.</p>
+                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de fois où votre carte est apparue lors des recherches.</p>
                     </div>
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding-left: 0.5rem;">
                         <div class="stat-value" style="color: #2563eb;">{{ teacher.nb_vues_mois }}</div>
                         <div class="stat-label">Visites</div>
-                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de clics réels sur votre profil complet ce mois-ci.</p>
+                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de clics réels sur votre profil complet.</p>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -205,7 +269,7 @@
             <!-- Engagement Management Tabs -->
             <div class="tabs-container">
                 <div class="tabs-header">
-                    <button class="tab-btn active" onclick="switchTab(event, 'tab-programmes')">
+                    <button class="tab-btn active" id="tab-essai-programme" onclick="switchTab(event, 'tab-programmes')">
                         Essai programmé
                         {% if badge_essais_programmes > 0 %}
                         <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_programmes }}</span>
@@ -1035,7 +1099,7 @@
                             <div>
                                 <strong style="display:block; font-size:1.1rem; margin-bottom:0.5rem;">Essai confirmé avec succès !</strong>
                                 <span style="font-size: 0.9rem; opacity:0.95; display:block; line-height: 1.5;">
-                                    Appuyez sur l\'icône à trois points (<strong>⋮</strong>) située sur cette carte pour rejoindre la messagerie privée avec le parent. N\'hésitez pas à lui laisser un premier message
+                                    Appuyez sur l\'icône de messagerie située en haut à droite de la carte pour rejoindre la discussion privée avec le parent. N\'hésitez pas à lui laisser un premier message.
                                 </span>
                             </div>
                         </div>
@@ -1275,6 +1339,116 @@
 {% endcomment %}
 
 {% include 'core/components/engagement_modals.html' %}
+
+{% if show_visite_guidee %}
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Attendre un court instant pour que la page soit bien rendue
+    setTimeout(function() {
+        const driver = window.driver.js.driver;
+
+        function markTourCompleted() {
+            fetch("{% url 'api_mark_visite_guidee_vue' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
+        function showCompletionModal() {
+            markTourCompleted();
+            const overlay = document.createElement('div');
+            overlay.className = 'tour-completion-overlay';
+            overlay.innerHTML = `
+                <div class="tour-completion-card">
+                    <div class="tour-emoji">🎉</div>
+                    <h3>Bienvenue sur Prof Chez Vous !</h3>
+                    <p>Vous connaissez désormais l'essentiel de votre espace. À vous de jouer : faites vivre votre profil et profitez pleinement de Prof Chez Vous !</p>
+                    <button onclick="this.closest('.tour-completion-overlay').remove()">C'est parti !</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.remove();
+            });
+        }
+
+        const driverObj = driver({
+            showProgress: true,
+            progressText: 'Étape {{current}} sur {{total}}',
+            nextBtnText: 'Suivant →',
+            prevBtnText: '← Précédent',
+            doneBtnText: 'Terminer',
+            allowClose: true,
+            overlayColor: 'rgba(15, 23, 42, 0.6)',
+            stagePadding: 8,
+            stageRadius: 12,
+            popoverOffset: 12,
+            steps: [
+                {
+                    element: '#mobileMessagerieBtn',
+                    popover: {
+                        title: 'Vos échanges, toujours à portée de main',
+                        description: 'Retrouvez ici toutes vos conversations avec les parents et apprenants, organisées dans un espace unique. Échangez facilement et ne perdez plus le fil de vos collaborations.',
+                        side: 'bottom',
+                        align: 'end'
+                    }
+                },
+                {
+                    element: '#mobileMenuToggle',
+                    popover: {
+                        title: 'Tout votre espace, en un seul endroit',
+                        description: 'Accédez rapidement à vos options : modification de votre profil, paramètres, accueil de la plateforme et déconnexion. Gardez le contrôle de votre espace professionnel.',
+                        side: 'bottom',
+                        align: 'end'
+                    }
+                },
+                {
+                    element: '#btn-voir-stats',
+                    popover: {
+                        title: "Découvrez l'impact de votre profil",
+                        description: "Consultez l'évolution de vos vues, visites, favoris et réactions. Mesurez l'intérêt suscité par votre profil et découvrez comment les familles interagissent avec votre présentation.",
+                        side: 'bottom',
+                        align: 'start'
+                    }
+                },
+                {
+                    element: '#video-promo-banner',
+                    popover: {
+                        title: 'Donnez vie à votre profil',
+                        description: 'Ajoutez ou retirez vos vidéos de présentation pour permettre aux familles de découvrir votre personnalité et votre approche pédagogique. Une autre façon de faire ressortir votre expertise.',
+                        side: 'bottom',
+                        align: 'center'
+                    }
+                },
+                {
+                    element: '#tab-essai-programme',
+                    popover: {
+                        title: 'Suivez vos collaborations à chaque étape',
+                        description: "Retrouvez ici les essais programmés, confirmez les demandes des familles et suivez l'évolution de vos engagements, de la première rencontre au cours finalisé.",
+                        side: 'top',
+                        align: 'start'
+                    }
+                }
+            ],
+            onDestroyStarted: function() {
+                if (!driverObj.hasNextStep()) {
+                    showCompletionModal();
+                } else {
+                    markTourCompleted();
+                }
+                driverObj.destroy();
+            }
+        });
+
+        driverObj.drive();
+    }, 800);
+});
+</script>
+{% endif %}
 
 {% endblock %}
 
