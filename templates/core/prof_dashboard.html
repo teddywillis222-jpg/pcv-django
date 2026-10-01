@@ -30,7 +30,7 @@
         color: #94a3b8 !important;
     }
     .driver-popover-navigation-btns .driver-popover-next-btn {
-        background: #2563eb !important;
+        background: #16a34a !important;
         border-radius: 10px !important;
         font-weight: 700 !important;
         padding: 0.4rem 1rem !important;
@@ -40,6 +40,9 @@
         border-radius: 10px !important;
         font-weight: 600 !important;
         color: #64748b !important;
+    }
+    .driver-popover-close-btn {
+        display: none !important;
     }
     /* Visite guidée – modale de fin */
     .tour-completion-overlay {
@@ -61,11 +64,11 @@
         font-size: 0.9rem; color: #475569; line-height: 1.55; margin: 0 0 1.25rem;
     }
     .tour-completion-card button {
-        background: #2563eb; color: #fff; border: none; border-radius: 12px;
+        background: #16a34a; color: #fff; border: none; border-radius: 12px;
         padding: 0.7rem 1.5rem; font-size: 0.95rem; font-weight: 700;
         cursor: pointer; transition: background 0.2s;
     }
-    .tour-completion-card button:hover { background: #1d4ed8; }
+    .tour-completion-card button:hover { background: #15803d; }
     @keyframes tourFadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes tourSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
@@ -1378,14 +1381,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const driverObj = driver({
             showProgress: true,
-            progressText: 'Étape {{current}} sur {{total}}',
+            animate: true,
+            progressText: 'Étape {% verbatim %}{{current}}{% endverbatim %} sur {% verbatim %}{{total}}{% endverbatim %}',
             nextBtnText: 'Suivant →',
             prevBtnText: '← Précédent',
             doneBtnText: 'Terminer',
-            allowClose: true,
+            allowClose: false,
             overlayColor: 'rgba(15, 23, 42, 0.6)',
-            stagePadding: 8,
-            stageRadius: 12,
+            stagePadding: 4,
+            stageRadius: 10,
             popoverOffset: 12,
             steps: [
                 {

@@ -391,9 +391,13 @@
             
             <div class="join-counter" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin: 1.5rem auto 2.5rem; background: white; padding: 0.5rem 1rem 0.5rem 0.5rem; border-radius: 9999px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); width: fit-content; border: 1px solid rgba(22, 163, 74, 0.15);">
                 <div class="avatars" style="display: flex; align-items: center;">
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; border: 2px solid white; z-index: 3; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">JD</div>
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #f59e0b; border: 2px solid white; margin-left: -12px; z-index: 2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">AM</div>
-                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; border: 2px solid white; margin-left: -12px; z-index: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">KL</div>
+                    {% for p_prof in trusted_teachers %}
+                        <img src="{{ p_prof.photo_de_profil.url }}" alt="Professeur" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white; {% if not forloop.first %}margin-left: -12px;{% endif %} position: relative; z-index: {{ 10|add:forloop.revcounter }};">
+                    {% empty %}
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; border: 2px solid white; z-index: 3; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">JD</div>
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #f59e0b; border: 2px solid white; margin-left: -12px; z-index: 2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">AM</div>
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; border: 2px solid white; margin-left: -12px; z-index: 1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">KL</div>
+                    {% endfor %}
                 </div>
                 <div style="color: var(--text-main); font-size: 0.95rem; font-weight: 600;">
                     <span style="color: var(--primary); font-weight: 800; font-size: 1.05rem;">+<span id="fakeCounter">0</span></span> profs nous font confiance

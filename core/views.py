@@ -7735,6 +7735,8 @@ def ressources_professeurs_view(request):
 
     
 
+    trusted_teachers = TeacherProfile.objects.filter(statut_de_validation='APPROVED').exclude(photo_de_profil='').order_by('-id')[:4]
+
     context = {
 
         'ressources': ressources,
@@ -7743,6 +7745,7 @@ def ressources_professeurs_view(request):
 
         'guide_officiel': guide_officiel,
 
+        'trusted_teachers': trusted_teachers,
     }
 
     return render(request, 'core/ressources_professeurs.html', context)
