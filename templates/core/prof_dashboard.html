@@ -784,9 +784,15 @@
     function showSection(sectionId, btn) {
         // Hide all sections
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
+
         // Show target section
-        document.getElementById(sectionId).style.display = 'block';
-        
+        const targetSection = document.getElementById(sectionId);
+        if (!targetSection) return;
+        targetSection.style.display = 'block';
+
+        // Scroll to top so the section is immediately visible in the viewport
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         // Update nav active states
         document.querySelectorAll('.dash-sidebar nav a, .dash-bottom-nav .nav-item').forEach(a => {
             a.classList.remove('active');
