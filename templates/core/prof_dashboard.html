@@ -131,9 +131,9 @@
     <main class="dash-main">
         {% include "core/components/_announcement_card.html" %}
 
-        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton avec état dynamique) -->
+        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton avec état dynamique) - MASQUÉ -->
         {% if site_config.allow_teacher_video_submissions %}
-        <a href="{% url 'prof_video_presentation' %}" id="video-promo-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.08); text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;"
+        <a href="{% url 'prof_video_presentation' %}" id="video-promo-banner" style="display: none !important; align-items: center; justify-content: space-between; gap: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.08); text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;"
            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(22, 163, 74, 0.15)'; this.style.borderColor='#4ade80';"
            onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 5px rgba(22, 163, 74, 0.08)'; this.style.borderColor='#86efac';">
             <div style="display: flex; align-items: center; gap: 0.95rem;">
@@ -173,7 +173,7 @@
         </a>
         {% else %}
         <!-- Version verrouillée/désactivée par l'admin : encart informatif non cliquable -->
-        <div id="video-promo-banner" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; opacity: 0.85; cursor: not-allowed;">
+        <div id="video-promo-banner" style="display: none !important; align-items: center; justify-content: space-between; gap: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; opacity: 0.85; cursor: not-allowed;">
             <div style="display: flex; align-items: center; gap: 0.95rem;">
                 <div style="width: 40px; height: 40px; border-radius: 12px; background: #94a3b8; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
                     🎬
@@ -1460,6 +1460,173 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endif %}
+
+<!-- SECTION FIABILITE (Vide pour le moment) -->
+<div id="section-fiabilite" class="dash-section" style="display: none;">
+    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--dash-text); margin-bottom: 1rem;">Score de fiabilité</h2>
+    <div style="background: white; border-radius: 20px; padding: 3rem 2rem; text-align: center; color: var(--dash-text-muted); border: 1px solid var(--dash-border);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; color: #cbd5e1;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <h3 style="font-size: 1.1rem; color: var(--dash-text); font-weight: 700; margin-bottom: 0.5rem;">Bientôt disponible</h3>
+        <p style="font-size: 0.95rem;">Votre score de fiabilité et vos badges apparaîtront ici.</p>
+    </div>
+</div>
+
+<!-- BOTTOM NAVBAR (Mobile / Touch) -->
+<style>
+/* Masquer par défaut sur desktop */
+.bottom-navbar-container {
+    display: none;
+}
+
+/* Afficher uniquement sur mobile/tablette */
+@media (max-width: 768px) {
+    /* Padding sur le body pour ne pas cacher le contenu derrière la navbar */
+    body.dashboard-page {
+        padding-bottom: 90px !important;
+    }
+
+    .bottom-navbar-container {
+        display: flex;
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: 20px;
+        height: 65px;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 8px;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .bottom-navbar-container.hidden {
+        transform: translateY(150%);
+    }
+
+    .nav-items-wrapper {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .b-nav-item {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+        color: #64748b;
+        transition: color 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .b-nav-item svg {
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .b-nav-item.active {
+        color: #ffffff;
+    }
+
+    .b-nav-item.active svg {
+        transform: translateY(-2px) scale(1.15);
+    }
+
+    .b-nav-indicator {
+        position: absolute;
+        top: 8px;
+        bottom: 8px;
+        width: 25%; /* 100% / 4 onglets */
+        background: #16a34a;
+        border-radius: 18px;
+        z-index: 1;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    }
+}
+</style>
+
+<nav class="bottom-navbar-container" id="bottom-navbar">
+    <div class="nav-items-wrapper">
+        <div class="b-nav-indicator" id="b-nav-indicator"></div>
+        
+        <!-- Onglet 1: Accueil (section-main) -->
+        <a href="javascript:void(0)" class="b-nav-item active" data-index="0" onclick="handleBottomNavClick(this, 'section-main')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </a>
+        
+        <!-- Onglet 2: Vidéos de présentation (Lien direct) -->
+        <a href="{% url 'prof_video_presentation' %}" class="b-nav-item" data-index="1" onclick="handleBottomNavClick(this, null)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+        </a>
+        
+        <!-- Onglet 3: Score de fiabilité (section-fiabilite) -->
+        <a href="javascript:void(0)" class="b-nav-item" data-index="2" onclick="handleBottomNavClick(this, 'section-fiabilite')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </a>
+        
+        <!-- Onglet 4: Paramètres (section-settings) -->
+        <a href="javascript:void(0)" class="b-nav-item" data-index="3" onclick="handleBottomNavClick(this, 'section-settings')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </a>
+    </div>
+</nav>
+
+<script>
+function handleBottomNavClick(el, sectionId) {
+    // 1. Animer la bulle active (sliding pill)
+    const index = parseInt(el.getAttribute('data-index'));
+    const indicator = document.getElementById('b-nav-indicator');
+    indicator.style.transform = `translateX(${index * 100}%)`;
+
+    // 2. Mettre à jour la classe active (couleurs et scale des icônes)
+    document.querySelectorAll('.b-nav-item').forEach(item => item.classList.remove('active'));
+    el.classList.add('active');
+
+    // 3. Afficher la section appropriée
+    if (sectionId) {
+        // Appelle la fonction existante showSection du dashboard
+        if (typeof showSection === 'function') {
+            showSection(sectionId, null);
+        } else {
+            // Fallback si la fonction n'est pas dispo (ex: sur une autre page)
+            document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
+            const target = document.getElementById(sectionId);
+            if (target) target.style.display = 'block';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// Logique de scroll pour masquer/afficher la navbar flottante
+let lastScrollY = window.scrollY;
+const bNavbar = document.getElementById('bottom-navbar');
+
+window.addEventListener('scroll', () => {
+    if (!bNavbar) return;
+    const currentScrollY = window.scrollY;
+    
+    // Si on descend (et qu'on a un peu scrollé) => masquer
+    if (currentScrollY > lastScrollY && currentScrollY > 60) {
+        bNavbar.classList.add('hidden');
+    } 
+    // Si on remonte => afficher
+    else {
+        bNavbar.classList.remove('hidden');
+    }
+    
+    lastScrollY = currentScrollY;
+}, { passive: true });
+</script>
 
 {% endblock %}
 
