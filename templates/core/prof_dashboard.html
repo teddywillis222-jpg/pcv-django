@@ -204,6 +204,8 @@
         </div>
         {% endif %}
 
+        <div id="section-main" class="dash-section">
+
         <div class="dash-header">
             <div class="dash-header-top">
                 <div class="teacher-avatar-wrapper" style="position: relative; display: inline-block;">
@@ -236,8 +238,6 @@
             </div>
         </div>
 
-        <div id="section-main" class="dash-section">
-
 
             <!-- Stats Link & Grid -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -259,14 +259,11 @@
                         <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de clics réels sur votre profil complet.</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ nb_actifs }}</div>
-                    <div class="stat-label">Contrats actifs</div>
-                </div>
-                <div class="stat-card" id="desktop-only-stat">
-                    <div class="stat-value">{{ nb_termines }}</div>
-                    <div class="stat-label">Cours terminés</div>
-                </div>
+            </div>
+
+            <!-- Titre pour la section des engagements -->
+            <div style="margin-top: 2rem; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0;">Mes Engagements</h2>
             </div>
 
             <!-- Engagement Management Tabs -->
