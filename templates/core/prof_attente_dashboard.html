@@ -361,7 +361,7 @@
             </div>
             <div>
                 <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Rejoignez la communauté !</h3>
-                <p style="margin: 0; font-size: 0.85rem; opacity: 0.95; line-height: 1.4;">Intégrez le groupe WhatsApp des professeurs pour échanger et vous entraider.</p>
+                <p style="margin: 0; font-size: 0.85rem; opacity: 0.95; line-height: 1.4;">Intégrez la chaîne WhatsApp des professeurs pour rester informé et développer votre activité de répétiteur à Cotonou.</p>
             </div>
         </div>
         <div style="background: white; color: #128C7E; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -442,7 +442,10 @@
         </div>
     </div>
 
-    <!-- NOUVELLE SECTION : Valorisation de la Vidéo -->
+    {% endif %} {# Fin du bloc if/elif/else principal (APPROVED / INCOMPLETE / else) #}
+
+    <!-- NOUVELLE SECTION : Valorisation de la Vidéo (visible pour tous les statuts non-validés) -->
+    {% if teacher.statut_de_validation != "APPROVED" %}
     <style>
     .ed-video-section {
         margin-top: 1rem;
