@@ -1500,7 +1500,7 @@ def post_signup_redirect(request):
 
             return redirect("prof_attente_dashboard")
 
-        return redirect("prof_intro")
+        return redirect("prof_create_profile")
 
 
 
