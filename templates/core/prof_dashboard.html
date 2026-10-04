@@ -1,7 +1,7 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Centre de Contrôle - Prof Chez Vous{% endblock %}
+{% block title %}Centre de ContrÃ´le - Prof Chez Vous{% endblock %}
 {% block body_class %}dashboard-page{% endblock %}
 
 {% block extra_css %}
@@ -44,7 +44,7 @@
     .driver-popover-close-btn {
         display: none !important;
     }
-    /* Visite guidée – modale de fin */
+    /* Visite guidÃ©e â€“ modale de fin */
     .tour-completion-overlay {
         position: fixed; inset: 0; background: rgba(0,0,0,0.5);
         display: flex; align-items: center; justify-content: center;
@@ -101,12 +101,12 @@
             
             <a href="{% url 'prof_video_presentation' %}" id="sidebar-nav-video" onclick="closeMobileMenu();" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                Vidéos de présentation
+                VidÃ©os de prÃ©sentation
             </a>
 
             <a href="javascript:void(0)" id="sidebar-nav-fiabilite" onclick="showSection('section-fiabilite', this); closeMobileMenu();" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
-                Score de fiabilité
+                Score de fiabilitÃ©
             </a>
 
             <a href="javascript:void(0)" onclick="showSection('section-ambassadeur', this); closeMobileMenu();" class="dash-menu-item" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: #16a34a; text-decoration: none; font-weight: 700; margin-top: 0.5rem; background: #f0fdf4; border: 1px solid #bbf7d0;">
@@ -115,14 +115,14 @@
             </a>
 
             <hr style="border: none; border-top: 1px solid var(--dash-border); margin: 0.5rem 0;">
-            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dash-text-muted); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & Paramètres</div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--dash-text-muted); margin-bottom: 0.25rem; padding-left: 0.5rem; font-weight: 800;">Compte & ParamÃ¨tres</div>
             <a href="{% url 'messagerie' %}" onclick="closeMobileMenu();" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 Messagerie
             </a>
             <a href="javascript:void(0)" onclick="showSection('section-settings', this); closeMobileMenu();" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; color: var(--dash-text-muted); text-decoration: none; font-weight: 600;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                Paramètres
+                ParamÃ¨tres
             </a>
         </nav>
 
@@ -131,7 +131,7 @@
                 {% csrf_token %}
                 <button type="submit" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #ef4444; text-decoration: none; font-weight: 700; font-size: 0.875rem; background: none; border: none; width: 100%; cursor: pointer; text-align: left;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                    Déconnexion
+                    DÃ©connexion
                 </button>
             </form>
         </div>
@@ -140,22 +140,22 @@
     <!-- Main Content -->
     <main class="dash-main">
 
-        <!-- Encart Permanent Vidéo de présentation (Action Card / Bouton avec état dynamique) - MASQUÉ -->
+        <!-- Encart Permanent VidÃ©o de prÃ©sentation (Action Card / Bouton avec Ã©tat dynamique) - MASQUÃ‰ -->
         {% if site_config.allow_teacher_video_submissions %}
         <a href="{% url 'prof_video_presentation' %}" id="video-promo-banner" style="display: none !important; align-items: center; justify-content: space-between; gap: 1rem; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.08); text-decoration: none; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;"
            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(22, 163, 74, 0.15)'; this.style.borderColor='#4ade80';"
            onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 5px rgba(22, 163, 74, 0.08)'; this.style.borderColor='#86efac';">
             <div style="display: flex; align-items: center; gap: 0.95rem;">
                 <div style="width: 40px; height: 40px; border-radius: 12px; background: #16a34a; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 2px 5px rgba(22, 163, 74, 0.3);">
-                    🎬
+                    ðŸŽ¬
                 </div>
                 <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <h4 style="margin: 0; color: #14532d; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 0.5rem;">
-                            <span>Vidéos de présentation</span>
+                            <span>VidÃ©os de prÃ©sentation</span>
                             {% if teacher.videos.exists %}
                             <span style="background: #16a34a; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
-                                {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
+                                {{ teacher.videos.count }} vidÃ©o{{ teacher.videos.count|pluralize }}
                             </span>
                             {% else %}
                             <span style="background: #eab308; color: #713f12; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
@@ -166,40 +166,40 @@
                     </div>
                     <p style="margin: 0.2rem 0 0; color: #166534; font-size: 0.825rem; font-weight: 500; line-height: 1.35;">
                         {% if teacher.videos.exists %}
-                        Gérer, ajouter ou supprimer vos vidéos de présentation pour valoriser votre profil auprès des parents.
+                        GÃ©rer, ajouter ou supprimer vos vidÃ©os de prÃ©sentation pour valoriser votre profil auprÃ¨s des parents.
                         {% else %}
-                        Ajoutez votre première vidéo YouTube pour captiver les familles et multiplier vos demandes de cours !
+                        Ajoutez votre premiÃ¨re vidÃ©o YouTube pour captiver les familles et multiplier vos demandes de cours !
                         {% endif %}
                     </p>
                 </div>
             </div>
             <div style="color: #16a34a; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; background: #ffffff; padding: 6px 12px; border-radius: 9999px; border: 1px solid #bbf7d0; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                <span>Gérer</span>
+                <span>GÃ©rer</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
             </div>
         </a>
         {% else %}
-        <!-- Version verrouillée/désactivée par l'admin : encart informatif non cliquable -->
+        <!-- Version verrouillÃ©e/dÃ©sactivÃ©e par l'admin : encart informatif non cliquable -->
         <div id="video-promo-banner" style="display: none !important; align-items: center; justify-content: space-between; gap: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 14px 18px; margin: 0 0 1.25rem 0; opacity: 0.85; cursor: not-allowed;">
             <div style="display: flex; align-items: center; gap: 0.95rem;">
                 <div style="width: 40px; height: 40px; border-radius: 12px; background: #94a3b8; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
-                    🎬
+                    ðŸŽ¬
                 </div>
                 <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <h4 style="margin: 0; color: #475569; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 0.5rem;">
-                            <span>Vidéos de présentation</span>
+                            <span>VidÃ©os de prÃ©sentation</span>
                             {% if teacher.videos.exists %}
                             <span style="background: #94a3b8; color: white; font-size: 0.725rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">
-                                {{ teacher.videos.count }} vidéo{{ teacher.videos.count|pluralize }}
+                                {{ teacher.videos.count }} vidÃ©o{{ teacher.videos.count|pluralize }}
                             </span>
                             {% endif %}
                         </h4>
                     </div>
                     <p style="margin: 0.2rem 0 0; color: #64748b; font-size: 0.825rem; font-weight: 500; line-height: 1.35;">
-                        La soumission et gestion des vidéos est temporairement fermée pour maintenance.
+                        La soumission et gestion des vidÃ©os est temporairement fermÃ©e pour maintenance.
                     </p>
                 </div>
             </div>
@@ -208,7 +208,7 @@
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                <span>Fermé</span>
+                <span>FermÃ©</span>
             </div>
         </div>
         {% endif %}
@@ -228,14 +228,14 @@
                             </div>
                         {% endif %}
                     </div>
-                    <!-- Badge vérifié -->
-                    <div title="Professeur vérifié" style="position: absolute; bottom: 0; right: 0; background: #10b981; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2.5px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                    <!-- Badge vÃ©rifiÃ© -->
+                    <div title="Professeur vÃ©rifiÃ©" style="position: absolute; bottom: 0; right: 0; background: #10b981; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2.5px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </div>
                 </div>
                 <div class="dash-title">
                     <h1>Bonjour, {{ teacher.prenom|default:request.user.first_name }} !</h1>
-                    <p>Voici l'état de votre activité aujourd'hui.</p>
+                    <p>Voici l'Ã©tat de votre activitÃ© aujourd'hui.</p>
                 </div>
             </div>
             
@@ -251,9 +251,9 @@
 
             <!-- Stats Link & Grid -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0;">Aperçu des performances</h2>
+                <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--dash-text); margin: 0;">AperÃ§u des performances</h2>
                 <a href="{% url 'prof_stats' %}" id="btn-voir-stats" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--dash-accent); text-decoration: none; padding: 0.4rem 0.8rem; background: #eff6ff; border-radius: 8px; transition: background 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
-                    Voir toutes mes statistiques ❯
+                    Voir toutes mes statistiques â¯
                 </a>
             </div>
             <div class="stats-grid">
@@ -261,12 +261,12 @@
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--dash-border); padding-right: 1rem;">
                         <div class="stat-value" style="color: var(--dash-accent);">{{ teacher.nombre_apparitions_mois }}</div>
                         <div class="stat-label">Vues</div>
-                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de fois où votre carte est apparue lors des recherches.</p>
+                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de fois oÃ¹ votre carte est apparue lors des recherches.</p>
                     </div>
                     <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; padding-left: 0.5rem;">
                         <div class="stat-value" style="color: #2563eb;">{{ teacher.nb_vues_mois }}</div>
                         <div class="stat-label">Visites</div>
-                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de clics réels sur votre profil complet.</p>
+                        <p style="font-size: 0.65rem; color: var(--dash-text-muted); margin: 0; line-height: 1.2;">Nombre de clics rÃ©els sur votre profil complet.</p>
                     </div>
                 </div>
             </div>
@@ -280,26 +280,26 @@
             <div class="tabs-container">
                 <div class="tabs-header">
                     <button class="tab-btn active" id="tab-essai-programme" onclick="switchTab(event, 'tab-programmes')">
-                        Essai programmé
+                        Essai programmÃ©
                         {% if badge_essais_programmes > 0 %}
                         <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_programmes }}</span>
                         {% endif %}
                     </button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-confirmes')">
-                        Essai confirmé
+                        Essai confirmÃ©
                         {% if badge_essais_confirmes > 0 %}
                         <span style="background: #ef4444; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">{{ badge_essais_confirmes }}</span>
                         {% endif %}
                     </button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-finalises')">
-                        Finalisé
+                        FinalisÃ©
                         {% if engs_finalises|length > 0 %}
                         <span style="background: #3b82f6; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; margin-left: 4px; vertical-align: top; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);">{{ engs_finalises|length }}</span>
                         {% endif %}
                     </button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-termines')">Terminé</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-termines')">TerminÃ©</button>
                     <button class="tab-btn" onclick="switchTab(event, 'tab-history')">Historique</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'tab-masques')">Masqués</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab-masques')">MasquÃ©s</button>
                 </div>
 
                 <!-- Tab: Programmes -->
@@ -315,8 +315,8 @@
                             <div style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; color: #64748b; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             </div>
-                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai programmé</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les demandes d'essai de vos futurs élèves apparaîtront ici. Partagez votre profil pour attirer plus de clients !</p>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai programmÃ©</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les demandes d'essai de vos futurs Ã©lÃ¨ves apparaÃ®tront ici. Partagez votre profil pour attirer plus de clients !</p>
                         </div>
                     {% endif %}
                 </div>
@@ -332,10 +332,10 @@
                     {% else %}
                         <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
                             <div style="width: 48px; height: 48px; border-radius: 50%; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
                             </div>
-                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai confirmé</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les essais que vous avez acceptés apparaîtront ici.</p>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun essai confirmÃ©</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les essais que vous avez acceptÃ©s apparaÃ®tront ici.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -353,8 +353,8 @@
                             <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                             </div>
-                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement finalisé</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Vos contrats actifs avec vos élèves s'afficheront ici une fois finalisés.</p>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement finalisÃ©</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Vos contrats actifs avec vos Ã©lÃ¨ves s'afficheront ici une fois finalisÃ©s.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -369,8 +369,8 @@
                         {% endfor %}
                     {% else %}
                         <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
-                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement terminé</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les engagements clôturés apparaîtront dans cette section.</p>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement terminÃ©</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les engagements clÃ´turÃ©s apparaÃ®tront dans cette section.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -386,10 +386,10 @@
                     {% else %}
                         <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
                             <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Historique vide</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Votre historique d'engagements apparaîtra ici au fil du temps.</p>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Votre historique d'engagements apparaÃ®tra ici au fil du temps.</p>
                         </div>
                     {% endif %}
-                <!-- Tab: Masqués -->
+                <!-- Tab: MasquÃ©s -->
                 <div id="tab-masques" class="tab-content">
                     {% if engs_tous %}
                         {% for eng in engs_tous %}
@@ -399,8 +399,8 @@
                         {% endfor %}
                     {% else %}
                         <div style="text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,255,255,0.6); border-radius: 16px; border: 1px dashed var(--dash-border); margin: 1rem 0;">
-                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement masqué</h3>
-                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les engagements que vous masquez apparaîtront ici.</p>
+                            <h3 style="font-size: 1.05rem; color: var(--dash-text); margin-bottom: 0.5rem; font-weight: 800;">Aucun engagement masquÃ©</h3>
+                            <p style="font-size: 0.85rem; color: var(--dash-text-muted); line-height: 1.5;">Les engagements que vous masquez apparaÃ®tront ici.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -441,9 +441,9 @@
         <div id="section-ambassadeur" class="dash-section" style="display:none; padding-bottom: 5rem;">
             <div>
                 <h2 class="amb-title">Programme Ambassadeur</h2>
-                <p class="amb-desc" style="margin-bottom: 0.5rem;">Recommandez Prof Chez Vous à vos collègues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vérifié.</p>
+                <p class="amb-desc" style="margin-bottom: 0.5rem;">Recommandez Prof Chez Vous Ã  vos collÃ¨gues et gagnez <strong>{{ ambassador_stats.current_reward }} FCFA</strong> pour chaque profil vÃ©rifiÃ©.</p>
                 <p style="font-size: 0.85rem; color: var(--dash-text-muted); margin-bottom: 1.5rem;">
-                    En participant, vous acceptez les <a href="{% url 'referrals:cgu' %}" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Conditions générales du Programme Ambassadeurs</a>.
+                    En participant, vous acceptez les <a href="{% url 'referrals:cgu' %}" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Conditions gÃ©nÃ©rales du Programme Ambassadeurs</a>.
                 </p>
                 
                 <div class="amb-link-box">
@@ -451,7 +451,7 @@
                         <div class="amb-link-label">Votre lien personnel</div>
                         <div class="amb-link-url" id="referral-link">https://{{ SITE_DOMAIN }}/p/{{ ambassador_stats.ambassador.code }}/</div>
                     </div>
-                    <button class="amb-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText.trim()).then(() => alert('Lien copié !'))">
+                    <button class="amb-copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('referral-link').innerText.trim()).then(() => alert('Lien copiÃ© !'))">
                         Copier le lien
                     </button>
                 </div>
@@ -462,18 +462,18 @@
                         <div class="amb-stat-val">{{ ambassador_stats.visits_count }}</div>
                     </div>
                     <div class="amb-stat">
-                        <div class="amb-stat-label">Comptes créés</div>
+                        <div class="amb-stat-label">Comptes crÃ©Ã©s</div>
                         <div class="amb-stat-val">{{ ambassador_stats.accounts_count }}</div>
                     </div>
                     <div class="amb-stat">
-                        <div class="amb-stat-label">Profs vérifiés</div>
+                        <div class="amb-stat-label">Profs vÃ©rifiÃ©s</div>
                         <div class="amb-stat-val">{{ ambassador_stats.verified_count }}</div>
                     </div>
                 </div>
                 
                 <div class="amb-rewards-grid">
                     <div class="amb-reward" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
-                        <div class="amb-reward-label" style="color: #166534;">Récompenses payées</div>
+                        <div class="amb-reward-label" style="color: #166534;">RÃ©compenses payÃ©es</div>
                         <div class="amb-reward-val" style="color: #15803d;">{{ ambassador_stats.total_paid_amount }} FCFA</div>
                     </div>
                     <div class="amb-reward" style="background: #eff6ff; border: 1px solid #bfdbfe;">
@@ -484,7 +484,7 @@
 
                 {% if ambassador_stats.referrals %}
                 <div class="amb-table-wrap" style="margin-bottom: 2rem;">
-                    <h3 class="amb-table-title">Dernières recommandations</h3>
+                    <h3 class="amb-table-title">DerniÃ¨res recommandations</h3>
                     <div style="overflow-x: auto;">
                         <table class="amb-table">
                             <thead>
@@ -502,7 +502,7 @@
                                         {% if ref.referred_teacher %}
                                             {{ ref.referred_teacher.first_name }} {{ ref.referred_teacher.last_name }}
                                         {% else %}
-                                            Compte en création
+                                            Compte en crÃ©ation
                                         {% endif %}
                                     </td>
                                     <td>
@@ -531,19 +531,19 @@
                 <div onclick="copyProfileLink('{{ request.scheme }}://{{ request.get_host }}{% url 'professeur_detail' teacher.slug %}')" 
                      style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
+                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">â¯</span>
                         <span id="copy-link-text" style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Copier le lien de mon profil</span>
                     </div>
                     <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Partagez votre lien de profil pour attirer de nouveaux clients.</p>
                 </div>
 
-                <!-- Option: Partager mon profil (Réseaux Sociaux) -->
+                <!-- Option: Partager mon profil (RÃ©seaux Sociaux) -->
                 <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; border: 1px solid #e2e8f0; transition: all 0.2s ease;">
                     <div onclick="toggleShareOptions()" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; cursor: pointer;">
-                        <span id="share-chevron" style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem; transition: transform 0.2s;">❯</span>
+                        <span id="share-chevron" style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem; transition: transform 0.2s;">â¯</span>
                         <span style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Partager mon profil</span>
                     </div>
-                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Publiez votre profil sur vos réseaux sociaux pour plus de visibilité.</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Publiez votre profil sur vos rÃ©seaux sociaux pour plus de visibilitÃ©.</p>
                     
                     {% url 'professeur_detail' teacher.slug as profile_path %}
                     {% with profile_url=request.scheme|add:"://"|add:request.get_host|add:profile_path %}
@@ -573,34 +573,103 @@
                 <a href="{% url 'professeur_detail' teacher.slug %}" target="_blank" 
                    style="text-decoration: none; background: #f8fafc; padding: 1.25rem; border-radius: 16px; cursor: pointer; border: 1px solid #e2e8f0; display: block; transition: all 0.2s ease;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">❯</span>
+                        <span style="font-weight: 900; color: var(--dash-accent); font-size: 1.1rem;">â¯</span>
                         <span style="font-weight: 800; color: var(--dash-text); font-size: 1.05rem;">Voir mon profil public</span>
                     </div>
                     <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">Consultez votre profil tel qu'il est vu par les parents et apprenants.</p>
                 </a>
 
-                <!-- Option: Toggle Trial (Bloqué) -->
+                <!-- Option: Toggle Trial (BloquÃ©) -->
                 <div id="btnToggleEssaiContainer" 
                      style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; border: 1px solid #e2e8f0; opacity: 0.6; cursor: not-allowed;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                        <span style="font-weight: 900; color: var(--dash-text-muted); font-size: 1.1rem;">❯</span>
+                        <span style="font-weight: 900; color: var(--dash-text-muted); font-size: 1.1rem;">â¯</span>
                         <span id="txtToggleEssai" style="font-weight: 800; color: var(--dash-text-muted); font-size: 1.05rem;">
-                            Essai gratuit activé (Obligatoire)
+                            Essai gratuit activÃ© (Obligatoire)
                         </span>
                     </div>
-                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">L'essai gratuit de 45 minutes est désormais obligatoire pour tous les professeurs selon nos nouvelles conditions.</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--dash-text-muted); padding-left: 1.6rem;">L'essai gratuit de 45 minutes est dÃ©sormais obligatoire pour tous les professeurs selon nos nouvelles conditions.</p>
                 </div>
 
             </div>
         </div>
 
-        <!-- SECTION FIABILITE (Vide pour le moment) -->
-        <div id="section-fiabilite" class="dash-section" style="display: none;">
-            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--dash-text); margin-bottom: 1rem;">Score de fiabilité</h2>
-            <div style="background: white; border-radius: 20px; padding: 3rem 2rem; text-align: center; color: var(--dash-text-muted); border: 1px solid var(--dash-border);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; color: #cbd5e1;"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
-                <h3 style="font-size: 1.1rem; color: var(--dash-text); font-weight: 700; margin-bottom: 0.5rem;">Bientôt disponible</h3>
-                <p style="font-size: 0.95rem;">Votre score de fiabilité et vos badges apparaîtront ici.</p>
+                <!-- SECTION FIABILITE (DÃ©tails du score) -->
+        <div id="section-fiabilite" class="dash-section" style="display: none; max-width: 800px; margin: 0 auto;">
+            <div style="background: white; border-radius: 16px; border: 1px solid var(--dash-border, #e2e8f0); overflow: hidden;">
+                <!-- Header -->
+                <div style="padding: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--dash-text, #0f172a); margin: 0 0 0.25rem 0;">Mon score de fiabilitÃ©</h2>
+                            <p style="font-size: 0.95rem; color: var(--dash-text-muted, #64748b); margin: 0;">Votre engagement sur Prof Chez Vous</p>
+                        </div>
+                        <div style="color: #16a34a; padding: 0.5rem; border-radius: 50%;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                        </div>
+                    </div>
+                    <div style="font-size: 2rem; font-weight: 800; color: #16a34a;">
+                        {{ teacher.score_fiabilite|default:0 }} points
+                    </div>
+                </div>
+
+                <div style="height: 1px; background: var(--dash-border, #f1f5f9); margin: 0 2rem;"></div>
+
+                <!-- Body -->
+                <div style="padding: 2rem;">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dash-text, #0f172a); margin: 0 0 1.5rem 0;">Mes contributions</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Ligne 1 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--dash-text, #334155); font-size: 1rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8;"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+                                Journaux de sÃ©ance
+                            </div>
+                            <div style="font-weight: 700; color: var(--dash-text, #0f172a);">
+                                +{{ stats_fiabilite.JOURNAL|default:0 }} pts
+                            </div>
+                        </div>
+
+                        <!-- Ligne 2 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--dash-text, #334155); font-size: 1rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                RÃ©activitÃ©
+                            </div>
+                            <div style="font-weight: 700; color: var(--dash-text, #0f172a);">
+                                +{{ stats_fiabilite.REACTIVITE|default:0 }} pts
+                            </div>
+                        </div>
+
+                        <!-- Ligne 3 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--dash-text, #334155); font-size: 1rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                                Collaborations achevÃ©es
+                            </div>
+                            <div style="font-weight: 700; color: var(--dash-text, #0f172a);">
+                                +{{ stats_fiabilite.ENGAGEMENT_TERMINE|default:0 }} pts
+                            </div>
+                        </div>
+
+                        <!-- Ligne 4 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--dash-text, #334155); font-size: 1rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                Reconnaissance des familles
+                            </div>
+                            <div style="font-weight: 700; color: var(--dash-text, #0f172a);">
+                                +{{ stats_fiabilite.AVIS|default:0 }} pts
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="padding: 1.5rem 2rem; background: #f8fafc; color: var(--dash-text-muted, #64748b); font-size: 0.9rem; line-height: 1.5; border-top: 1px solid var(--dash-border, #f1f5f9);">
+                    Continuez Ã  renseigner vos bilans de sÃ©ance et Ã  rÃ©pondre aux demandes des familles pour faire progresser votre score.
+                </div>
             </div>
         </div>
     </main>
@@ -611,31 +680,31 @@
 <!-- Modal Container -->
 <div id="engModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:5000; align-items:center; justify-content:center; padding: 1.5rem;">
     <div class="modal-content" style="background: white; padding: 1.5rem; border-radius: 24px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; overflow-x: hidden;">
-        <button onclick="closeEngModal()" style="position:absolute; top:1.25rem; right:1.25rem; border:none; background:#f1f5f9; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor:pointer; color: var(--dash-text-muted); display: flex; align-items: center; justify-content: center;">✕</button>
+        <button onclick="closeEngModal()" style="position:absolute; top:1.25rem; right:1.25rem; border:none; background:#f1f5f9; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor:pointer; color: var(--dash-text-muted); display: flex; align-items: center; justify-content: center;">âœ•</button>
         <div id="modalContent">
-            <h3>Détails de l'engagement</h3>
+            <h3>DÃ©tails de l'engagement</h3>
             <p>Chargement...</p>
         </div>
     </div>
 </div>
 
-{# Désactivé temporairement pour éviter la répétition : if not teacher.popup_partage_vu #}
+{# DÃ©sactivÃ© temporairement pour Ã©viter la rÃ©pÃ©tition : if not teacher.popup_partage_vu #}
 {% if False %}
 <!-- Modal Bienvenue / Incitation Partage -->
 <div class="modal-overlay" id="welcomeShareModal" style="display: flex; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 7000; align-items: center; justify-content: center; padding: 1rem;">
     <div class="modal-content" style="background: white; border-radius: 24px; width: 100%; max-width: 450px; padding: 2.5rem 2rem 2rem; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative;">
         <!-- Close Button -->
-        <button onclick="closeWelcomeShareModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:transparent; width: 32px; height: 32px; font-size: 1.25rem; font-weight: bold; cursor:pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center; transition: color 0.2s;">✕</button>
+        <button onclick="closeWelcomeShareModal()" style="position:absolute; top:1rem; right:1rem; border:none; background:transparent; width: 32px; height: 32px; font-size: 1.25rem; font-weight: bold; cursor:pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center; transition: color 0.2s;">âœ•</button>
         
         <!-- Icon -->
         <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
         </div>
         
         <!-- Text -->
-        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Boostez votre visibilité ! 🚀</h3>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Boostez votre visibilitÃ© ! ðŸš€</h3>
         <p style="font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-            Pour multiplier vos chances de trouver des élèves rapidement, <strong>partagez votre lien de profil certifié</strong> à votre réseau !
+            Pour multiplier vos chances de trouver des Ã©lÃ¨ves rapidement, <strong>partagez votre lien de profil certifiÃ©</strong> Ã  votre rÃ©seau !
         </p>
         
         <!-- Share Buttons (Copied logic from dashboard) -->
@@ -670,7 +739,7 @@
     function copyWelcomeLink(link, btn) {
         navigator.clipboard.writeText(link).then(() => {
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Lien copié ! ✓';
+            btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> Lien copiÃ© ! âœ“';
             btn.style.backgroundColor = '#dcfce7';
             btn.style.color = '#16a34a';
             btn.style.borderColor = '#bbf7d0';
@@ -713,7 +782,7 @@
         </div>
         <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Refuser la proposition ?</h3>
         <p style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin-bottom: 1.5rem;">
-            Cette action est irréversible. Le parent sera notifié de votre refus.
+            Cette action est irrÃ©versible. Le parent sera notifiÃ© de votre refus.
         </p>
         <div style="display: flex; gap: 0.75rem;">
             <button onclick="closeRefuseModal()" style="flex: 1; padding: 0.875rem; border-radius: 12px; background: #f1f5f9; color: #64748b; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s;">Annuler</button>
@@ -852,7 +921,7 @@
             const data = await response.json();
             if (data.success) {
                 if (data.actif) {
-                    txt.textContent = "Désactiver l'essai gratuit";
+                    txt.textContent = "DÃ©sactiver l'essai gratuit";
                 } else {
                     txt.textContent = "Activer l'essai gratuit";
                 }
@@ -923,16 +992,16 @@
                         </div>
                     `;
                 } else if (eng.status === 'REFUSE') {
-                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #fee2e2; color: #b91c1c; border-radius: 12px; font-weight: 700; margin-top:1rem;">${isTrial ? 'Essai refusé' : 'Proposition refusée'}</div>`;
+                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #fee2e2; color: #b91c1c; border-radius: 12px; font-weight: 700; margin-top:1rem;">${isTrial ? 'Essai refusÃ©' : 'Proposition refusÃ©e'}</div>`;
                 } else {
-                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #f0fdf4; color: #16a34a; border-radius: 12px; font-weight: 700; margin-top:1rem;">${isTrial ? 'Essai déjà accepté' : 'Demande déjà acceptée'}</div>`;
+                    actionsHtml = `<div style="text-align: center; padding: 1rem; background: #f0fdf4; color: #16a34a; border-radius: 12px; font-weight: 700; margin-top:1rem;">${isTrial ? 'Essai dÃ©jÃ  acceptÃ©' : 'Demande dÃ©jÃ  acceptÃ©e'}</div>`;
                 }
                 
                 let trialInfoHtml = '';
                 if (isTrial) {
                     trialInfoHtml = `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Matière</span>
+                            <span style="color: #64748b;">MatiÃ¨re</span>
                             <span style="font-weight: 700;">${eng.matiere}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
@@ -951,11 +1020,11 @@
                         ${eng.mode_raw !== 'ONLINE' ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Lieu</span>
-                            <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
+                            <span style="font-weight: 700;">${eng.lieu || 'Non prÃ©cisÃ©'}</span>
                         </div>` : ''}
                         ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem; max-width: 100%;">
-                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications pour trouver la maison</span>
+                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">ðŸ“ Indications pour trouver la maison</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b; max-height: 100px; overflow-y: auto; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; white-space: pre-wrap;">
                                 ${eng.indications_geographiques}
                             </div>
@@ -984,13 +1053,13 @@
                 content.innerHTML = `
                     <div style="text-align: center; margin-bottom: 1.5rem;">
                         <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">${isTrial ? "Demande de Cours d'Essai" : "Proposition d'Engagement"}</h3>
-                        <p style="font-size: 0.85rem; color: #64748b;">Détails envoyés par le client</p>
+                        <p style="font-size: 0.85rem; color: #64748b;">DÃ©tails envoyÃ©s par le client</p>
                     </div>
 
                     <div style="background: #f8fafc; padding: 1.25rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.8;">
                         ${!isTrial ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Matière</span>
+                            <span style="color: #64748b;">MatiÃ¨re</span>
                             <span style="font-weight: 700;">${eng.matiere}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
@@ -1009,36 +1078,36 @@
                         ${eng.mode_raw !== 'ONLINE' ? `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Lieu</span>
-                            <span style="font-weight: 700;">${eng.lieu || 'Non précisé'}</span>
+                            <span style="font-weight: 700;">${eng.lieu || 'Non prÃ©cisÃ©'}</span>
                         </div>` : ''}
                         ${eng.mode_raw !== 'ONLINE' && eng.indications_geographiques ? `
                         <div style="margin-bottom: 0.5rem; max-width: 100%;">
-                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">📍 Indications pour trouver la maison</span>
+                            <span style="display: block; color: #64748b; font-size: 0.82rem; margin-bottom: 4px;">ðŸ“ Indications pour trouver la maison</span>
                             <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-style: italic; color: #1e293b; max-height: 100px; overflow-y: auto; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; white-space: pre-wrap;">${eng.indications_geographiques}</div>
                         </div>` : ''}
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
                             <span style="color: #64748b;">Budget</span>
-                            <span style="font-weight: 800; color: #16a34a;">${eng.budget || 'À négocier'} FCFA/séance</span>
+                            <span style="font-weight: 800; color: #16a34a;">${eng.budget || 'Ã€ nÃ©gocier'} FCFA/sÃ©ance</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Durée d'une séance</span>
-                            <span style="font-weight: 700;">${eng.duree || 'Non précisée'}</span>
+                            <span style="color: #64748b;">DurÃ©e d'une sÃ©ance</span>
+                            <span style="font-weight: 700;">${eng.duree || 'Non prÃ©cisÃ©e'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Fréquence par semaine</span>
-                            <span style="font-weight: 700;">${eng.frequence || 'Non précisée'}</span>
+                            <span style="color: #64748b;">FrÃ©quence par semaine</span>
+                            <span style="font-weight: 700;">${eng.frequence || 'Non prÃ©cisÃ©e'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Élève / Enfant</span>
-                            <span style="font-weight: 700;">${eng.student_name || 'Non précisé'}</span>
+                            <span style="color: #64748b;">Ã‰lÃ¨ve / Enfant</span>
+                            <span style="font-weight: 700;">${eng.student_name || 'Non prÃ©cisÃ©'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.4rem;">
-                            <span style="color: #64748b;">Durée souhaitée</span>
-                            <span style="font-weight: 700;">${eng.duree_mois ? eng.duree_mois + ' mois' : 'Non précisée'}</span>
+                            <span style="color: #64748b;">DurÃ©e souhaitÃ©e</span>
+                            <span style="font-weight: 700;">${eng.duree_mois ? eng.duree_mois + ' mois' : 'Non prÃ©cisÃ©e'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #64748b;">Début souhaité</span>
-                            <span style="font-weight: 700;">${eng.date_debut || 'À convenir'}</span>
+                            <span style="color: #64748b;">DÃ©but souhaitÃ©</span>
+                            <span style="font-weight: 700;">${eng.date_debut || 'Ã€ convenir'}</span>
                         </div>` : trialInfoHtml}
                     </div>
                     ${actionsHtml}
@@ -1069,7 +1138,7 @@
         const pDesc = document.querySelector('#refuseConfirmModal p');
         if (pDesc) {
             const roleTxt = (clientRole === 'APPRENANT') ? 'l\'apprenant' : 'le parent';
-            pDesc.textContent = `Cette action est irréversible. ${roleTxt.charAt(0).toUpperCase() + roleTxt.slice(1)} sera notifié de votre refus.`;
+            pDesc.textContent = `Cette action est irrÃ©versible. ${roleTxt.charAt(0).toUpperCase() + roleTxt.slice(1)} sera notifiÃ© de votre refus.`;
         }
         
         document.getElementById('refuseConfirmModal').style.display = 'flex';
@@ -1125,11 +1194,11 @@
                 if (action === 'accepter' && data.conversation_id) {
                     document.body.insertAdjacentHTML('beforeend', `
                         <div id="ephemeral-success-alert" style="position: fixed; top: 20px; right: 20px; max-width: 450px; background: #10b981; color: white; padding: 1.2rem 1.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; font-weight: 500; opacity: 0; transition: opacity 0.4s; display: flex; align-items: flex-start; gap: 1rem;">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
                             <div>
-                                <strong style="display:block; font-size:1.1rem; margin-bottom:0.5rem;">Essai confirmé avec succès !</strong>
+                                <strong style="display:block; font-size:1.1rem; margin-bottom:0.5rem;">Essai confirmÃ© avec succÃ¨s !</strong>
                                 <span style="font-size: 0.9rem; opacity:0.95; display:block; line-height: 1.5;">
-                                    Appuyez sur l\'icône de messagerie située en haut à droite de la carte pour rejoindre la discussion privée avec le parent. N\'hésitez pas à lui laisser un premier message.
+                                    Appuyez sur l\'icÃ´ne de messagerie situÃ©e en haut Ã  droite de la carte pour rejoindre la discussion privÃ©e avec le parent. N\'hÃ©sitez pas Ã  lui laisser un premier message.
                                 </span>
                             </div>
                         </div>
@@ -1177,7 +1246,7 @@
         document.getElementById('engModal').style.display = 'none';
     }
 
-    // Fermer les menus au clic extérieur
+    // Fermer les menus au clic extÃ©rieur
     window.onclick = function(event) {
         if (!event.target.closest('.options-btn')) {
             document.querySelectorAll('.options-menu').forEach(menu => menu.classList.remove('active'));
@@ -1191,7 +1260,7 @@
         navigator.clipboard.writeText(link).then(() => {
             const textEl = document.getElementById('copy-link-text');
             const originalText = textEl.textContent;
-            textEl.textContent = "Lien copié ! ✓";
+            textEl.textContent = "Lien copiÃ© ! âœ“";
             textEl.style.color = "#16a34a";
             setTimeout(() => {
                 textEl.textContent = originalText;
@@ -1218,7 +1287,7 @@
         }).catch(e => console.warn(e));
     }
     
-    // Fonction helper si getCookie n'est pas définie
+    // Fonction helper si getCookie n'est pas dÃ©finie
     if (typeof getCookie !== 'function') {
         function getCookie(name) {
             let cookieValue = null;
@@ -1237,7 +1306,7 @@
     }
 </script>
 
-{% comment "Fonctionnalité désactivée pour le moment" %}
+{% comment "FonctionnalitÃ© dÃ©sactivÃ©e pour le moment" %}
 {% if not teacher.popup_partage_vu %}
 <!-- Popup Incitation au Partage -->
 <div id="share-profile-popup" class="modal-overlay" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
@@ -1253,7 +1322,7 @@
         </div>
 
         <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 12px; line-height: 1.2;">Faites briller votre profil !</h3>
-        <p style="font-size: 1rem; color: #475569; margin: 0 0 24px; line-height: 1.5;">Partagez votre profil sur vos réseaux pour attirer plus d'élèves. Un profil partagé reçoit en moyenne <strong style="color: #0f172a;">3 fois plus de visites</strong>.</p>
+        <p style="font-size: 1rem; color: #475569; margin: 0 0 24px; line-height: 1.5;">Partagez votre profil sur vos rÃ©seaux pour attirer plus d'Ã©lÃ¨ves. Un profil partagÃ© reÃ§oit en moyenne <strong style="color: #0f172a;">3 fois plus de visites</strong>.</p>
 
         <!-- Share Buttons -->
         <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
@@ -1332,7 +1401,7 @@
                     const originalText = textEl.textContent;
                     btn.style.borderColor = "#16a34a";
                     btn.style.color = "#16a34a";
-                    textEl.textContent = "Lien copié ! ✓";
+                    textEl.textContent = "Lien copiÃ© ! âœ“";
                     setTimeout(() => {
                         btn.style.borderColor = "#e2e8f0";
                         btn.style.color = "#334155";
@@ -1348,7 +1417,7 @@
     function shareSocial(network) {
         const profileUrl = '{{ request.scheme }}://{{ request.get_host }}{% url "professeur_detail" teacher.slug %}';
         const url = encodeURIComponent(profileUrl);
-        const text = encodeURIComponent("Découvrez mon profil sur Prof Chez Vous et réservez des cours avec moi !");
+        const text = encodeURIComponent("DÃ©couvrez mon profil sur Prof Chez Vous et rÃ©servez des cours avec moi !");
         
         let shareUrl = '';
         if (network === 'facebook') {
@@ -1393,11 +1462,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.createElement('div');
             overlay.className = 'tour-completion-overlay';
             overlay.innerHTML = `
-                <div class="tour-completion-card">
-                    <div class="tour-emoji">🎉</div>
-                    <h3>Bienvenue sur Prof Chez Vous !</h3>
-                    <p>Vous connaissez désormais l'essentiel de votre espace. À vous de jouer : faites vivre votre profil et profitez pleinement de Prof Chez Vous !</p>
-                    <button onclick="this.closest('.tour-completion-overlay').remove()">C'est parti !</button>
+                <div class="tour-completion-card" style="max-width: 420px; padding: 2.5rem 1.75rem;">
+                    <div class="tour-emoji" style="font-size: 3rem;">ðŸŽ‰</div>
+                    <h3 style="font-size: 1.3rem;">Vous Ãªtes prÃªt(e) !</h3>
+                    <p style="margin-bottom: 1.5rem;">Votre tableau de bord n'a plus de secret pour vous. Vous Ãªtes parÃ© pour recevoir et gÃ©rer vos premiÃ¨res demandes de cours.</p>
+                    
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 1.25rem; text-align: left; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <p style="color: #166534; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Une derniÃ¨re Ã©tape importante</p>
+                        <h4 style="margin: 0; font-size: 1.05rem; color: #14532d; font-weight: 800;">Rejoignez la communautÃ© !</h4>
+                        <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: #166534; line-height: 1.4;">IntÃ©grez la chaÃ®ne WhatsApp des professeurs pour rester informÃ© et dÃ©velopper votre activitÃ© de rÃ©pÃ©titeur Ã  Cotonou.</p>
+                        <a href="https://whatsapp.com/channel/0029VbD5Qni2Jl8KaiqS3k36" target="_blank" onclick="this.closest('.tour-completion-overlay').remove()" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; background: #25D366; color: white; padding: 0.75rem; border-radius: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); transition: all 0.2s;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            Rejoindre la chaÃ®ne WhatsApp
+                        </a>
+                    </div>
+
+                    <a href="javascript:void(0)" onclick="this.closest('.tour-completion-overlay').remove()" style="display: inline-block; color: #64748b; font-size: 0.9rem; font-weight: 600; text-decoration: none; padding: 0.5rem; transition: color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'">Non merci, accÃ©der Ã  mon tableau de bord</a>
                 </div>
             `;
             document.body.appendChild(overlay);
@@ -1411,9 +1491,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const driverObj = driver({
             showProgress: true,
             animate: true,
-            progressText: 'Étape {% verbatim %}{{current}}{% endverbatim %} sur {% verbatim %}{{total}}{% endverbatim %}',
-            nextBtnText: 'Suivant ❯',
-            prevBtnText: '❮ Précédent',
+            progressText: 'Ã‰tape {% verbatim %}{{current}}{% endverbatim %} sur {% verbatim %}{{total}}{% endverbatim %}',
+            nextBtnText: 'Suivant â¯',
+            prevBtnText: 'â® PrÃ©cÃ©dent',
             doneBtnText: 'Terminer',
             allowClose: false,
             overlayColor: 'rgba(15, 23, 42, 0.6)',
@@ -1424,8 +1504,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     element: '#mobileMessagerieBtn',
                     popover: {
-                        title: 'Vos échanges, toujours à portée de main',
-                        description: 'Retrouvez ici toutes vos conversations avec les parents et apprenants, organisées dans un espace unique. Échangez facilement et ne perdez plus le fil de vos collaborations.',
+                        title: 'Vos Ã©changes, toujours Ã  portÃ©e de main',
+                        description: 'Retrouvez ici toutes vos conversations avec les parents et apprenants, organisÃ©es dans un espace unique. Ã‰changez facilement et ne perdez plus le fil de vos collaborations.',
                         side: 'bottom',
                         align: 'end'
                     }
@@ -1434,7 +1514,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     element: '#mobileMenuToggle',
                     popover: {
                         title: 'Tout votre espace, en un seul endroit',
-                        description: 'Accédez rapidement à vos options : modification de votre profil, paramètres, accueil de la plateforme et déconnexion. Gardez le contrôle de votre espace professionnel.',
+                        description: 'AccÃ©dez rapidement Ã  vos options : modification de votre profil, paramÃ¨tres, accueil de la plateforme et dÃ©connexion. Gardez le contrÃ´le de votre espace professionnel.',
                         side: 'bottom',
                         align: 'end'
                     }
@@ -1442,8 +1522,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     element: '#btn-voir-stats',
                     popover: {
-                        title: "Découvrez l'impact de votre profil",
-                        description: "Consultez l'évolution de vos vues, visites, favoris et réactions. Mesurez l'intérêt suscité par votre profil et découvrez comment les familles interagissent avec votre présentation.",
+                        title: "DÃ©couvrez l'impact de votre profil",
+                        description: "Consultez l'Ã©volution de vos vues, visites, favoris et rÃ©actions. Mesurez l'intÃ©rÃªt suscitÃ© par votre profil et dÃ©couvrez comment les familles interagissent avec votre prÃ©sentation.",
                         side: 'bottom',
                         align: 'start'
                     }
@@ -1451,8 +1531,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     element: isMobile ? '#bottom-nav-video' : '#sidebar-nav-video',
                     popover: {
-                        title: 'Donnez vie à votre profil',
-                        description: 'Ajoutez ou retirez vos vidéos de présentation pour permettre aux familles de découvrir votre personnalité et votre approche pédagogique. Une autre façon de faire ressortir votre expertise.',
+                        title: 'Donnez vie Ã  votre profil',
+                        description: 'Ajoutez ou retirez vos vidÃ©os de prÃ©sentation pour permettre aux familles de dÃ©couvrir votre personnalitÃ© et votre approche pÃ©dagogique. Une autre faÃ§on de faire ressortir votre expertise.',
                         side: isMobile ? 'top' : 'right',
                         align: 'center'
                     }
@@ -1460,8 +1540,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     element: isMobile ? '#bottom-nav-fiabilite' : '#sidebar-nav-fiabilite',
                     popover: {
-                        title: 'Votre fiabilité, en un coup d’œil',
-                        description: 'Consultez votre score, suivez vos points et découvrez comment chaque action renforce la confiance des familles.',
+                        title: 'Votre fiabilitÃ©, en un coup dâ€™Å“il',
+                        description: 'Consultez votre score, suivez vos points et dÃ©couvrez comment chaque action renforce la confiance des familles.',
                         side: isMobile ? 'top' : 'right',
                         align: 'center'
                     }
@@ -1469,8 +1549,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     element: '#tab-essai-programme',
                     popover: {
-                        title: 'Suivez vos collaborations à chaque étape',
-                        description: "Retrouvez ici les essais programmés, confirmez les demandes des familles et suivez l'évolution de vos engagements, de la première rencontre au cours finalisé.",
+                        title: 'Suivez vos collaborations Ã  chaque Ã©tape',
+                        description: "Retrouvez ici les essais programmÃ©s, confirmez les demandes des familles et suivez l'Ã©volution de vos engagements, de la premiÃ¨re rencontre au cours finalisÃ©.",
                         side: 'top',
                         align: 'start'
                     }
@@ -1494,14 +1574,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- BOTTOM NAVBAR (Mobile / Touch) -->
 <style>
-/* Masquer par défaut sur desktop */
+/* Masquer par dÃ©faut sur desktop */
 .bottom-navbar-container {
     display: none;
 }
 
 /* Afficher uniquement sur mobile/tablette */
 @media (max-width: 768px) {
-    /* Padding sur le body pour ne pas cacher le contenu derrière la navbar */
+    /* Padding sur le body pour ne pas cacher le contenu derriÃ¨re la navbar */
     body.dashboard-page {
         padding-bottom: 90px !important;
     }
@@ -1585,17 +1665,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         </a>
         
-        <!-- Onglet 2: Vidéos de présentation (Lien direct) -->
+        <!-- Onglet 2: VidÃ©os de prÃ©sentation (Lien direct) -->
         <a href="{% url 'prof_video_presentation' %}" id="bottom-nav-video" class="b-nav-item" data-index="1" onclick="handleBottomNavClick(this, null)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
         </a>
         
-        <!-- Onglet 3: Score de fiabilité (section-fiabilite) -->
+        <!-- Onglet 3: Score de fiabilitÃ© (section-fiabilite) -->
         <a href="javascript:void(0)" id="bottom-nav-fiabilite" class="b-nav-item" data-index="2" onclick="handleBottomNavClick(this, 'section-fiabilite')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
         </a>
         
-        <!-- Onglet 4: Paramètres (section-settings) -->
+        <!-- Onglet 4: ParamÃ¨tres (section-settings) -->
         <a href="javascript:void(0)" class="b-nav-item" data-index="3" onclick="handleBottomNavClick(this, 'section-settings')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </a>
@@ -1609,11 +1689,11 @@ function handleBottomNavClick(el, sectionId) {
     const indicator = document.getElementById('b-nav-indicator');
     indicator.style.transform = `translateX(${index * 100}%)`;
 
-    // 2. Mettre à jour la classe active (couleurs et scale des icônes)
+    // 2. Mettre Ã  jour la classe active (couleurs et scale des icÃ´nes)
     document.querySelectorAll('.b-nav-item').forEach(item => item.classList.remove('active'));
     el.classList.add('active');
 
-    // 3. Afficher la section appropriée
+    // 3. Afficher la section appropriÃ©e
     if (sectionId) {
         // Appelle la fonction existante showSection du dashboard
         if (typeof showSection === 'function') {
@@ -1636,7 +1716,7 @@ window.addEventListener('scroll', () => {
     if (!bNavbar) return;
     const currentScrollY = window.scrollY;
     
-    // Si on descend (et qu'on a un peu scrollé) => masquer
+    // Si on descend (et qu'on a un peu scrollÃ©) => masquer
     if (currentScrollY > lastScrollY && currentScrollY > 60) {
         bNavbar.classList.add('hidden');
     } 
