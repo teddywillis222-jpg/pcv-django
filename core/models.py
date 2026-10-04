@@ -1173,7 +1173,6 @@ class TeacherProfile(models.Model):
     )
 
     est_certifie = models.BooleanField(default=False)
-
     score_fiabilite = models.PositiveBigIntegerField(default=0, help_text="Total des points cumulés de fiabilité")
     date_dernier_calcul_score = models.DateTimeField(null=True, blank=True, help_text="Date de la dernière actualisation du score")
 
@@ -2986,8 +2985,8 @@ class OperationScoreFiabilite(models.Model):
     professeur = models.ForeignKey(TeacherProfile, on_delete=models.CASCADE, related_name='operations_fiabilite')
     type_operation = models.CharField(max_length=50, choices=TYPE_OPERATION_CHOICES)
     points = models.IntegerField(help_text="Nombre de points attribués")
-    reference_type = models.CharField(max_length=100)
-    reference_id = models.CharField(max_length=255)
+    reference_type = models.CharField(max_length=100, help_text="Type d'objet source (ex: Seance, Engagement, Avis)")
+    reference_id = models.CharField(max_length=255, help_text="ID de l'objet source")
     date_creation = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='VALIDE')
