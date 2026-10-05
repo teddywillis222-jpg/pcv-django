@@ -1464,14 +1464,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.createElement('div');
             overlay.className = 'tour-completion-overlay';
             overlay.innerHTML = `
-                <div class="tour-completion-card" style="padding: 2.5rem 2rem;">
-                    <div style="background: #eef2ff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <div class="tour-completion-card" style="padding: 2.5rem 2rem; max-width: 420px;">
+                    
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🎉</div>
+                        <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0 0 0.75rem 0;">Vous êtes prêt(e) !</h2>
+                        <p style="font-size: 0.95rem; color: #475569; line-height: 1.6; margin: 0;">Votre tableau de bord n'a plus de secret pour vous. Vous êtes paré pour recevoir et gérer vos premières demandes de cours.</p>
                     </div>
-                    <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #0f172a;">Rejoignez la communauté</h2>
-                    <p style="font-size: 1rem; color: #475569; margin-bottom: 2rem; line-height: 1.6;">Pour ne rater aucune opportunité de cours et échanger avec les autres professeurs, rejoignez notre canal WhatsApp exclusif.</p>
-                    <a href="https://whatsapp.com/channel/0029Val4Hn1I7BeC0m1oXz34" target="_blank" onclick="this.closest('.tour-completion-overlay').remove()" style="display: block; background: #25D366; color: white; text-decoration: none; padding: 0.8rem 2rem; border-radius: 12px; font-size: 1.05rem; font-weight: 700; text-align: center; margin-bottom: 1rem; transition: all 0.2s;">Rejoindre le canal WhatsApp</a>
-                    <button onclick="this.closest('.tour-completion-overlay').remove()" style="background: transparent; color: #64748b; border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: underline;">Plus tard, accéder à mon espace</button>
+
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 1.1rem;">🟢</span>
+                            <span style="font-size: 1rem; font-weight: 700; color: #166534;">Une dernière étape importante</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #334155; line-height: 1.5; margin: 0;">Intégrez la communauté des professeurs pour rester informé et développer votre activité de répétiteur à Cotonou.</p>
+                    </div>
+
+                    <a href="https://whatsapp.com/channel/0029VbD5Qni2Jl8KaiqS3k36" target="_blank" onclick="this.closest('.tour-completion-overlay').remove()" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: #25D366; color: white; text-decoration: none; padding: 0.85rem 2rem; border-radius: 12px; font-size: 1.05rem; font-weight: 700; text-align: center; margin-bottom: 1rem; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);">
+                        <span>👉</span> Rejoindre la chaîne WhatsApp
+                    </a>
+                    <button onclick="this.closest('.tour-completion-overlay').remove()" style="display: block; width: 100%; background: transparent; color: #94a3b8; border: none; font-size: 0.9rem; font-weight: 500; cursor: pointer; padding: 0.5rem;">Non merci, accéder directement à mon tableau de bord</button>
                 </div>
             `;
             document.body.appendChild(overlay);
