@@ -1550,7 +1550,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             ],
+            onHighlightStarted: function(element) {
+                if (element && element.style) {
+                    element.style.pointerEvents = 'none';
+                    element.setAttribute('data-tour-blocked', 'true');
+                }
+            },
             onDestroyStarted: function() {
+                document.querySelectorAll('[data-tour-blocked]').forEach(function(el) {
+                    el.style.pointerEvents = '';
+                    el.removeAttribute('data-tour-blocked');
+                });
                 if (!driverObj.hasNextStep()) {
                     showCompletionModal();
                 } else {
