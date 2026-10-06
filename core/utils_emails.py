@@ -299,68 +299,70 @@ def send_essai_confirmed_email(parent_user, engagement):
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
         dt_local = tz.localtime(engagement.date_heure_essai)
-        date_str = format_date_fr(dt_local)
+        # Format simple (tu peux ajuster format_date_fr si nécessaire)
+        # mais on utilise celui-là par defaut
+        try:
+            date_str = format_date_fr(dt_local)
+        except NameError:
+            date_str = dt_local.strftime('%d/%m/%Y à %H:%M')
+    else:
+        date_str = "Date non précisée"
 
-    # Lien vers le bon espace selon le rôle
     from django.urls import reverse
+    
+    # URL vers la messagerie (si applicable) ou le dashboard
+    # S'il y a une conversation avec le prof, l'utilisateur la trouvera dans sa messagerie
+    dashboard_url = get_full_url(reverse("parent_dashboard")) if hasattr(parent_user, 'parent') else get_full_url(reverse("apprenant_dashboard"))
+    
+    sujet = f"Cours d'essai confirmé avec {prof_name} !"
     is_parent = hasattr(parent_user, 'parent')
     
     if is_parent:
-        dashboard_url = get_full_url(reverse("parent_dashboard"))
         prenom_enfant = "votre enfant"
         if engagement.enfants_concernes.exists():
             prenom_enfant = engagement.enfants_concernes.first().prenom
         
-        sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
         message = f"""Bonjour {parent_name},
 
-Bonne nouvelle ! Le professeur {prof_name} vient de confirmer votre cours d’essai.
+Bonne nouvelle ! {prof_name} vient de confirmer votre séance d'essai pour {prenom_enfant}.
 
-Récapitulatif :
+📋 Récapitulatif :
 Professeur : {prof_name}
 Matière : {matiere}
 Date et heure : {date_str}
 
 Que faire maintenant ?
-1. Connectez-vous à votre espace pour consulter tous les détails de la séance.
-2. Préparez vos questions ou les points que vous souhaitez aborder durant ce premier cours.
-3. Profitez de cette séance pour évaluer la pédagogie du professeur et voir si le courant passe.
+Accéder à la messagerie pour préciser le lieu exact de la séance avec le professeur.
+Préparez les derniers devoirs ou chapitres où {prenom_enfant} rencontre des difficultés.
 
-🎁 Et si vous poursuivez cette collaboration ?
-En officialisant votre engagement sur Prof Chez Vous après l’essai, vous débloquez le Cahier de Suivi Digital de {prenom_enfant}. Vous pourrez ainsi consulter un bilan détaillé de sa progression après chaque séance et suivre son accompagnement dans la durée.
+💡 Remarque : L'essai est entièrement gratuit. Si la séance est concluante, vous pourrez officialiser votre professeur via la formule Access+ (2 000 F/mois) pour débloquer le cahier de suivi de {prenom_enfant}.
 
-👉 Accéder à mon espace : {dashboard_url}
-
-Nous vous souhaitons une excellente première séance !
+👉 Discuter avec le professeur :
+{dashboard_url}
 
 Cordialement,
-L'équipe Prof Chez Vous."""
+L'équipe Prof Chez Vous"""
     else:
-        dashboard_url = get_full_url(reverse("apprenant_dashboard"))
-        sujet = "Votre cours d'essai est confirmé ! – Prof Chez Vous"
         message = f"""Bonjour {parent_name},
 
-Bonne nouvelle ! Le professeur {prof_name} vient de confirmer votre cours d’essai.
+Bonne nouvelle ! {prof_name} vient de confirmer votre séance d'essai.
 
-Récapitulatif :
+📋 Récapitulatif :
 Professeur : {prof_name}
 Matière : {matiere}
 Date et heure : {date_str}
 
 Que faire maintenant ?
-1. Connectez-vous à votre espace pour consulter tous les détails de la séance.
-2. Préparez vos questions ou les points que vous souhaitez aborder durant ce premier cours.
-3. Profitez de cette séance pour évaluer la pédagogie du professeur et voir si le courant passe.
+Accéder à la messagerie pour préciser le lieu exact de la séance avec le professeur.
+Préparez les derniers devoirs ou chapitres où vous rencontrez des difficultés.
 
-🎁 Et si vous poursuivez cette collaboration ?
-En officialisant votre engagement sur Prof Chez Vous après l’essai, vous débloquez votre Cahier de Suivi Digital. Vous pourrez ainsi consulter un bilan détaillé de votre progression après chaque séance et suivre votre accompagnement dans la durée.
+💡 Remarque : L'essai est entièrement gratuit. Si la séance est concluante, vous pourrez officialiser votre professeur via la formule Access+ (2 000 F/mois) pour débloquer votre cahier de suivi.
 
-👉 Accéder à mon espace : {dashboard_url}
-
-Nous vous souhaitons une excellente première séance !
+👉 Discuter avec le professeur :
+{dashboard_url}
 
 Cordialement,
-L'équipe Prof Chez Vous."""
+L'équipe Prof Chez Vous"""
 
     try:
         from django.core.mail import send_mail
@@ -541,8 +543,77 @@ def send_essai_realise_email(parent_user, engagement):
     """
     Email envoyé au parent ou apprenant lorsque l'essai passe au statut ESSAI_REALISE.
     """
+    import logging
+    logger = logging.getLogger(__name__)
     if not parent_user.email:
         logger.warning("Aucun email pour %s (id=%s), notification de réalisation d'essai ignorée.", parent_user.username, parent_user.pk)
+        return False
+
+    dest_email = parent_user.email
+    prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip() or "Votre professeur"
+    prenom_destinataire = parent_user.first_name or "Cher(e) utilisateur"
+    
+    # Bouton d'officialisation
+    from django.urls import reverse
+    officialiser_url = get_full_url(reverse("finalisation_engagement", args=[engagement.id]))
+    
+    is_parent = hasattr(parent_user, 'parent')
+
+    if is_parent:
+        prenom_enfant = "votre enfant"
+        if engagement.enfants_concernes.exists():
+            prenom_enfant = engagement.enfants_concernes.first().prenom
+
+        sujet = f"Comment s'est passé l'essai de {prenom_enfant} ? 🎓"
+        message = f"""Bonjour {prenom_destinataire},
+
+La séance d'essai avec {prof_name} est marquée comme réalisée.
+
+Si sa pédagogie vous convient, il est temps d'officialiser votre collaboration sur Prof Chez Vous pour engager le professeur dans la durée.
+
+Pourquoi officialiser avec le Pass Access+ (2 000 FCFA / mois) ?
+Obligation de Suivi : {prof_name} débloque son accès au Cahier de Suivi Digital et s'engage à vous transmettre un bilan après chaque cours.
+Garantie Remplacement : Si le professeur n'est plus disponible ou ne convient plus, nous vous en trouvons un autre sans aucun frais supplémentaire.
+
+💡 Remarque : Les cours eux-mêmes sont réglés directement au professeur selon ce que vous avez convenu ensemble.
+
+👉 Officialiser la collaboration & Activer Access+ :
+{officialiser_url}
+
+L’équipe Prof Chez Vous"""
+    else:
+        sujet = "Comment s'est passé votre essai ? 🎓"
+        message = f"""Bonjour {prenom_destinataire},
+
+La séance d'essai avec {prof_name} est marquée comme réalisée.
+
+Si sa pédagogie vous convient, il est temps d'officialiser votre collaboration sur Prof Chez Vous pour engager le professeur dans la durée.
+
+Pourquoi officialiser avec le Pass Access+ (2 000 FCFA / mois) ?
+Obligation de Suivi : {prof_name} débloque son accès au Cahier de Suivi Digital et s'engage à vous transmettre un bilan après chaque cours.
+Garantie Remplacement : Si le professeur n'est plus disponible ou ne convient plus, nous vous en trouvons un autre sans aucun frais supplémentaire.
+
+💡 Remarque : Les cours eux-mêmes sont réglés directement au professeur selon ce que vous avez convenu ensemble.
+
+👉 Officialiser la collaboration & Activer Access+ :
+{officialiser_url}
+
+L’équipe Prof Chez Vous"""
+
+    try:
+        from django.core.mail import send_mail
+        from django.conf import settings
+        send_mail(
+            subject=sujet,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[dest_email],
+            fail_silently=False,
+        )
+        logger.info("Email d'essai réalisé envoyé avec succès à %s.", dest_email)
+        return True
+    except Exception as e:
+        logger.error("Échec d'envoi de l'email d'essai réalisé à %s : %s", dest_email, e, exc_info=True)
         return False
 
     dest_email = parent_user.email
