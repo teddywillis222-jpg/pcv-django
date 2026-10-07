@@ -3970,13 +3970,6 @@ def api_engagement(request):
 
         type_eng = EngagementType.ESSAI if engagement_type_str == 'essai' else EngagementType.NORMAL
 
-        if type_eng == EngagementType.ESSAI:
-            essais_utilises = request.user.engagements_client.filter(
-                type_engagement=EngagementType.ESSAI
-            ).count()
-            if essais_utilises >= 1:
-                return JsonResponse({'error': 'Vous avez déjà utilisé votre essai gratuit.'}, status=400)
-
         # Recherche d'un engagement existant non terminé
 
         existing = Engagement.objects.filter(
@@ -3986,7 +3979,6 @@ def api_engagement(request):
             parent_apprenant=request.user
 
         ).exclude(statut_general__in=[StatutGeneral.TERMINE, StatutGeneral.ANNULE, StatutGeneral.REFUSE, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).first()
-
 
 
         engagement = None
@@ -4028,6 +4020,16 @@ def api_engagement(request):
         is_new_engagement = False
 
         if not engagement:
+
+            # Vérifier le quota d'essai uniquement lors d'une NOUVELLE création (pas une mise à jour)
+            if type_eng == EngagementType.ESSAI:
+                essais_utilises = request.user.engagements_client.filter(
+                    type_engagement=EngagementType.ESSAI
+                ).exclude(
+                    statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
+                ).count()
+                if essais_utilises >= 1:
+                    return JsonResponse({'error': 'Vous avez déjà utilisé votre essai gratuit.'}, status=400)
 
             engagement = Engagement(
 
