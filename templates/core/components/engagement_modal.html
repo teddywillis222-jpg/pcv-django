@@ -280,15 +280,15 @@
 
 <!-- Modal Succès Engagement -->
 <div id="engagementSuccessModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem;">
-    <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 450px; text-align: center; padding: 2.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
-        <div style="width: 70px; height: 70px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-            <svg width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 450px; text-align: center; padding: 1.5rem 2rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+        <div style="width: 50px; height: 50px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
         
         <!-- STANDARD SUCCESS -->
         <div id="eng_success_standard" style="display: none;">
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Proposition envoyée !</h3>
-            <p style="color: #64748b; margin-bottom: 2rem; line-height: 1.6;">Votre proposition d'engagement a été soumise avec succès. Le professeur a été notifié et vous répondra très bientôt.</p>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Proposition envoyée !</h3>
+            <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.5;">Votre proposition d'engagement a été soumise avec succès. Le professeur a été notifié et vous répondra très bientôt.</p>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <a id="btn_go_dashboard_standard" href="#" style="padding: 1rem; background: #16a34a; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s;">Accéder à mon espace</a>
                 <button onclick="closeEngagementSuccessModal()" style="padding: 1rem; background: #f1f5f9; color: #475569; border: none; border-radius: 0.75rem; font-weight: 700; cursor: pointer;">Rester sur cette page</button>
@@ -297,49 +297,49 @@
 
         <!-- ESSAI SUCCESS (PARENT) -->
         <div id="eng_success_essai_parent" style="display: none; text-align: center;">
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Essai programmé !</h3>
-            <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.6;">Votre demande a été transmise à <strong id="eng_success_prof_name_parent">ce professeur</strong>.<br>Vous recevrez une notification dès sa confirmation.</p>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Essai programmé !</h3>
+            <p style="color: #64748b; margin-bottom: 1.25rem; line-height: 1.5;">Votre demande a été transmise à <strong id="eng_success_prof_name_parent">ce professeur</strong>.<br>Vous recevrez une notification dès sa confirmation.</p>
             
-            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 1.5rem 0;">
+            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 1.25rem 0;">
             
-            <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;">
-                <h4 style="font-size: 1rem; font-weight: 800; color: #86198f; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 1rem; padding: 1rem; margin-bottom: 1.25rem; text-align: left;">
+                <h4 style="font-size: 1rem; font-weight: 800; color: #f59e0b; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
                     <span>🎁</span> PENSEZ À LA SUITE AVEC LA FORMULE ACCESS+
                 </h4>
-                <p style="font-size: 0.85rem; color: #4a044e; margin: 0 0 0.75rem 0; font-weight: 600;">Pour seulement 2 000 FCFA/mois, débloquez :</p>
-                <ul style="font-size: 0.85rem; color: #701a75; margin: 0; padding-left: 1.25rem; line-height: 1.5;">
-                    <li>Le Cahier de suivi digital de <strong id="eng_success_enfant_name">votre enfant</strong></li>
+                <p style="font-size: 0.85rem; color: #b45309; margin: 0 0 0.5rem 0; font-weight: 600;">Pour seulement 2 000 FCFA/mois, débloquez :</p>
+                <ul style="font-size: 0.85rem; color: #92400e; margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+                    <li>L'espace de suivi digital de <strong id="eng_success_enfant_name">votre enfant</strong></li>
                     <li>La Garantie de remplacement gratuit si besoin</li>
                     <li>La possibilité de programmer d'autres essais</li>
                 </ul>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="/parent/plan/" style="padding: 1rem; background: #c026d3; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s;">Découvrir la formule Access+</a>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="/parent/plan/" style="padding: 1rem; background: #f59e0b; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s; box-shadow: 0 3px 10px rgba(245,158,11,0.2);">Découvrir la formule Access+</a>
                 <a id="btn_go_dashboard_parent_secondary" href="#" style="padding: 1rem; background: transparent; color: #64748b; border: none; border-radius: 0.75rem; font-weight: 600; text-decoration: underline; cursor: pointer;">Non merci, je continue sans le suivi de <span id="eng_success_enfant_name_btn">mon enfant</span> ❯</a>
             </div>
         </div>
 
         <!-- ESSAI SUCCESS (APPRENANT) -->
         <div id="eng_success_essai_apprenant" style="display: none; text-align: center;">
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">Essai programmé !</h3>
-            <p style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.6;">Votre demande a été transmise à <strong id="eng_success_prof_name_apprenant">ce professeur</strong>.<br>Vous recevrez une notification dès sa confirmation.</p>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Essai programmé !</h3>
+            <p style="color: #64748b; margin-bottom: 1.25rem; line-height: 1.5;">Votre demande a été transmise à <strong id="eng_success_prof_name_apprenant">ce professeur</strong>.<br>Vous recevrez une notification dès sa confirmation.</p>
             
-            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 1.5rem 0;">
+            <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 1.25rem 0;">
             
-            <div style="background: #fdf4ff; border: 1px solid #f5d0fe; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;">
-                <h4 style="font-size: 1rem; font-weight: 800; color: #86198f; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 1rem; padding: 1rem; margin-bottom: 1.25rem; text-align: left;">
+                <h4 style="font-size: 1rem; font-weight: 800; color: #f59e0b; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
                     <span>🎁</span> PENSEZ À LA SUITE AVEC LA FORMULE ACCESS+
                 </h4>
-                <ul style="font-size: 0.85rem; color: #701a75; margin: 0; padding-left: 1.25rem; line-height: 1.5;">
-                    <li>Votre Tableau de bord de progression & historique des séances</li>
+                <ul style="font-size: 0.85rem; color: #92400e; margin: 0; padding-left: 1.25rem; line-height: 1.5;">
+                    <li>L'espace de suivi digital de votre apprentissage</li>
                     <li>La garantie de changer de professeur à tout moment</li>
                     <li>Des essais illimités pour couvrir toutes vos matières</li>
                 </ul>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="/apprenant/plan/" style="padding: 1rem; background: #c026d3; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s;">Découvrir la formule Access+</a>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="/apprenant/plan/" style="padding: 1rem; background: #f59e0b; color: white; border-radius: 0.75rem; font-weight: 700; text-decoration: none; transition: transform 0.2s; box-shadow: 0 3px 10px rgba(245,158,11,0.2);">Découvrir la formule Access+</a>
                 <a id="btn_go_dashboard_apprenant_secondary" href="#" style="padding: 1rem; background: transparent; color: #64748b; border: none; border-radius: 0.75rem; font-weight: 600; text-decoration: underline; cursor: pointer;">Non merci, je continue sans mon outil de suivi personnel ❯</a>
             </div>
         </div>
