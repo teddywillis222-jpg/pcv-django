@@ -16,22 +16,19 @@ new_content = '''                    {% if eng.statut_general in "EN_ATTENTE,ESS
                     {% endif %}
 '''
 
-start_idx = -1
-end_idx = -1
 for i, line in enumerate(lines):
-    if "{% if eng.statut_general == 'ESSAI_CONFIRME' %}" in line and i > 100:
-        start_idx = i
-        # find the end matching this block
-        for j in range(start_idx, start_idx + 15):
-            if "{% endif %}" in lines[j] and j > start_idx + 5:
-                end_idx = j
+    if "{% if eng.statut_general == 'ESSAI_CONFIRME' %}" in line and i > 100 and i < 150:
+        start = i
+        # find end
+        for j in range(start, start + 30):
+            if "{% endif %}" in lines[j] and j > start + 3:
+                end = j
                 break
+        
+        lines = lines[:start] + [new_content] + lines[end+1:]
         break
 
-if start_idx != -1 and end_idx != -1:
-    lines = lines[:start_idx] + [new_content] + lines[end_idx+1:]
-    with open(path, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
-    print("Replaced lines", start_idx, "to", end_idx)
-else:
-    print("Could not find lines to replace")
+with open(path, 'w', encoding='utf-8') as f:
+    f.writelines(lines)
+    
+print("Fixed replacement!")

@@ -11,7 +11,7 @@
             </button>
         </div>
         
-        <form id="engagementForm" onsubmit="submitEngagement(event, 'eng_submit_btn')" style="padding: 1.5rem;">
+        <form id="engagementForm" novalidate onsubmit="submitEngagement(event, 'eng_submit_btn')" style="padding: 1.5rem;">
             <input type="hidden" id="eng_id_hidden" name="engagement_id">
             <input type="hidden" id="eng_teacher_id" name="teacher_id">
             <input type="hidden" id="eng_teacher_name_hidden" name="teacher_name">
@@ -170,7 +170,7 @@
             </div>
         </div>
 
-        <form id="essaiForm" onsubmit="submitEngagement(event, 'essai_submit_btn')" style="padding: 1.5rem;">
+        <form id="essaiForm" novalidate onsubmit="submitEngagement(event, 'essai_submit_btn')" style="padding: 1.5rem;">
             <input type="hidden" id="essai_id_hidden" name="engagement_id">
             <input type="hidden" id="essai_teacher_id" name="teacher_id">
             <input type="hidden" id="essai_teacher_name_hidden" name="teacher_name">
@@ -241,13 +241,12 @@
 
             <!-- Indications géographiques -->
             <div id="essai_field_indications" style="display: none; margin-bottom: 1.25rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Indications pour trouver votre maison</label>
+                <label style="display: none; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Indications pour trouver votre maison</label>
                 <textarea id="essai_indications_geo" name="indications_geographiques" rows="3"
-                    placeholder="Ex: Calavi Kpota, virer juste après la Pharmacie du Peuple, 3ème maison à barrière bleue."
-                    style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; box-sizing: border-box;"></textarea>
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; padding: 0.6rem 0.85rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.6rem;">
-                    <span style="font-size: 1rem; flex-shrink: 0;">⚠️</span>
-                    <p style="margin: 0; font-size: 0.78rem; color: #9a3412; line-height: 1.4; font-weight: 500;">Sécurité : Pour votre protection, l'échange de numéros de téléphone est interdit à cette étape. Tout numéro détecté sera automatiquement masqué par le système.</p>
+                    style="display: none; width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; resize: vertical; font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s; box-sizing: border-box;"></textarea>
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; padding: 0.6rem 0.85rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.6rem;">
+                    <span style="font-size: 1rem; flex-shrink: 0;">ℹ️</span>
+                    <p style="margin: 0; font-size: 0.78rem; color: #1e3a8a; line-height: 1.4; font-weight: 500;">Vous pourrez préciser l'adresse exacte à <strong id="essai_prof_name_placeholder"></strong> dans la messagerie privée dès qu'il aura confirmé le créneau.</p>
                 </div>
             </div>
 
@@ -368,6 +367,11 @@ function populateFormSelects(prefix, teacherId, teacherName, matiere, isParent, 
     document.getElementById(prefix + '_teacher_id').value = teacherId;
     document.getElementById(prefix + '_prof_display').textContent = 'Prof. ' + teacherName;
     document.getElementById(prefix + '_teacher_name_hidden').value = teacherName;
+    
+    if (prefix === 'essai') {
+        const profPlaceholder = document.getElementById('essai_prof_name_placeholder');
+        if (profPlaceholder) profPlaceholder.textContent = 'Prof. ' + teacherName;
+    }
     
     const classes = classesStr ? classesStr.split(',').map(c => c.trim()) : [];
     
@@ -632,19 +636,29 @@ async function submitEngagement(event, btnId) {
     
     // Custom validation to handle hidden selects (like TomSelect)
     let isValid = true;
+    let firstInvalid = null;
     const requiredInputs = form.querySelectorAll('[required]');
     for (let input of requiredInputs) {
-        if (input.disabled) continue;
+        if (input.disabled || input.style.display === 'none' || input.closest('[style*="display: none"]')) continue;
         if (input.type === 'select-multiple') {
-            if (input.selectedOptions.length === 0) { isValid = false; break; }
+            if (input.selectedOptions.length === 0) { isValid = false; firstInvalid = input; break; }
+        } else if (input.type === 'checkbox' || input.type === 'radio') {
+            if (!input.checked) { isValid = false; firstInvalid = input; break; }
         } else if (!input.value.trim()) {
             isValid = false;
+            firstInvalid = input;
             break;
         }
     }
     
     if (!isValid || !form.checkValidity()) {
         alert("Veuillez remplir tous les champs obligatoires avant de soumettre.");
+        if (firstInvalid) {
+            try {
+                if (firstInvalid.tomselect) firstInvalid.tomselect.focus();
+                else firstInvalid.focus();
+            } catch(e) {}
+        }
         return;
     }
     

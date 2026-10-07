@@ -31,6 +31,16 @@
                      fetchpriority="high"
                      decoding="async"
                      style="position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #e9eef5; cursor: zoom-in; opacity: 0; transition: opacity 0.4s ease; z-index: 0; background: white;">
+                <!-- Icône pour signaler le zoom (Visible sur Desktop et Mobile) -->
+                <div onclick="openZoom('{{ teacher.photo_de_profil.url }}')" style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); color: white; border-radius: 20px; padding: 4px 10px; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: zoom-in; z-index: 3; box-shadow: 0 2px 8px rgba(0,0,0,0.2); font-size: 0.75rem; font-weight: 500; white-space: nowrap;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="11" y1="8" x2="11" y2="14"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                    Agrandir
+                </div>
             </div>
         {% else %}
             <div class="avatar-initials" style="width: 160px; height: 160px; border-radius: 50%; background: #e2e8f0;
