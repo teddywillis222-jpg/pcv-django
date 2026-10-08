@@ -6131,6 +6131,38 @@ def suivi_engagement(request, engagement_id):
 
         request.user.profile.save(update_fields=['nb_vues_suivi'])
 
+
+    # Calcul des statistiques sur les notions
+    from .models import NotionSeance
+    notions_raw = NotionSeance.objects.filter(seance__engagement=engagement).order_by('seance__date_seance', 'id')
+    
+    notions_dict = {}
+    for n in notions_raw:
+        key = n.nom_notion.strip().lower()
+        notions_dict[key] = {
+            'nom_original': n.nom_notion.strip(),
+            'score': n.score
+        }
+
+    notions_maitrisees = []
+    notions_en_cours = []
+    notions_a_renforcer = []
+    
+    for key, data in notions_dict.items():
+        if data['score'] == 3:
+            notions_maitrisees.append(data)
+        elif data['score'] == 2:
+            notions_en_cours.append(data)
+        else:
+            notions_a_renforcer.append(data)
+            
+    # Trier les listes alphabétiquement
+    notions_maitrisees.sort(key=lambda x: x['nom_original'])
+    notions_en_cours.sort(key=lambda x: x['nom_original'])
+    notions_a_renforcer.sort(key=lambda x: x['nom_original'])
+
+    total_notions = len(notions_dict)
+    nb_seances_total = engagement.seances.count()
         
 
     seances = engagement.seances.prefetch_related('notions').order_by('-date_seance')[:5]
@@ -6146,6 +6178,12 @@ def suivi_engagement(request, engagement_id):
         "is_parent_apprenant": is_parent_apprenant,
 
         "is_prof": is_prof,
+        
+        "total_notions": total_notions,
+        "nb_seances_total": nb_seances_total,
+        "notions_maitrisees": notions_maitrisees,
+        "notions_en_cours": notions_en_cours,
+        "notions_a_renforcer": notions_a_renforcer,
 
     })
 

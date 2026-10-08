@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Mon Plan - Prof Chez Vous{% endblock %}
+{% block title %}Formule Access+ - Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -11,9 +11,11 @@
         --text-dark: #0f172a;
         --text-gray: #64748b;
         --primary: #16a34a;
-        --primary-soft: #dcfce7;
+        --access-color: #f59e0b;
+        --access-dark: #b45309;
+        --access-light: #fffbeb;
         --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
 
     body {
@@ -22,188 +24,243 @@
         padding: 0;
     }
 
-    .plan-container {
+    .access-page {
         width: 100%;
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+        max-width: 600px;
+        margin: 2rem auto 4rem;
+        padding: 0 1.25rem;
+        color: var(--text-dark);
     }
 
-    .plan-card {
-        background: var(--card-bg);
-        border-radius: 24px;
-        padding: 2.5rem;
-        box-shadow: var(--shadow-sm);
-        position: relative;
-        overflow: hidden;
-        border: 2px solid var(--primary);
+    .access-hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
     }
 
-    .plan-badge {
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        background: var(--primary-soft);
-        color: var(--primary);
-    }
-
-    .plan-header h2 {
-        font-size: 2rem;
+    .access-hero-title {
+        font-size: 1.85rem;
         font-weight: 900;
         color: var(--text-dark);
-        margin-bottom: 0.5rem;
+        line-height: 1.25;
+        margin-bottom: 1rem;
     }
 
-    .plan-desc {
-        color: var(--text-gray);
+    .access-hero-subtitle {
         font-size: 1.1rem;
-        max-width: 600px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+    .access-text {
+        font-size: 1.05rem;
+        color: var(--text-gray);
         line-height: 1.6;
         margin-bottom: 2rem;
     }
 
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    .access-visual {
+        background: var(--card-bg);
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 3rem;
     }
 
-    .feature-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        font-size: 1.05rem;
+    .access-section-title {
+        font-size: 1.35rem;
+        font-weight: 800;
         color: var(--text-dark);
+        margin: 3rem 0 1rem;
+        text-align: center;
+    }
+
+    .access-section-subtitle {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .access-feature-card {
+        background: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid var(--access-color);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    }
+
+    .access-feature-text {
+        font-size: 1rem;
+        color: var(--text-gray);
+        margin-bottom: 0.75rem;
         line-height: 1.5;
     }
 
-    .feature-item svg {
-        flex-shrink: 0;
-        color: var(--primary);
-        width: 24px;
-        height: 24px;
+    .access-feature-highlight {
+        font-weight: 700;
+        color: var(--access-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .access-pricing {
+        background: var(--access-light);
+        border: 2px solid #fde68a;
+        border-radius: 1.5rem;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        margin-top: 3.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .access-price-val {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--access-dark);
+        margin-bottom: 1rem;
+    }
+
+    .access-price-desc {
+        font-size: 1rem;
+        color: #92400e;
+        line-height: 1.5;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    .btn-activate {
+        display: block;
+        width: 100%;
+        padding: 1.25rem;
+        background: var(--access-color);
+        color: white;
+        font-size: 1.15rem;
+        font-weight: 800;
+        border-radius: 1rem;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
     
-    .feature-item strong {
-        font-weight: 800;
+    .btn-activate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.35);
     }
 
-    .launch-message {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1e3a8a;
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin-top: 2rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        display: flex;
-        gap: 1rem;
-        align-items: flex-start;
+    .btn-back {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background: transparent;
+        color: var(--text-gray);
+        font-size: 1.05rem;
+        font-weight: 600;
+        border-radius: 1rem;
+        text-align: center;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    .btn-back:hover {
+        color: var(--text-dark);
     }
 
-    /* Optimisations Mobile */
+    /* Mock UI Elements */
+    .mock-progress { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+    .mock-percent { font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1; }
+    .mock-bar-bg { flex: 1; height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .mock-bar-fill { height: 100%; width: 78%; background: var(--primary); border-radius: 999px; }
+    .mock-context { font-size: 0.85rem; color: var(--text-gray); font-weight: 600; text-align: right; }
+
+    .mock-item { background: #f8fafc; padding: 0.85rem; border-radius: 0.75rem; margin-bottom: 0.5rem; font-size: 0.9rem; border-left: 4px solid #cbd5e1; color: #334155; line-height: 1.4; }
+    .mock-badge { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 800; margin-right: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
     @media (max-width: 600px) {
-        .plan-container {
-            margin: 1rem auto;
-            padding: 0 0.5rem;
-        }
-        .plan-card {
-            padding: 1.25rem;
-            border-radius: 16px;
-        }
-        .plan-badge {
-            position: static;
-            display: inline-block;
-            margin-bottom: 1rem;
-            font-size: 0.75rem;
-        }
-        .plan-header h2 {
-            font-size: 1.5rem;
-        }
-        .plan-desc {
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        .feature-item {
-            font-size: 0.9rem;
-        }
-        .feature-item svg {
-            width: 20px;
-            height: 20px;
-        }
-        .launch-message {
-            padding: 1rem;
-            font-size: 0.85rem;
-            margin-top: 1.5rem;
-            gap: 0.75rem;
-            border-radius: 12px;
-        }
-        .launch-message svg {
-            width: 24px;
-            height: 24px;
-        }
+        .access-hero-title { font-size: 1.6rem; }
+        .access-price-val { font-size: 1.75rem; }
+        .access-visual { padding: 1.25rem; }
+        .mock-percent { font-size: 2rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="plan-container">
-    <div class="plan-card">
-        <div class="plan-badge">Offre de lancement</div>
-        
-        <div class="plan-header">
-            <h2>Plan Découverte</h2>
-            <p class="plan-desc">
-                Profitez d'un accès complet à notre plateforme pour trouver le professeur idéal pour votre enfant.
-            </p>
-        </div>
+<div class="access-page">
+    <div class="access-hero">
+        <h1 class="access-hero-title">Suivez les acquis de votre enfant, séance après séance</h1>
+        <p class="access-hero-subtitle">Suivez où que vous soyez le niveau de maîtrise des notions travaillées par votre enfant au fil des séances avec son professeur.</p>
+        <p class="access-text">Cet indicateur est établi à partir des évaluations renseignées par le professeur pour chaque notion travaillée. Il vous permet de suivre, au fil de l'accompagnement, comment votre enfant maîtrise les notions abordées.</p>
+    </div>
 
-        <ul class="feature-list">
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>Recherche complète</strong> des professeurs certifiés et vérifiés.</span>
-            </li>
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>1 essai gratuit</strong> de 45 minutes pour valider un professeur.</span>
-            </li>
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>Finalisation des engagements</strong> sans aucun frais d'activation.</span>
-            </li>
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>Journal de séance</strong> pour chaque cours réalisé.</span>
-            </li>
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>Suivi pédagogique complet</strong> et messagerie intégrée.</span>
-            </li>
-            <li class="feature-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span><strong>Progression de l'apprenant</strong> suivie en temps réel.</span>
-            </li>
-        </ul>
-
-        <div class="launch-message">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <div>
-                <strong>Phase de lancement</strong><br>
-                Nous sommes actuellement en phase de lancement. Toutes les fonctionnalités essentielles sont accessibles gratuitement afin de permettre à chacun de découvrir Prof Chez Vous.
+    <!-- Visual 1: Barre de progression -->
+    <div class="access-visual">
+        <div style="font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 1rem;">Niveau de maîtrise des notions travaillées</div>
+        <div class="mock-progress">
+            <div class="mock-percent">78 %</div>
+            <div class="mock-bar-bg">
+                <div class="mock-bar-fill"></div>
             </div>
         </div>
+        <div class="mock-context">12 séances · 14 notions évaluées</div>
     </div>
+
+    <h2 class="access-section-title">Mais le suivi ne s'arrête pas à un pourcentage.</h2>
+    <h3 class="access-section-subtitle">Consultez en détail le travail réalisé à chaque séance.</h3>
+    <p class="access-text" style="text-align: center;">Retrouvez les notions travaillées, les difficultés observées, les recommandations pour la maison ainsi que l'évolution des acquis au fil des séances. Vous disposez ainsi de repères concrets pour comprendre ce qui est travaillé avec votre enfant et ce qui mérite encore d'être renforcé.</p>
+
+    <!-- Visual 2: Bilan de séance -->
+    <div class="access-visual">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.25rem; align-items: baseline;">
+            <div style="font-weight: 800; color: #1e293b; font-size: 1.1rem;">Bilan de séance</div>
+            <div style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">Mer. 14 Octobre</div>
+        </div>
+        <div class="mock-item" style="border-left-color: #3b82f6;">
+            <span class="mock-badge" style="background:#dbeafe; color:#1d4ed8;">Notions</span> Fractions, Résolution de problèmes
+        </div>
+        <div class="mock-item" style="border-left-color: #f59e0b;">
+            <span class="mock-badge" style="background:#fef3c7; color:#b45309;">Difficultés</span> Simplification des fractions
+        </div>
+        <div class="mock-item" style="border-left-color: #8b5cf6;">
+            <span class="mock-badge" style="background:#ede9fe; color:#6d28d9;">Maison</span> Refaire l'exercice 4 page 12
+        </div>
+    </div>
+
+    <h2 class="access-section-title">Et ce n'est qu'une partie de ce que vous offre Access+</h2>
+
+    <div class="access-feature-card">
+        <p class="access-feature-text">Si l'essai ne débouche pas sur la bonne collaboration, vous n'êtes pas sans solution.</p>
+        <div class="access-feature-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            Garantie de remplacement selon les conditions prévues.
+        </div>
+    </div>
+
+    <div class="access-feature-card">
+        <p class="access-feature-text">Vous souhaitez découvrir d'autres professeurs avant de faire votre choix ?</p>
+        <div class="access-feature-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            Possibilité de programmer d'autres séances d'essai.
+        </div>
+    </div>
+
+    <div class="access-pricing">
+        <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Access+</div>
+        <div class="access-price-val">2 000 FCFA / mois</div>
+        <p class="access-price-desc">Un espace pour suivre l'accompagnement de votre enfant, avec les avantages qui vous permettent de choisir et de poursuivre dans de meilleures conditions.</p>
+        
+        <a href="#" class="btn-activate">Activer Access+</a>
+    </div>
+
+    <!-- Fallback to root route, which automatically redirects logged in users to their dashboard -->
+    <a href="/" class="btn-back">Retourner dans mon espace</a>
 </div>
 {% endblock %}
