@@ -2290,11 +2290,15 @@ def parent_dashboard(request):
 
     q_quartier = Q()
     if parent.quartier_ville_id:
-        # Utilisation de id__in pour éviter les duplications dues au LEFT JOIN du ManyToMany
-        prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
-            quartier_id=parent.quartier_ville_id
-        ).values_list('teacherprofile_id', flat=True)
-        q_quartier = Q(id__in=prof_ids_in_quartier)
+        try:
+            q_id = int(parent.quartier_ville_id)
+            prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
+                quartier_id=q_id
+            ).values_list('teacherprofile_id', flat=True)
+            q_quartier = Q(id__in=prof_ids_in_quartier)
+        except (ValueError, TypeError):
+            # Fallback if string 'Cotonou' is stored somehow
+            pass
 
     # Pour éviter l'erreur "An empty Q() can't be used as a When() condition", on les remplace par une condition toujours fausse si elles sont vides.
     valid_q_matieres = q_matieres if q_matieres else Q(pk__isnull=True)
@@ -2597,11 +2601,14 @@ def apprenant_dashboard(request):
 
     q_quartier = Q()
     if apprenant.quartier_ville_id:
-        # Utilisation de id__in pour éviter les duplications dues au LEFT JOIN du ManyToMany
-        prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
-            quartier_id=apprenant.quartier_ville_id
-        ).values_list('teacherprofile_id', flat=True)
-        q_quartier = Q(id__in=prof_ids_in_quartier)
+        try:
+            q_id = int(apprenant.quartier_ville_id)
+            prof_ids_in_quartier = TeacherProfile.quartiers_couverts.through.objects.filter(
+                quartier_id=q_id
+            ).values_list('teacherprofile_id', flat=True)
+            q_quartier = Q(id__in=prof_ids_in_quartier)
+        except (ValueError, TypeError):
+            pass
 
     score_annotation = (
         Case(When(q_matieres, then=Value(3)), default=Value(0), output_field=IntegerField()) +
