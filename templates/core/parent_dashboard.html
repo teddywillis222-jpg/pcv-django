@@ -711,6 +711,15 @@
         font-size: 0.9rem;
         color: var(--text-dark);
     }
+    details > summary::-webkit-details-marker {
+        display: none;
+    }
+    details.reco-details .reco-arrow {
+        transition: transform 0.2s ease-in-out;
+    }
+    details.reco-details[open] .reco-arrow {
+        transform: rotate(180deg);
+    }
 </style>
 {% endblock %}
 
@@ -878,42 +887,60 @@
             </section>
             <div class="section-separator" aria-hidden="true" style="margin-top: 0.25rem;"></div>
 
-            <!-- Recommandations -->
+            <!-- Nouvelle section: Collaboration Actuelle -->
             <section style="margin-top: 0.35rem;">
                 <div class="section-header">
-                    <h2 class="section-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations {% if active_enfant %}pour {{ active_enfant.prenom }}{% endif %}</h2>
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <!-- Scroll Buttons (Desktop Only) -->
-                        <div class="scroll-controls" style="display: flex; gap: 0.5rem;">
-                            <button onclick="scrollSection('reco-scroll', 'left')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                            </button>
-                            <button onclick="scrollSection('reco-scroll', 'right')" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </button>
-                        </div>
-                    </div>
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        Collaboration actuelle {% if active_enfant %}de {{ active_enfant.prenom }}{% endif %}
+                    </h2>
                 </div>
-                <div class="carousel-container" id="reco-scroll">
-                    {% for prof in recommandations %}
-                        {% include "core/components/_teacher_card_compact.html" with teacher=prof %}
-                    {% empty %}
-                    <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
-                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
-                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
+                {% if active_engagement %}
+                    {% include "core/components/_engagement_card.html" with eng=active_engagement %}
+                {% else %}
+                    <div style="width: 100%; text-align: center; padding: 2.5rem 1.5rem; background: white; border-radius: 18px; border: 1px dashed #cbd5e1; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);">
+                        <svg viewBox="0 0 24 24" width="56" height="56" stroke="currentColor" stroke-width="1.2" fill="none" style="color: #94a3b8; margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+                        <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Aucune collaboration active</h3>
+                        <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">Programmez un premier essai gratuit avec l'un de nos professeurs pour suivre les avancées de {{ active_enfant.prenom|default:"votre enfant" }} ici.</p>
+                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Trouver un professeur</a>
                     </div>
-                    {% endfor %}
-
-                    {% if recommandations %}
-                    <a href="{% url 'recherche' %}" class="carousel-end-arrow" title="Voir plus de professeurs">
-                        <span class="carousel-end-badge" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
-                        </span>
-                    </a>
-                    {% endif %}
-                </div>
-            <div class="section-separator" aria-hidden="true" style="margin-top: 1.5rem;"></div>
+                {% endif %}
             </section>
+            
+            <div class="section-separator" aria-hidden="true" style="margin-top: 1rem; margin-bottom: 1.5rem;"></div>
+
+            <!-- Recommandations -->
+            <details class="reco-details" style="margin-top: 0.35rem;">
+                <summary class="section-header" style="cursor: pointer; list-style: none; display: flex; justify-content: space-between; outline: none; margin-bottom: 0;">
+                    <h2 class="section-title" style="margin-bottom: 0;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V12" stroke-width="1.5" stroke="currentColor" fill="none"/><path d="M7 12l5-5v10z" stroke-width="1.5" stroke="currentColor" fill="none"/></svg>Recommandations {% if active_enfant %}pour {{ active_enfant.prenom }}{% endif %}</h2>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <svg class="reco-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                </summary>
+                
+                <div style="margin-top: 1.5rem; position: relative;">
+                    <div class="carousel-container" id="reco-scroll">
+                        {% for prof in recommandations %}
+                            {% include "core/components/_teacher_card_compact.html" with teacher=prof %}
+                        {% empty %}
+                        <div style="width: 100%; text-align: center; padding: 1.5rem; background: white; border-radius: 18px; border: 1px dashed #e2e8f0;">
+                            <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem;">Aucun prof ne correspond exactement.</p>
+                            <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Recherche manuelle</a>
+                        </div>
+                        {% endfor %}
+    
+                        {% if recommandations %}
+                        <a href="{% url 'recherche' %}" class="carousel-end-arrow" title="Voir plus de professeurs">
+                            <span class="carousel-end-badge" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                            </span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </details>
+            
+            <div class="section-separator" aria-hidden="true" style="margin-top: 1.5rem;"></div>
 
             <!-- Engagements Rapides -->
             <section style="margin-top: 1.5rem;">

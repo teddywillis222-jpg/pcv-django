@@ -2403,6 +2403,10 @@ def parent_dashboard(request):
 
     announcement = ProfessorAnnouncement.objects.filter(is_active=True, target_audience__in=['PARENT_APPRENANT', 'ALL']).order_by('-created_at').first()
 
+    active_engagement = next((e for e in engagements_tous if e.statut_general not in [StatutGeneral.ANNULE, StatutGeneral.REFUSE]), None)
+    if not active_engagement and engagements_tous:
+        active_engagement = engagements_tous[0]
+
     context = {
 
         "parent_details": parent,
@@ -2423,6 +2427,8 @@ def parent_dashboard(request):
         "engagements_masques": engagements_masques_list,
 
         "engagements_tous": engagements_tous,
+        
+        "active_engagement": active_engagement,
 
         "abonnement": abonnement,
 
@@ -2691,6 +2697,12 @@ def apprenant_dashboard(request):
 
 
 
+    engagements_masques_list = [] # Temporaire si on veut gérer les masqués pour apprenants plus tard
+    
+    active_engagement = next((e for e in engagements_tous if e.statut_general not in [StatutGeneral.ANNULE, StatutGeneral.REFUSE]), None)
+    if not active_engagement and engagements_tous:
+        active_engagement = engagements_tous[0]
+
     context = {
 
         "apprenant": apprenant,
@@ -2707,6 +2719,8 @@ def apprenant_dashboard(request):
         "engagements_masques": engagements_masques_list,
 
         "engagements_tous": engagements_tous,
+        
+        "active_engagement": active_engagement,
 
         "abonnement": abonnement,
 
