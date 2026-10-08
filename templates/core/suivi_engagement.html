@@ -432,7 +432,7 @@
         
         <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem;">
             <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1;">{{ engagement.taux_global_matiere|default:"0"|floatformat:0 }} %</div>
-            <div style="font-size: 1.1rem; font-weight: 700; color: #64748b;">{{ engagement.total_points_obtenus_matiere|default:0 }} / {{ engagement.total_points_max_matiere|default:0 }} points</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #64748b;">{{ engagement.total_points_obtenus_matiere|default:0|floatformat:0 }} / {{ engagement.total_points_max_matiere|default:0|floatformat:0 }} points</div>
         </div>
         
         <div class="progress-track" style="margin-bottom: 1rem;">
@@ -446,16 +446,17 @@
         
         {% if total_notions > 0 %}
         <h3 style="font-size: 0.95rem; font-weight: 800; color: #334155; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Répartition des notions</h3>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: -0.5rem; margin-bottom: 1rem;">Cliquez sur l'une des catégories pour voir toutes les notions correspondantes.</p>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 2rem;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+            <div onclick="document.getElementById('modal-notions-maitrisees').style.display='flex'" style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
                 <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">{{ notions_maitrisees|length }}</span>
                 <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">Maîtrisées</span>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #f59e0b; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+            <div onclick="document.getElementById('modal-notions-en-cours').style.display='flex'" style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #f59e0b; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
                 <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">{{ notions_en_cours|length }}</span>
                 <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">En cours d'acquisition</span>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #ef4444; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+            <div onclick="document.getElementById('modal-notions-a-renforcer').style.display='flex'" style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #ef4444; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
                 <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">{{ notions_a_renforcer|length }}</span>
                 <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">À renforcer</span>
             </div>
@@ -484,24 +485,19 @@
             {% endfor %}
         </div>
         {% endif %}
-        
-        <button onclick="document.getElementById('modal-toutes-notions').style.display='flex'" style="background: none; border: none; color: var(--primary); font-weight: 700; font-size: 0.95rem; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; transition: opacity 0.2s;">
-            Voir les {{ total_notions }} notions évaluées &rarr;
-        </button>
         {% endif %}
     </div>
 
-    <!-- Modal Toutes les notions -->
-    <div id="modal-toutes-notions" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px);">
+    <!-- Modal Notions à Renforcer -->
+    <div id="modal-notions-a-renforcer" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px);">
         <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
             <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0;">Toutes les notions évaluées</h3>
-                <button onclick="document.getElementById('modal-toutes-notions').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0;">Notions à renforcer</h3>
+                <button onclick="document.getElementById('modal-notions-a-renforcer').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
             </div>
             <div style="padding: 1.5rem; overflow-y: auto;">
                 {% if notions_a_renforcer %}
-                <h4 style="font-size: 0.9rem; font-weight: 800; color: #ef4444; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">À renforcer</h4>
-                <div style="margin-bottom: 2rem;">
+                <div style="margin-bottom: 1rem;">
                     {% for n in notions_a_renforcer %}
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid #ef4444;">
                         <span style="font-size: 0.9rem; font-weight: 600; color: #334155; line-height: 1.3;">{{ n.nom_original }}</span>
@@ -509,11 +505,23 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #64748b; font-size: 0.95rem; text-align: center;">Aucune notion dans cette catégorie.</p>
                 {% endif %}
-                
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notions En Cours d'Acquisition -->
+    <div id="modal-notions-en-cours" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px);">
+        <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0;">En cours d'acquisition</h3>
+                <button onclick="document.getElementById('modal-notions-en-cours').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+            <div style="padding: 1.5rem; overflow-y: auto;">
                 {% if notions_en_cours %}
-                <h4 style="font-size: 0.9rem; font-weight: 800; color: #f59e0b; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">En cours d'acquisition</h4>
-                <div style="margin-bottom: 2rem;">
+                <div style="margin-bottom: 1rem;">
                     {% for n in notions_en_cours %}
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid #f59e0b;">
                         <span style="font-size: 0.9rem; font-weight: 600; color: #334155; line-height: 1.3;">{{ n.nom_original }}</span>
@@ -521,10 +529,22 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #64748b; font-size: 0.95rem; text-align: center;">Aucune notion dans cette catégorie.</p>
                 {% endif %}
+            </div>
+        </div>
+    </div>
 
+    <!-- Modal Notions Maîtrisées -->
+    <div id="modal-notions-maitrisees" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px);">
+        <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 500px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0;">Notions maîtrisées</h3>
+                <button onclick="document.getElementById('modal-notions-maitrisees').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+            <div style="padding: 1.5rem; overflow-y: auto;">
                 {% if notions_maitrisees %}
-                <h4 style="font-size: 0.9rem; font-weight: 800; color: #16a34a; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Notions maîtrisées</h4>
                 <div style="margin-bottom: 1rem;">
                     {% for n in notions_maitrisees %}
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem; border-left: 4px solid #16a34a;">
@@ -533,6 +553,8 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #64748b; font-size: 0.95rem; text-align: center;">Aucune notion dans cette catégorie.</p>
                 {% endif %}
             </div>
         </div>
@@ -616,28 +638,30 @@
         </button>
     </div>
     
-    <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.5rem; border-radius: 20px; margin-bottom: 1rem;">
         <div id="dt-taux" style="font-size: 2.5rem; font-weight: 900; color: var(--primary);"></div>
-        <div style="margin-left: 1rem; font-size: 0.9rem; font-weight: 700; color: #166534;">Taux de maîtrise<br>de la séance</div>
+        <div style="margin-left: 1rem; font-size: 0.95rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
     </div>
     
+    <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; padding: 0 1rem; line-height: 1.4;">Ce pourcentage montre le niveau affiché par votre enfant sur l'ensemble des notions abordées ce jour de séance.</p>
+    
     <div class="form-group">
-        <label class="form-label">🎯 Objectifs de la séance</label>
+        <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">🎯 Objectifs de la séance</label>
         <div id="dt-objectifs" class="detail-box"></div>
     </div>
     
     <div class="form-group">
-        <label class="form-label">📚 Notions abordées</label>
+        <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">📚 Notions abordées</label>
         <div id="dt-notions" style="display: grid; gap: 0.5rem;"></div>
     </div>
     
     <div class="form-group" id="dt-diff-container">
-        <label class="form-label">⚠️ Difficultés rencontrées</label>
+        <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">⚠️ Difficultés rencontrées</label>
         <div id="dt-difficultes" class="detail-box" style="background: #fef2f2; color: #991b1b;"></div>
     </div>
     
     <div class="form-group" id="dt-taches-container">
-        <label class="form-label">🏠 Tâches à domicile</label>
+        <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">🏠 Tâches à domicile</label>
         <div id="dt-taches" class="detail-box"></div>
     </div>
     
