@@ -94,8 +94,8 @@
                 ✨ Engager ce professeur
             </a>
         {% elif eng.statut_general != 'REFUSE' and eng.statut_general != 'ESSAI_PROGRAMME' and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'ESSAI_REALISE' and eng.statut_general != 'ESSAI_CONFIRME' and eng.type_engagement != 'ESSAI' %}
-            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none;">
-                Accéder à l'espace de l'engagement
+            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Accéder au suivi de {% with enfant=eng.enfants_concernes.first %}{% if enfant %}{{ enfant.prenom }}{% else %}l'apprenant{% endif %}{% endwith %}
             </a>
         {% else %}
              <button onclick="openDetailModal({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-dark); padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer;">

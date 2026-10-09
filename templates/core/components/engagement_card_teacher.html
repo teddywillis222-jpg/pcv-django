@@ -89,8 +89,8 @@
                 </button>
             {% endif %}
         {% elif eng.statut_general != 'REFUSE' and eng.type_engagement != 'ESSAI' %}
-            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-dash btn-dash-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem;">
-                Accéder à l'engagement
+            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-dash btn-dash-primary" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Accéder au suivi de {% with enfant=eng.enfants_concernes.first %}{% if enfant %}{{ enfant.prenom }}{% else %}l'apprenant{% endif %}{% endwith %}
             </a>
         {% endif %}
         

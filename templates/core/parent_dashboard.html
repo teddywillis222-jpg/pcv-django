@@ -887,28 +887,6 @@
             </section>
             <div class="section-separator" aria-hidden="true" style="margin-top: 0.25rem;"></div>
 
-            <!-- Nouvelle section: Collaboration Actuelle -->
-            <section style="margin-top: 0.35rem;">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                        Collaboration actuelle {% if active_enfant %}de {{ active_enfant.prenom }}{% endif %}
-                    </h2>
-                </div>
-                {% if active_engagement %}
-                    {% include "core/components/engagement_card_parent.html" with eng=active_engagement show_actions=True %}
-                {% else %}
-                    <div style="width: 100%; text-align: center; padding: 2.5rem 1.5rem; background: white; border-radius: 18px; border: 1px dashed #cbd5e1; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);">
-                        <svg viewBox="0 0 24 24" width="56" height="56" stroke="currentColor" stroke-width="1.2" fill="none" style="color: #94a3b8; margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
-                        <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Aucune collaboration active</h3>
-                        <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">Programmez un premier essai gratuit avec l'un de nos professeurs pour suivre les avancées de {{ active_enfant.prenom|default:"votre enfant" }} ici.</p>
-                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Trouver un professeur</a>
-                    </div>
-                {% endif %}
-            </section>
-            
-            <div class="section-separator" aria-hidden="true" style="margin-top: 1rem; margin-bottom: 1.5rem;"></div>
-
             <!-- Recommandations -->
             <details class="reco-details" style="margin-top: 0.35rem;">
                 <summary class="section-header" style="cursor: pointer; list-style: none; display: flex; justify-content: space-between; outline: none; margin-bottom: 0;">
@@ -939,6 +917,28 @@
                     </div>
                 </div>
             </details>
+            
+            <div class="section-separator" aria-hidden="true" style="margin-top: 1rem; margin-bottom: 1.5rem;"></div>
+
+            <!-- Collaboration Actuelle -->
+            <section style="margin-top: 0.35rem;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        Collaboration actuelle {% if active_enfant %}de {{ active_enfant.prenom }}{% endif %}
+                    </h2>
+                </div>
+                {% if active_engagement %}
+                    {% include "core/components/engagement_card_parent.html" with eng=active_engagement show_actions=True %}
+                {% else %}
+                    <div style="width: 100%; text-align: center; padding: 2.5rem 1.5rem; background: white; border-radius: 18px; border: 1px dashed #cbd5e1; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);">
+                        <svg viewBox="0 0 24 24" width="56" height="56" stroke="currentColor" stroke-width="1.2" fill="none" style="color: #94a3b8; margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+                        <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Aucune collaboration active</h3>
+                        <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">Programmez un premier essai gratuit avec l'un de nos professeurs pour suivre les avancées de {{ active_enfant.prenom|default:"votre enfant" }} ici.</p>
+                        <a href="{% url 'recherche' %}" class="btn-eng-main" style="display: inline-block;">Trouver un professeur</a>
+                    </div>
+                {% endif %}
+            </section>
             
             <div class="section-separator" aria-hidden="true" style="margin-top: 1.5rem;"></div>
 
