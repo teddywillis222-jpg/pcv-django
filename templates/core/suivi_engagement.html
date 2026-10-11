@@ -744,6 +744,44 @@
 </div>
 {% endif %}
 
+<!-- MODAL: Confirmation & Félicitations Bilan (Prof) -->
+{% if is_prof %}
+<div id="modal-bilan-succes" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 6000; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(6px);">
+    <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 440px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;">
+        
+        <button type="button" onclick="location.reload()" aria-label="Fermer" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; font-size: 2rem; box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.2);">
+            👏
+        </div>
+
+        <h3 style="font-size: 1.35rem; font-weight: 900; color: #1e293b; margin: 0 0 0.5rem 0; line-height: 1.3;">
+            Félicitations pour votre effort !
+        </h3>
+
+        <p style="font-size: 0.95rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.5;">
+            Votre bilan de séance a été enregistré avec succès. Vous pourrez recevoir un retour dès que le parent aura consulté ce bilan.
+        </p>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 0.85rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #64748b; text-align: left; display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.3rem;">⭐</span>
+            <span>Chaque bilan validé renforce la confiance des familles et valorise votre <strong>score de fiabilité</strong>.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <button type="button" onclick="location.reload()" class="btn-primary" style="width: 100%; padding: 0.95rem 1rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; text-align: center; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
+                Voir la nouvelle étape de progression de {% with enfant=engagement.enfants_concernes.first %}{% if enfant %}{{ enfant.prenom }}{% else %}{{ engagement.parent_apprenant.first_name|default:"l'enfant" }}{% endif %}{% endwith %}
+            </button>
+
+            <a href="{% url 'prof_dashboard' %}#section-fiabilite" style="width: 100%; padding: 0.85rem 1rem; font-size: 0.9rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; display: block; text-align: center; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                Aller dans mon espace découvrir mon score de fiabilité
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endif %}
+
 <script>
     // Initialiser la date par défaut à aujourd'hui
     if(document.getElementById('add-date')) {
@@ -890,7 +928,13 @@
             });
             const result = await response.json();
             if(result.success) {
-                location.reload();
+                closeAllSheets();
+                const modalSucces = document.getElementById('modal-bilan-succes');
+                if (modalSucces) {
+                    modalSucces.style.display = 'flex';
+                } else {
+                    location.reload();
+                }
             } else {
                 alert("Erreur : " + result.error);
                 btn.disabled = false;
