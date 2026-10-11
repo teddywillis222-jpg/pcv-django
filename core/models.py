@@ -228,6 +228,14 @@ class Profile(models.Model):
 
     )
 
+    a_vu_visite_guidee = models.BooleanField(
+
+        default=False,
+
+        help_text="Détermine si la visite guidée (Parent/Apprenant) a été vue."
+
+    )
+
     
 
     # Statistiques avancÃ©es (Lancement)

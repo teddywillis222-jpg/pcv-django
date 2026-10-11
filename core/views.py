@@ -2442,7 +2442,9 @@ def parent_dashboard(request):
 
         "has_child_form_errors": has_child_form_errors,
 
-        "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
+        "show_welcome_popup": False,
+
+        "show_visite_guidee": not request.user.profile.a_vu_visite_guidee,
 
         "badge_essais_programmes": len(engs_essais_programmes),
 
@@ -2733,7 +2735,9 @@ def apprenant_dashboard(request):
 
         "favoris": favoris,
 
-        "show_welcome_popup": not request.user.profile.a_vu_popup_bienvenue,
+        "show_welcome_popup": False,
+
+        "show_visite_guidee": not request.user.profile.a_vu_visite_guidee,
 
         "badge_essais_programmes": len(engs_essais_programmes),
 
@@ -8566,9 +8570,14 @@ from django.contrib.auth.decorators import login_required
 @require_POST
 def api_mark_visite_guidee_vue(request):
     try:
-        profile = request.user.teacher_profile
-        profile.a_vu_visite_guidee = True
-        profile.save()
+        if hasattr(request.user, 'teacher_profile'):
+            teacher = request.user.teacher_profile
+            teacher.a_vu_visite_guidee = True
+            teacher.save(update_fields=['a_vu_visite_guidee'])
+        if hasattr(request.user, 'profile'):
+            user_profile = request.user.profile
+            user_profile.a_vu_visite_guidee = True
+            user_profile.save(update_fields=['a_vu_visite_guidee'])
         return JsonResponse({"status": "success"})
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=400)
