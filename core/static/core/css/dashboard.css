@@ -181,9 +181,21 @@ body {
     cursor: pointer;
 }
 
-.btn-dash-primary {
-    background: var(--dash-accent);
-    color: white;
+.btn-dash-primary,
+.btn-dash-primary:visited,
+.btn-dash-primary:hover,
+.btn-dash-primary:focus {
+    background: var(--dash-accent) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.btn-dash-primary:active {
+    background: var(--dash-accent) !important;
+    color: #ffffff !important;
+    opacity: 0.94;
+    transform: scale(0.98);
+    text-decoration: none !important;
 }
 
 .btn-dash-outline {
@@ -192,7 +204,14 @@ body {
     border: 1.5px solid var(--dash-accent);
 }
 
-.btn-dash:active {
+.btn-dash-outline:visited,
+.btn-dash-outline:hover,
+.btn-dash-outline:focus {
+    color: var(--dash-accent) !important;
+    text-decoration: none !important;
+}
+
+.btn-dash-outline:active {
     transform: scale(0.98);
 }
 

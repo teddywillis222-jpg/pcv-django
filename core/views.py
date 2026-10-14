@@ -1922,61 +1922,73 @@ def prof_delete_video(request, video_id):
     return redirect("prof_video_presentation")
 
 
+def get_or_create_engagement_conversation(engagement):
+    """
+    Assure qu'une conversation existe et est correctement liée à l'engagement.
+    Permet de rattraper les engagements confirmés ou finalisés sans conversation liée.
+    """
+    if engagement.conversation_id:
+        return engagement.conversation
+    if not engagement.professeur or not engagement.parent_apprenant:
+        return None
+    from .models import Conversation
+    from .choices import ConversationStatus
 
+    conv = Conversation.objects.filter(
+        professeur=engagement.professeur,
+        parent=engagement.parent_apprenant
+    ).first()
 
+    if not conv:
+        conv = Conversation.objects.create(
+            professeur=engagement.professeur,
+            parent=engagement.parent_apprenant,
+            statut_conversation=ConversationStatus.ENGAGEMENT_EN_COURS,
+            engagement_actif=engagement
+        )
+        conv.participants.add(engagement.professeur.user, engagement.parent_apprenant)
+    else:
+        if not conv.engagement_actif:
+            conv.engagement_actif = engagement
+            conv.save(update_fields=['engagement_actif'])
+        if engagement.professeur.user not in conv.participants.all():
+            conv.participants.add(engagement.professeur.user)
+        if engagement.parent_apprenant not in conv.participants.all():
+            conv.participants.add(engagement.parent_apprenant)
+
+    engagement.conversation = conv
+    engagement.save(update_fields=['conversation'])
+    return conv
 
 
 @login_required
-
 def prof_dashboard(request):
-
     try:
-
         profile = request.user.profile
-
     except Profile.DoesNotExist:
-
         return redirect("finalisation_compte")
 
-
-
     if profile.role != Profile.ROLE_PROF:
-
         return redirect("home")
-
         
-
     try:
-
         teacher = request.user.teacher_profile
-
     except TeacherProfile.DoesNotExist:
-
         return redirect("prof_create_profile")
 
-
-
     # 1. Gestion des Engagements
-
     engagements_base = teacher.engagements.select_related(
-
-        'parent_apprenant', 'parent_apprenant__profile', 'parent_apprenant__apprenant'
-
+        'parent_apprenant', 'parent_apprenant__profile', 'parent_apprenant__apprenant', 'conversation'
     ).prefetch_related(
-
-        'enfants_concernes', 'conversation'
-
+        'enfants_concernes'
     ).order_by("-date_creation")
-
     
-
     engs_tous = list(engagements_base)
-
     
-
     for eng in engs_tous:
-
         eng.check_and_update_essai_status()
+        if eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE] and not eng.conversation_id:
+            eng.conversation = get_or_create_engagement_conversation(eng)
 
     
 
@@ -2375,10 +2387,14 @@ def parent_dashboard(request):
     engagements_tous = list(engagements)
     for eng in engagements_tous:
         eng.check_and_update_essai_status()
+        if eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE] and not eng.conversation_id:
+            eng.conversation = get_or_create_engagement_conversation(eng)
         
     engagements_masques_list = list(engagements_masques_qs)
     for eng in engagements_masques_list:
         eng.check_and_update_essai_status()
+        if eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE] and not eng.conversation_id:
+            eng.conversation = get_or_create_engagement_conversation(eng)
 
     engs_essais_programmes = [e for e in engagements_tous if e.statut_general == StatutGeneral.ESSAI_PROGRAMME]
     engs_essais_confirmes = [e for e in engagements_tous if e.statut_general in [StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]]
@@ -2671,10 +2687,10 @@ def apprenant_dashboard(request):
     ).order_by("-date_creation")
 
     engagements_tous = list(engagements)
-
     for eng in engagements_tous:
-
         eng.check_and_update_essai_status()
+        if eng.statut_general in [StatutGeneral.CONFIRME, StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE, StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE] and not eng.conversation_id:
+            eng.conversation = get_or_create_engagement_conversation(eng)
 
 
 
@@ -5396,10 +5412,9 @@ def api_finalize_engagement(request, engagement_id):
         
 
     try:
-
         engagement.statut_general = StatutGeneral.FINALISE
-
         engagement.save()
+        get_or_create_engagement_conversation(engagement)
 
         
 
@@ -7762,11 +7777,9 @@ def finalisation_engagement(request, engagement_id):
                 
 
         engagement.statut_general = StatutGeneral.FINALISE
-
         engagement.type_engagement = EngagementType.NORMAL
-
         engagement.save()
-
+        get_or_create_engagement_conversation(engagement)
         return redirect('parent_dashboard')
 
 
