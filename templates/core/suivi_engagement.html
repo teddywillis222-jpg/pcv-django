@@ -475,6 +475,52 @@
         width: 100%;
         box-sizing: border-box;
     }
+
+    /* Radio choices modern cards styling */
+    .radio-choices-group {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .radio-card-label {
+        flex: 1;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 0.75rem 0.85rem !important;
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 0.875rem !important;
+        font-weight: 700 !important;
+        color: #334155 !important;
+        margin-bottom: 0 !important;
+        transition: all 0.2s ease;
+        user-select: none;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .radio-card-label:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+    .bottom-sheet input[type="radio"] {
+        width: 18px !important;
+        min-width: 18px !important;
+        max-width: 18px !important;
+        height: 18px !important;
+        min-height: 18px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        accent-color: var(--primary) !important;
+        cursor: pointer;
+        flex-shrink: 0;
+        vertical-align: middle;
+    }
 </style>
 
 <div class="suivi-container">
@@ -824,11 +870,17 @@
         
         <div class="form-group">
             <label class="form-label">Des difficultés rencontrées ? *</label>
-            <div style="display: flex; gap: 1.25rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                <label style="font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="has_diff" value="non" checked onchange="toggleDiffText()"> Aucune difficulté</label>
-                <label style="font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="has_diff" value="oui" onchange="toggleDiffText()"> Oui</label>
+            <div class="radio-choices-group">
+                <label class="radio-card-label" id="lbl-diff-non" for="diff-non" style="border-color: var(--primary); background: #f0fdf4; color: #166534;">
+                    <input type="radio" id="diff-non" name="has_diff" value="non" checked onchange="toggleDiffText()">
+                    <span>Aucune difficulté</span>
+                </label>
+                <label class="radio-card-label" id="lbl-diff-oui" for="diff-oui">
+                    <input type="radio" id="diff-oui" name="has_diff" value="oui" onchange="toggleDiffText()">
+                    <span>Oui</span>
+                </label>
             </div>
-            <textarea id="add-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés..." style="display: none;"></textarea>
+            <textarea id="add-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés rencontrées..." style="display: none; margin-top: 0.5rem;"></textarea>
         </div>
         
         <div class="form-group">
@@ -984,9 +1036,29 @@
         if(hasDiff) {
             tf.style.display = 'block';
             tf.setAttribute('required', 'required');
+            tf.focus();
         } else {
             tf.style.display = 'none';
             tf.removeAttribute('required');
+        }
+        const lblNon = document.getElementById('lbl-diff-non');
+        const lblOui = document.getElementById('lbl-diff-oui');
+        if (lblNon && lblOui) {
+            if (hasDiff) {
+                lblOui.style.borderColor = 'var(--primary)';
+                lblOui.style.background = '#f0fdf4';
+                lblOui.style.color = '#166534';
+                lblNon.style.borderColor = '#e2e8f0';
+                lblNon.style.background = '#f8fafc';
+                lblNon.style.color = '#334155';
+            } else {
+                lblNon.style.borderColor = 'var(--primary)';
+                lblNon.style.background = '#f0fdf4';
+                lblNon.style.color = '#166534';
+                lblOui.style.borderColor = '#e2e8f0';
+                lblOui.style.background = '#f8fafc';
+                lblOui.style.color = '#334155';
+            }
         }
     }
     
