@@ -6136,15 +6136,36 @@ def edit_enfant(request, id_enfant):
 
 
 # ==========================================
-
-# ESPACE DE SUIVI PÉDAGOGIQUE
-
+# ESPACE DE SUIVI PÉDAGOGIQUE & SIMULATEUR
 # ==========================================
 
+@login_required
+def simulateur_suivi(request):
+    """
+    Espace d'entraînement et simulateur de suivi pédagogique pour les professeurs.
+    Permet de tester la création d'un bilan de séance et d'observer l'évolution du taux de maîtrise
+    en conditions réelles avec un élève fictif sans impacter la base de données de production.
+    """
+    try:
+        profile = request.user.profile
+    except Exception:
+        return redirect("home")
+
+    if profile.role != Profile.ROLE_PROF:
+        return redirect("home")
+
+    try:
+        teacher = request.user.teacher_profile
+    except Exception:
+        return redirect("prof_create_profile")
+
+    return render(request, "core/simulateur_suivi.html", {
+        "teacher": teacher,
+        "prof_nom": f"{teacher.prenom} {teacher.nom}".strip(),
+    })
 
 
 @login_required
-
 def suivi_engagement(request, engagement_id):
 
     from django.http import Http404

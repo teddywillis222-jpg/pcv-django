@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulateur Suivi Pédagogique - Prof Chez Vous</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #16a34a;
+            --primary-light: #f0fdf4;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border-color: #f1f5f9;
+            --bg-page: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+
+        /* Top Bar Entraînement */
+        .simulator-topbar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .btn-exit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.85rem;
+            background: #f1f5f9;
+            color: #334155;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .btn-exit:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .sim-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-reset-sim {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 0.45rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset-sim:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Conteneur Suivi */
+        .suivi-container {
+            max-width: 800px;
+            margin: 1.25rem auto 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Banner didactique */
+        .info-sim-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 18px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+        }
+        .info-sim-banner h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0369a1;
+            margin-bottom: 0.25rem;
+        }
+        .info-sim-banner p {
+            font-size: 0.85rem;
+            color: #334155;
+            line-height: 1.45;
+        }
+
+        /* Cartes Suivi */
+        .header-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 1.5rem;
+            position: relative;
+            border: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: #dcfce7;
+            color: #166534;
+            text-transform: uppercase;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        .context-item {
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+        }
+        .context-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        .context-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Jauge Progression */
+        .progress-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 1.5rem;
+            border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary);
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .progress-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0;
+            color: #1e293b;
+        }
+        .progress-percent {
+            font-size: 1.85rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -1px;
+            transition: all 0.5s ease;
+        }
+        .progress-track {
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 7px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, #22c55e 100%);
+            border-radius: 7px;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Journal */
+        .journal-section {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            margin-bottom: 1.5rem;
+            border: 1px solid #f1f5f9;
+        }
+        .seance-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 0.6rem;
+            border-bottom: 1px solid #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 14px;
+        }
+        .seance-row:hover {
+            background: #f8fafc;
+            transform: translateX(4px);
+        }
+        .seance-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 1.2rem;
+            box-shadow: 0 0 0 4px rgba(255,255,255,1);
+            flex-shrink: 0;
+        }
+        .seance-non-lue { background: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .seance-validee { background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1); }
+
+        .seance-date {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.2rem;
+        }
+        .seance-notions {
+            font-size: 0.8rem;
+            color: #64748b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 240px;
+        }
+        .seance-taux {
+            font-weight: 900;
+            font-size: 1.15rem;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-add-action {
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-add-action:hover {
+            filter: brightness(1.05);
+            transform: translateY(-2px);
+        }
+
+        /* Sheets & Overlays */
+        .sheet-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 9999;
+        }
+        .sheet-overlay.active { opacity: 1; visibility: visible; }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: white;
+            border-radius: 28px 28px 0 0;
+            padding: 1.25rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 20px));
+            transform: translateY(105%);
+            visibility: hidden;
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s;
+            z-index: 10000;
+            max-height: 88vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+            box-sizing: border-box;
+            box-shadow: 0 -15px 35px -5px rgba(0, 0, 0, 0.15);
+        }
+        .bottom-sheet * { box-sizing: border-box; }
+        .bottom-sheet::-webkit-scrollbar { width: 5px; }
+        .bottom-sheet::-webkit-scrollbar-track { background: transparent; }
+        .bottom-sheet::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .bottom-sheet.active { transform: translateY(0); visibility: visible; }
+
+        .sheet-handle {
+            width: 44px;
+            height: 5px;
+            background: #cbd5e1;
+            border-radius: 9999px;
+            margin: -0.25rem auto 1rem auto;
+        }
+
+        @media (min-width: 769px) {
+            .bottom-sheet {
+                left: 50% !important;
+                right: auto !important;
+                top: 50% !important;
+                bottom: auto !important;
+                transform: translate(-50%, -45%) scale(0.96) !important;
+                width: 520px !important;
+                max-width: calc(100vw - 2rem) !important;
+                max-height: 85vh !important;
+                border-radius: 24px !important;
+                padding: 2rem !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+                transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s, visibility 0.3s !important;
+            }
+            .bottom-sheet.active {
+                transform: translate(-50%, -50%) scale(1) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .sheet-handle { display: none; }
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            width: 100%;
+        }
+        .sheet-close {
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .sheet-close:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+            transform: rotate(90deg);
+        }
+
+        /* Formulaires */
+        .form-group {
+            margin-bottom: 1.25rem;
+            width: 100%;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            width: 100%;
+            max-width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #f1f5f9;
+            background: #f8fafc;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* Notions Rows */
+        .notion-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.65rem;
+            align-items: center;
+            width: 100%;
+            animation: slideUp 0.25s ease-out;
+        }
+        .notion-row .notion-name {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .notion-row .notion-score {
+            flex: 0 0 72px;
+            width: 72px;
+            min-width: 72px;
+            text-align: center;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        .notion-row .btn-remove-notion {
+            flex: 0 0 38px;
+            width: 38px;
+            height: 42px;
+            background: #fef2f2;
+            color: #ef4444;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .notion-row .btn-remove-notion:hover {
+            background: #fee2e2;
+            transform: scale(1.05);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Radio cards */
+        .radio-choices-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+        .radio-card-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.75rem 0.85rem;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #334155;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-align: center;
+        }
+        .radio-card-label input[type="radio"] {
+            width: 18px !important;
+            min-width: 18px !important;
+            max-width: 18px !important;
+            height: 18px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .warning-box {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            color: #92400e;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            width: 100%;
+        }
+
+        .detail-box {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+            word-break: break-word;
+            width: 100%;
+        }
+
+        @media (max-width: 576px) {
+            .suivi-container { padding: 0 0.75rem; }
+            .header-card, .progress-section, .journal-section { padding: 1.25rem !important; }
+            .simulator-topbar { padding: 0.6rem 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre de contrôle de la simulation -->
+    <header class="simulator-topbar">
+        <a href="{% url 'prof_dashboard' %}" class="btn-exit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Quitter le simulateur
+        </a>
+
+        <div class="sim-badge">
+            <span>🧪</span> Mode Entraînement
+        </div>
+
+        <button type="button" onclick="resetSimulation()" class="btn-reset-sim" title="Réinitialiser les données de simulation">
+            ↺ Réinitialiser
+        </button>
+    </header>
+
+    <div class="suivi-container">
+
+        <!-- Bannière explicative didactique -->
+        <div class="info-sim-banner">
+            <div style="font-size: 1.4rem; line-height: 1;">💡</div>
+            <div>
+                <h4>Espace d'entraînement interactif</h4>
+                <p>
+                    Vous suivez ici un élève test fictif (<strong>Koffi ADANHOUN</strong>, 3ème en Mathématiques).  
+                    Testez l'enregistrement d'une séance pour observer comment vos appréciations par notion (notées de 0 à 3) 
+                    font évoluer en direct la <strong>jauge globale de maîtrise</strong> de l'élève. Aucune donnée réelle n'est modifiée.
+                </p>
+            </div>
+        </div>
+
+        <!-- En-tête de la collaboration fictive -->
+        <div class="header-card">
+            <div class="status-badge">
+                Finalisé
+            </div>
+            
+            <h1 style="margin: 0; font-size: 1.4rem; font-weight: 800;">Suivi Pédagogique (Simulation)</h1>
+            <p style="margin: 0.25rem 0 0 0; color: var(--text-gray); font-size: 0.95rem;">
+                Mathématiques • Classe de 3ème
+            </p>
+            
+            <div class="context-grid">
+                <div class="context-item">
+                    <div class="context-label">Professeur</div>
+                    <div class="context-value">{{ prof_nom }}</div>
+                </div>
+                <div class="context-item">
+                    <div class="context-label">Élève fictif</div>
+                    <div class="context-value">Koffi ADANHOUN</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Niveau global de maîtrise -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <div>
+                    <h2 class="progress-title">Niveau global de maîtrise</h2>
+                    <span id="label-pts" style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">10 / 15 points obtenus</span>
+                </div>
+                <div class="progress-percent" id="sim-taux-global">67%</div>
+            </div>
+            
+            <div class="progress-track">
+                <div class="progress-fill" id="sim-progress-fill" style="width: 67%;"></div>
+            </div>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">
+                Ce taux est le reflet cumulé de toutes les notions abordées depuis le début des cours.
+            </p>
+        </div>
+
+        <!-- Journal des séances -->
+        <div class="journal-section">
+            <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances (Simulation)</h2>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
+                    <span style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></span> En attente
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
+                    <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span> Validée
+                </div>
+            </div>
+
+            <div id="seances-list-container">
+                <!-- Généré dynamiquement en JS -->
+            </div>
+
+            <button type="button" onclick="openAddSeance()" class="btn-add-action">
+                + Ajouter une séance test
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Overlay global -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
+
+    <!-- BOTTOM SHEET: Détails Séance -->
+    <div class="bottom-sheet" id="sheetDetails">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <h2 style="margin: 0; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.5px;">Bilan du <span id="dt-date"></span></h2>
+            <button class="sheet-close" onclick="closeAllSheets()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.25rem; border-radius: 18px; margin-bottom: 1rem;">
+            <div id="dt-taux" style="font-size: 2.25rem; font-weight: 900; color: var(--primary);"></div>
+            <div style="margin-left: 1rem; font-size: 0.9rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
+        </div>
+        
+        <p style="font-size: 0.8rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 1.5rem; padding: 0 1rem; line-height: 1.4;">Pourcentage calculé sur la base des notions abordées ce jour-là.</p>
+        
+        <div class="form-group">
+            <label class="form-label">🎯 Objectifs de la séance</label>
+            <div id="dt-objectifs" class="detail-box"></div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">📚 Notions abordées</label>
+            <div id="dt-notions" style="display: grid; gap: 0.5rem;"></div>
+        </div>
+        
+        <div class="form-group" id="dt-diff-container">
+            <label class="form-label">⚠️ Difficultés rencontrées</label>
+            <div id="dt-difficultes" class="detail-box" style="background: #fef2f2; color: #991b1b;"></div>
+        </div>
+        
+        <div class="form-group" id="dt-taches-container">
+            <label class="form-label">🏠 Tâches à domicile</label>
+            <div id="dt-taches" class="detail-box"></div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <button type="button" onclick="closeAllSheets()" class="btn-add-action" style="margin-top: 0; background: #f1f5f9; color: #334155;">
+                Fermer ce bilan
+            </button>
+        </div>
+    </div>
+
+    <!-- BOTTOM SHEET: Ajouter Séance (Simulation) -->
+    <div class="bottom-sheet" id="sheetAdd">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <h2 style="margin: 0; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.5px;">Ajouter une séance test</h2>
+            <button class="sheet-close" onclick="closeAllSheets()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        
+        <div class="warning-box" style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="font-size: 1.25rem;">📝</div>
+            <div style="flex: 1;">
+                <strong>Rapport d'entraînement</strong><br>
+                Saisissez les notions abordées et évaluez-les de 0 à 3 (0 = Non acquis, 3 = Parfaitement maîtrisé).
+            </div>
+        </div>
+        
+        <form id="form-sim-seance" onsubmit="event.preventDefault(); submitSimulationSeance();">
+            <div class="form-group">
+                <label class="form-label">Date de la séance *</label>
+                <input type="date" id="sim-date" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Objectifs de la séance *</label>
+                <textarea id="sim-objectifs" class="form-control" rows="2" placeholder="Ex: Réviser les équations et introduire les fonctions affines..." required>Renforcement sur les équations et résolution de problèmes appliqués.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notions abordées * (Noter sur 3)</label>
+                <div id="sim-notions-container">
+                    <div class="notion-row">
+                        <input type="text" class="form-control notion-name" placeholder="Nom de la notion" value="Résolution d'équations à une inconnue" required>
+                        <select class="form-control notion-score" required>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                        </select>
+                    </div>
+                    <div class="notion-row">
+                        <input type="text" class="form-control notion-name" placeholder="Nom de la notion" value="Mise en équation d'un problème concret" required>
+                        <select class="form-control notion-score" required>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                        </select>
+                        <button type="button" class="btn-remove-notion" onclick="this.parentElement.remove()" title="Supprimer cette notion">✕</button>
+                    </div>
+                </div>
+                <button type="button" onclick="addSimNotionRow()" style="background: none; border: 1.5px dashed #cbd5e1; color: var(--text-dark); font-weight: 700; padding: 0.65rem; border-radius: 12px; width: 100%; margin-top: 0.5rem; cursor: pointer;">
+                    + Ajouter une notion
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Des difficultés rencontrées ? *</label>
+                <div class="radio-choices-group">
+                    <label class="radio-card-label" id="lbl-diff-non" for="sim-diff-non" style="border-color: var(--primary); background: #f0fdf4; color: #166534;">
+                        <input type="radio" id="sim-diff-non" name="sim_has_diff" value="non" checked onchange="toggleSimDiffText()">
+                        <span>Aucune difficulté</span>
+                    </label>
+                    <label class="radio-card-label" id="lbl-diff-oui" for="sim-diff-oui">
+                        <input type="radio" id="sim-diff-oui" name="sim_has_diff" value="oui" onchange="toggleSimDiffText()">
+                        <span>Oui</span>
+                    </label>
+                </div>
+                <textarea id="sim-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés observées..." style="display: none; margin-top: 0.5rem;"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tâches à domicile (Optionnel)</label>
+                <textarea id="sim-taches" class="form-control" rows="2" placeholder="Exercices conseillés pour la séance suivante...">Exercices 4 et 5 page 62 à terminer pour mercredi.</textarea>
+            </div>
+            
+            <button type="submit" class="btn-add-action" id="btn-submit-sim">
+                Enregistrer la séance (Simuler)
+            </button>
+        </form>
+    </div>
+
+    <!-- MODAL: Félicitations & Résultat Simulation -->
+    <div id="modal-bilan-succes" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 20000; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(6px);">
+        <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 440px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;">
+            <button type="button" onclick="closeSuccessModal()" aria-label="Fermer" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; font-size: 2rem; box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.2);">
+                👏
+            </div>
+
+            <h3 style="font-size: 1.3rem; font-weight: 900; color: #1e293b; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                Séance test enregistrée avec succès !
+            </h3>
+
+            <p style="font-size: 0.9rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.5;" id="sim-modal-explication">
+                Votre séance a été ajoutée. Le niveau global de Koffi s'est immédiatement actualisé en fonction de vos notes.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 0.85rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #64748b; text-align: left; display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 1.3rem;">⭐</span>
+                <span>Dans la réalité, chaque bilan validé par le parent vous rapporte <strong>+5 points</strong> sur votre score de fiabilité.</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button type="button" onclick="closeSuccessModal()" class="btn-add-action" style="margin: 0; padding: 0.85rem 1rem; font-size: 0.95rem;">
+                    Voir l'évolution de la jauge
+                </button>
+                <a href="{% url 'prof_dashboard' %}" style="width: 100%; padding: 0.8rem 1rem; font-size: 0.9rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; display: block; text-align: center; text-decoration: none;">
+                    Retourner à mon espace prof
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de simulation interactif -->
+    <script>
+        // Données initiales
+        const initialSeances = [
+            {
+                id: 1,
+                date: "12 Oct 2026",
+                taux: 50,
+                objectifs: "Introduction aux racines carrées et résolution d'équations simples.",
+                difficultes: "Quelques hésitations sur la simplification des radicaux.",
+                taches: "Exercices 1 et 2 page 45.",
+                validee: true,
+                notions: [
+                    { nom: "Racines carrées et simplifications", score: 1 },
+                    { nom: "Équations du premier degré", score: 2 }
+                ]
+            },
+            {
+                id: 2,
+                date: "09 Oct 2026",
+                taux: 78,
+                objectifs: "Application du théorème de Thalès et calcul littéral.",
+                difficultes: "",
+                taches: "Révision des identités remarquables.",
+                validee: true,
+                notions: [
+                    { nom: "Théorème de Thalès direct", score: 3 },
+                    { nom: "Calcul littéral et factorisation", score: 2 },
+                    { nom: "Développement d'expressions algébriques", score: 2 }
+                ]
+            }
+        ];
+
+        let simulatedSeances = [];
+        let cumulPointsObtenus = 10;
+        let cumulPointsMax = 15;
+
+        function initSimulation() {
+            simulatedSeances = JSON.parse(JSON.stringify(initialSeances));
+            cumulPointsObtenus = 10;
+            cumulPointsMax = 15;
+            updateGlobalStats();
+            renderSeancesList();
+            
+            const dateInput = document.getElementById('sim-date');
+            if (dateInput) {
+                dateInput.valueAsDate = new Date();
+            }
+        }
+
+        function updateGlobalStats() {
+            const taux = cumulPointsMax > 0 ? Math.round((cumulPointsObtenus / cumulPointsMax) * 100) : 0;
+            const progressFill = document.getElementById('sim-progress-fill');
+            const tauxGlobal = document.getElementById('sim-taux-global');
+            const labelPts = document.getElementById('label-pts');
+
+            if (progressFill) progressFill.style.width = taux + '%';
+            if (tauxGlobal) tauxGlobal.textContent = taux + '%';
+            if (labelPts) labelPts.textContent = `${cumulPointsObtenus} / ${cumulPointsMax} points obtenus`;
+        }
+
+        function renderSeancesList() {
+            const container = document.getElementById('seances-list-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            simulatedSeances.forEach(s => {
+                const color = s.taux >= 80 ? '#16a34a' : (s.taux >= 40 ? '#ca8a04' : '#dc2626');
+                const row = document.createElement('div');
+                row.className = 'seance-row';
+                row.onclick = () => openSeanceDetailsSim(s.id);
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; flex: 1; min-width: 0;">
+                        <div class="seance-indicator ${s.validee ? 'seance-validee' : 'seance-non-lue'}"></div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div class="seance-date">${s.date}</div>
+                            <div class="seance-notions">${s.notions.map(n => n.nom).join(', ')}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-left: 0.5rem;">
+                        <div class="seance-taux" style="color: ${color};">${Math.round(s.taux)}%</div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function openAddSeance() {
+            document.getElementById('sheetOverlay').classList.add('active');
+            document.getElementById('sheetAdd').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAllSheets() {
+            document.getElementById('sheetOverlay').classList.remove('active');
+            document.getElementById('sheetDetails').classList.remove('active');
+            const addSheet = document.getElementById('sheetAdd');
+            if (addSheet) addSheet.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openSeanceDetailsSim(id) {
+            const s = simulatedSeances.find(item => item.id === id);
+            if (!s) return;
+
+            document.getElementById('dt-date').textContent = s.date;
+            document.getElementById('dt-taux').textContent = Math.round(s.taux) + '%';
+            document.getElementById('dt-objectifs').textContent = s.objectifs;
+
+            const diffCont = document.getElementById('dt-diff-container');
+            if (s.difficultes) {
+                diffCont.style.display = 'block';
+                document.getElementById('dt-difficultes').textContent = s.difficultes;
+            } else {
+                diffCont.style.display = 'none';
+            }
+
+            const tachesCont = document.getElementById('dt-taches-container');
+            if (s.taches) {
+                tachesCont.style.display = 'block';
+                document.getElementById('dt-taches').textContent = s.taches;
+            } else {
+                tachesCont.style.display = 'none';
+            }
+
+            const notionsDiv = document.getElementById('dt-notions');
+            notionsDiv.innerHTML = '';
+            s.notions.forEach(n => {
+                notionsDiv.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 10px; border: 1px solid #f1f5f9;">
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #1e293b;">${n.nom}</span>
+                        <span style="font-weight: 800; color: var(--primary); font-size: 0.95rem;">${n.score}/3</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('sheetOverlay').classList.add('active');
+            document.getElementById('sheetDetails').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function addSimNotionRow() {
+            const cont = document.getElementById('sim-notions-container');
+            const row = document.createElement('div');
+            row.className = 'notion-row';
+            row.innerHTML = `
+                <input type="text" class="form-control notion-name" placeholder="Nom de la notion" required>
+                <select class="form-control notion-score" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                </select>
+                <button type="button" class="btn-remove-notion" onclick="this.parentElement.remove()" title="Supprimer cette notion">✕</button>
+            `;
+            cont.appendChild(row);
+        }
+
+        function toggleSimDiffText() {
+            const hasDiff = document.querySelector('input[name="sim_has_diff"]:checked').value === 'oui';
+            const tf = document.getElementById('sim-difficultes');
+            const lblNon = document.getElementById('lbl-diff-non');
+            const lblOui = document.getElementById('lbl-diff-oui');
+
+            if (hasDiff) {
+                tf.style.display = 'block';
+                tf.setAttribute('required', 'required');
+                tf.focus();
+                lblOui.style.borderColor = 'var(--primary)';
+                lblOui.style.background = '#f0fdf4';
+                lblOui.style.color = '#166534';
+                lblNon.style.borderColor = '#e2e8f0';
+                lblNon.style.background = '#f8fafc';
+                lblNon.style.color = '#334155';
+            } else {
+                tf.style.display = 'none';
+                tf.removeAttribute('required');
+                lblNon.style.borderColor = 'var(--primary)';
+                lblNon.style.background = '#f0fdf4';
+                lblNon.style.color = '#166534';
+                lblOui.style.borderColor = '#e2e8f0';
+                lblOui.style.background = '#f8fafc';
+                lblOui.style.color = '#334155';
+            }
+        }
+
+        function submitSimulationSeance() {
+            const form = document.getElementById('form-sim-seance');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const rawDate = document.getElementById('sim-date').value;
+            let formattedDate = "Aujourd'hui";
+            if (rawDate) {
+                const parts = rawDate.split('-');
+                if (parts.length === 3) {
+                    const months = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
+                    formattedDate = `${parts[2]} ${months[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
+                }
+            }
+
+            const objectifs = document.getElementById('sim-objectifs').value;
+            const hasDiff = document.querySelector('input[name="sim_has_diff"]:checked').value === 'oui';
+            const difficultes = hasDiff ? document.getElementById('sim-difficultes').value : '';
+            const taches = document.getElementById('sim-taches').value;
+
+            const notions = [];
+            let pointsSeance = 0;
+            document.querySelectorAll('#sim-notions-container .notion-row').forEach(row => {
+                const nom = row.querySelector('.notion-name').value.trim();
+                const score = parseInt(row.querySelector('.notion-score').value, 10);
+                if (nom) {
+                    notions.push({ nom, score });
+                    pointsSeance += score;
+                }
+            });
+
+            if (notions.length === 0) {
+                alert("Veuillez renseigner au moins une notion abordée.");
+                return;
+            }
+
+            const pointsMaxSeance = notions.length * 3;
+            const tauxSeance = Math.round((pointsSeance / pointsMaxSeance) * 100);
+
+            // Création de l'objet séance simulé
+            const newSeance = {
+                id: Date.now(),
+                date: formattedDate,
+                taux: tauxSeance,
+                objectifs: objectifs,
+                difficultes: difficultes,
+                taches: taches,
+                validee: false,
+                notions: notions
+            };
+
+            // Ajout en tête de liste
+            simulatedSeances.unshift(newSeance);
+
+            // Recalcul du taux global cumulé
+            cumulPointsObtenus += pointsSeance;
+            cumulPointsMax += pointsMaxSeance;
+
+            updateGlobalStats();
+            renderSeancesList();
+            closeAllSheets();
+
+            // Affichage de la modale de succès
+            const modalExp = document.getElementById('sim-modal-explication');
+            const nouveauTaux = Math.round((cumulPointsObtenus / cumulPointsMax) * 100);
+            if (modalExp) {
+                modalExp.innerHTML = `Cette séance test a obtenu un score de <strong>${tauxSeance}%</strong> (${pointsSeance}/${pointsMaxSeance} pts).<br>La jauge de maîtrise globale de Koffi est désormais de <strong>${nouveauTaux}%</strong> !`;
+            }
+
+            document.getElementById('modal-bilan-succes').style.display = 'flex';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('modal-bilan-succes').style.display = 'none';
+        }
+
+        function resetSimulation() {
+            if (confirm("Voulez-vous réinitialiser le simulateur à son état de départ ?")) {
+                initSimulation();
+                alert("Le simulateur a été réinitialisé.");
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAllSheets();
+                closeSuccessModal();
+            }
+        });
+
+        // Lancement au chargement
+        window.addEventListener('DOMContentLoaded', initSimulation);
+    </script>
+</body>
+</html>
