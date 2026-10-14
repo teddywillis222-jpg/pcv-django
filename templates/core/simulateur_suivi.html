@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Simulateur Suivi Pédagogique - Prof Chez Vous</title>
+    <title>Suivi Pédagogique - Mathématiques</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -32,101 +32,28 @@
             padding-bottom: 3rem;
         }
 
-        /* Top Bar Entraînement */
-        .simulator-topbar {
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 0.75rem 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .btn-exit {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.85rem;
-            background: #f1f5f9;
-            color: #334155;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: all 0.2s;
-        }
-        .btn-exit:hover {
-            background: #e2e8f0;
-            color: #0f172a;
-        }
-
-        .sim-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-reset-sim {
-            background: none;
-            border: 1px solid #cbd5e1;
-            padding: 0.45rem 0.75rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-reset-sim:hover {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
-
         /* Conteneur Suivi */
         .suivi-container {
             max-width: 800px;
-            margin: 1.25rem auto 0 auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
         }
 
-        /* Banner didactique */
-        .info-sim-banner {
-            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
-            border: 1px solid #bfdbfe;
-            border-radius: 18px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.85rem;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
-        }
-        .info-sim-banner h4 {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #0369a1;
-            margin-bottom: 0.25rem;
-        }
-        .info-sim-banner p {
-            font-size: 0.85rem;
-            color: #334155;
-            line-height: 1.45;
+        @media (max-width: 576px) {
+            .suivi-container {
+                padding: 1.25rem 0.75rem;
+                width: 100%;
+            }
+            .header-card, .progress-section, .journal-section {
+                padding: 1.25rem !important;
+                border-radius: 16px !important;
+                margin-bottom: 0.75rem !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.03) !important;
+                border: 1px solid #f1f5f9 !important;
+            }
         }
 
-        /* Cartes Suivi */
+        /* En-tête */
         .header-card {
             background: white;
             border-radius: 20px;
@@ -135,6 +62,27 @@
             margin-bottom: 1.5rem;
             position: relative;
             border: 1px solid #f1f5f9;
+        }
+
+        .btn-retour {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+        .btn-retour:hover {
+            background: #e2e8f0;
+            transform: translateX(-3px);
         }
 
         .status-badge {
@@ -177,7 +125,7 @@
             color: var(--text-dark);
         }
 
-        /* Jauge Progression */
+        /* Section Niveau de Maîtrise */
         .progress-section {
             background: white;
             border-radius: 20px;
@@ -194,12 +142,6 @@
             top: 0; left: 0; width: 4px; height: 100%;
             background: var(--primary);
         }
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
         .progress-title {
             font-size: 1.15rem;
             font-weight: 800;
@@ -207,9 +149,10 @@
             color: #1e293b;
         }
         .progress-percent {
-            font-size: 1.85rem;
+            font-size: 2.5rem;
             font-weight: 900;
             color: var(--primary);
+            line-height: 1;
             letter-spacing: -1px;
             transition: all 0.5s ease;
         }
@@ -218,7 +161,7 @@
             background: #e2e8f0;
             border-radius: 7px;
             overflow: hidden;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         .progress-fill {
             height: 100%;
@@ -227,7 +170,41 @@
             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Journal */
+        /* Cartes de répartition des notions */
+        .notion-cat-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .notion-cat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .notion-cat-card.cat-maitrisees { border-top: 3px solid #16a34a; }
+        .notion-cat-card.cat-en-cours { border-top: 3px solid #f59e0b; }
+        .notion-cat-card.cat-a-renforcer { border-top: 3px solid #ef4444; }
+
+        .notion-cat-count {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+        .notion-cat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            line-height: 1.2;
+            display: block;
+        }
+
+        /* Section Journal */
         .journal-section {
             background: white;
             border-radius: 24px;
@@ -240,7 +217,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1.1rem 0.6rem;
+            padding: 1.15rem 0.6rem;
             border-bottom: 1px solid #f8fafc;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -281,32 +258,55 @@
             letter-spacing: -0.5px;
         }
 
-        .btn-add-action {
-            display: block;
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.75rem;
+        }
+        .btn-secondary {
+            flex: 1;
+            background: #f1f5f9;
+            color: #475569;
+            text-align: center;
             padding: 1rem;
             border-radius: 14px;
-            font-weight: 800;
-            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 1.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        .btn-primary {
+            flex: 1;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
             box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
             transition: all 0.2s ease;
         }
-        .btn-add-action:hover {
+        .btn-primary:hover {
             filter: brightness(1.05);
             transform: translateY(-2px);
         }
 
-        /* Sheets & Overlays */
+        /* Bottom Sheets */
         .sheet-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(15, 23, 42, 0.45);
             backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 9999;
@@ -538,54 +538,70 @@
             width: 100%;
         }
 
-        @media (max-width: 576px) {
-            .suivi-container { padding: 0 0.75rem; }
-            .header-card, .progress-section, .journal-section { padding: 1.25rem !important; }
-            .simulator-topbar { padding: 0.6rem 0.75rem; }
+        /* Modales Notions Répartition */
+        .modal-repartition {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 15000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
         }
+        .modal-repartition-content {
+            background: white;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+        .modal-repartition-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-repartition-body {
+            padding: 1.25rem 1.5rem;
+            overflow-y: auto;
+        }
+        .notion-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .notion-item-row.border-green { border-left: 4px solid #16a34a; }
+        .notion-item-row.border-amber { border-left: 4px solid #f59e0b; }
+        .notion-item-row.border-red { border-left: 4px solid #ef4444; }
     </style>
 </head>
 <body>
 
-    <!-- Barre de contrôle de la simulation -->
-    <header class="simulator-topbar">
-        <a href="{% url 'prof_dashboard' %}" class="btn-exit">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            Quitter le simulateur
-        </a>
-
-        <div class="sim-badge">
-            <span>🧪</span> Mode Entraînement
-        </div>
-
-        <button type="button" onclick="resetSimulation()" class="btn-reset-sim" title="Réinitialiser les données de simulation">
-            ↺ Réinitialiser
-        </button>
-    </header>
-
     <div class="suivi-container">
 
-        <!-- Bannière explicative didactique -->
-        <div class="info-sim-banner">
-            <div style="font-size: 1.4rem; line-height: 1;">💡</div>
-            <div>
-                <h4>Espace d'entraînement interactif</h4>
-                <p>
-                    Vous suivez ici un élève test fictif (<strong>Koffi ADANHOUN</strong>, 3ème en Mathématiques).  
-                    Testez l'enregistrement d'une séance pour observer comment vos appréciations par notion (notées de 0 à 3) 
-                    font évoluer en direct la <strong>jauge globale de maîtrise</strong> de l'élève. Aucune donnée réelle n'est modifiée.
-                </p>
-            </div>
-        </div>
-
-        <!-- En-tête de la collaboration fictive -->
+        <!-- En-tête -->
         <div class="header-card">
+            <a href="javascript:history.back()" class="btn-retour">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Retour
+            </a>
+
             <div class="status-badge">
                 Finalisé
             </div>
             
-            <h1 style="margin: 0; font-size: 1.4rem; font-weight: 800;">Suivi Pédagogique (Simulation)</h1>
-            <p style="margin: 0.25rem 0 0 0; color: var(--text-gray); font-size: 0.95rem;">
+            <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Suivi Pédagogique</h1>
+            <p style="margin: 0.2rem 0 0 0; color: var(--text-gray); font-size: 0.95rem;">
                 Mathématiques • Classe de 3ème
             </p>
             
@@ -595,105 +611,120 @@
                     <div class="context-value">{{ prof_nom }}</div>
                 </div>
                 <div class="context-item">
-                    <div class="context-label">Élève fictif</div>
+                    <div class="context-label">Élève(s)</div>
                     <div class="context-value">Koffi ADANHOUN</div>
                 </div>
             </div>
         </div>
 
-        <!-- Niveau global de maîtrise -->
-        <div class="progress-section">
-            <div class="progress-header">
-                <div>
-                    <h2 class="progress-title">Niveau global de maîtrise</h2>
-                    <span id="label-pts" style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">10 / 15 points obtenus</span>
-                </div>
-                <div class="progress-percent" id="sim-taux-global">67%</div>
+        <!-- Section Progression & Niveau de Maîtrise -->
+        <div class="progress-section" id="section-progression">
+            <h2 class="progress-title" style="margin-bottom: 1.25rem;">Niveau de maîtrise des notions travaillées</h2>
+            
+            <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.75rem;">
+                <div class="progress-percent" id="sim-taux-global">67 %</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #64748b;" id="sim-label-points">10 / 15 points</div>
             </div>
             
-            <div class="progress-track">
+            <div class="progress-track" style="margin-bottom: 1rem;">
                 <div class="progress-fill" id="sim-progress-fill" style="width: 67%;"></div>
             </div>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">
-                Ce taux est le reflet cumulé de toutes les notions abordées depuis le début des cours.
-            </p>
+            
+            <div style="font-size: 0.9rem; color: #475569; font-weight: 700; margin-bottom: 0.25rem;">Depuis le début de l’accompagnement</div>
+            <div style="font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 1.25rem;" id="sim-label-seances-notions">2 séances · 5 notions évaluées</div>
+            
+            <div style="font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 2rem;">Cet indicateur est établi à partir des évaluations renseignées par le professeur.</div>
+            
+            <!-- Répartition des notions -->
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: #334155; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Répartition des notions</h3>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: -0.5rem; margin-bottom: 1rem;">Cliquez sur l'une des catégories pour voir toutes les notions correspondantes.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                <div class="notion-cat-card cat-maitrisees" onclick="openModalCategory('maitrisees')">
+                    <span class="notion-cat-count" id="count-maitrisees">1</span>
+                    <span class="notion-cat-label">Maîtrisées</span>
+                </div>
+                <div class="notion-cat-card cat-en-cours" onclick="openModalCategory('en-cours')">
+                    <span class="notion-cat-count" id="count-en-cours">3</span>
+                    <span class="notion-cat-label">En cours d'acquisition</span>
+                </div>
+                <div class="notion-cat-card cat-a-renforcer" onclick="openModalCategory('a-renforcer')">
+                    <span class="notion-cat-count" id="count-a-renforcer">1</span>
+                    <span class="notion-cat-label">À renforcer</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Journal des séances -->
+        <!-- Section Journal des séances -->
         <div class="journal-section">
-            <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances (Simulation)</h2>
-            <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
-                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
-                    <span style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></span> En attente
+            <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances</h2>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <span style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);"></span> En attente
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
-                    <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span> Validée
+                <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);"></span> Validée
                 </div>
             </div>
 
             <div id="seances-list-container">
-                <!-- Généré dynamiquement en JS -->
+                <!-- Rendu dynamique JS -->
             </div>
 
-            <button type="button" onclick="openAddSeance()" class="btn-add-action">
-                + Ajouter une séance test
-            </button>
+            <div class="action-buttons">
+                <a href="javascript:void(0)" onclick="alert('En mode complet, cette page affiche l\'historique paginé de toutes vos séances.')" class="btn-secondary">Voir tout</a>
+                <button type="button" onclick="openAddSeance()" class="btn-primary">Ajouter</button>
+            </div>
         </div>
 
     </div>
 
-    <!-- Overlay global -->
+    <!-- Overlay global pour bottom sheets -->
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
 
     <!-- BOTTOM SHEET: Détails Séance -->
     <div class="bottom-sheet" id="sheetDetails">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-            <h2 style="margin: 0; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.5px;">Bilan du <span id="dt-date"></span></h2>
+            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px;">Bilan du <span id="dt-date"></span></h2>
             <button class="sheet-close" onclick="closeAllSheets()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
         
-        <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.25rem; border-radius: 18px; margin-bottom: 1rem;">
-            <div id="dt-taux" style="font-size: 2.25rem; font-weight: 900; color: var(--primary);"></div>
-            <div style="margin-left: 1rem; font-size: 0.9rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
+        <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.5rem; border-radius: 20px; margin-bottom: 1rem;">
+            <div id="dt-taux" style="font-size: 2.5rem; font-weight: 900; color: var(--primary);"></div>
+            <div style="margin-left: 1rem; font-size: 0.95rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
         </div>
         
-        <p style="font-size: 0.8rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 1.5rem; padding: 0 1rem; line-height: 1.4;">Pourcentage calculé sur la base des notions abordées ce jour-là.</p>
+        <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; padding: 0 1rem; line-height: 1.4;">Ce pourcentage montre le niveau affiché par votre enfant sur l'ensemble des notions abordées ce jour de séance.</p>
         
         <div class="form-group">
-            <label class="form-label">🎯 Objectifs de la séance</label>
+            <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">🎯 Objectifs de la séance</label>
             <div id="dt-objectifs" class="detail-box"></div>
         </div>
         
         <div class="form-group">
-            <label class="form-label">📚 Notions abordées</label>
+            <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">📚 Notions abordées</label>
             <div id="dt-notions" style="display: grid; gap: 0.5rem;"></div>
         </div>
         
         <div class="form-group" id="dt-diff-container">
-            <label class="form-label">⚠️ Difficultés rencontrées</label>
+            <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">⚠️ Difficultés rencontrées</label>
             <div id="dt-difficultes" class="detail-box" style="background: #fef2f2; color: #991b1b;"></div>
         </div>
         
         <div class="form-group" id="dt-taches-container">
-            <label class="form-label">🏠 Tâches à domicile</label>
+            <label class="form-label" style="font-size: 0.85rem; font-weight: 900; color: #1e293b;">🏠 Tâches à domicile</label>
             <div id="dt-taches" class="detail-box"></div>
-        </div>
-
-        <div style="margin-top: 1.5rem;">
-            <button type="button" onclick="closeAllSheets()" class="btn-add-action" style="margin-top: 0; background: #f1f5f9; color: #334155;">
-                Fermer ce bilan
-            </button>
         </div>
     </div>
 
-    <!-- BOTTOM SHEET: Ajouter Séance (Simulation) -->
+    <!-- BOTTOM SHEET: Ajouter Séance -->
     <div class="bottom-sheet" id="sheetAdd">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-            <h2 style="margin: 0; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.5px;">Ajouter une séance test</h2>
+            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px;">Ajouter une séance</h2>
             <button class="sheet-close" onclick="closeAllSheets()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -702,27 +733,27 @@
         <div class="warning-box" style="display: flex; gap: 0.75rem; align-items: flex-start;">
             <div style="font-size: 1.25rem;">📝</div>
             <div style="flex: 1;">
-                <strong>Rapport d'entraînement</strong><br>
-                Saisissez les notions abordées et évaluez-les de 0 à 3 (0 = Non acquis, 3 = Parfaitement maîtrisé).
+                <strong>Rapport pédagogique</strong><br>
+                Les informations que vous renseignez servent de base pour le suivi de l'élève. Soyez le plus précis possible.
             </div>
         </div>
         
-        <form id="form-sim-seance" onsubmit="event.preventDefault(); submitSimulationSeance();">
+        <form id="form-ajouter-seance" onsubmit="event.preventDefault(); submitSimulationSeance();">
             <div class="form-group">
                 <label class="form-label">Date de la séance *</label>
-                <input type="date" id="sim-date" class="form-control" required>
+                <input type="date" id="add-date" class="form-control" required>
             </div>
             
             <div class="form-group">
                 <label class="form-label">Objectifs de la séance *</label>
-                <textarea id="sim-objectifs" class="form-control" rows="2" placeholder="Ex: Réviser les équations et introduire les fonctions affines..." required>Renforcement sur les équations et résolution de problèmes appliqués.</textarea>
+                <textarea id="add-objectifs" class="form-control" rows="2" placeholder="Quels étaient les buts fixés ? (Ex: Renforcement sur les équations et résolution de problèmes appliqués)" required></textarea>
             </div>
             
             <div class="form-group">
                 <label class="form-label">Notions abordées * (Noter sur 3)</label>
-                <div id="sim-notions-container">
+                <div id="notions-container">
                     <div class="notion-row">
-                        <input type="text" class="form-control notion-name" placeholder="Nom de la notion" value="Résolution d'équations à une inconnue" required>
+                        <input type="text" class="form-control notion-name" placeholder="Nom de la notion (Ex: Résolution d'équations à une inconnue)" required>
                         <select class="form-control notion-score" required>
                             <option value="0">0</option>
                             <option value="1">1</option>
@@ -730,18 +761,8 @@
                             <option value="3" selected>3</option>
                         </select>
                     </div>
-                    <div class="notion-row">
-                        <input type="text" class="form-control notion-name" placeholder="Nom de la notion" value="Mise en équation d'un problème concret" required>
-                        <select class="form-control notion-score" required>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                        </select>
-                        <button type="button" class="btn-remove-notion" onclick="this.parentElement.remove()" title="Supprimer cette notion">✕</button>
-                    </div>
                 </div>
-                <button type="button" onclick="addSimNotionRow()" style="background: none; border: 1.5px dashed #cbd5e1; color: var(--text-dark); font-weight: 700; padding: 0.65rem; border-radius: 12px; width: 100%; margin-top: 0.5rem; cursor: pointer;">
+                <button type="button" onclick="addNotionRow()" style="background: none; border: 1.5px dashed #cbd5e1; color: var(--text-dark); font-weight: 700; padding: 0.65rem; border-radius: 12px; width: 100%; margin-top: 0.5rem; cursor: pointer; transition: all 0.2s;">
                     + Ajouter une notion
                 </button>
             </div>
@@ -749,30 +770,28 @@
             <div class="form-group">
                 <label class="form-label">Des difficultés rencontrées ? *</label>
                 <div class="radio-choices-group">
-                    <label class="radio-card-label" id="lbl-diff-non" for="sim-diff-non" style="border-color: var(--primary); background: #f0fdf4; color: #166534;">
-                        <input type="radio" id="sim-diff-non" name="sim_has_diff" value="non" checked onchange="toggleSimDiffText()">
+                    <label class="radio-card-label" id="lbl-diff-non" for="diff-non" style="border-color: var(--primary); background: #f0fdf4; color: #166534;">
+                        <input type="radio" id="diff-non" name="has_diff" value="non" checked onchange="toggleDiffText()">
                         <span>Aucune difficulté</span>
                     </label>
-                    <label class="radio-card-label" id="lbl-diff-oui" for="sim-diff-oui">
-                        <input type="radio" id="sim-diff-oui" name="sim_has_diff" value="oui" onchange="toggleSimDiffText()">
+                    <label class="radio-card-label" id="lbl-diff-oui" for="diff-oui">
+                        <input type="radio" id="diff-oui" name="has_diff" value="oui" onchange="toggleDiffText()">
                         <span>Oui</span>
                     </label>
                 </div>
-                <textarea id="sim-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés observées..." style="display: none; margin-top: 0.5rem;"></textarea>
+                <textarea id="add-difficultes" class="form-control" rows="2" placeholder="Décrivez les difficultés rencontrées..." style="display: none; margin-top: 0.5rem;"></textarea>
             </div>
             
             <div class="form-group">
                 <label class="form-label">Tâches à domicile (Optionnel)</label>
-                <textarea id="sim-taches" class="form-control" rows="2" placeholder="Exercices conseillés pour la séance suivante...">Exercices 4 et 5 page 62 à terminer pour mercredi.</textarea>
+                <textarea id="add-taches" class="form-control" rows="2" placeholder="Exercices, révisions... (Ex: Exercices 4 et 5 page 62 à terminer pour mercredi)"></textarea>
             </div>
             
-            <button type="submit" class="btn-add-action" id="btn-submit-sim">
-                Enregistrer la séance (Simuler)
-            </button>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem; border-radius: 14px; padding: 1rem; font-weight: 800; font-size: 1rem;">Enregistrer la séance</button>
         </form>
     </div>
 
-    <!-- MODAL: Félicitations & Résultat Simulation -->
+    <!-- MODAL: Confirmation & Félicitations Bilan -->
     <div id="modal-bilan-succes" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 20000; align-items: center; justify-content: center; padding: 1.25rem; backdrop-filter: blur(6px);">
         <div style="background: white; border-radius: 1.5rem; width: 100%; max-width: 440px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;">
             <button type="button" onclick="closeSuccessModal()" aria-label="Fermer" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
@@ -781,33 +800,73 @@
                 👏
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 900; color: #1e293b; margin: 0 0 0.5rem 0; line-height: 1.3;">
-                Séance test enregistrée avec succès !
+            <h3 style="font-size: 1.35rem; font-weight: 900; color: #1e293b; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                Félicitations pour votre effort !
             </h3>
 
-            <p style="font-size: 0.9rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.5;" id="sim-modal-explication">
-                Votre séance a été ajoutée. Le niveau global de Koffi s'est immédiatement actualisé en fonction de vos notes.
+            <p style="font-size: 0.95rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.5;" id="sim-modal-explication">
+                Votre bilan de séance a été enregistré avec succès. Vous pourrez recevoir un retour dès que le parent aura consulté ce bilan.
             </p>
 
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 0.85rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #64748b; text-align: left; display: flex; align-items: center; gap: 0.75rem;">
                 <span style="font-size: 1.3rem;">⭐</span>
-                <span>Dans la réalité, chaque bilan validé par le parent vous rapporte <strong>+5 points</strong> sur votre score de fiabilité.</span>
+                <span>Chaque bilan validé renforce la confiance des familles et valorise votre <strong>score de fiabilité</strong>.</span>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <button type="button" onclick="closeSuccessModal()" class="btn-add-action" style="margin: 0; padding: 0.85rem 1rem; font-size: 0.95rem;">
-                    Voir l'évolution de la jauge
+                <button type="button" onclick="closeSuccessModal()" class="btn-primary" style="width: 100%; padding: 0.95rem 1rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; text-align: center; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);">
+                    Voir la nouvelle étape de progression de Koffi
                 </button>
-                <a href="{% url 'prof_dashboard' %}" style="width: 100%; padding: 0.8rem 1rem; font-size: 0.9rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; display: block; text-align: center; text-decoration: none;">
-                    Retourner à mon espace prof
+
+                <a href="{% url 'prof_dashboard' %}#section-fiabilite" style="width: 100%; padding: 0.85rem 1rem; font-size: 0.9rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; display: block; text-align: center; text-decoration: none; box-sizing: border-box; transition: background 0.2s;">
+                    Aller dans mon espace découvrir mon score de fiabilité
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Script de simulation interactif -->
+    <!-- Modale Notions: À Renforcer -->
+    <div id="modal-notions-a-renforcer" class="modal-repartition">
+        <div class="modal-repartition-content">
+            <div class="modal-repartition-header">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin: 0;">Notions à renforcer</h3>
+                <button type="button" onclick="closeModalCategory('a-renforcer')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer;">✕</button>
+            </div>
+            <div class="modal-repartition-body" id="list-notions-a-renforcer">
+                <!-- Rendu dynamique JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Notions: En Cours d'Acquisition -->
+    <div id="modal-notions-en-cours" class="modal-repartition">
+        <div class="modal-repartition-content">
+            <div class="modal-repartition-header">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin: 0;">En cours d'acquisition</h3>
+                <button type="button" onclick="closeModalCategory('en-cours')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer;">✕</button>
+            </div>
+            <div class="modal-repartition-body" id="list-notions-en-cours">
+                <!-- Rendu dynamique JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Notions: Maîtrisées -->
+    <div id="modal-notions-maitrisees" class="modal-repartition">
+        <div class="modal-repartition-content">
+            <div class="modal-repartition-header">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: #1e293b; margin: 0;">Notions maîtrisées</h3>
+                <button type="button" onclick="closeModalCategory('maitrisees')" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; color: #64748b; cursor: pointer;">✕</button>
+            </div>
+            <div class="modal-repartition-body" id="list-notions-maitrisees">
+                <!-- Rendu dynamique JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de logique interactive -->
     <script>
-        // Données initiales
+        // Données initiales réalistes
         const initialSeances = [
             {
                 id: 1,
@@ -849,21 +908,89 @@
             updateGlobalStats();
             renderSeancesList();
             
-            const dateInput = document.getElementById('sim-date');
+            const dateInput = document.getElementById('add-date');
             if (dateInput) {
                 dateInput.valueAsDate = new Date();
             }
+        }
+
+        function getAllNotions() {
+            const all = [];
+            simulatedSeances.forEach(s => {
+                s.notions.forEach(n => {
+                    all.push({
+                        nom: n.nom,
+                        score: n.score,
+                        date: s.date
+                    });
+                });
+            });
+            return all;
         }
 
         function updateGlobalStats() {
             const taux = cumulPointsMax > 0 ? Math.round((cumulPointsObtenus / cumulPointsMax) * 100) : 0;
             const progressFill = document.getElementById('sim-progress-fill');
             const tauxGlobal = document.getElementById('sim-taux-global');
-            const labelPts = document.getElementById('label-pts');
+            const labelPts = document.getElementById('sim-label-points');
+            const labelSeancesNotions = document.getElementById('sim-label-seances-notions');
 
             if (progressFill) progressFill.style.width = taux + '%';
-            if (tauxGlobal) tauxGlobal.textContent = taux + '%';
-            if (labelPts) labelPts.textContent = `${cumulPointsObtenus} / ${cumulPointsMax} points obtenus`;
+            if (tauxGlobal) tauxGlobal.textContent = taux + ' %';
+            if (labelPts) labelPts.textContent = `${cumulPointsObtenus} / ${cumulPointsMax} points`;
+
+            const allNotions = getAllNotions();
+            const nbSeances = simulatedSeances.length;
+            const nbNotions = allNotions.length;
+            if (labelSeancesNotions) {
+                labelSeancesNotions.textContent = `${nbSeances} séance${nbSeances > 1 ? 's' : ''} · ${nbNotions} notion${nbNotions > 1 ? 's' : ''} évaluée${nbNotions > 1 ? 's' : ''}`;
+            }
+
+            // Répartition
+            const maitrisees = allNotions.filter(n => n.score === 3);
+            const enCours = allNotions.filter(n => n.score === 2);
+            const aRenforcer = allNotions.filter(n => n.score <= 1);
+
+            document.getElementById('count-maitrisees').textContent = maitrisees.length;
+            document.getElementById('count-en-cours').textContent = enCours.length;
+            document.getElementById('count-a-renforcer').textContent = aRenforcer.length;
+
+            renderModalCategoryList('list-notions-maitrisees', maitrisees, 'border-green');
+            renderModalCategoryList('list-notions-en-cours', enCours, 'border-amber');
+            renderModalCategoryList('list-notions-a-renforcer', aRenforcer, 'border-red');
+        }
+
+        function renderModalCategoryList(containerId, list, borderClass) {
+            const cont = document.getElementById(containerId);
+            if (!cont) return;
+            if (list.length === 0) {
+                cont.innerHTML = '<p style="color: #64748b; font-size: 0.95rem; text-align: center; padding: 1rem 0;">Aucune notion dans cette catégorie.</p>';
+                return;
+            }
+            cont.innerHTML = list.map(n => `
+                <div class="notion-item-row ${borderClass}">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #334155; line-height: 1.3;">${n.nom}</span>
+                    <span style="font-size: 0.85rem; font-weight: 800; color: #1e293b; background: white; padding: 0.25rem 0.5rem; border-radius: 0.35rem; border: 1px solid #e2e8f0; white-space: nowrap; margin-left: 0.5rem;">${n.score} / 3</span>
+                </div>
+            `).join('');
+        }
+
+        function openModalCategory(cat) {
+            let modalId = 'modal-notions-' + cat;
+            let m = document.getElementById(modalId);
+            if (m) {
+                m.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModalCategory(cat) {
+            let modalId = 'modal-notions-' + cat;
+            let m = document.getElementById(modalId);
+            if (m) {
+                m.style.display = 'none';
+                document.body.style.overflow = '';
+            }
         }
 
         function renderSeancesList() {
@@ -897,6 +1024,7 @@
             document.getElementById('sheetOverlay').classList.add('active');
             document.getElementById('sheetAdd').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
 
         function closeAllSheets() {
@@ -905,6 +1033,7 @@
             const addSheet = document.getElementById('sheetAdd');
             if (addSheet) addSheet.classList.remove('active');
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
 
         function openSeanceDetailsSim(id) {
@@ -945,10 +1074,11 @@
             document.getElementById('sheetOverlay').classList.add('active');
             document.getElementById('sheetDetails').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
         }
 
-        function addSimNotionRow() {
-            const cont = document.getElementById('sim-notions-container');
+        function addNotionRow() {
+            const cont = document.getElementById('notions-container');
             const row = document.createElement('div');
             row.className = 'notion-row';
             row.innerHTML = `
@@ -964,9 +1094,9 @@
             cont.appendChild(row);
         }
 
-        function toggleSimDiffText() {
-            const hasDiff = document.querySelector('input[name="sim_has_diff"]:checked').value === 'oui';
-            const tf = document.getElementById('sim-difficultes');
+        function toggleDiffText() {
+            const hasDiff = document.querySelector('input[name="has_diff"]:checked').value === 'oui';
+            const tf = document.getElementById('add-difficultes');
             const lblNon = document.getElementById('lbl-diff-non');
             const lblOui = document.getElementById('lbl-diff-oui');
 
@@ -993,13 +1123,13 @@
         }
 
         function submitSimulationSeance() {
-            const form = document.getElementById('form-sim-seance');
+            const form = document.getElementById('form-ajouter-seance');
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
             }
 
-            const rawDate = document.getElementById('sim-date').value;
+            const rawDate = document.getElementById('add-date').value;
             let formattedDate = "Aujourd'hui";
             if (rawDate) {
                 const parts = rawDate.split('-');
@@ -1009,14 +1139,14 @@
                 }
             }
 
-            const objectifs = document.getElementById('sim-objectifs').value;
-            const hasDiff = document.querySelector('input[name="sim_has_diff"]:checked').value === 'oui';
-            const difficultes = hasDiff ? document.getElementById('sim-difficultes').value : '';
-            const taches = document.getElementById('sim-taches').value;
+            const objectifs = document.getElementById('add-objectifs').value;
+            const hasDiff = document.querySelector('input[name="has_diff"]:checked').value === 'oui';
+            const difficultes = hasDiff ? document.getElementById('add-difficultes').value : '';
+            const taches = document.getElementById('add-taches').value;
 
             const notions = [];
             let pointsSeance = 0;
-            document.querySelectorAll('#sim-notions-container .notion-row').forEach(row => {
+            document.querySelectorAll('#notions-container .notion-row').forEach(row => {
                 const nom = row.querySelector('.notion-name').value.trim();
                 const score = parseInt(row.querySelector('.notion-score').value, 10);
                 if (nom) {
@@ -1033,7 +1163,7 @@
             const pointsMaxSeance = notions.length * 3;
             const tauxSeance = Math.round((pointsSeance / pointsMaxSeance) * 100);
 
-            // Création de l'objet séance simulé
+            // Nouvel objet séance
             const newSeance = {
                 id: Date.now(),
                 date: formattedDate,
@@ -1045,10 +1175,10 @@
                 notions: notions
             };
 
-            // Ajout en tête de liste
+            // Ajout au journal en première position
             simulatedSeances.unshift(newSeance);
 
-            // Recalcul du taux global cumulé
+            // Cumul des points
             cumulPointsObtenus += pointsSeance;
             cumulPointsMax += pointsMaxSeance;
 
@@ -1056,24 +1186,22 @@
             renderSeancesList();
             closeAllSheets();
 
-            // Affichage de la modale de succès
-            const modalExp = document.getElementById('sim-modal-explication');
-            const nouveauTaux = Math.round((cumulPointsObtenus / cumulPointsMax) * 100);
-            if (modalExp) {
-                modalExp.innerHTML = `Cette séance test a obtenu un score de <strong>${tauxSeance}%</strong> (${pointsSeance}/${pointsMaxSeance} pts).<br>La jauge de maîtrise globale de Koffi est désormais de <strong>${nouveauTaux}%</strong> !`;
-            }
+            // Reset du formulaire pour le prochain ajout
+            form.reset();
+            const dateInput = document.getElementById('add-date');
+            if (dateInput) dateInput.valueAsDate = new Date();
+            toggleDiffText();
 
+            // Affichage de la modale de succès
             document.getElementById('modal-bilan-succes').style.display = 'flex';
         }
 
         function closeSuccessModal() {
             document.getElementById('modal-bilan-succes').style.display = 'none';
-        }
-
-        function resetSimulation() {
-            if (confirm("Voulez-vous réinitialiser le simulateur à son état de départ ?")) {
-                initSimulation();
-                alert("Le simulateur a été réinitialisé.");
+            // Scroll fluide vers la jauge pour admirer le résultat
+            const section = document.getElementById('section-progression');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
@@ -1081,6 +1209,9 @@
             if (e.key === 'Escape') {
                 closeAllSheets();
                 closeSuccessModal();
+                closeModalCategory('maitrisees');
+                closeModalCategory('en-cours');
+                closeModalCategory('a-renforcer');
             }
         });
 
