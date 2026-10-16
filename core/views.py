@@ -7797,25 +7797,265 @@ def finalisation_engagement(request, engagement_id):
 
                 
 
+        # Enregistrement standard en repli si soumission POST directe
         engagement.statut_general = StatutGeneral.FINALISE
         engagement.type_engagement = EngagementType.NORMAL
         engagement.save()
         get_or_create_engagement_conversation(engagement)
         return redirect('parent_dashboard')
 
-
+    parent_phone = ""
+    if hasattr(request.user, 'profile') and request.user.profile.telephone:
+        parent_phone = request.user.profile.telephone
+    elif hasattr(request.user, 'parent') and request.user.parent.numero_whatsapp:
+        parent_phone = request.user.parent.numero_whatsapp
 
     context = {
-
         'engagement': engagement,
-
         'professeur': engagement.professeur,
-
-        'enfants': request.user.parent.enfants.all() if hasattr(request.user, 'parent') else []
-
+        'enfants': request.user.parent.enfants.all() if hasattr(request.user, 'parent') else [],
+        'sebpay_amount': getattr(settings, 'SEBPAY_AMOUNT', 30),
+        'parent_phone': parent_phone,
+        'enfant_principal': engagement.enfants_concernes.first(),
     }
 
     return render(request, 'core/finalisation_engagement.html', context)
+
+
+# ============================================================
+# --- GESTION DU PAIEMENT ACCESS+ VIA SEBPAY (MOBILE MONEY) ---
+# ============================================================
+
+def finaliser_engagement_et_activer_access_plus(engagement, user, montant=30):
+    """
+    Active ou renouvelle l'abonnement Access+ pour l'utilisateur,
+    finalise l'engagement et crée/lie la conversation.
+    """
+    from .choices import TypeAbonnement, StatutGeneral, EngagementType
+    from .models import Abonnement
+    from datetime import timedelta
+    from django.utils import timezone
+
+    # 1. Activation ou prolongation de l'abonnement Access+ (30 jours)
+    abonnement = user.abonnements.order_by('-id').first()
+    if abonnement:
+        abonnement.type_abonnement = TypeAbonnement.ACCESS_PREMIUM
+        abonnement.date_debut = timezone.now().date()
+        abonnement.date_fin = timezone.now().date() + timedelta(days=30)
+        abonnement.prix = str(montant)
+        abonnement.save()
+    else:
+        Abonnement.objects.create(
+            user=user,
+            type_abonnement=TypeAbonnement.ACCESS_PREMIUM,
+            date_debut=timezone.now().date(),
+            date_fin=timezone.now().date() + timedelta(days=30),
+            prix=str(montant)
+        )
+
+    # 2. Finalisation de l'engagement
+    if engagement:
+        engagement.statut_general = StatutGeneral.FINALISE
+        engagement.type_engagement = EngagementType.NORMAL
+        engagement.paiement_effectue = True
+        engagement.save()
+        get_or_create_engagement_conversation(engagement)
+
+    return engagement
+
+
+@login_required
+@require_POST
+def api_initier_sebpay(request, engagement_id):
+    """
+    Enregistre les données de l'engagement (comme brouillon sans le finaliser)
+    et déclenche la collecte SebPay (demande Mobile Money push).
+    """
+    from .models import Engagement, Enfant
+    from .services import initier_collecte_sebpay
+    from django.utils.dateparse import parse_date
+
+    engagement = get_object_or_404(Engagement, id=engagement_id)
+    if engagement.parent_apprenant != request.user:
+        return JsonResponse({'success': False, 'message': "Action non autorisée."}, status=403)
+
+    # 1. Mémorisation des informations saisies (brouillon de l'engagement)
+    engagement.matiere = request.POST.get('matiere', engagement.matiere)
+    engagement.classe = request.POST.get('classe', engagement.classe)
+    engagement.mode_de_cours = request.POST.get('mode_de_cours', engagement.mode_de_cours)
+
+    if engagement.mode_de_cours == 'en_ligne':
+        engagement.plateforme_visio_preferee = request.POST.get('localisation_plateforme', engagement.plateforme_visio_preferee)
+    else:
+        engagement.localisation_option = request.POST.get('localisation_plateforme', engagement.localisation_option)
+
+    engagement.frequence_hebdomadaire = request.POST.get('frequence_hebdomadaire', engagement.frequence_hebdomadaire)
+    engagement.duree_seance = request.POST.get('duree_seance', engagement.duree_seance)
+
+    duree_mois = request.POST.get('duree_mois')
+    if duree_mois and duree_mois.isdigit():
+        engagement.duree_mois = int(duree_mois)
+
+    date_debut_str = request.POST.get('date_debut')
+    if date_debut_str:
+        parsed = parse_date(date_debut_str)
+        if parsed:
+            engagement.date_debut = parsed
+
+    enfant_id = request.POST.get('enfant_id')
+    if enfant_id and str(enfant_id).isdigit():
+        try:
+            enfant = Enfant.objects.get(id=int(enfant_id))
+            if hasattr(request.user, 'parent') and enfant.parent == request.user.parent:
+                engagement.enfants_concernes.clear()
+                engagement.enfants_concernes.add(enfant)
+        except Enfant.DoesNotExist:
+            pass
+
+    # Sauvegarde des paramètres modifiés (statut reste inchangé : NON FINALISÉ)
+    engagement.save()
+
+    # 2. Paramètres de paiement SebPay
+    phone = request.POST.get('phone', '').strip()
+    operator = request.POST.get('operator', 'mtn').strip().lower()
+
+    if not phone:
+        return JsonResponse({'success': False, 'message': "Veuillez renseigner un numéro Mobile Money."}, status=400)
+
+    callback_url = request.build_absolute_uri(reverse('sebpay_webhook'))
+
+    try:
+        txn_obj, response_data = initier_collecte_sebpay(
+            user=request.user,
+            engagement=engagement,
+            phone=phone,
+            operator=operator,
+            callback_url=callback_url
+        )
+        return JsonResponse({
+            'success': True,
+            'external_reference': txn_obj.external_reference,
+            'transaction_id': txn_obj.transaction_id,
+            'montant': int(txn_obj.montant),
+            'telephone': txn_obj.telephone,
+            'operateur': txn_obj.operateur,
+            'message': "Demande de paiement envoyée sur votre téléphone."
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+@login_required
+def api_verifier_statut_sebpay(request, external_reference):
+    """
+    Vérifie le statut d'une transaction SebPay (appelé en boucle par la modale).
+    Si approuvée, active Access+ et finalise l'engagement.
+    """
+    from .models import TransactionSebPay
+    from .services import verifier_statut_sebpay
+    from django.urls import reverse
+
+    try:
+        txn = TransactionSebPay.objects.select_related('engagement', 'user').get(external_reference=external_reference, user=request.user)
+    except TransactionSebPay.DoesNotExist:
+        return JsonResponse({'success': False, 'message': "Transaction introuvable."}, status=404)
+
+    # Si encore pending et qu'on a un transaction_id, interroger l'API SebPay
+    if txn.statut == 'pending' and txn.transaction_id:
+        api_statut = verifier_statut_sebpay(txn.transaction_id)
+        if api_statut:
+            api_statut_lower = api_statut.lower()
+            if api_statut_lower in ['approved', 'success', 'successful']:
+                txn.statut = 'approved'
+                from django.utils import timezone
+                txn.date_validation = timezone.now()
+                txn.save()
+            elif api_statut_lower in ['rejected', 'failed', 'declined', 'canceled', 'cancelled']:
+                txn.statut = 'rejected'
+                txn.save()
+
+    # Si approuvé
+    if txn.statut in ['approved', 'success', 'successful']:
+        eng = finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
+
+        enfant_prenom = ""
+        if eng and eng.enfants_concernes.exists():
+            enfant_prenom = eng.enfants_concernes.first().prenom
+        elif hasattr(txn.user, 'parent') and txn.user.parent.enfants.exists():
+            enfant_prenom = txn.user.parent.enfants.first().prenom
+
+        suivi_url = reverse('suivi_engagement', args=[eng.id]) if eng else reverse('parent_dashboard')
+
+        return JsonResponse({
+            'success': True,
+            'status': 'approved',
+            'enfant_prenom': enfant_prenom,
+            'suivi_url': suivi_url,
+            'message': "Votre paiement a été validé avec succès !"
+        })
+
+    # Si rejeté
+    if txn.statut in ['rejected', 'failed', 'declined', 'canceled', 'cancelled']:
+        return JsonResponse({
+            'success': False,
+            'status': 'rejected',
+            'message': "La transaction a été refusée ou a expiré sur votre téléphone."
+        })
+
+    # Toujours en attente
+    return JsonResponse({
+        'success': True,
+        'status': 'pending',
+        'message': "En attente de validation sur votre téléphone..."
+    })
+
+
+@csrf_exempt
+def sebpay_webhook(request):
+    """
+    Webhook SebPay : reçoit la notification finale dès qu'un paiement est validé ou échoué.
+    """
+    from .models import TransactionSebPay
+    from .services import verifier_signature_webhook_sebpay
+    import json
+
+    signature = request.headers.get('X-SebPay-Signature', '')
+    if signature and not verifier_signature_webhook_sebpay(request.body, signature):
+        logger.warning("Signature webhook SebPay invalide.")
+        return JsonResponse({'error': 'Invalid signature'}, status=403)
+
+    try:
+        payload = json.loads(request.body)
+    except Exception:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    external_ref = payload.get('external_reference')
+    txn_id = payload.get('transaction_id') or payload.get('id')
+    status = str(payload.get('status', '')).lower()
+
+    if not external_ref and not txn_id:
+        return JsonResponse({'error': 'Missing reference'}, status=400)
+
+    try:
+        if external_ref:
+            txn = TransactionSebPay.objects.select_related('engagement', 'user').get(external_reference=external_ref)
+        else:
+            txn = TransactionSebPay.objects.select_related('engagement', 'user').get(transaction_id=str(txn_id))
+
+        txn.statut = status
+        txn.raw_response = json.dumps(payload)
+
+        if status in ['approved', 'success', 'successful'] and not txn.date_validation:
+            from django.utils import timezone
+            txn.date_validation = timezone.now()
+            finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
+
+        txn.save()
+        return JsonResponse({'status': 'ok'})
+
+    except TransactionSebPay.DoesNotExist:
+        return JsonResponse({'status': 'not_found'}, status=404)
+
 
 
 

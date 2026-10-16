@@ -493,3 +493,10 @@ REFERRAL_DEFAULT_REWARD_AMOUNT = int(os.getenv('REFERRAL_DEFAULT_REWARD_AMOUNT',
 
 # Domaine principal du site (pour construire les liens de parrainage)
 SITE_DOMAIN = os.getenv('SITE_DOMAIN', 'profchezvousapp.com')
+
+# --- Configuration SebPay ---
+SEBPAY_PUBLIC_KEY = os.getenv('SEBPAY_PUBLIC_KEY', '')
+SEBPAY_SECRET_KEY = os.getenv('SEBPAY_SECRET_KEY', '')
+SEBPAY_API_URL = os.getenv('SEBPAY_API_URL', 'https://newapi.sebpay.bj/api/v1')
+# Montant de test temporaire (30 FCFA jusqu'à nouvel ordre)
+SEBPAY_AMOUNT = int(os.getenv('SEBPAY_AMOUNT', '30'))

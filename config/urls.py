@@ -134,6 +134,11 @@ urlpatterns = [
     path("paiement/premium/initier/", core_views.payer_premium, name="payer_premium"),
     path("paiement/premium/callback/", core_views.fedapay_premium_callback, name="fedapay_premium_callback"),
 
+    # SebPay (Access+ et Finalisation)
+    path("api/engagement/<int:engagement_id>/initier-sebpay/", core_views.api_initier_sebpay, name="api_initier_sebpay"),
+    path("api/sebpay/check-status/<str:external_reference>/", core_views.api_verifier_statut_sebpay, name="api_verifier_statut_sebpay"),
+    path("paiement/sebpay/webhook/", core_views.sebpay_webhook, name="sebpay_webhook"),
+
 
     # Suivi Pédagogique
     path("engagement/<int:engagement_id>/suivi/", core_views.suivi_engagement, name="suivi_engagement"),

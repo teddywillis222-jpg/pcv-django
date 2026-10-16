@@ -2826,8 +2826,71 @@ class TransactionFedaPay(models.Model):
 
 
     def __str__(self):
-
         return f"Transaction {self.transaction_id} - {self.statut}"
+
+
+class TransactionSebPay(models.Model):
+    """
+    Trace comptable d'une tentative de paiement via l'API SebPay Mobile Money (ex: souscription Access+).
+    """
+    TYPE_TRANSACTION_CHOICES = [
+        ('ACCESS_PLUS', 'Souscription Access+'),
+        ('AUTRE', 'Autre'),
+    ]
+    type_transaction = models.CharField(
+        max_length=30,
+        choices=TYPE_TRANSACTION_CHOICES,
+        default='ACCESS_PLUS'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="transactions_sebpay"
+    )
+    engagement = models.ForeignKey(
+        "Engagement",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="transactions_sebpay"
+    )
+    transaction_id = models.CharField(
+        max_length=150,
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="Identifiant unique retourné par SebPay"
+    )
+    external_reference = models.CharField(
+        max_length=150,
+        unique=True,
+        help_text="Référence externe unique générée par notre système"
+    )
+    montant = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=30.00,
+        help_text="Montant en FCFA"
+    )
+    telephone = models.CharField(max_length=50, blank=True)
+    operateur = models.CharField(max_length=50, blank=True)
+    statut = models.CharField(
+        max_length=50,
+        default="pending",
+        help_text="Statut SebPay (ex: pending, approved, rejected, failed)"
+    )
+    raw_response = models.TextField(blank=True, null=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_validation = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Transaction SebPay"
+        verbose_name_plural = "Transactions SebPay"
+        ordering = ['-date_creation']
+
+    def __str__(self):
+        return f"SebPay {self.external_reference} ({self.statut}) - {self.montant} FCFA"
+
 
 class RessourceProfesseur(models.Model):
     titre = models.CharField(max_length=200)
