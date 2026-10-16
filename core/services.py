@@ -226,23 +226,66 @@ def initier_paiement_abonnement(user, callback_url):
 
 def clean_phone_for_sebpay(phone_number):
     """
-    Formate le numéro au format international sans le signe '+' pour SebPay (ex: 22901XXXXXXXX).
+    Formate le numéro au format international sans le signe '+' pour SebPay.
+    Gère tous les formats du Bénin (8 chiffres historiques, 10 chiffres ARCEP 01..., indicatif 229, +229).
+    Retourne un tuple: (format_8_avec_229, format_10_avec_229)
+    Exemples:
+        '0144582541' -> ('22944582541', '2290144582541')
+        '+2290144582541' -> ('22944582541', '2290144582541')
+        '97000000' -> ('22997000000', '2290197000000')
     """
     if not phone_number:
-        return ""
-    cleaned = str(phone_number).strip().replace(" ", "").replace("-", "").replace(".", "")
-    if cleaned.startswith("+"):
-        cleaned = cleaned[1:]
-    # Si le numéro commence par 0, on le retire
-    if cleaned.startswith("0") and not cleaned.startswith("00"):
-        cleaned = cleaned[1:]
-    # Si le numéro ne contient pas l'indicatif du Bénin (229), on le préfixe
-    if not cleaned.startswith("229") and len(cleaned) in [8, 10]:
-        cleaned = f"229{cleaned}"
-    return cleaned
+        return "", ""
+    digits = re.sub(r'\D', '', str(phone_number))
+    
+    # Nettoyer les répétitions accidentelles d'indicatifs (ex: 229229...)
+    while digits.startswith("229") and len(digits) > 13:
+        digits = digits[3:]
+        
+    if digits.startswith("00229"):
+        digits = digits[2:]
+        
+    if digits.startswith("229"):
+        local = digits[3:]
+    else:
+        local = digits
+        
+    if local.startswith("01") and len(local) == 10:
+        local_8 = local[2:]
+        local_10 = local
+    elif len(local) == 8:
+        local_8 = local
+        local_10 = "01" + local
+    elif local.startswith("0") and len(local) == 9:
+        local_8 = local[1:]
+        local_10 = "01" + local[1:]
+    else:
+        local_8 = local[-8:] if len(local) >= 8 else local
+        local_10 = ("01" + local_8) if len(local_8) == 8 else local
+
+    format_8 = f"229{local_8}" if len(local_8) == 8 else ""
+    format_10 = f"229{local_10}" if len(local_10) == 10 else ""
+    
+    return format_8, format_10
 
 
-def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None):
+def detect_benin_operator(phone_number):
+    """
+    Détecte l'opérateur Mobile Money béninois (mtn, moov, celtiis) selon le préfixe du numéro.
+    """
+    format_8, _ = clean_phone_for_sebpay(phone_number)
+    if not format_8 or len(format_8) < 11:
+        return 'mtn'
+    num8 = format_8[3:]
+    prefix2 = num8[:2]
+    if prefix2 in ['40', '41', '47', '48', '49', '92', '93']:
+        return 'celtiis'
+    if prefix2 in ['43', '44', '45', '55', '58', '60', '63', '64', '65', '68', '94', '95', '98', '99']:
+        return 'moov'
+    return 'mtn'
+
+
+def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url=None):
     """
     Initie une demande de paiement direct Mobile Money via l'API SebPay Collections.
     Envoie un Push USSD direct sur le téléphone de l'utilisateur.
@@ -256,14 +299,15 @@ def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None
         logger.error("Clés d'API SebPay manquantes (SEBPAY_PUBLIC_KEY ou SEBPAY_SECRET_KEY).")
         raise ValueError("Les clés d'API SebPay ne sont pas encore configurées sur le serveur.")
 
-    phone_cleaned = clean_phone_for_sebpay(phone)
-    if not phone_cleaned or len(phone_cleaned) < 10:
-        raise ValueError("Numéro de téléphone Mobile Money invalide.")
+    format_8, format_10 = clean_phone_for_sebpay(phone)
+    if not format_8 and not format_10:
+        logger.error(f"Numéro Mobile Money invalide: '{phone}'")
+        raise ValueError(f"Le numéro '{phone}' n'est pas un numéro valide du Bénin (ex: 01 97 00 00 00 ou 97 00 00 00).")
 
-    # Opérateur standardisé : mtn, moov, celtiis
-    operator_clean = str(operator).lower().strip()
+    detected_op = detect_benin_operator(phone)
+    operator_clean = str(operator).lower().strip() if operator else detected_op
     if operator_clean not in ['mtn', 'moov', 'celtiis']:
-        operator_clean = 'mtn'
+        operator_clean = detected_op
 
     # Référence externe unique
     ext_ref = f"PCV-ACC-{engagement.id if engagement else user.id}-{int(time.time())}"
@@ -275,10 +319,13 @@ def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None
         "Accept": "application/json"
     }
 
+    # Le format documenté par SebPay est '229' + 8 chiffres (ex: 22997000000)
+    phone_to_use = format_8 or format_10
+
     payload = {
         "amount": int(montant),
         "currency": "XOF",
-        "phone": phone_cleaned,
+        "phone": phone_to_use,
         "operator": operator_clean,
         "country": "BJ",
         "external_reference": ext_ref,
@@ -288,18 +335,39 @@ def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None
         payload["callback_url"] = callback_url
 
     endpoint = f"{api_url.rstrip('/')}/collections"
-    logger.info(f"Envoi requête SebPay Collections vers {endpoint} - Réf: {ext_ref}, Tel: {phone_cleaned}, Op: {operator_clean}")
+    logger.info(f"Envoi requête SebPay Collections vers {endpoint} - Réf: {ext_ref}, Tel: {phone_to_use}, Op: {operator_clean}")
 
     try:
         response = requests.post(endpoint, json=payload, headers=headers, timeout=20)
         response_data = response.json() if response.content else {}
 
+        # Stratégie de robustesse / auto-fallback :
+        # Si SebPay rejette avec une erreur liée au format du numéro et qu'on a le format 10 chiffres (22901...):
+        if response.status_code in [400, 422] and format_10 and format_10 != phone_to_use:
+            err_text = str(response_data.get('message', '')).lower()
+            if any(w in err_text for w in ['phone', 'numéro', 'numero', 'format', 'invalide', 'invalid']):
+                logger.info(f"Fallback SebPay avec le format 10 chiffres : {format_10}")
+                payload["phone"] = format_10
+                phone_to_use = format_10
+                response = requests.post(endpoint, json=payload, headers=headers, timeout=20)
+                response_data = response.json() if response.content else {}
+
+        # Si SebPay signale un opérateur incompatible avec le numéro :
+        if response.status_code in [400, 422] and detected_op != operator_clean:
+            err_text = str(response_data.get('message', '')).lower()
+            if any(w in err_text for w in ['operator', 'opérateur', 'reseau', 'network']):
+                logger.info(f"Fallback SebPay avec l'opérateur détecté : {detected_op}")
+                payload["operator"] = detected_op
+                operator_clean = detected_op
+                response = requests.post(endpoint, json=payload, headers=headers, timeout=20)
+                response_data = response.json() if response.content else {}
+
         if response.status_code not in [200, 201]:
             error_msg = response_data.get('message') or response_data.get('error') or f"Erreur code HTTP {response.status_code}"
-            logger.error(f"Échec appel SebPay Collections: {response.status_code} - {response.text}")
+            logger.error(f"Échec appel SebPay Collections: HTTP {response.status_code} - {response.text}")
             raise Exception(f"Erreur SebPay: {error_msg}")
 
-        # SebPay retourne généralement transaction_id ou data.transaction_id
+        # SebPay retourne transaction_id ou data.transaction_id ou id
         txn_id = response_data.get('transaction_id') or response_data.get('data', {}).get('transaction_id')
         if not txn_id:
             txn_id = response_data.get('id')
@@ -311,7 +379,7 @@ def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None
             transaction_id=str(txn_id) if txn_id else None,
             external_reference=ext_ref,
             montant=montant,
-            telephone=phone_cleaned,
+            telephone=phone_to_use,
             operateur=operator_clean,
             statut='pending',
             raw_response=json.dumps(response_data)
@@ -320,7 +388,7 @@ def initier_collecte_sebpay(user, engagement, phone, operator, callback_url=None
         return txn_obj, response_data
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"Erreur de communication avec SebPay: {str(e)}")
+        logger.error(f"Erreur de communication avec SebPay: {str(e)}", exc_info=True)
         raise Exception(f"Impossible de joindre le serveur de paiement SebPay: {str(e)}")
 
 

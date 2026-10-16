@@ -7811,12 +7811,19 @@ def finalisation_engagement(request, engagement_id):
     elif hasattr(request.user, 'parent') and request.user.parent.numero_whatsapp:
         parent_phone = request.user.parent.numero_whatsapp
 
+    # Nettoyage pour affichage dans l'input (sans l'indicatif +229 qui est pré-affiché)
+    parent_phone_display = str(parent_phone).strip()
+    if parent_phone_display.startswith("+229"):
+        parent_phone_display = parent_phone_display[4:]
+    elif parent_phone_display.startswith("229") and len(parent_phone_display) > 8:
+        parent_phone_display = parent_phone_display[3:]
+
     context = {
         'engagement': engagement,
         'professeur': engagement.professeur,
         'enfants': request.user.parent.enfants.all() if hasattr(request.user, 'parent') else [],
         'sebpay_amount': getattr(settings, 'SEBPAY_AMOUNT', 30),
-        'parent_phone': parent_phone,
+        'parent_phone': parent_phone_display,
         'enfant_principal': engagement.enfants_concernes.first(),
     }
 
@@ -7944,6 +7951,7 @@ def api_initier_sebpay(request, engagement_id):
             'message': "Demande de paiement envoyée sur votre téléphone."
         })
     except Exception as e:
+        logger.error(f"Erreur dans api_initier_sebpay pour engagement {engagement_id}: {str(e)}", exc_info=True)
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 

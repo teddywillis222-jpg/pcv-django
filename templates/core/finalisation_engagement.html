@@ -174,7 +174,7 @@
                 <label style="display: block; font-weight: 700; color: #334155; font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">2. Numéro Mobile Money</label>
                 <div style="position: relative;">
                     <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #64748b; font-size: 0.95rem;">+229</span>
-                    <input type="tel" id="sebPhoneInput" class="seb-phone-input" value="{{ parent_phone|default:'' }}" placeholder="Ex: 01XXXXXXXX" required>
+                    <input type="tel" id="sebPhoneInput" class="seb-phone-input" value="{{ parent_phone|default:'' }}" placeholder="Ex: 01XXXXXXXX" required oninput="autoDetectOperator(this.value)">
                 </div>
                 <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 4px;">Numéro associé à votre compte de paiement (Bénin).</small>
             </div>
@@ -581,6 +581,25 @@ function toggleLocPlat() {
     }
 }
 
+function autoDetectOperator(phone) {
+    if (!phone) return;
+    const digits = String(phone).replace(/\D/g, '');
+    let local = digits;
+    if (local.startsWith('229')) local = local.substring(3);
+    if (local.startsWith('01') && local.length >= 4) local = local.substring(2);
+    
+    if (local.length >= 2) {
+        const p2 = local.substring(0, 2);
+        if (['40', '41', '47', '48', '49', '92', '93'].includes(p2)) {
+            selectOperator('celtiis');
+        } else if (['43', '44', '45', '55', '58', '60', '63', '64', '65', '68', '94', '95', '98', '99'].includes(p2)) {
+            selectOperator('moov');
+        } else if (['42', '46', '50', '51', '52', '53', '54', '56', '57', '59', '61', '62', '66', '67', '69', '90', '91', '96', '97'].includes(p2)) {
+            selectOperator('mtn');
+        }
+    }
+}
+
 function openSebpayModal(e) {
     if (e) e.preventDefault();
     const form = document.getElementById('formFinalisation');
@@ -595,6 +614,11 @@ function openSebpayModal(e) {
         const textEnfant = selectEnfant.options[selectEnfant.selectedIndex].text;
         const prenomSeul = textEnfant.split(' ')[0];
         document.getElementById('labelEnfantPrenom').textContent = prenomSeul;
+    }
+
+    const phoneInput = document.getElementById('sebPhoneInput');
+    if (phoneInput && phoneInput.value) {
+        autoDetectOperator(phoneInput.value);
     }
 
     document.getElementById('sebpayModalOverlay').style.display = 'flex';
