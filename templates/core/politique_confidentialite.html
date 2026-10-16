@@ -5,88 +5,158 @@
 
 {% block extra_css %}
 <style>
-    .legal-wrapper {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 3rem 1.25rem;
-        background: #ffffff;
-    }
-    
-    .legal-header {
-        text-align: center;
-        margin-bottom: 4rem;
-        padding-bottom: 2rem;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .legal-header h1 {
-        font-size: 2.25rem;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 1rem;
-    }
-    
-    .legal-header p {
-        color: #64748b;
-        font-size: 1.1rem;
-    }
-    
-    .legal-content {
-        line-height: 1.8;
-        color: #334155;
-        font-size: 1.05rem;
-    }
-    
-    .legal-content h2 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 2.5rem 0 1rem;
+    .legal-placeholder-container {
+        min-height: calc(80vh - 120px);
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        justify-content: center;
+        padding: 3.5rem 1.25rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
-    
-    .legal-content h3 {
-        font-size: 1.2rem;
+
+    .legal-placeholder-card {
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(226, 232, 240, 0.8);
+        max-width: 600px;
+        width: 100%;
+        padding: 3.5rem 2.5rem;
+        text-align: center;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .placeholder-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        border: 1px solid #dbeafe;
+    }
+
+    .placeholder-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1.1rem;
+        border-radius: 9999px;
+        background: #fef3c7;
+        color: #92400e;
         font-weight: 700;
-        color: #1e293b;
-        margin: 1.5rem 0 0.75rem;
-    }
-    
-    .legal-content p {
-        margin-bottom: 1.25rem;
-    }
-    
-    .legal-content ul {
+        font-size: 0.85rem;
+        letter-spacing: 0.025em;
         margin-bottom: 1.5rem;
-        padding-left: 1.5rem;
     }
-    
-    .legal-content li {
-        margin-bottom: 0.5rem;
-    }
-    
-    .legal-content strong {
+
+    .placeholder-title {
+        font-size: 1.85rem;
+        font-weight: 800;
         color: #0f172a;
+        margin-bottom: 0.85rem;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
     }
-    
-    .contact-card {
+
+    .placeholder-subtitle {
+        color: #475569;
+        font-size: 1.05rem;
+        line-height: 1.65;
+        margin-bottom: 2rem;
+    }
+
+    .placeholder-info-box {
         background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        border: 1px dashed #cbd5e1;
         border-radius: 16px;
-        padding: 1.5rem;
-        margin-top: 3rem;
+        padding: 1.25rem;
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 2.25rem;
+        line-height: 1.55;
     }
-    
+
+    .btn-return {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.75rem;
+        border-radius: 14px;
+        background: #16a34a;
+        color: #ffffff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-return:hover {
+        background: #15803d;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+    }
+
     @media (max-width: 640px) {
-        .legal-header h1 { font-size: 1.75rem; }
-        .legal-content h2 { font-size: 1.25rem; }
+        .legal-placeholder-card {
+            padding: 2.25rem 1.5rem;
+        }
+        .placeholder-title {
+            font-size: 1.45rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="legal-placeholder-container">
+    <div class="legal-placeholder-card">
+        <div class="placeholder-icon">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+        </div>
+
+        <div class="placeholder-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Mise à jour en cours
+        </div>
+
+        <h1 class="placeholder-title">Politique de Confidentialité</h1>
+        
+        <p class="placeholder-subtitle">
+            Notre Politique de Confidentialité et de Protection des Données est actuellement en cours de révision afin de vous garantir les plus hauts standards de sécurité, de confidentialité et de conformité.
+        </p>
+
+        <div class="placeholder-info-box">
+            La nouvelle version sera disponible et consultable très prochainement sur cette page. Pour toute question relative à la gestion de vos données personnelles, vous pouvez joindre notre équipe au <strong>+229 01 47 52 88 39</strong>.
+        </div>
+
+        <div>
+            <a href="{% url 'home' %}" class="btn-return">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+
+{% comment %}
+=== ANCIEN CONTENU POLITIQUE DE CONFIDENTIALITÉ EN ATTENTE DE NOUVELLE VERSION ===
 <div class="legal-wrapper">
     <header class="legal-header">
         <h1>Politique de Confidentialité</h1>
@@ -170,4 +240,5 @@
         <p>Nous encourageons chaque utilisateur à consulter régulièrement cette politique afin de rester informé de la manière dont ses données personnelles sont protégées et utilisées.</p>
     </div>
 </div>
+{% endcomment %}
 {% endblock %}
