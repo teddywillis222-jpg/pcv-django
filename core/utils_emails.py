@@ -13,7 +13,7 @@ MOIS_FR = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
 def format_date_fr(dt):
     """Formatte une datetime en français de manière déterministe."""
     jour = JOURS_FR[dt.weekday()]
-    mois = MOIS_FR[dt.month]
+    mois = MOIS_FR[dt.month].lower()
     return f"{jour} {dt.day} {mois} {dt.year} à {dt.strftime('%Hh%M')}"
 
 def send_welcome_email(user, profile):
@@ -284,85 +284,131 @@ def send_essai_confirmed_email(parent_user, engagement):
     Email envoyé au parent ou apprenant lorsque le professeur confirme le cours d'essai.
     """
     if not parent_user.email:
-        import logging
-        logger = logging.getLogger(__name__)
         logger.warning("Aucun email pour %s (id=%s), notification de confirmation d'essai ignorée.", parent_user.username, parent_user.pk)
         return False
 
     parent_email = parent_user.email
-    parent_name = parent_user.first_name or "Cher(e) utilisateur"
+    parent_name = parent_user.first_name or parent_user.username or "Cher utilisateur"
     prof_name = f"{engagement.professeur.prenom} {engagement.professeur.nom}".strip() or "Votre professeur"
     matiere = engagement.matiere or "Non précisée"
 
     # Date et heure de l'essai
-    date_str = ""
     if engagement.date_heure_essai:
         from django.utils import timezone as tz
         dt_local = tz.localtime(engagement.date_heure_essai)
-        # Format simple (tu peux ajuster format_date_fr si nécessaire)
-        # mais on utilise celui-là par defaut
         try:
             date_str = format_date_fr(dt_local)
-        except NameError:
+        except Exception:
             date_str = dt_local.strftime('%d/%m/%Y à %H:%M')
     else:
         date_str = "Date non précisée"
 
     from django.urls import reverse
-    
-    # URL vers la messagerie (si applicable) ou le dashboard
-    # S'il y a une conversation avec le prof, l'utilisateur la trouvera dans sa messagerie
-    dashboard_url = get_full_url(reverse("parent_dashboard")) if hasattr(parent_user, 'parent') else get_full_url(reverse("apprenant_dashboard"))
-    
-    sujet = f"Cours d'essai confirmé avec {prof_name} !"
-    is_parent = hasattr(parent_user, 'parent')
-    
-    if is_parent:
-        prenom_enfant = "votre enfant"
-        if engagement.enfants_concernes.exists():
-            prenom_enfant = engagement.enfants_concernes.first().prenom
-        
-        message = f"""Bonjour {parent_name},
+    from .models import Conversation
 
-Bonne nouvelle ! {prof_name} vient de confirmer votre séance d'essai pour {prenom_enfant}.
+    # Lien direct vers la conversation créée pour cet essai
+    conversation = getattr(engagement, 'conversation', None)
+    if not conversation:
+        conversation = Conversation.objects.filter(
+            professeur=engagement.professeur,
+            parent=engagement.parent_apprenant
+        ).first()
 
-📋 Récapitulatif :
-Professeur : {prof_name}
-Matière : {matiere}
-Date et heure : {date_str}
-
-Que faire maintenant ?
-Accéder à la messagerie pour préciser le lieu exact de la séance avec le professeur.
-Préparez les derniers devoirs ou chapitres où {prenom_enfant} rencontre des difficultés.
-
-💡 Remarque : L'essai est entièrement gratuit. Si la séance est concluante, vous pourrez officialiser votre professeur via la formule Access+ (2 000 F/mois) pour débloquer le cahier de suivi de {prenom_enfant}.
-
-👉 Discuter avec le professeur :
-{dashboard_url}
-
-Cordialement,
-L'équipe Prof Chez Vous"""
+    if conversation:
+        conversation_url = get_full_url(reverse("conversation_detail", kwargs={"conversation_id": conversation.id}))
     else:
-        message = f"""Bonjour {parent_name},
+        conversation_url = get_full_url(reverse("messagerie"))
 
-Bonne nouvelle ! {prof_name} vient de confirmer votre séance d'essai.
+    sujet = f"Votre essai avec {prof_name} est confirmé"
+    is_parent = hasattr(parent_user, 'parent')
 
-📋 Récapitulatif :
+    if is_parent:
+        suivi_text = (
+            "Avec Access+, vous pourrez suivre les séances de votre enfant grâce à un espace dédié : notions travaillées, acquis observés, difficultés rencontrées et points à renforcer.\n"
+            "Vous gardez ainsi une visibilité sur l'accompagnement de votre enfant, séance après séance."
+        )
+        suivi_text_html = (
+            "Avec Access+, vous pourrez suivre les séances de votre enfant grâce à un espace dédié : notions travaillées, acquis observés, difficultés rencontrées et points à renforcer.<br>"
+            "Vous gardez ainsi une visibilité sur l'accompagnement de votre enfant, séance après séance."
+        )
+    else:
+        suivi_text = (
+            "Avec Access+, vous pourrez suivre vos séances grâce à un espace dédié : notions travaillées, acquis observés, difficultés rencontrées et points à renforcer.\n"
+            "Vous gardez ainsi une visibilité sur votre accompagnement, séance après séance."
+        )
+        suivi_text_html = (
+            "Avec Access+, vous pourrez suivre vos séances grâce à un espace dédié : notions travaillées, acquis observés, difficultés rencontrées et points à renforcer.<br>"
+            "Vous gardez ainsi une visibilité sur votre accompagnement, séance après séance."
+        )
+
+    message = f"""Bonjour {parent_name},
+
+Bonne nouvelle !
+Le professeur {prof_name} vient de confirmer votre cours d'essai.
+
+Votre rendez-vous
 Professeur : {prof_name}
 Matière : {matiere}
 Date et heure : {date_str}
 
-Que faire maintenant ?
-Accéder à la messagerie pour préciser le lieu exact de la séance avec le professeur.
-Préparez les derniers devoirs ou chapitres où vous rencontrez des difficultés.
+Votre prochaine étape
+Échangez dès maintenant avec le professeur pour confirmer le lieu exact de l'essai et préparer votre rendez-vous.
 
-💡 Remarque : L'essai est entièrement gratuit. Si la séance est concluante, vous pourrez officialiser votre professeur via la formule Access+ (2 000 F/mois) pour débloquer votre cahier de suivi.
+[ 💬 Échanger avec le professeur ]
+{conversation_url}
 
-👉 Discuter avec le professeur :
-{dashboard_url}
+Et si vous décidez de poursuivre après l'essai ?
+Votre accompagnement peut aller plus loin.
+{suivi_text}
+Access+ — 2 000 FCFA/mois
+Vous pourrez découvrir et activer cette formule lorsque vous déciderez de poursuivre l'accompagnement.
+Nous vous souhaitons une excellente première séance.
 
-Cordialement,
 L'équipe Prof Chez Vous"""
+
+    html_message = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6; margin: 0; padding: 20px; background-color: #f8fafc;">
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <p style="font-size: 16px; margin-top: 0;">Bonjour {parent_name},</p>
+        
+        <p style="font-size: 16px; font-weight: bold; color: #16a34a; margin-bottom: 5px;">Bonne nouvelle !</p>
+        <p style="font-size: 15px; margin-top: 0;">Le professeur <strong>{prof_name}</strong> vient de confirmer votre cours d'essai.</p>
+        
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin: 20px 0;">
+            <p style="font-weight: bold; margin-top: 0; margin-bottom: 10px; color: #0f172a;">Votre rendez-vous</p>
+            <p style="margin: 4px 0; font-size: 14px;"><strong>Professeur :</strong> {prof_name}</p>
+            <p style="margin: 4px 0; font-size: 14px;"><strong>Matière :</strong> {matiere}</p>
+            <p style="margin: 4px 0; font-size: 14px;"><strong>Date et heure :</strong> {date_str}</p>
+        </div>
+        
+        <p style="font-weight: bold; margin-bottom: 5px; color: #0f172a;">Votre prochaine étape</p>
+        <p style="font-size: 15px; margin-top: 0;">Échangez dès maintenant avec le professeur pour confirmer le lieu exact de l'essai et préparer votre rendez-vous.</p>
+        
+        <div style="margin: 25px 0;">
+            <a href="{conversation_url}" style="background-color: #16a34a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+                💬 Échanger avec le professeur
+            </a>
+        </div>
+        
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 25px 0;">
+        
+        <p style="font-weight: bold; margin-bottom: 5px; color: #0f172a;">Et si vous décidez de poursuivre après l'essai ?</p>
+        <p style="font-size: 14px; margin-top: 0; color: #334155;">Votre accompagnement peut aller plus loin.<br>
+        {suivi_text_html}</p>
+        
+        <p style="font-size: 15px; font-weight: bold; color: #b45309; margin: 15px 0 5px 0;">Access+ — 2 000 FCFA/mois</p>
+        <p style="font-size: 14px; color: #64748b; margin-top: 0;">Vous pourrez découvrir et activer cette formule lorsque vous déciderez de poursuivre l'accompagnement.</p>
+        
+        <p style="font-size: 15px; margin-top: 25px;">Nous vous souhaitons une excellente première séance.</p>
+        
+        <p style="font-size: 15px; font-weight: bold; color: #0f172a; margin-bottom: 0;">L'équipe Prof Chez Vous</p>
+    </div>
+</body>
+</html>"""
 
     try:
         from django.core.mail import send_mail
@@ -373,13 +419,10 @@ L'équipe Prof Chez Vous"""
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[parent_email],
             fail_silently=False,
+            html_message=html_message,
         )
-        import logging
-        logger = logging.getLogger(__name__)
         logger.info("Email de confirmation d'essai envoyé avec succès à %s.", parent_email)
     except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
         logger.error("Échec d'envoi de l'email de confirmation d'essai à %s : %s", parent_email, e, exc_info=True)
     return True
 
