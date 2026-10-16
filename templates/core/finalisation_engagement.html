@@ -17,7 +17,7 @@
         </div>
 
         <!-- Formulaire -->
-        <form method="POST" action="{% url 'finalisation_engagement' engagement.id %}" id="formFinalisation">
+        <form method="POST" action="{% url 'finalisation_engagement' engagement.id %}" id="formFinalisation" onsubmit="event.preventDefault(); openSebpayModal(event);">
             {% csrf_token %}
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
@@ -664,7 +664,18 @@ function lancerPaiementSebpay() {
             "X-CSRFToken": form.querySelector('input[name="csrfmiddlewaretoken"]').value
         }
     })
-    .then(res => res.json())
+    .then(async res => {
+        let data;
+        try {
+            data = await res.json();
+        } catch (e) {
+            if (res.status === 502 || res.status === 503 || res.status === 504) {
+                throw new Error("Le serveur était momentanément indisponible (Erreur " + res.status + "). Il vient de redémarrer, veuillez relancer.");
+            }
+            throw new Error("Erreur serveur (" + res.status + "). Veuillez réessayer.");
+        }
+        return data;
+    })
     .then(data => {
         if (!data.success) {
             afficherEchec(data.message || "Impossible d'initier la demande de paiement.");
@@ -675,7 +686,7 @@ function lancerPaiementSebpay() {
         startPolling(data.external_reference);
     })
     .catch(err => {
-        afficherEchec("Erreur de connexion au serveur. Veuillez vérifier votre connexion.");
+        afficherEchec(err.message || "Erreur de connexion au serveur. Veuillez vérifier votre connexion.");
     });
 }
 

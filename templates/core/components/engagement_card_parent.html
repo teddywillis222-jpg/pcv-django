@@ -94,11 +94,20 @@
                 ✨ Officialiser la collaboration
             </a>
         {% elif eng.statut_general != 'REFUSE' and eng.statut_general != 'ESSAI_PROGRAMME' and eng.statut_general != 'EN_ATTENTE' and eng.statut_general != 'ESSAI_REALISE' and eng.statut_general != 'ESSAI_CONFIRME' and eng.type_engagement != 'ESSAI' %}
+            {% if user.profile.current_plan == 'ACCESS_PREMIUM' %}
+            <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 0.7rem 0.85rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-sizing: border-box; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.28); border: 1px solid rgba(254, 240, 138, 0.5); display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>✨</span>
+                <span style="display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; pointer-events: none;">
+                    Accéder au suivi de {% with enfant=eng.enfants_concernes.first %}{% if enfant %}{{ enfant.prenom }}{% else %}l'apprenant{% endif %}{% endwith %}
+                </span>
+            </a>
+            {% else %}
             <a href="{% url 'suivi_engagement' eng.id %}" class="btn-eng-main" style="flex: 1; text-align: center; background: var(--primary); color: white; padding: 0.7rem 0.85rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-sizing: border-box;">
                 <span style="display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; pointer-events: none;">
                     Accéder au suivi de {% with enfant=eng.enfants_concernes.first %}{% if enfant %}{{ enfant.prenom }}{% else %}l'apprenant{% endif %}{% endwith %}
                 </span>
             </a>
+            {% endif %}
         {% else %}
              <button onclick="openDetailModal({{ eng.id }})" class="btn-eng-main" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-dark); padding: 0.7rem; border-radius: 12px; font-weight: 700; font-size: 0.85rem; border: none; cursor: pointer;">
                 {% if eng.type_engagement == 'ESSAI' %}Voir l'essai{% else %}Voir les détails{% endif %}
