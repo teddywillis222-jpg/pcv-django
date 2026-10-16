@@ -7,6 +7,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 
 from django.http import JsonResponse
 
@@ -7874,6 +7875,7 @@ def api_initier_sebpay(request, engagement_id):
     from .models import Engagement, Enfant
     from .services import initier_collecte_sebpay
     from django.utils.dateparse import parse_date
+    from django.urls import reverse
 
     engagement = get_object_or_404(Engagement, id=engagement_id)
     if engagement.parent_apprenant != request.user:
