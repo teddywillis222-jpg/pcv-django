@@ -265,12 +265,12 @@
         bottom: 0; left: 0; right: 0;
         background: white;
         border-radius: 28px 28px 0 0;
-        padding: 1.25rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom, 20px));
+        padding: 1.25rem 1.25rem calc(2rem + env(safe-area-inset-bottom, 20px));
         transform: translateY(105%);
         visibility: hidden;
-        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s;
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s, padding-bottom 0.25s ease;
         z-index: 10000;
-        max-height: 88vh;
+        max-height: 90vh;
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
@@ -279,6 +279,7 @@
         touch-action: pan-y;
         box-sizing: border-box;
         box-shadow: 0 -15px 35px -5px rgba(0, 0, 0, 0.15);
+        scroll-behavior: smooth;
     }
     .bottom-sheet * {
         box-sizing: border-box;
@@ -377,11 +378,14 @@
         transform: rotate(90deg);
     }
     
-    /* Form Premium */
+    /* Form Premium & Dimensions sécurisées */
     .form-group { 
-        margin-bottom: 1.25rem; 
+        margin-bottom: 1.1rem; 
         width: 100%;
+        max-width: 100%;
         box-sizing: border-box;
+        scroll-margin-top: 30px;
+        scroll-margin-bottom: 140px;
     }
     .form-label { 
         display: block; 
@@ -390,23 +394,30 @@
         color: #475569; 
         text-transform: uppercase; 
         letter-spacing: 0.5px; 
-        margin-bottom: 0.5rem; 
+        margin-bottom: 0.45rem; 
     }
     .form-control { 
-        width: 100%; 
-        max-width: 100%;
-        padding: 0.85rem 1rem; 
+        width: 100% !important; 
+        max-width: 100% !important;
+        padding: 0.75rem 0.95rem; 
         border: 2px solid #f1f5f9; 
         background: #f8fafc;
         border-radius: 14px; 
         font-family: inherit; 
         font-size: 0.95rem; 
+        line-height: 1.4;
         transition: all 0.2s ease;
-        box-sizing: border-box;
+        box-sizing: border-box !important;
+        scroll-margin-top: 40px;
+        scroll-margin-bottom: 140px;
+    }
+    input.form-control, select.form-control {
+        height: 46px;
     }
     textarea.form-control {
         resize: vertical;
         min-height: 70px;
+        max-height: 150px;
     }
     .form-control:focus { 
         outline: none; 
@@ -417,33 +428,38 @@
     
     .notion-row {
         display: flex;
-        gap: 0.5rem;
+        gap: 6px;
         margin-bottom: 0.65rem;
         align-items: center;
         width: 100%;
         max-width: 100%;
-        box-sizing: border-box;
+        box-sizing: border-box !important;
         animation: slideUp 0.25s ease-out;
+        scroll-margin-top: 40px;
+        scroll-margin-bottom: 140px;
     }
     .notion-row .notion-name {
         flex: 1 1 auto;
         min-width: 0;
-        box-sizing: border-box;
+        height: 46px;
+        box-sizing: border-box !important;
     }
     .notion-row .notion-score {
-        flex: 0 0 72px;
-        width: 72px;
-        min-width: 72px;
+        flex: 0 0 66px;
+        width: 66px;
+        min-width: 66px;
+        height: 46px;
         text-align: center;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        box-sizing: border-box;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        box-sizing: border-box !important;
     }
     .notion-row .btn-remove-notion {
         flex: 0 0 38px;
         width: 38px;
-        height: 42px;
-        box-sizing: border-box;
+        min-width: 38px;
+        height: 46px;
+        box-sizing: border-box !important;
         background: #fef2f2;
         color: #ef4444;
         border: none;
@@ -945,7 +961,10 @@
         document.getElementById('sheetOverlay').classList.remove('active');
         document.getElementById('sheetDetails').classList.remove('active');
         let sheetAdd = document.getElementById('sheetAdd');
-        if(sheetAdd) sheetAdd.classList.remove('active');
+        if(sheetAdd) {
+            sheetAdd.classList.remove('active');
+            sheetAdd.style.paddingBottom = '';
+        }
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
     }
@@ -1158,5 +1177,36 @@
             closeAllSheets();
         }
     });
+
+    // Auto-scroll vers le haut au-dessus du clavier virtuel sur mobile lors de la saisie
+    const formSeance = document.getElementById('form-ajouter-seance');
+    const sheetAddEl = document.getElementById('sheetAdd');
+
+    if (formSeance && sheetAddEl) {
+        formSeance.addEventListener('focusin', function(e) {
+            const target = e.target;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
+                // Agrandir le bas de la sheet pour donner de l'espace de défilement au-dessus du clavier
+                sheetAddEl.style.paddingBottom = 'min(50vh, 280px)';
+
+                // Déclencher le scroll centré pour que le champ reste entièrement visible au-dessus du clavier
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 120);
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 350);
+            }
+        });
+
+        formSeance.addEventListener('focusout', function(e) {
+            setTimeout(() => {
+                const active = document.activeElement;
+                if (!active || !formSeance.contains(active)) {
+                    sheetAddEl.style.paddingBottom = '';
+                }
+            }, 250);
+        });
+    }
 </script>
 {% endblock %}

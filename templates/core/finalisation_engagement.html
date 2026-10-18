@@ -221,9 +221,9 @@
             </p>
 
             <!-- BOUTON CLAIR DEMANDÉ PAR L'UTILISATEUR -->
-            <a href="{% url 'suivi_engagement' engagement.id %}" id="btnDecouvrirSuivi" class="seb-btn-decouvrir">
-                Découvrir l'espace de suivi de <span id="labelEnfantPrenom">{{ enfant_principal.prenom|default:"l'élève" }}</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <a href="{% url 'suivi_engagement' engagement.id %}" id="btnDecouvrirSuivi" class="seb-btn-decouvrir" onclick="handleSuiviRedirect(this, event)">
+                <span id="labelDecouvrirWrap">Découvrir l'espace de suivi de <strong id="labelEnfantPrenom">{{ enfant_principal.prenom|default:"l'élève" }}</strong></span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
         </div>
 
@@ -476,27 +476,44 @@
         transform: translateY(-1px);
     }
 
-    .seb-btn-decouvrir {
+    .seb-btn-decouvrir,
+    .seb-btn-decouvrir:link,
+    .seb-btn-decouvrir:visited,
+    .seb-btn-decouvrir:hover,
+    .seb-btn-decouvrir:active,
+    .seb-btn-decouvrir:focus {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
         width: 100%;
         padding: 16px 20px;
-        background: #16a34a;
-        color: #ffffff;
+        background: #16a34a !important;
+        color: #ffffff !important;
         border-radius: 14px;
         font-size: 1.05rem;
         font-weight: 800;
-        text-decoration: none;
+        text-decoration: none !important;
         box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
-        transition: all 0.25s ease;
+        transition: all 0.2s ease;
         box-sizing: border-box;
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+        user-select: none;
     }
     .seb-btn-decouvrir:hover {
-        background: #15803d;
+        background: #15803d !important;
         transform: translateY(-2px);
         box-shadow: 0 12px 25px rgba(22, 163, 74, 0.45);
+        color: #ffffff !important;
+    }
+    .seb-btn-decouvrir:active {
+        background: #15803d !important;
+        transform: scale(0.99);
+        color: #ffffff !important;
+    }
+    .seb-btn-decouvrir * {
+        color: #ffffff !important;
     }
 
     /* Pulse animation */
@@ -747,15 +764,30 @@ function startPolling(extRef) {
     }, 2500);
 }
 
+function handleSuiviRedirect(btn, event) {
+    if (btn) {
+        btn.style.opacity = '0.92';
+    }
+}
+
 function afficherSucces(data) {
     document.getElementById('sebStepWaiting').style.display = 'none';
     document.getElementById('sebStepSuccess').style.display = 'block';
     document.getElementById('sebCloseBtn').style.display = 'none';
 
-    if (data.enfant_prenom) {
-        document.getElementById('labelEnfantPrenom').textContent = data.enfant_prenom;
+    let prenom = '';
+    if (data && data.enfant_prenom && String(data.enfant_prenom).trim()) {
+        prenom = String(data.enfant_prenom).trim();
+    } else {
+        const selectEnfant = document.querySelector('select[name="enfant_id"]');
+        if (selectEnfant && selectEnfant.selectedIndex > 0) {
+            prenom = selectEnfant.options[selectEnfant.selectedIndex].text.split(' ')[0].trim();
+        }
     }
-    if (data.suivi_url) {
+    if (prenom) {
+        document.getElementById('labelEnfantPrenom').textContent = prenom;
+    }
+    if (data && data.suivi_url) {
         document.getElementById('btnDecouvrirSuivi').href = data.suivi_url;
     }
 }
