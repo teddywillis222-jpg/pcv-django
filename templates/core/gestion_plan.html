@@ -168,22 +168,53 @@
         box-shadow: 0 10px 25px rgba(245, 158, 11, 0.35);
     }
 
+    .btn-retour-top {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 0.65rem 1.15rem;
+        border-radius: 12px;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+    .btn-retour-top:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        transform: translateX(-3px);
+    }
+
     .btn-back {
-        display: block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
         width: 100%;
-        padding: 1rem;
-        background: transparent;
-        color: var(--text-gray);
+        padding: 1.1rem;
+        background: #ffffff;
+        color: #1e293b;
         font-size: 1.05rem;
-        font-weight: 600;
+        font-weight: 700;
         border-radius: 1rem;
         text-align: center;
         text-decoration: none;
-        transition: color 0.2s;
+        border: 1.5px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.2s ease;
+        box-sizing: border-box;
     }
     
     .btn-back:hover {
-        color: var(--text-dark);
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     /* Mock UI Elements */
@@ -205,6 +236,13 @@
 
 {% block content %}
 <div class="access-page">
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{% url 'post_signup_redirect' %}" class="btn-retour-top">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Retourner dans mon espace
+        </a>
+    </div>
+
     <div class="access-hero">
         <h1 class="access-hero-title">Ne devinez plus ce qui est fait pendant les cours.</h1>
         <p class="access-hero-subtitle">Suivez avec certitude et sérénité les acquis réels de votre enfant, séance après séance.</p>
@@ -338,14 +376,11 @@
         </div>
     </div>
 
-    <div class="access-pricing">
-        <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Access+</div>
-        <div class="access-price-val">2 000 FCFA / mois</div>
-        <p class="access-price-desc">Moins que le coût d'une seule heure de cours pour éliminer tous vos doutes, suivre chaque progrès et protéger l'investissement que vous faites pour la réussite de votre enfant.</p>
-        
-        <a href="#" class="btn-activate">Activer Access+</a>
+    <div style="margin-top: 2.5rem; margin-bottom: 2rem;">
+        <a href="{% url 'post_signup_redirect' %}" class="btn-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Retourner dans mon espace
+        </a>
     </div>
-
-    <a href="/" class="btn-back">Retourner dans mon espace</a>
 </div>
 {% endblock %}

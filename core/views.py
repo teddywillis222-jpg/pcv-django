@@ -8451,48 +8451,29 @@ def create_search_alert(request):
 
         
 
-        # Envoi d'email à l'admin
-
-        admin_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'hello@profchezvous.com')
-
+        # Envoi d'email directement à l'adresse spécifiée
+        admin_from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'hello@profchezvous.com')
+        destinataire_email = 'teddywillis222@gmail.com'
         sujet = f"[ProfChezVous] Nouvelle alerte de recherche - {matiere}"
-
         message = (
-
             f"Une nouvelle alerte de recherche a été créée (Aucun résultat trouvé).\n\n"
-
             f"Contact : {contact}\n"
-
             f"Matière recherchée : {matiere}\n"
-
             f"Localisation : {localisation}\n\n"
-
-            f"Connectez-vous à l'admin pour suivre ce lead."
-
+            f"Connectez-vous à l'administration pour suivre ce lead."
         )
 
-        
-
         try:
-
             send_mail(
-
                 sujet,
-
                 message,
-
-                admin_email,
-
-                [admin_email],
-
+                admin_from_email,
+                [destinataire_email],
                 fail_silently=True,
-
             )
-
+            logger.info(f"Email d'alerte de recherche envoyé avec succès à {destinataire_email} (contact: {contact}, matière: {matiere})")
         except Exception as e:
-
-            # Ne pas bloquer l'utilisateur si l'email échoue
-
+            logger.error(f"Erreur envoi email alerte de recherche à {destinataire_email}: {e}")
             pass
 
             
