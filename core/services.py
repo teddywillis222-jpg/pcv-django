@@ -320,8 +320,11 @@ def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url
         "Accept": "application/json"
     }
 
-    # Le format documenté par SebPay est '229' + 8 chiffres (ex: 22997000000)
-    phone_to_use = format_8 or format_10
+    # Format ARCEP Bénin :
+    # Depuis la réforme des télécoms au Bénin, tous les numéros ont 10 chiffres (préfixe 01).
+    # On privilégie le format 10 chiffres (ex: 2290162856823) pour que l'opérateur (MTN/Moov/Celtiis)
+    # puisse router l'USSD push vers le bon abonné sans expiration.
+    phone_to_use = format_10 or format_8
 
     payload = {
         "amount": int(montant),
@@ -341,15 +344,16 @@ def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url
     try:
         response = requests.post(endpoint, json=payload, headers=headers, timeout=20)
         response_data = response.json() if response.content else {}
+        logger.info(f"Réponse SebPay Collections: HTTP {response.status_code} - {response_data}")
 
         # Stratégie de robustesse / auto-fallback :
-        # Si SebPay rejette avec une erreur liée au format du numéro et qu'on a le format 10 chiffres (22901...):
-        if response.status_code in [400, 422] and format_10 and format_10 != phone_to_use:
+        # Si SebPay rejette avec une erreur liée au format du numéro et qu'on a le format 8 chiffres :
+        if response.status_code in [400, 422] and format_8 and format_8 != phone_to_use:
             err_text = str(response_data.get('message', '')).lower()
             if any(w in err_text for w in ['phone', 'numéro', 'numero', 'format', 'invalide', 'invalid']):
-                logger.info(f"Fallback SebPay avec le format 10 chiffres : {format_10}")
-                payload["phone"] = format_10
-                phone_to_use = format_10
+                logger.info(f"Fallback SebPay avec le format 8 chiffres : {format_8}")
+                payload["phone"] = format_8
+                phone_to_use = format_8
                 response = requests.post(endpoint, json=payload, headers=headers, timeout=20)
                 response_data = response.json() if response.content else {}
 
@@ -413,6 +417,7 @@ def verifier_statut_sebpay(transaction_id):
     endpoint = f"{api_url.rstrip('/')}/collections/{transaction_id}"
     try:
         response = requests.get(endpoint, headers=headers, timeout=10)
+        logger.info(f"SebPay GET {endpoint} -> HTTP {response.status_code}: {response.text}")
         if response.status_code == 200:
             data = response.json()
             return data.get('status') or data.get('data', {}).get('status')

@@ -8009,10 +8009,20 @@ def api_verifier_statut_sebpay(request, external_reference):
 
     # Si rejeté
     if txn.statut in ['rejected', 'failed', 'declined', 'canceled', 'cancelled']:
+        msg_detail = "La transaction a été refusée ou a expiré sur votre téléphone."
+        try:
+            if txn.raw_response:
+                raw_data = json.loads(txn.raw_response)
+                detail = raw_data.get('message') or raw_data.get('reason') or raw_data.get('description')
+                if detail:
+                    msg_detail = f"{detail}"
+        except Exception:
+            pass
+
         return JsonResponse({
             'success': False,
             'status': 'rejected',
-            'message': "La transaction a été refusée ou a expiré sur votre téléphone."
+            'message': msg_detail
         })
 
     # Toujours en attente
@@ -8032,14 +8042,18 @@ def sebpay_webhook(request):
     from .services import verifier_signature_webhook_sebpay
     import json
 
+    body_str = request.body.decode('utf-8', errors='ignore')
+    logger.info(f"--- WEBHOOK SEBPAY REÇU --- Headers: {dict(request.headers)} - Body: {body_str}")
+
     signature = request.headers.get('X-SebPay-Signature', '')
     if signature and not verifier_signature_webhook_sebpay(request.body, signature):
-        logger.warning("Signature webhook SebPay invalide.")
+        logger.warning(f"Signature webhook SebPay invalide: {signature}")
         return JsonResponse({'error': 'Invalid signature'}, status=403)
 
     try:
         payload = json.loads(request.body)
     except Exception:
+        logger.error(f"Erreur décodage JSON webhook SebPay: {body_str}")
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     external_ref = payload.get('external_reference')
@@ -8064,9 +8078,11 @@ def sebpay_webhook(request):
             finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
 
         txn.save()
+        logger.info(f"Webhook SebPay traité avec succès pour txn {txn.id} (ref: {txn.external_reference}, statut: {status})")
         return JsonResponse({'status': 'ok'})
 
     except TransactionSebPay.DoesNotExist:
+        logger.warning(f"Webhook SebPay: transaction introuvable pour ref {external_ref} ou id {txn_id}")
         return JsonResponse({'status': 'not_found'}, status=404)
 
 
