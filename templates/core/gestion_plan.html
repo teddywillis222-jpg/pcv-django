@@ -148,6 +148,18 @@
         font-weight: 500;
     }
 
+    .btn-activate,
+    .btn-activate:hover,
+    .btn-activate:focus,
+    .btn-activate:active,
+    .btn-back,
+    .btn-back:hover,
+    .btn-back:focus,
+    .btn-back:active {
+        text-decoration: none !important;
+        outline: none;
+    }
+
     .btn-activate {
         display: block;
         width: 100%;
@@ -158,16 +170,26 @@
         font-weight: 800;
         border-radius: 1rem;
         text-align: center;
-        text-decoration: none;
+        text-decoration: none !important;
         box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
+        box-sizing: border-box;
     }
     
     .btn-activate:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(245, 158, 11, 0.35);
+        box-shadow: 0 12px 25px rgba(245, 158, 11, 0.35);
+        filter: brightness(1.03);
+        color: white;
+        text-decoration: none !important;
     }
 
+    .btn-activate:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        filter: brightness(0.97);
+        text-decoration: none !important;
+    }
 
     .btn-back {
         display: inline-flex;
@@ -182,10 +204,10 @@
         font-weight: 700;
         border-radius: 1rem;
         text-align: center;
-        text-decoration: none;
+        text-decoration: none !important;
         border: 1.5px solid #e2e8f0;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        transition: all 0.2s ease;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
         box-sizing: border-box;
     }
     
@@ -194,7 +216,15 @@
         border-color: #cbd5e1;
         color: #0f172a;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+        text-decoration: none !important;
+    }
+
+    .btn-back:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        background: #f1f5f9;
+        text-decoration: none !important;
     }
 
     /* Mock UI Elements */
@@ -339,7 +369,7 @@
             🎯 Vous avez déjà un cours d'essai programmé ?
         </p>
         <p class="access-feature-text" style="margin-bottom: 0;">
-            Profitez sereinement de votre séance : <strong>elle est 100% gratuite et sans engagement</strong>. Dès la fin du cours, vous recevrez automatiquement une notification pour officialiser votre collaboration et débloquer le cahier de suivi {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}.
+            Profitez sereinement de votre séance : <strong>elle est 100% gratuite et sans engagement</strong>. Dès la fin de l'essai, vous recevrez une notification pour officialiser la collaboration si le professeur vous convient, et ainsi débloquer l'espace de suivi {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}.
         </p>
     </div>
 
@@ -353,7 +383,7 @@
         </p>
         <div class="access-feature-highlight">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            Sécurité totale : testez d'autres professeurs avant de fixer votre choix.
+            Testez d'autres professeurs avant de fixer votre choix.
         </div>
     </div>
 
@@ -362,7 +392,7 @@
         <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Formule Access+</div>
         <div class="access-price-val">2 000 FCFA / mois</div>
         <p class="access-price-desc">
-            Moins que le coût d'une seule heure de cours pour éliminer tous vos doutes, suivre chaque progrès et protéger la réussite {% if request.user.profile.role == 'APPRENANT' %}de vos études{% else %}de votre enfant{% endif %}.
+            Moins que le coût d'une seule heure de cours pour éliminer tous vos doutes et suivre avec précision chaque progrès {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}, séance après séance.
         </p>
         
         {% if engagement_a_finaliser %}
