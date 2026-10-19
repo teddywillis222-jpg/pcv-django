@@ -2811,7 +2811,17 @@ def gestion_plan(request):
 
 
 
-    context = {}
+    from .models import Engagement
+    from .choices import StatutGeneral
+
+    engagement_a_finaliser = Engagement.objects.filter(
+        parent_apprenant=request.user,
+        statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
+    ).order_by('-date_creation').first()
+
+    context = {
+        'engagement_a_finaliser': engagement_a_finaliser,
+    }
 
     return render(request, "core/gestion_plan.html", context)
 
