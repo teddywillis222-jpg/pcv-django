@@ -288,7 +288,7 @@
         const contentDiv = document.getElementById('admin-content');
         const navButtons = document.querySelectorAll('.nav-btn');
 
-        async function loadSection(target) {
+        async function loadSection(target, force = false) {
             navButtons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.target === target);
             });
@@ -299,7 +299,8 @@
             contentDiv.innerHTML = '<div class="loader-container"><div class="spinner"></div></div>';
 
             try {
-                const response = await fetch(`${API_BASE}${target}/`);
+                const url = force ? `${API_BASE}${target}/?force=1` : `${API_BASE}${target}/`;
+                const response = await fetch(url);
                 if (response.ok) {
                     const html = await response.text();
                     contentDiv.innerHTML = html;

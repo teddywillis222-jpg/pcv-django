@@ -46,3 +46,16 @@ def track_user_login(sender, request, user, **kwargs):
     if hasattr(user, 'profile') and user.email not in getattr(app_settings, 'TEST_ACCOUNT_EMAILS', []):
         user.profile.nb_connexions += 1
         user.profile.save(update_fields=['nb_connexions'])
+
+
+from django.db.models.signals import post_delete
+from django.core.cache import cache
+from core.models import Quartier, SiteConfiguration
+
+@receiver([post_save, post_delete], sender=Quartier)
+def clear_quartiers_cache(sender, **kwargs):
+    cache.delete('global_choices_quartiers_list')
+
+@receiver([post_save, post_delete], sender=SiteConfiguration)
+def clear_site_config_cache(sender, **kwargs):
+    cache.delete('global_choices_site_config_obj')

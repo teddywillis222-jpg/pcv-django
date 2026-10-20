@@ -1537,8 +1537,21 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Utilise l'heure du serveur pour éviter les boucles de rechargement dues au décalage d'horloge client/serveur
             let lastCheckTime = {% now "U" %}000;
+            let lastPingTimestamp = Date.now();
             
             function checkGlobalUpdates() {
+                // OPTIMISATION NEON : Arrêter immédiatement si l'onglet est masqué ou en arrière-plan
+                if (document.hidden) {
+                    return;
+                }
+
+                // Ne pas poller sur les pages statiques/publiques
+                const path = window.location.pathname;
+                const staticPaths = ['/recherche/', '/nos-tarifs/', '/cgu/', '/politique-de-confidentialite/', '/a-propos/', '/faq/', '/devenir-enseignant/'];
+                if (staticPaths.some(p => path.startsWith(p))) {
+                    return;
+                }
+
                 // Ne pas recharger si l'utilisateur est en train de taper
                 const activeEl = document.activeElement;
                 if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
@@ -1566,6 +1579,7 @@
                     return;
                 }
                 
+                lastPingTimestamp = Date.now();
                 fetch(`/api/ping/?last_check=${lastCheckTime}`)
                     .then(res => res.json())
                     .then(data => {
@@ -1576,7 +1590,15 @@
                     .catch(e => console.warn('Polling error:', e));
             }
             
-            setInterval(checkGlobalUpdates, 10000); // Polling toutes les 10 secondes
+            // Polling toutes les 60 secondes (au lieu de 10s) pour préserver les heures de calcul Neon
+            setInterval(checkGlobalUpdates, 60000);
+
+            // Relancer une vérification immédiate lorsque l'utilisateur revient sur l'onglet après > 60s
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden && (Date.now() - lastPingTimestamp >= 60000)) {
+                    checkGlobalUpdates();
+                }
+            });
         });
     </script>
     {% endif %}

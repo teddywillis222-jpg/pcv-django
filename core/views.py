@@ -750,22 +750,6 @@ def recherche(request):
 
     """Page de recherche des professeurs avec filtres"""
 
-    
-
-    if request.user.is_authenticated and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
-
-        if hasattr(request.user, 'parent_profile'):
-
-            request.user.parent_profile.nb_recherches += 1
-
-            request.user.parent_profile.save(update_fields=['nb_recherches'])
-
-        elif hasattr(request.user, 'apprenant'):
-
-            request.user.apprenant.nb_recherches += 1
-
-            request.user.apprenant.save(update_fields=['nb_recherches'])
-
 
 
     from .choices import ValidationStatus, CourseMode, Localisation, ClassLevel, SupportCategory, Matiere
@@ -2799,12 +2783,6 @@ def gestion_plan(request):
 
         # Incrémenter les vues pour les statistiques de lancement (sauf comptes de test)
 
-        if request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
-
-            user_profile.nb_vues_page_plan += 1
-
-            user_profile.save(update_fields=['nb_vues_page_plan'])
-
     except Profile.DoesNotExist:
 
         return redirect("finalisation_compte")
@@ -3279,22 +3257,6 @@ def professeur_detail(request, teacher_slug):
         teacher.nb_vues_profil += 1
 
         teacher.save(update_fields=['nb_vues_profil'])
-
-        
-
-        if request.user.is_authenticated and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
-
-            if hasattr(request.user, 'parent_profile'):
-
-                request.user.parent_profile.nb_profils_consultes += 1
-
-                request.user.parent_profile.save(update_fields=['nb_profils_consultes'])
-
-            elif hasattr(request.user, 'apprenant'):
-
-                request.user.apprenant.nb_profils_consultes += 1
-
-                request.user.apprenant.save(update_fields=['nb_profils_consultes'])
 
     
 
@@ -5543,201 +5505,84 @@ def debug_admin_pcv(request):
 
 
 def admin_api_accueil(request):
-
-    """Retourne le HTML partiel pour l'accueil du dashboard"""
-
+    """Retourne le HTML partiel pour l'accueil du dashboard (Optimisé Neon Serverless)"""
     from django.core.cache import cache
 
-    
-
-    # OPTIMISATION NEON : Mise en cache des stats du dashboard admin pendant 15 minutes
-
-    context = cache.get('admin_dashboard_context')
-
-    
+    # OPTIMISATION NEON : Mise en cache des stats du dashboard admin pendant 1 heure (avec rafraîchissement forcé)
+    force_refresh = request.GET.get('force') == '1'
+    context = None if force_refresh else cache.get('admin_dashboard_context')
 
     if not context:
-
         from django.contrib.auth import get_user_model
-
         User = get_user_model()
 
-        
-
         # 1. Statistiques Globales
-
         total_inscrits = User.objects.filter(is_superuser=False).count()
-
         total_parents = Profile.objects.filter(role=Profile.ROLE_PARENT).count()
-
         total_apprenants = Profile.objects.filter(role=Profile.ROLE_APPRENANT).count()
-
         total_professeurs = Profile.objects.filter(role=Profile.ROLE_PROF).count()
 
-        
-
         total_users_avec_role = total_parents + total_apprenants + total_professeurs
-
         total_incomplets = total_inscrits - total_users_avec_role
 
-    
-
         engagements = Engagement.objects.all()
-        
-        # Mise à jour des statuts (Essai Confirmé -> Essai Réalisé) pour affichage frais dans le dashboard admin
-        for eng in engagements.filter(statut_general='ESSAI_CONFIRME', type_engagement='ESSAI'):
-            eng.check_and_update_essai_status()
         stats_engagements = engagements.values('statut_general').annotate(count=Count('id'))
-
         dict_engagements = {stat['statut_general']: stat['count'] for stat in stats_engagements}
-
-        total_engagements = engagements.count()
-
-    
+        total_engagements = sum(dict_engagements.values())
 
         evaluations = Evaluation.objects.all()
-
         total_evaluations = evaluations.count()
-
         moyenne_generale = evaluations.aggregate(Avg('note'))['note__avg'] or 0
 
-    
-
-        # Nouvelles statistiques de lancement
-
-        from django.db.models import Sum
-
-        from .models import Parent, TeacherProfile, Apprenant, Seance, Message, PageAnalytics
-
+        from .models import Seance, Message, PageAnalytics
         from .choices import EngagementType
 
-    
-
-        parent_recherches = Parent.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
-
-        apprenant_recherches = Apprenant.objects.aggregate(total=Sum('nb_recherches'))['total'] or 0
-
-        total_recherches = parent_recherches + apprenant_recherches
-
-        
-
-        parent_profils = Parent.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
-
-        apprenant_profils = Apprenant.objects.aggregate(total=Sum('nb_profils_consultes'))['total'] or 0
-
-        total_profils_consultes = parent_profils + apprenant_profils
-
-        
-
-        total_vues_profil = TeacherProfile.objects.aggregate(total=Sum('nb_vues_profil'))['total'] or 0
-
-        total_vues_plan = Profile.objects.aggregate(total=Sum('nb_vues_page_plan'))['total'] or 0
-
-        total_vues_suivi = Profile.objects.aggregate(total=Sum('nb_vues_suivi'))['total'] or 0
-
-        total_connexions = Profile.objects.aggregate(total=Sum('nb_connexions'))['total'] or 0
-
-        
-
         total_seances = Seance.objects.count()
-
         total_messages = Message.objects.count()
 
-        
-
-        essais_programmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_PROGRAMME).count()
-
-        essais_confirmes = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_CONFIRME).count()
-
-        essais_realises = engagements.filter(type_engagement=EngagementType.ESSAI, statut_general=StatutGeneral.ESSAI_REALISE).count()
-
-        engagements_finalises = engagements.filter(statut_general__in=[StatutGeneral.FINALISE, StatutGeneral.ENGAGEMENT_FINALISE]).count()
-
-        
+        # Exploitation directe de dict_engagements (évite 4 requêtes de scan redondantes sur Engagement)
+        essais_programmes = dict_engagements.get(StatutGeneral.ESSAI_PROGRAMME, 0)
+        essais_confirmes = dict_engagements.get(StatutGeneral.ESSAI_CONFIRME, 0)
+        essais_realises = dict_engagements.get(StatutGeneral.ESSAI_REALISE, 0)
+        engagements_finalises = dict_engagements.get(StatutGeneral.FINALISE, 0) + dict_engagements.get(StatutGeneral.ENGAGEMENT_FINALISE, 0)
 
         taux_conversion = 0
-
         if essais_realises > 0:
-
             taux_conversion = round((engagements_finalises / essais_realises) * 100, 1)
 
-    
-
         # 2. Engagements Prioritaires
-
         # Condition: Statut "En attente" + Parent/Apprenant Access+ Premium + Délai >= 30 min
-
         limite_temps = timezone.now() - timedelta(minutes=30)
-
         engagements_prioritaires = list(Engagement.objects.filter(
-
             statut_general=StatutGeneral.EN_ATTENTE,
-
             date_creation__lte=limite_temps,
-
             parent_apprenant__abonnements__type_abonnement=TypeAbonnement.ACCESS_PREMIUM
-
         ).select_related('parent_apprenant').distinct())
 
-    
-
         context = {
-
             'total_inscrits': total_inscrits,
-
             'total_parents': total_parents,
-
             'total_apprenants': total_apprenants,
-
             'total_professeurs': total_professeurs,
-
             'total_incomplets': total_incomplets,
-
             'total_engagements': total_engagements,
-
             'dict_engagements': dict_engagements,
-
             'StatutGeneral': StatutGeneral,
-
             'total_evaluations': total_evaluations,
-
             'moyenne_generale': round(moyenne_generale, 1),
-
             'engagements_prioritaires': engagements_prioritaires,
-
-            'total_recherches': total_recherches,
-
-            'total_profils_consultes': total_profils_consultes,
-
-            'total_vues_profil': total_vues_profil,
-
             'essais_programmes': essais_programmes,
-
             'essais_confirmes': essais_confirmes,
-
             'essais_realises': essais_realises,
-
             'engagements_finalises': engagements_finalises,
-
             'taux_conversion': taux_conversion,
-
-            'total_vues_plan': total_vues_plan,
-
-            'total_vues_suivi': total_vues_suivi,
-
-            'total_connexions': total_connexions,
-
             'total_seances': total_seances,
-
             'total_messages': total_messages,
-
             'vues_page_ressources': PageAnalytics.objects.filter(page_name='Centre de Ressources').values_list('view_count', flat=True).first() or 0,
-
         }
 
-        
-
-        cache.set('admin_dashboard_context', context, 60 * 15)
+        # Cache pendant 1 heure (3600 secondes)
+        cache.set('admin_dashboard_context', context, 3600)
 
     return render(request, "core/admin_dashboard/partials/accueil.html", context)
 
@@ -6195,16 +6040,6 @@ def suivi_engagement(request, engagement_id):
     if not (is_parent_apprenant or is_prof):
 
         raise Http404("Accès refusé.")
-
-        
-
-    # Incrémenter le compteur de consultation pour la collecte de données (sauf comptes de test)
-
-    if is_parent_apprenant and hasattr(request.user, 'profile') and request.user.email not in getattr(settings, 'TEST_ACCOUNT_EMAILS', []):
-
-        request.user.profile.nb_vues_suivi += 1
-
-        request.user.profile.save(update_fields=['nb_vues_suivi'])
 
 
     # Calcul des statistiques sur les notions
