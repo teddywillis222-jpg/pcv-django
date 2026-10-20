@@ -364,6 +364,12 @@ select.pcv-multi-select,
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
+.more-filters-btn.active {
+    background: #ecfdf5;
+    color: var(--success-600, #16a34a);
+    border-color: #a7f3d0;
+}
+
 .more-filters-btn svg {
     width: 18px;
     height: 18px;
@@ -602,9 +608,12 @@ select.pcv-multi-select,
                     </div>
                     
                     <div class="filter-actions-row">
-                        <button type="button" class="more-filters-btn" onclick="toggleAdvancedFilters()">
+                        <button type="button" class="more-filters-btn {% if classe or prix or mode %}active{% endif %}" id="toggleFiltersBtn" onclick="toggleAdvancedFilters()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                            Plus de filtres
+                            <span id="moreFiltersText">{% if classe or prix or mode %}Moins de filtres{% else %}Plus de filtres{% endif %}</span>
+                            {% if classe or prix or mode %}
+                            <span style="background: var(--primary-green, #10b981); color: white; border-radius: 999px; padding: 1px 7px; font-size: 0.72rem; font-weight: 700; margin-left: 4px;">Actif</span>
+                            {% endif %}
                         </button>
                         <a href="{% url 'recherche' %}" class="reset-filters-btn" title="Réinitialiser tous les filtres">
                             🧹 Réinitialiser
@@ -619,7 +628,7 @@ select.pcv-multi-select,
                 </div>
                 
                 <!-- Filtres Avancés -->
-                <div class="advanced-filters" id="advancedFilters" {% if classe or prix or mode %}style="display:block;"{% endif %}>
+                <div class="advanced-filters {% if classe or prix or mode %}active{% endif %}" id="advancedFilters" style="{% if classe or prix or mode %}display: block;{% else %}display: none;{% endif %}">
                     <div class="advanced-filters-grid">
                         <div class="filter-group">
                             <label class="filter-label" for="classe">Classe</label>
@@ -650,8 +659,16 @@ select.pcv-multi-select,
                                 {% endfor %}
                             </select>
                         </div>
-                        
-                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 1rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+                        {% if classe or prix or mode %}
+                        <a href="?{% if matiere %}matiere={{ matiere|urlencode }}&{% endif %}{% if localisation %}localisation={{ localisation|urlencode }}&{% endif %}{% if soutien %}soutien={{ soutien|urlencode }}{% endif %}" style="font-size: 0.85rem; color: #ef4444; text-decoration: none; font-weight: 600;">
+                            Effacer ces options
+                        </a>
+                        {% endif %}
+                        <button type="submit" class="btn" style="background: var(--primary-green, #10b981); color: white; border: none; padding: 0.55rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; cursor: pointer;">
+                            Appliquer les filtres
+                        </button>
                     </div>
                 </div>
             </form>
@@ -774,17 +791,17 @@ select.pcv-multi-select,
         <!-- Bloc SEO de bas de page -->
         <div class="seo-content-block" style="margin-top: 4rem; margin-bottom: 3rem; padding: 2.5rem; background: white; border-radius: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);">
             <h2 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 1rem; font-weight: 800;">
-                Pourquoi choisir un répétiteur avec Prof Chez Vous ?
+                Pourquoi choisir un professeur avec Prof Chez Vous ?
             </h2>
             <p style="color: #475569; line-height: 1.6; margin-bottom: 1.5rem;">
                 {% if matiere and localisation_name %}
-                    Vous recherchez des <strong>cours particuliers de {{ matiere }} à {{ localisation_name }}</strong> ? Notre plateforme vous met en relation avec des enseignants qualifiés et rigoureusement vérifiés. L'accompagnement personnalisé est la clé de la réussite scolaire.
+                    Vous recherchez des <strong>cours particuliers de {{ matiere }} à {{ localisation_name }}</strong> ? Notre plateforme vous aide à identifier des professeurs disponibles dans votre zone pour accompagner votre enfant de manière adaptée.
                 {% elif matiere %}
-                    Nos <strong>professeurs de {{ matiere }}</strong> accompagnent votre enfant avec une pédagogie adaptée à ses besoins. Qu'il s'agisse de remise à niveau ou de perfectionnement, nous vérifions méticuleusement chaque profil pour vous garantir un apprentissage de qualité.
+                    Nos <strong>professeurs de {{ matiere }}</strong> proposent un soutien adapté aux besoins de votre enfant. Découvrez leurs profils, leurs spécialités et organisez un premier échange en toute simplicité.
                 {% elif localisation_name %}
-                    Trouvez rapidement un <strong>répétiteur de confiance à {{ localisation_name }}</strong>. Nous sélectionnons les meilleurs profils près de chez vous pour offrir à votre enfant un suivi régulier et adapté à ses objectifs scolaires.
+                    Trouvez un <strong>professeur à domicile à {{ localisation_name }}</strong>. Consultez les enseignants disponibles à proximité pour organiser un suivi de cours pratique et sans contrainte géographique.
                 {% else %}
-                    Prof Chez Vous est la référence pour trouver un répétiteur de confiance au Bénin. Notre communauté d'enseignants passionnés est évaluée et certifiée pour garantir un accompagnement d'excellence à votre enfant, quelle que soit la matière ou la classe.
+                    Prof Chez Vous facilite la mise en relation directe avec des professeurs particuliers au Bénin. Consultez les profils détaillés, découvrez leurs compétences et convenez d'une première séance de découverte sans engagement pour échanger directement et apprécier leur pédagogie.
                 {% endif %}
             </p>
             
@@ -792,12 +809,12 @@ select.pcv-multi-select,
                 <div class="seo-card" style="flex: 1; min-width: 250px; background: #f8fafc; padding: 1.5rem; border-radius: 0.75rem;">
                     <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎁</div>
                     <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Le premier cours est 100% offert !</h3>
-                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Profitez d'une première séance de découverte de 45 minutes offerte. Cet essai gratuit (30 min d'évaluation pédagogique + 15 min d'échange) permet de valider le feeling et la méthode avant tout engagement. Sans aucune obligation de poursuite si vous n'êtes pas satisfait.</p>
+                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Profitez d'une première séance de découverte de 45 minutes offerte (30 min d'échange pédagogique + 15 min de cadrage). Cela vous permet de faire connaissance et de valider le contact avec votre enfant avant tout engagement, sans aucune obligation.</p>
                 </div>
                 <div class="seo-card" style="flex: 1; min-width: 250px; background: #f8fafc; padding: 1.5rem; border-radius: 0.75rem;">
                     <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛡️</div>
-                    <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Des profils 100% vérifiés</h3>
-                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Nous contrôlons minutieusement l'identité, les diplômes et l'expérience de chaque professeur avant publication de son profil. Vous avez ainsi la certitude de faire entrer chez vous un professionnel de l'éducation compétent et fiable.</p>
+                    <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700;">Des profils examinés avec attention</h3>
+                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5;">Chaque dossier d'enseignant fait l'objet d'un examen attentif des pièces justificatives (identité, diplômes et parcours déclarés) avant la publication du profil, pour vous offrir un cadre de contact fiable et transparent.</p>
                 </div>
             </div>
         </div>
@@ -806,6 +823,26 @@ select.pcv-multi-select,
 
 <!-- Side Panel Overlay -->
 <script>
+function toggleAdvancedFilters() {
+    const adv = document.getElementById('advancedFilters');
+    const btn = document.getElementById('toggleFiltersBtn');
+    const textSpan = document.getElementById('moreFiltersText');
+    if (!adv) return;
+    
+    const isVisible = adv.classList.contains('active') || adv.style.display === 'block';
+    if (isVisible) {
+        adv.classList.remove('active');
+        adv.style.display = 'none';
+        if (btn) btn.classList.remove('active');
+        if (textSpan) textSpan.textContent = 'Plus de filtres';
+    } else {
+        adv.classList.add('active');
+        adv.style.display = 'block';
+        if (btn) btn.classList.add('active');
+        if (textSpan) textSpan.textContent = 'Moins de filtres';
+    }
+}
+window.toggleAdvancedFilters = toggleAdvancedFilters;
 
 function getCookie(name) {
     let cookieValue = null;
@@ -863,6 +900,17 @@ document.addEventListener("DOMContentLoaded", function() {
     // Observer toutes les cartes
     document.querySelectorAll('.teacher-card').forEach(card => {
         observer.observe(card);
+    });
+
+    // Écoute des changements sur les filtres avancés
+    ['classe', 'prix', 'mode'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', function() {
+                const form = document.getElementById('search-form');
+                if (form) form.submit();
+            });
+        }
     });
 
     // Restaurer les valeurs personnalisées de Tom Select (Matière, Localisation)

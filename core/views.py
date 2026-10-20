@@ -785,56 +785,49 @@ def recherche(request):
         professeurs = professeurs.filter(quartiers_couverts__id=localisation)
 
     if classe:
-
         from django.db.models import Case, When, Value, BooleanField
-
+        accent_map = {
+            '6ème': '6EME', '5ème': '5EME', '4ème': '4EME', '3ème': '3EME',
+            '2nde Littéraire': '2NDE_LIT', '1ère Littéraire': '1ERE_LIT', 'Tle Littéraire': 'TLE_LIT',
+            '2nde Scientifique': '2NDE_SCI', '1ère Scientifique': '1ERE_SCI', 'Tle Scientifique': 'TLE_SCI',
+        }
+        classe_code = accent_map.get(classe, classe)
         professeurs = professeurs.filter(
-
-            Q(classes_expertise__icontains=classe) | Q(classes_enseignees__icontains=classe)
-
+            Q(classes_expertise__icontains=classe) | Q(classes_enseignees__icontains=classe) |
+            Q(classes_expertise__icontains=classe_code) | Q(classes_enseignees__icontains=classe_code)
         ).annotate(
-
             is_expert_classe=Case(
-
-                When(classes_expertise__icontains=classe, then=Value(True)),
-
+                When(Q(classes_expertise__icontains=classe) | Q(classes_expertise__icontains=classe_code), then=Value(True)),
                 default=Value(False),
-
                 output_field=BooleanField()
-
             )
-
         )
 
     if mode:
-
         professeurs = professeurs.filter(modes_de_cours__icontains=mode)
 
     if soutien:
-
         professeurs = professeurs.filter(categories_de_soutien__icontains=soutien)
 
-        
-
     if prix:
-
         thresholds = [int(t) for t in settings.PRICE_THRESHOLDS]
-
-        if prix == f"0-{thresholds[0]}":
-
-            professeurs = professeurs.filter(tarif_horaire__lt=thresholds[0])
-
-        elif prix == f"{thresholds[0]}-{thresholds[1]}":
-
-            professeurs = professeurs.filter(tarif_horaire__gte=thresholds[0], tarif_horaire__lte=thresholds[1])
-
-        elif prix == f"{thresholds[1]}-{thresholds[2]}":
-
-            professeurs = professeurs.filter(tarif_horaire__gte=thresholds[1], tarif_horaire__lte=thresholds[2])
-
-        elif prix == f"{thresholds[2]}+":
-
-            professeurs = professeurs.filter(tarif_horaire__gt=thresholds[2])
+        matching_prof_ids = []
+        for p in professeurs:
+            eff_price = p.tarif_minimum if p.tarif_minimum is not None else p.tarif_horaire
+            if eff_price is not None:
+                try:
+                    val = float(eff_price)
+                    if prix == f"0-{thresholds[0]}" and val < thresholds[0]:
+                        matching_prof_ids.append(p.id)
+                    elif prix == f"{thresholds[0]}-{thresholds[1]}" and thresholds[0] <= val <= thresholds[1]:
+                        matching_prof_ids.append(p.id)
+                    elif prix == f"{thresholds[1]}-{thresholds[2]}" and thresholds[1] <= val <= thresholds[2]:
+                        matching_prof_ids.append(p.id)
+                    elif prix == f"{thresholds[2]}+" and val > thresholds[2]:
+                        matching_prof_ids.append(p.id)
+                except (ValueError, TypeError):
+                    pass
+        professeurs = professeurs.filter(id__in=matching_prof_ids)
 
 
 
