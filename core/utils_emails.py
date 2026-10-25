@@ -327,6 +327,13 @@ def send_essai_confirmed_email(parent_user, engagement):
     sujet = f"Votre essai avec {prof_name} est confirmé"
     is_parent = hasattr(parent_user, 'parent')
 
+    visio_info_txt = ""
+    visio_info_html = ""
+    if engagement.lien_cours_essai:
+        plat = engagement.plateforme_visio_preferee or "En ligne"
+        visio_info_txt = f"\nPlateforme : {plat}\nLien d'accès : {engagement.lien_cours_essai}"
+        visio_info_html = f'<p style="margin: 4px 0; font-size: 14px;"><strong>Plateforme :</strong> {plat}</p><p style="margin: 4px 0; font-size: 14px;"><strong>Lien d\'accès :</strong> <a href="{engagement.lien_cours_essai}" target="_blank" style="color: #2563eb; font-weight: bold;">Accéder à la salle de cours ↗</a></p>'
+
     if is_parent:
         suivi_text = (
             "Avec Access+, vous pourrez suivre les séances de votre enfant grâce à un espace dédié : notions travaillées, acquis observés, difficultés rencontrées et points à renforcer.\n"
@@ -354,7 +361,7 @@ Le professeur {prof_name} vient de confirmer votre cours d'essai.
 Votre rendez-vous
 Professeur : {prof_name}
 Matière : {matiere}
-Date et heure : {date_str}{f'\nPlateforme : {engagement.plateforme_visio_preferee or "En ligne"}\nLien d\'accès : {engagement.lien_cours_essai}' if engagement.lien_cours_essai else ''}
+Date et heure : {date_str}{visio_info_txt}
 
 Votre prochaine étape
 Échangez dès maintenant avec le professeur pour confirmer le lieu exact de l'essai et préparer votre rendez-vous.
@@ -388,7 +395,7 @@ L'équipe Prof Chez Vous"""
             <p style="margin: 4px 0; font-size: 14px;"><strong>Professeur :</strong> {prof_name}</p>
             <p style="margin: 4px 0; font-size: 14px;"><strong>Matière :</strong> {matiere}</p>
             <p style="margin: 4px 0; font-size: 14px;"><strong>Date et heure :</strong> {date_str}</p>
-            {f'<p style="margin: 4px 0; font-size: 14px;"><strong>Plateforme :</strong> {engagement.plateforme_visio_preferee or "En ligne"}</p><p style="margin: 4px 0; font-size: 14px;"><strong>Lien d\'accès :</strong> <a href="{engagement.lien_cours_essai}" target="_blank" style="color: #2563eb; font-weight: bold;">Accéder à la salle de cours ↗</a></p>' if engagement.lien_cours_essai else ''}
+            {visio_info_html}
         </div>
         
         <p style="font-weight: bold; margin-bottom: 5px; color: #0f172a;">Votre prochaine étape</p>
