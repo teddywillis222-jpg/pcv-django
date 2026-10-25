@@ -3021,6 +3021,7 @@ import uuid
 class ParentSelection(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nom_client_prospect = models.CharField(max_length=150, blank=True, null=True, help_text="Optionnel. Nom ou pseudo WhatsApp du parent (ex: M. Dossou).")
+    ordre_professeurs = models.JSONField(default=list, blank=True, help_text="Ordre d'affichage des professeurs (liste ordonnée des IDs).")
     professeurs = models.ManyToManyField('TeacherProfile', related_name='selections', help_text="Sélectionnez les professeurs à présenter au parent.")
     message_personnalisé = models.TextField(blank=True, null=True, help_text="Optionnel. Un petit mot d'introduction affiché en haut de la page.")
     date_creation = models.DateTimeField(auto_now_add=True)

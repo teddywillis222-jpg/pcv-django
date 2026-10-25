@@ -228,14 +228,22 @@
                 </div>
 
                 <div id="essai_field_visio" style="display: none;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Plateforme préférée</label>
-                    <select name="plateforme_visio" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; box-sizing: border-box; background: #fff;">
-                        <option value="">Sélectionnez une plateforme</option>
-                        <option value="zoom">Zoom</option>
-                        <option value="google_meet">Google Meet</option>
-                        <option value="teams">Microsoft Teams</option>
-                        <option value="whatsapp">WhatsApp Visio</option>
-                    </select>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Plateforme de visioconférence <span style="color:#ef4444">*</span></label>
+                        <select id="essai_plateforme_visio" name="plateforme_visio" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; box-sizing: border-box; background: #fff; font-weight: 500;">
+                            <option value="">Sélectionnez la plateforme</option>
+                            <option value="Google Meet">Google Meet</option>
+                            <option value="Zoom">Zoom</option>
+                            <option value="Microsoft Teams">Microsoft Teams</option>
+                            <option value="WhatsApp Visio">WhatsApp Visio</option>
+                            <option value="Autre plateforme">Autre plateforme en ligne</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #334155;">Lien de la salle de cours / visioconférence <span style="color:#ef4444">*</span></label>
+                        <input type="url" id="essai_lien_cours_essai" name="lien_cours_essai" placeholder="Ex: https://meet.google.com/abc-defg-hij" style="width: 100%; padding: 0.85rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; box-sizing: border-box; background: #fff; font-weight: 500;">
+                        <span style="display: block; font-size: 0.78rem; color: #64748b; margin-top: 0.35rem;">Collez ici le lien de la réunion pour que le professeur puisse vous rejoindre.</span>
+                    </div>
                 </div>
             </div>
 
@@ -467,6 +475,14 @@ function openEngagementForm(teacherId, teacherName, matiere, isParent = false, i
 
             populateFormSelects('eng', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
 
+            // Définir la date minimale (aujourd'hui) pour bloquer les dates passées
+            const engDateDebutInput = document.getElementById('eng_date_debut');
+            if (engDateDebutInput) {
+                const now = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                engDateDebutInput.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+            }
+
             // Pré-remplissage
             if (existingEng && existingEng.status === 'EN_ATTENTE' && existingEng.type !== 'essai') {
                 document.getElementById('eng_id_hidden').value = existingEng.id;
@@ -536,6 +552,14 @@ function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPrem
 
             populateFormSelects('essai', teacherId, teacherName, matiere, isParent, isPremium, children, existingEng, classesStr);
 
+            // Définir la date/heure minimale (au moment présent) pour bloquer les dates et heures passées
+            const essaiDateInput = document.getElementById('essai_date_essai');
+            if (essaiDateInput) {
+                const now = new Date();
+                const pad = (n) => String(n).padStart(2, '0');
+                essaiDateInput.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            }
+
             const banner = document.getElementById('essai_banner');
             const bannerText = document.getElementById('essai_banner_text');
             const bannerBtn = document.getElementById('essai_banner_btn');
@@ -569,6 +593,8 @@ function openEssaiForm(teacherId, teacherName, matiere, isParent = false, isPrem
                 }
                 if (existingEng.date_essai) document.getElementById('essai_date_essai').value = existingEng.date_essai;
                 if (existingEng.indications_geographiques) document.getElementById('essai_indications_geo').value = existingEng.indications_geographiques;
+                if (existingEng.plateforme_visio && document.getElementById('essai_plateforme_visio')) document.getElementById('essai_plateforme_visio').value = existingEng.plateforme_visio;
+                if (existingEng.lien_cours_essai && document.getElementById('essai_lien_cours_essai')) document.getElementById('essai_lien_cours_essai').value = existingEng.lien_cours_essai;
                 
                 submitBtn.textContent = "Mettre à jour l’essai";
             } else {
@@ -609,19 +635,36 @@ function toggleModeFields(prefix) {
     const locInput = document.getElementById(prefix + '_localisation');
     const indicationsField = document.getElementById(prefix + '_field_indications');
 
+    const isOnline = (mode === 'ONLINE' || mode === 'DISTANCE');
     const isDomicile = ['PARENT_HOME', 'APPRENANT_HOME', 'HYBRID', 'THIRD_PLACE', 'SMALL_GROUP'].includes(mode);
 
-    if (mode === 'ONLINE') {
+    const plateformeSelect = document.getElementById(prefix + '_plateforme_visio');
+    const lienInput = document.getElementById(prefix + '_lien_cours_essai');
+
+    if (isOnline) {
         visioField.style.display = 'block';
         locField.style.display = 'none';
         locInput.required = false;
         indicationsField.style.display = 'none';
+
+        if (prefix === 'essai') {
+            if (plateformeSelect) plateformeSelect.required = true;
+            if (lienInput) lienInput.required = true;
+        }
     } else {
         visioField.style.display = 'none';
         locField.style.display = 'block';
         locInput.required = true;
-        // Afficher les indications uniquement pour les essais physiques
+
         if (prefix === 'essai') {
+            if (plateformeSelect) {
+                plateformeSelect.required = false;
+                plateformeSelect.value = '';
+            }
+            if (lienInput) {
+                lienInput.required = false;
+                lienInput.value = '';
+            }
             indicationsField.style.display = isDomicile ? 'block' : 'none';
         } else {
             indicationsField.style.display = 'none';
@@ -659,6 +702,64 @@ async function submitEngagement(event, btnId) {
             } catch(e) {}
         }
         return;
+    }
+
+    // Validation spécifique pour les cours d'essai en ligne / visio vs présentiel
+    if (data.engagement_type === 'essai') {
+        const mode = data.course_mode;
+        const isOnline = (mode === 'ONLINE' || mode === 'DISTANCE');
+        if (isOnline) {
+            const plateforme = (data.plateforme_visio || '').trim();
+            const lien = (data.lien_cours_essai || '').trim();
+            if (!plateforme) {
+                alert("Pour un cours d'essai en visioconférence, veuillez sélectionner la plateforme de visioconférence.");
+                const pEl = document.getElementById('essai_plateforme_visio');
+                if (pEl) pEl.focus();
+                return;
+            }
+            if (!lien) {
+                alert("Pour un cours d'essai en visioconférence, veuillez renseigner le lien de la salle de cours en ligne.");
+                const lEl = document.getElementById('essai_lien_cours_essai');
+                if (lEl) lEl.focus();
+                return;
+            }
+        } else {
+            const loc = (data.localisation || '').trim();
+            if (!loc) {
+                alert("Pour un cours d'essai à domicile / en présentiel, veuillez sélectionner un quartier ou une localisation.");
+                const locEl = document.getElementById('essai_localisation');
+                if (locEl) {
+                    if (locEl.tomselect) locEl.tomselect.focus();
+                    else locEl.focus();
+                }
+                return;
+            }
+        }
+    }
+
+    // Validation stricte anti-date passée pour le cours d'essai
+    const essaiDateEl = form.querySelector('#essai_date_essai');
+    if (essaiDateEl && essaiDateEl.value) {
+        const chosenDateTime = new Date(essaiDateEl.value);
+        const currentDateTime = new Date();
+        if (isNaN(chosenDateTime.getTime()) || chosenDateTime <= currentDateTime) {
+            alert("La date et l'heure du cours d'essai doivent être postérieures au moment présent.");
+            essaiDateEl.focus();
+            return;
+        }
+    }
+
+    // Validation date de début pour l'engagement standard
+    const engDateDebutEl = form.querySelector('#eng_date_debut');
+    if (engDateDebutEl && engDateDebutEl.value) {
+        const chosenDate = new Date(engDateDebutEl.value + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (chosenDate < today) {
+            alert("La date de début ne peut pas être antérieure à aujourd'hui.");
+            engDateDebutEl.focus();
+            return;
+        }
     }
     
     const btn = document.getElementById(btnId);
@@ -769,6 +870,25 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const essaiDateEl = document.getElementById('essai_date_essai');
+    if (essaiDateEl) {
+        essaiDateEl.addEventListener('focus', function() {
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            this.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        });
+    }
+    const engDateEl = document.getElementById('eng_date_debut');
+    if (engDateEl) {
+        engDateEl.addEventListener('focus', function() {
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            this.min = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+        });
+    }
+});
 
 (function() {
     function handleModalClicks(e) {

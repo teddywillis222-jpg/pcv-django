@@ -1,0 +1,159 @@
+{% extends "admin/change_form.html" %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+
+<script id="initial-order-data" type="application/json">{% if original and original.ordre_professeurs %}{{ original.ordre_professeurs|safe }}{% else %}[]{% endif %}</script>
+
+<script>
+(function() {
+    // 1. Désactiver le tri alphabétique automatique pour la boîte de destination des professeurs
+    if (window.SelectBox) {
+        var originalSort = SelectBox.sort;
+        SelectBox.sort = function(id) {
+            if (id === 'id_professeurs_to') {
+                // Ne rien faire pour préserver l'ordre de sélection
+                return;
+            }
+            return originalSort.apply(this, arguments);
+        };
+    }
+
+    function initOrderManagement() {
+        var toBox = document.getElementById('id_professeurs_to');
+        if (!toBox) {
+            // Réessayer après un bref délai si SelectFilter2 n'a pas encore fini
+            setTimeout(initOrderManagement, 100);
+            return;
+        }
+
+        // 2. Restaurer l'ordre initial enregistré
+        var savedOrder = [];
+        var orderScript = document.getElementById('initial-order-data');
+        if (orderScript) {
+            try {
+                savedOrder = JSON.parse(orderScript.textContent) || [];
+            } catch (e) {
+                console.error("Erreur parsing initial-order-data:", e);
+            }
+        }
+
+        if (savedOrder && savedOrder.length > 0 && window.SelectBox && SelectBox.cache['id_professeurs_to']) {
+            SelectBox.cache['id_professeurs_to'].sort(function(a, b) {
+                var idxA = savedOrder.indexOf(parseInt(a.value));
+                var idxB = savedOrder.indexOf(parseInt(b.value));
+                if (idxA === -1 && idxB === -1) return 0;
+                if (idxA === -1) return 1;
+                if (idxB === -1) return -1;
+                return idxA - idxB;
+            });
+            SelectBox.redisplay('id_professeurs_to');
+        }
+
+        // 3. Ajouter la barre d'outils Monter / Descendre
+        if (!document.getElementById('prof-reorder-toolbar')) {
+            var container = toBox.parentNode;
+
+            var toolbar = document.createElement('div');
+            toolbar.id = 'prof-reorder-toolbar';
+            toolbar.style.display = 'flex';
+            toolbar.style.alignItems = 'center';
+            toolbar.style.gap = '8px';
+            toolbar.style.marginTop = '8px';
+            toolbar.style.marginBottom = '8px';
+            toolbar.style.padding = '6px 10px';
+            toolbar.style.backgroundColor = '#f0fdf4';
+            toolbar.style.border = '1px solid #bbf7d0';
+            toolbar.style.borderRadius = '6px';
+
+            var btnUp = document.createElement('button');
+            btnUp.type = 'button';
+            btnUp.innerHTML = '&#9650; Monter';
+            btnUp.title = 'Déplacer le professeur sélectionné vers le haut';
+            btnUp.style.padding = '4px 10px';
+            btnUp.style.backgroundColor = '#059669';
+            btnUp.style.color = '#ffffff';
+            btnUp.style.border = 'none';
+            btnUp.style.borderRadius = '4px';
+            btnUp.style.cursor = 'pointer';
+            btnUp.style.fontSize = '12px';
+            btnUp.style.fontWeight = 'bold';
+
+            var btnDown = document.createElement('button');
+            btnDown.type = 'button';
+            btnDown.innerHTML = '&#9660; Descendre';
+            btnDown.title = 'Déplacer le professeur sélectionné vers le bas';
+            btnDown.style.padding = '4px 10px';
+            btnDown.style.backgroundColor = '#059669';
+            btnDown.style.color = '#ffffff';
+            btnDown.style.border = 'none';
+            btnDown.style.borderRadius = '4px';
+            btnDown.style.cursor = 'pointer';
+            btnDown.style.fontSize = '12px';
+            btnDown.style.fontWeight = 'bold';
+
+            var helpText = document.createElement('span');
+            helpText.style.fontSize = '11px';
+            helpText.style.color = '#065f46';
+            helpText.style.fontWeight = '500';
+            helpText.textContent = 'Ordre des cartes : du 1er en haut au dernier en bas';
+
+            toolbar.appendChild(btnUp);
+            toolbar.appendChild(btnDown);
+            toolbar.appendChild(helpText);
+
+            // Insérer juste après la boîte de sélection
+            container.insertBefore(toolbar, toBox.nextSibling);
+
+            btnUp.addEventListener('click', function(e) {
+                e.preventDefault();
+                moveOption(-1);
+            });
+
+            btnDown.addEventListener('click', function(e) {
+                e.preventDefault();
+                moveOption(1);
+            });
+        }
+
+        function moveOption(direction) {
+            if (toBox.selectedIndex === -1) {
+                alert('Veuillez d\'abord cliquer sur un professeur dans la liste pour le sélectionner.');
+                return;
+            }
+
+            var index = toBox.selectedIndex;
+            var targetIndex = index + direction;
+
+            if (targetIndex < 0 || targetIndex >= toBox.options.length) {
+                return; // Hors limites
+            }
+
+            // Mettre à jour SelectBox.cache
+            if (window.SelectBox && SelectBox.cache && SelectBox.cache['id_professeurs_to']) {
+                var cache = SelectBox.cache['id_professeurs_to'];
+                var temp = cache[index];
+                cache[index] = cache[targetIndex];
+                cache[targetIndex] = temp;
+            }
+
+            // Mettre à jour le DOM
+            var currentOpt = toBox.options[index];
+            var targetOpt = toBox.options[targetIndex];
+            if (direction < 0) {
+                toBox.insertBefore(currentOpt, targetOpt);
+            } else {
+                toBox.insertBefore(targetOpt, currentOpt);
+            }
+            toBox.selectedIndex = targetIndex;
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initOrderManagement);
+    } else {
+        initOrderManagement();
+    }
+})();
+</script>
+{% endblock %}

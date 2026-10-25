@@ -3471,6 +3471,10 @@ def professeur_detail(request, teacher_slug):
 
                 'indications_geographiques': existing_engagement_obj.indications_geographiques,
 
+                'plateforme_visio': existing_engagement_obj.plateforme_visio_preferee,
+
+                'lien_cours_essai': existing_engagement_obj.lien_cours_essai,
+
             })
 
 
@@ -3836,6 +3840,10 @@ def api_teacher_profile(request, teacher_slug):
 
                         'indications_geographiques': existing_engagement_obj.indications_geographiques,
 
+                        'plateforme_visio': existing_engagement_obj.plateforme_visio_preferee,
+
+                        'lien_cours_essai': existing_engagement_obj.lien_cours_essai,
+
                     }
 
             except Exception:
@@ -4075,21 +4083,37 @@ def api_engagement(request):
                 loc_val = f"{q_obj.nom} ({q_obj.ville})" if q_obj.ville else q_obj.nom
         engagement.localisation_option = loc_val
 
-        # Sécurité : indications géographiques uniquement pour les essais (anti-contournement)
+        is_online_mode = course_mode in ['ONLINE', 'DISTANCE']
 
-        engagement.indications_geographiques = data.get('indications_geographiques', '') if type_eng == EngagementType.ESSAI else ''
-
-        engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
-
-        
+        # Sécurité : indications géographiques uniquement pour les essais physiques (anti-contournement)
+        engagement.indications_geographiques = data.get('indications_geographiques', '') if (type_eng == EngagementType.ESSAI and not is_online_mode) else ''
 
         if type_eng == EngagementType.ESSAI:
+            if is_online_mode:
+                plateforme_visio = str(data.get('plateforme_visio', '')).strip()
+                lien_cours_essai = str(data.get('lien_cours_essai', '')).strip()
+
+                if not plateforme_visio:
+                    return JsonResponse({'error': "Pour un cours d'essai en visioconférence, veuillez sélectionner la plateforme de visioconférence."}, status=400)
+                if not lien_cours_essai:
+                    return JsonResponse({'error': "Pour un cours d'essai en visioconférence, veuillez renseigner le lien de la salle de cours en ligne."}, status=400)
+
+                if not (lien_cours_essai.startswith('http://') or lien_cours_essai.startswith('https://')):
+                    lien_cours_essai = 'https://' + lien_cours_essai
+
+                engagement.plateforme_visio_preferee = plateforme_visio
+                engagement.lien_cours_essai = lien_cours_essai
+                engagement.localisation_option = ''
+            else:
+                # Cours à domicile ou physique
+                if not loc_val:
+                    return JsonResponse({'error': "Pour un cours d'essai à domicile / en présentiel, veuillez sélectionner une localisation."}, status=400)
+                engagement.plateforme_visio_preferee = ''
+                engagement.lien_cours_essai = ''
 
             from django.utils.dateparse import parse_datetime
 
-            from django.utils.timezone import make_aware, is_naive
-
-            
+            from django.utils.timezone import make_aware, is_naive, now
 
             date_essai_str = data.get('date_essai')
 
@@ -4099,9 +4123,11 @@ def api_engagement(request):
 
                 if dt and is_naive(dt): dt = make_aware(dt)
 
-                engagement.date_heure_essai = dt
+                if dt and dt <= now():
 
-            
+                    return JsonResponse({'error': "La date et l'heure du cours d'essai doivent être postérieures au moment présent."}, status=400)
+
+                engagement.date_heure_essai = dt
 
             date_fin_essai_str = data.get('date_fin_essai')
 
@@ -4111,13 +4137,16 @@ def api_engagement(request):
 
                 if dt_fin and is_naive(dt_fin): dt_fin = make_aware(dt_fin)
 
-                engagement.date_heure_fin_essai = dt_fin
+                if dt_fin and dt_fin <= now():
 
-                
+                    return JsonResponse({'error': "La date et l'heure de fin du cours d'essai doivent être postérieures au moment présent."}, status=400)
+
+                engagement.date_heure_fin_essai = dt_fin
 
             engagement.description_essai = data.get('description_essai', '')
 
         else:
+            engagement.plateforme_visio_preferee = data.get('plateforme_visio', '')
 
             budget = data.get('budget')
 
@@ -4135,7 +4164,15 @@ def api_engagement(request):
 
                 from django.utils.dateparse import parse_date
 
-                engagement.date_debut = parse_date(date_debut_str)
+                from django.utils.timezone import localdate
+
+                d_debut = parse_date(date_debut_str)
+
+                if d_debut and d_debut < localdate():
+
+                    return JsonResponse({'error': "La date de début ne peut pas être antérieure à aujourd'hui."}, status=400)
+
+                engagement.date_debut = d_debut
 
                 
 
@@ -8649,8 +8686,17 @@ def selection_personnalisee(request, uuid):
     # Récupérer tous les profs liés (sans filtrer par statut, car l'admin les a choisis manuellement)
     professeurs = selection.professeurs.all()
 
+    from django.db.models import Case, When, IntegerField
+
     # Appliquer les mêmes annotations que la page de recherche (moyenne_avis, nombre_avis, etc.)
     professeurs = annotate_teachers_with_ratings(professeurs)
+
+    # Si un ordre personnalisé a été défini, respecter cet ordre exact (du haut vers le bas)
+    if selection.ordre_professeurs:
+        order_cases = [When(id=pk, then=pos) for pos, pk in enumerate(selection.ordre_professeurs)]
+        professeurs = professeurs.annotate(
+            _ordre_selection=Case(*order_cases, default=9999, output_field=IntegerField())
+        ).order_by('_ordre_selection')
 
     context = {
         "selection": selection,

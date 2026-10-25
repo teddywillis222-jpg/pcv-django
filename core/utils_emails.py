@@ -251,6 +251,11 @@ Voici les détails de la demande :
         message += f"""
     Date proposée : {date_str}"""
 
+    if engagement.lien_cours_essai:
+        message += f"""
+    Plateforme : {engagement.plateforme_visio_preferee or 'En ligne'}
+    Lien de la salle : {engagement.lien_cours_essai}"""
+
     message += f"""
 
 L'étape suivante est entre vos mains : connectez-vous à votre espace professeur pour consulter la demande complète et confirmer (ou proposer un autre créneau).
@@ -349,7 +354,7 @@ Le professeur {prof_name} vient de confirmer votre cours d'essai.
 Votre rendez-vous
 Professeur : {prof_name}
 Matière : {matiere}
-Date et heure : {date_str}
+Date et heure : {date_str}{f'\nPlateforme : {engagement.plateforme_visio_preferee or "En ligne"}\nLien d\'accès : {engagement.lien_cours_essai}' if engagement.lien_cours_essai else ''}
 
 Votre prochaine étape
 Échangez dès maintenant avec le professeur pour confirmer le lieu exact de l'essai et préparer votre rendez-vous.
@@ -383,6 +388,7 @@ L'équipe Prof Chez Vous"""
             <p style="margin: 4px 0; font-size: 14px;"><strong>Professeur :</strong> {prof_name}</p>
             <p style="margin: 4px 0; font-size: 14px;"><strong>Matière :</strong> {matiere}</p>
             <p style="margin: 4px 0; font-size: 14px;"><strong>Date et heure :</strong> {date_str}</p>
+            {f'<p style="margin: 4px 0; font-size: 14px;"><strong>Plateforme :</strong> {engagement.plateforme_visio_preferee or "En ligne"}</p><p style="margin: 4px 0; font-size: 14px;"><strong>Lien d\'accès :</strong> <a href="{engagement.lien_cours_essai}" target="_blank" style="color: #2563eb; font-weight: bold;">Accéder à la salle de cours ↗</a></p>' if engagement.lien_cours_essai else ''}
         </div>
         
         <p style="font-weight: bold; margin-bottom: 5px; color: #0f172a;">Votre prochaine étape</p>

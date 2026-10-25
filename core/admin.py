@@ -222,6 +222,23 @@ class ParentSelectionAdmin(admin.ModelAdmin):
         }),
     )
 
+    def save_form(self, request, form, change):
+        obj = super().save_form(request, form, change)
+        raw_prof_ids = request.POST.getlist('professeurs')
+        if raw_prof_ids:
+            obj.ordre_professeurs = [int(p) for p in raw_prof_ids if str(p).isdigit()]
+        else:
+            obj.ordre_professeurs = []
+        return obj
+
+    def save_model(self, request, obj, form, change):
+        raw_prof_ids = request.POST.getlist('professeurs')
+        if raw_prof_ids:
+            obj.ordre_professeurs = [int(p) for p in raw_prof_ids if str(p).isdigit()]
+        else:
+            obj.ordre_professeurs = []
+        super().save_model(request, obj, form, change)
+
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "professeurs":
             kwargs["queryset"] = db_field.related_model.objects.filter(statut_de_validation='APPROVED')
