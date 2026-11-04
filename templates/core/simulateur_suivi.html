@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suivi Pédagogique - Mathématiques</title>
+    <title>Simulateur Suivi Pédagogique - Prof Chez Vous</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -30,6 +30,93 @@
             color: var(--text-dark);
             min-height: 100vh;
             padding-bottom: 3rem;
+        }
+
+        /* Top Bar Entraînement */
+        .simulator-topbar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .btn-exit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.85rem;
+            background: #f1f5f9;
+            color: #334155;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .btn-exit:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .sim-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-reset-sim {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 0.45rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset-sim:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Banner didactique */
+        .info-sim-banner {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 18px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05);
+        }
+        .info-sim-banner h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0369a1;
+            margin-bottom: 0.25rem;
+        }
+        .info-sim-banner p {
+            font-size: 0.85rem;
+            color: #334155;
+            line-height: 1.45;
         }
 
         /* Conteneur Suivi */
@@ -587,7 +674,36 @@
 </head>
 <body>
 
+    <!-- Barre de contrôle de la simulation -->
+    <header class="simulator-topbar">
+        <a href="{% url 'prof_dashboard' %}" class="btn-exit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Quitter le simulateur
+        </a>
+
+        <div class="sim-badge">
+            <span>🧪</span> Mode Entraînement
+        </div>
+
+        <button type="button" onclick="resetSimulation()" class="btn-reset-sim" title="Réinitialiser les données de simulation">
+            ↺ Réinitialiser
+        </button>
+    </header>
+
     <div class="suivi-container">
+
+        <!-- Bannière explicative didactique -->
+        <div class="info-sim-banner">
+            <div style="font-size: 1.4rem; line-height: 1;">💡</div>
+            <div>
+                <h4>Espace d'entraînement interactif</h4>
+                <p>
+                    Vous suivez ici un élève test fictif (<strong>Koffi ADANHOUN</strong>, 3ème en Mathématiques).  
+                    Testez l'enregistrement d'une séance pour observer comment vos appréciations par notion (notées de 0 à 3) 
+                    font évoluer en direct la <strong>jauge globale de maîtrise</strong> de l'élève. Aucune donnée réelle n'est modifiée.
+                </p>
+            </div>
+        </div>
 
         <!-- En-tête -->
         <div class="header-card">
@@ -600,7 +716,7 @@
                 Finalisé
             </div>
             
-            <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Suivi Pédagogique</h1>
+            <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800;">Suivi Pédagogique (Simulation)</h1>
             <p style="margin: 0.2rem 0 0 0; color: var(--text-gray); font-size: 0.95rem;">
                 Mathématiques • Classe de 3ème
             </p>
@@ -611,7 +727,7 @@
                     <div class="context-value">{{ prof_nom }}</div>
                 </div>
                 <div class="context-item">
-                    <div class="context-label">Élève(s)</div>
+                    <div class="context-label">Élève fictif</div>
                     <div class="context-value">Koffi ADANHOUN</div>
                 </div>
             </div>
@@ -657,7 +773,7 @@
 
         <!-- Section Journal des séances -->
         <div class="journal-section">
-            <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances</h2>
+            <h2 class="progress-title" style="margin-bottom: 0.5rem;">Journal des séances (Simulation)</h2>
             <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
                     <span style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);"></span> En attente
@@ -724,7 +840,7 @@
     <div class="bottom-sheet" id="sheetAdd">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px;">Ajouter une séance</h2>
+            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px;">Ajouter une séance test</h2>
             <button class="sheet-close" onclick="closeAllSheets()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -801,7 +917,7 @@
             </div>
 
             <h3 style="font-size: 1.35rem; font-weight: 900; color: #1e293b; margin: 0 0 0.5rem 0; line-height: 1.3;">
-                Félicitations pour votre effort !
+                Séance test enregistrée avec succès !
             </h3>
 
             <p style="font-size: 0.95rem; color: #475569; margin: 0 0 1.25rem 0; line-height: 1.5;" id="sim-modal-explication">
@@ -1192,7 +1308,13 @@
             if (dateInput) dateInput.valueAsDate = new Date();
             toggleDiffText();
 
-            // Affichage de la modale de succès
+            // Affichage de la modale de succès avec explications de simulation
+            const modalExp = document.getElementById('sim-modal-explication');
+            const nouveauTaux = Math.round((cumulPointsObtenus / cumulPointsMax) * 100);
+            if (modalExp) {
+                modalExp.innerHTML = `Cette séance test a obtenu un score de <strong>${tauxSeance}%</strong> (${pointsSeance}/${pointsMaxSeance} pts).<br>La jauge de maîtrise globale de Koffi est désormais de <strong>${nouveauTaux}%</strong> !`;
+            }
+
             document.getElementById('modal-bilan-succes').style.display = 'flex';
         }
 
@@ -1202,6 +1324,13 @@
             const section = document.getElementById('section-progression');
             if (section) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function resetSimulation() {
+            if (confirm("Voulez-vous réinitialiser le simulateur à son état de départ ?")) {
+                initSimulation();
+                alert("Le simulateur a été réinitialisé.");
             }
         }
 
