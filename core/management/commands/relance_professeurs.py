@@ -22,10 +22,118 @@ class Command(BaseCommand):
             action='store_true',
             help="Filtrer uniquement ceux n'ayant jamais reçu la relance",
         )
+        parser.add_argument(
+            '--test-email',
+            type=str,
+            help="Envoyer un e-mail de test uniquement à cette adresse (aucun autre e-mail ne sera envoyé)",
+        )
+
+    def get_email_content(self, name):
+        sujet = "Presque prêt ! Votre vitrine de professeur vous attend sur Prof Chez Vous 🚀"
+        profile_url = "https://profchezvousapp.com/prof/create-profile/"
+        whatsapp_url = "https://wa.me/2290147528839"
+
+        message_html = f"""
+        <div style="font-family: Arial, sans-serif; font-size: 15px; color: #2D3748; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+            <p>Bonjour <strong>{name}</strong>,</p>
+            
+            <p>Nous avons remarqué que vous avez créé votre compte sur <strong>Prof Chez Vous</strong>, et nous tenons à vous féliciter pour cette première étape !</p>
+            
+            <p>Cependant, votre profil n'est pas encore tout à fait terminé. Pour commencer à être visible auprès des parents d'élèves et recevoir vos premières demandes, il ne vous reste plus qu'à finaliser votre dossier (vos matières, votre diplôme et votre courte vidéo de présentation).</p>
+            
+            <p>Rassurez-vous, c'est simple et rapide ! Chaque document est un gage de confiance essentiel pour les familles qui recherchent l'excellence pour leurs enfants.</p>
+            
+            <!-- BOUTON D'ACTION PRINCIPAL -->
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{profile_url}" 
+                   style="display: inline-block; padding: 14px 28px; background-color: #2563EB; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
+                    🚀 Finaliser mon profil professeur
+                </a>
+            </div>
+            
+            <!-- BLOC ASSISTANCE WHATSAPP -->
+            <div style="background-color: #F8FAFC; border-left: 4px solid #25D366; padding: 15px; border-radius: 4px; margin: 25px 0;">
+                <p style="margin: 0 0 10px 0; font-weight: bold; color: #1E293B;">Besoin d'un coup de main ? 🤝</p>
+                <p style="margin: 0 0 10px 0; font-size: 14px; color: #475569;">
+                    Si vous rencontrez la moindre difficulté technique ou si vous préférez être guidé, notre équipe est là pour vous accompagner pas à pas.
+                </p>
+                <a href="{whatsapp_url}" 
+                   style="display: inline-block; padding: 8px 16px; background-color: #25D366; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 13px;">
+                    Contacter le support WhatsApp
+                </a>
+            </div>
+            
+            <p>Nous avons hâte de vous compter parmi nos professeurs officiels et de bâtir cette aventure ensemble.</p>
+            
+            <p style="margin-top: 25px;">
+                À très vite sur la plateforme,<br>
+                <strong>L'équipe Prof Chez Vous</strong>
+            </p>
+            
+            <!-- PIED DE PAGE / RGPD -->
+            <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 35px 0 15px 0;">
+            <p style="font-size: 12px; color: #718096; line-height: 1.5; margin: 0;">
+                <strong>Gestion de vos données personnelles :</strong><br>
+                Vous disposez à tout moment du droit de demander la suppression de vos données et de votre compte sur Prof Chez Vous. Si vous ne souhaitez pas poursuivre, il vous suffit de <strong>répondre directement à cet e-mail</strong> en mentionnant votre nom et l'adresse e-mail associée à votre compte.
+            </p>
+        </div>
+        """
+
+        message_text = f"""Bonjour {name},
+
+Nous avons remarqué que vous avez créé votre compte sur Prof Chez Vous, et nous tenons à vous féliciter pour cette première étape !
+
+Cependant, votre profil n'est pas encore tout à fait terminé. Pour commencer à être visible auprès des parents d'élèves et recevoir vos premières demandes, il ne vous reste plus qu'à finaliser votre dossier (vos matières, votre diplôme et votre courte vidéo de présentation).
+
+Rassurez-vous, c'est simple et rapide ! Chaque élément est un gage de confiance essentiel pour les familles qui recherchent l'excellence pour leurs enfants.
+
+👉 Cliquez sur le lien ci-dessous pour compléter votre profil dès maintenant :
+{profile_url}
+
+Besoin d'un coup de main ? 🤝
+Si vous rencontrez la moindre difficulté technique ou si vous préférez être guidé, notre équipe est là pour vous accompagner pas à pas sur WhatsApp :
+{whatsapp_url}
+
+Nous avons hâte de vous compter parmi nos professeurs officiels et de bâtir cette aventure ensemble.
+
+À très vite sur la plateforme,
+
+L'équipe Prof Chez Vous
+
+--------------------------------------------------
+Gestion de vos données personnelles :
+Vous disposez à tout moment du droit de demander la suppression de vos données et de votre compte sur Prof Chez Vous. Si vous ne souhaitez plus poursuivre, il vous suffit de répondre directement à ce message en mentionnant votre nom et l'adresse e-mail utilisée lors de la création de votre compte."""
+
+        return sujet, message_text, message_html
 
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         only_unsent = options.get('only_unsent', False)
+        test_email = options.get('test_email')
+        
+        # Mode test avec une adresse spécifique
+        if test_email:
+            name = "Professeur Test"
+            user_found = User.objects.filter(email__iexact=test_email).first()
+            if user_found:
+                name = user_found.first_name or user_found.username
+                
+            self.stdout.write(f"Mode TEST activé : envoi d'un e-mail unique à {test_email} (Nom affiché : {name})")
+            sujet, message_text, message_html = self.get_email_content(name)
+
+            try:
+                send_mail(
+                    subject=sujet,
+                    message=message_text,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[test_email],
+                    html_message=message_html,
+                    fail_silently=False,
+                )
+                self.stdout.write(self.style.SUCCESS(f"E-mail de test envoyé avec succès à {test_email} !"))
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"Échec d'envoi du test à {test_email} : {e}"))
+            return
         
         # Sélectionne les utilisateurs ayant le rôle PROF (insensible à la casse pour compatibilité)
         users_profs = User.objects.filter(profile__role__iexact=Profile.ROLE_PROF).select_related('profile')
@@ -61,67 +169,10 @@ class Command(BaseCommand):
                 continue
 
             name = user.first_name or user.username
-            sujet = "Presque prêt ! Votre vitrine de professeur vous attend sur Prof Chez Vous 🚀"
-            
-            message_html = f"""
-            <div style="font-family: Arial, sans-serif; font-size: 15px; color: #333; line-height: 1.6;">
-                <p>Bonjour {name},</p>
-                
-                <p>Nous avons remarqué que vous avez créé votre compte sur <strong>Prof Chez Vous</strong>, et nous tenons à vous féliciter pour cette première étape !</p>
-                
-                <p>Cependant, votre profil n'est pas encore tout à fait terminé. Pour commencer à être visible auprès des parents d'élèves et lancer votre essor sur la plateforme, il ne vous reste plus qu'à finaliser votre dossier (vos matières, votre diplôme et votre courte vidéo de présentation).</p>
-                
-                <p>Rassurez-vous, c'est simple et rapide ! Chaque document est une garantie de confiance pour les familles qui recherchent l'excellence pour leurs enfants.</p>
-                
-                <p><strong>Besoin d'un coup de main ? 🤝</strong><br>
-                Si vous rencontrez la moindre difficulté technique, ou si vous préférez être guidé, notre équipe est là pour vous accompagner pas à pas !</p>
-                
-                <p style="margin: 20px 0;">
-                    <a href="https://wa.me/2290147528839" style="display:inline-block; padding:12px 22px; background-color:#25D366; color:white; text-decoration:none; border-radius:6px; font-weight:bold; font-size:15px;">
-                        Contacter le support WhatsApp
-                    </a>
-                </p>
-                
-                <p>Nous avons hâte de vous compter parmi nos professeurs officiels et de bâtir cette aventure ensemble.</p>
-                
-                <p>À très vite sur la plateforme,<br>
-                <strong>L'équipe Prof Chez Vous</strong></p>
-                
-                <hr style="border:none; border-top:1px solid #e0e0e0; margin: 30px 0 15px 0;">
-                
-                <p style="font-size: 12px; color: #777; line-height: 1.5; margin: 0;">
-                    <strong>Gestion de vos données personnelles :</strong><br>
-                    Vous disposez à tout moment du droit de demander la suppression de vos données et de votre compte sur Prof Chez Vous. Si vous ne souhaitez plus poursuivre, il vous suffit de <strong>répondre directement à cet e-mail</strong> en mentionnant votre nom et l'adresse e-mail utilisée lors de la création de votre compte.
-                </p>
-            </div>
-            """
-            
-            # Version texte brut (fallback pour les clients mail ne supportant pas HTML)
-            message_text = f"""Bonjour {name},
-
-Nous avons remarqué que vous avez créé votre compte sur Prof Chez Vous, et nous tenons à vous féliciter pour cette première étape !
-
-Cependant, votre profil n'est pas encore tout à fait terminé. Pour commencer à être visible auprès des parents d'élèves et lancer votre essor sur la plateforme, il ne vous reste plus qu'à finaliser votre dossier (vos matières, votre diplôme et votre courte vidéo de présentation).
-
-Rassurez-vous, c'est simple et rapide ! Chaque document est une garantie de confiance pour les familles qui recherchent l'excellence pour leurs enfants.
-
-Besoin d'un coup de main ? 🤝 
-Si vous rencontrez la moindre difficulté technique, ou si vous préférez être guidé, notre équipe est là pour vous accompagner pas à pas.
-
-Cliquez ici pour échanger directement avec notre support sur WhatsApp : https://wa.me/2290147528839
-
-Nous avons hâte de vous compter parmi nos professeurs officiels et de bâtir cette aventure ensemble.
-
-À très vite sur la plateforme,
-
-L'équipe Prof Chez Vous
-
---------------------------------------------------
-Gestion de vos données personnelles :
-Vous disposez à tout moment du droit de demander la suppression de vos données et de votre compte sur Prof Chez Vous. Si vous ne souhaitez plus poursuivre, il vous suffit de répondre directement à ce message en mentionnant votre nom et l'adresse e-mail utilisée lors de la création de votre compte."""
+            sujet, message_text, message_html = self.get_email_content(name)
 
             try:
-                # Utilisation du DEFAULT_FROM_EMAIL par défaut dans django, s'il n'est pas configuré il tombera sur webmaster@localhost ou autre
+                # Utilisation du DEFAULT_FROM_EMAIL par défaut dans django
                 send_mail(
                     subject=sujet,
                     message=message_text,
