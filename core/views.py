@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -230,6 +230,15 @@ def annotate_teachers_with_ratings(queryset):
 
 
 
+
+
+def health_check(request):
+    """
+    Endpoint ultra-léger dédié au keep-alive (UptimeRobot, Render).
+    Retourne instantanément 'OK' sans JAMAIS toucher à la base de données.
+    Permet à Render de rester éveillé tout en laissant Neon s'endormir (scale-to-zero).
+    """
+    return HttpResponse("OK", content_type="text/plain")
 
 
 def home(request):
@@ -8024,7 +8033,7 @@ def ressources_professeurs_view(request):
 
 from django.views.decorators.csrf import csrf_exempt
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from django.shortcuts import render, get_object_or_404
 
@@ -8713,7 +8722,7 @@ def api_cron_check_essais(request):
     Sécurisé par un token statique.
     """
     from django.conf import settings
-    from django.http import JsonResponse
+    from django.http import JsonResponse, HttpResponse
     from django.core.management import call_command
     
     # Jeton de sécurité basique (peut être mis dans les variables d'environnement .env)
@@ -8730,7 +8739,7 @@ def api_cron_check_essais(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
