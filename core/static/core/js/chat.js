@@ -240,25 +240,128 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     hideSendError();
 
+    // ── Gestion de la sélection multiple de photos (max 5) ──
+    let selectedPhotos = [];
+
+    window.clearPhotoSelection = function() {
+        selectedPhotos = [];
+        const bar = document.getElementById('photoPreviewBar');
+        if (bar) bar.style.display = 'none';
+        if (fileInput) fileInput.value = '';
+        const list = document.getElementById('photoPreviewList');
+        if (list) list.innerHTML = '';
+    };
+
+    window.removeSelectedPhoto = function(idx) {
+        if (idx >= 0 && idx < selectedPhotos.length) {
+            selectedPhotos.splice(idx, 1);
+            if (selectedPhotos.length === 0) {
+                clearPhotoSelection();
+            } else {
+                renderPhotoPreviews();
+            }
+        }
+    };
+
+    function renderPhotoPreviews() {
+        const bar = document.getElementById('photoPreviewBar');
+        const list = document.getElementById('photoPreviewList');
+        const countEl = document.getElementById('photoPreviewCount');
+        if (!bar || !list) return;
+
+        if (selectedPhotos.length === 0) {
+            bar.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+
+        bar.style.display = 'block';
+        if (countEl) countEl.textContent = `Photos sélectionnées (${selectedPhotos.length}/5)`;
+        list.innerHTML = '';
+
+        selectedPhotos.forEach((file, index) => {
+            const item = document.createElement('div');
+            item.className = 'photo-preview-item';
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.alt = file.name;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'photo-preview-remove';
+            removeBtn.innerHTML = '×';
+            removeBtn.title = 'Retirer cette photo';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                removeSelectedPhoto(index);
+            };
+
+            item.appendChild(img);
+            item.appendChild(removeBtn);
+            list.appendChild(item);
+        });
+
+        if (selectedPhotos.length < 5) {
+            const addMoreBtn = document.createElement('button');
+            addMoreBtn.type = 'button';
+            addMoreBtn.className = 'photo-preview-add-more';
+            addMoreBtn.innerHTML = '+';
+            addMoreBtn.title = 'Ajouter d\'autres photos (max 5)';
+            addMoreBtn.onclick = () => {
+                if (fileInput) fileInput.click();
+            };
+            list.appendChild(addMoreBtn);
+        }
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                const newFiles = Array.from(this.files).filter(f => f.type.startsWith('image/'));
+                if (newFiles.length === 0) {
+                    alert("Veuillez sélectionner uniquement des fichiers image (photos).");
+                    return;
+                }
+
+                newFiles.forEach(f => {
+                    if (selectedPhotos.length < 5) {
+                        const exists = selectedPhotos.some(p => p.name === f.name && p.size === f.size);
+                        if (!exists) selectedPhotos.push(f);
+                    }
+                });
+
+                if (this.files.length > 5 || selectedPhotos.length >= 5) {
+                    if (this.files.length > 5) {
+                        alert("Vous ne pouvez sélectionner que 5 photos maximum par envoi.");
+                    }
+                }
+
+                renderPhotoPreviews();
+                if (input) input.focus();
+                fileInput.value = '';
+            }
+        });
+    }
+
     // ── Envoi de message ─────────────────────────────────────
     async function submitMessage(payload = null) {
         if (!chatForm || !input) return;
         const text = payload ? payload.text : input.value.trim();
-        const file = payload ? payload.file : (fileInput ? fileInput.files[0] : null);
-        if (!text && !file) return;
+        const singleFile = payload ? payload.file : null;
+        const photosToSend = (payload && payload.files) ? payload.files : (singleFile ? [singleFile] : [...selectedPhotos]);
+
+        if (!text && photosToSend.length === 0) return;
 
         const sendBtn = document.getElementById('sendBtn') || chatForm.querySelector('.btn-send');
         if (sendBtn) sendBtn.disabled = true;
 
-        // Bulle optimiste (envoi immédiat)
-        const tempId = 'temp-' + Date.now();
-        appendSentBubble(tempId, text, file, '…');
+        // Vider la sélection photo et masquer la prévisualisation immédiatement
+        clearPhotoSelection();
 
-        // Vider l'input immédiatement (UX optimiste)
+        // Vider l'input texte immédiatement (UX optimiste)
         if (!payload) {
             input.value = '';
             input.style.height = 'auto';
-            if (fileInput) { fileInput.value = ''; input.placeholder = 'Écrivez un message…'; }
         }
 
         // Cacher le placeholder vide s'il existe
@@ -267,10 +370,41 @@ document.addEventListener('DOMContentLoaded', function () {
             emptyPlaceholder.style.display = 'none';
         }
 
+        // Créer les bulles optimistes
+        const tempIds = [];
+        if (photosToSend.length > 0) {
+            photosToSend.forEach((file, idx) => {
+                const tempId = 'temp-' + Date.now() + '-' + idx;
+                tempIds.push(tempId);
+                const bubbleText = (idx === 0) ? text : '';
+                appendSentBubble(tempId, bubbleText, file, '…');
+            });
+        } else {
+            const tempId = 'temp-' + Date.now();
+            tempIds.push(tempId);
+            appendSentBubble(tempId, text, null, '…');
+        }
+
         try {
             const fd = new FormData();
             if (text) fd.append('texte', text);
-            if (file) fd.append('fichier', file);
+
+            if (photosToSend.length > 0) {
+                // Compression haute fidélité pour les images
+                const processedFiles = await Promise.all(
+                    photosToSend.map(async (file) => {
+                        if (file.type && file.type.startsWith('image/')) {
+                            return await compressImage(file, 1920, 0.88);
+                        }
+                        return file;
+                    })
+                );
+
+                processedFiles.forEach(file => {
+                    fd.append('fichiers', file);
+                });
+                fd.append('fichier', processedFiles[0]);
+            }
 
             const res = await fetch(config.urls.sendMessage, {
                 method: 'POST',
@@ -282,35 +416,50 @@ document.addEventListener('DOMContentLoaded', function () {
             try { data = await res.json(); } catch (_) {}
 
             if (res.ok) {
-                // Mettre à jour la bulle optimiste avec l'ID réel
-                const tmpBubble = document.querySelector(`[data-id="${tempId}"]`);
-                if (tmpBubble) {
-                    tmpBubble.setAttribute('data-id', data.message_id);
-                    const timeEl = tmpBubble.querySelector('.msg-time');
-                    if (timeEl) timeEl.textContent = data.date || new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-                    tmpBubble.style.opacity = '1';
+                // Mettre à jour les bulles optimistes avec les IDs réels
+                if (data.messages && Array.isArray(data.messages)) {
+                    data.messages.forEach((m, idx) => {
+                        const tempId = tempIds[idx];
+                        const tmpBubble = document.querySelector(`[data-id="${tempId}"]`);
+                        if (tmpBubble) {
+                            tmpBubble.setAttribute('data-id', m.id);
+                            const timeEl = tmpBubble.querySelector('.msg-time');
+                            if (timeEl) timeEl.textContent = m.date || new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+                            tmpBubble.style.opacity = '1';
+                        }
+                        if (m.id > config.lastMsgId) config.lastMsgId = m.id;
+                    });
+                } else if (tempIds.length > 0) {
+                    const tmpBubble = document.querySelector(`[data-id="${tempIds[0]}"]`);
+                    if (tmpBubble) {
+                        tmpBubble.setAttribute('data-id', data.message_id);
+                        const timeEl = tmpBubble.querySelector('.msg-time');
+                        if (timeEl) timeEl.textContent = data.date || new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+                        tmpBubble.style.opacity = '1';
+                    }
+                    if (data.message_id > config.lastMsgId) config.lastMsgId = data.message_id;
                 }
-                if (data.message_id > config.lastMsgId) config.lastMsgId = data.message_id;
+
                 hideSendError();
                 lastFailedPayload = null;
                 scrollToBottom();
                 return;
             }
 
-            // Échec : retirer la bulle optimiste
-            removeBubble(tempId);
+            // Échec : retirer les bulles optimistes
+            tempIds.forEach(id => removeBubble(id));
 
             if (res.status === 402) {
                 showPaymentModal();
                 return;
             }
 
-            lastFailedPayload = { text, file };
+            lastFailedPayload = { text, files: photosToSend };
             showSendError(data.error || 'Envoi impossible pour le moment.');
         } catch (e) {
             console.error('[Chat] Erreur envoi:', e);
-            removeBubble(tempId);
-            lastFailedPayload = { text, file };
+            tempIds.forEach(id => removeBubble(id));
+            lastFailedPayload = { text, files: photosToSend };
             showSendError('Erreur de connexion. Vérifiez le réseau puis renvoyez.');
         } finally {
             if (sendBtn) sendBtn.disabled = false;
@@ -319,7 +468,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ── Formulaire submit ────────────────────────────────────
     if (chatForm) {
-        // Blindage contre le rechargement intempestif
         chatForm.onsubmit = async (e) => {
             e.preventDefault();
             await submitMessage();
@@ -340,31 +488,8 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
         
-        // Sur iOS : scroll to bottom quand le clavier apparaît
         input.addEventListener('focus', function () {
             setTimeout(() => scrollToBottom(), 200);
-        });
-    }
-
-    // ── Photo : Compression haute fidélité & Envoi immédiat ──
-    if (fileInput) {
-        fileInput.addEventListener('change', async function () {
-            if (this.files.length > 0) {
-                const rawFile = this.files[0];
-                if (input) input.placeholder = 'Optimisation de la photo…';
-                try {
-                    // Compression haute fidélité (Full HD 1920px max, qualité 0.88)
-                    const compressedFile = await compressImage(rawFile, 1920, 0.88);
-                    const textVal = input ? input.value.trim() : '';
-                    await submitMessage({ file: compressedFile, text: textVal });
-                } catch (err) {
-                    console.error('[Chat] Erreur compression:', err);
-                    await submitMessage({ file: rawFile, text: input ? input.value.trim() : '' });
-                } finally {
-                    fileInput.value = '';
-                    if (input) input.placeholder = 'Écrivez un message…';
-                }
-            }
         });
     }
 

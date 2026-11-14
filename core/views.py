@@ -5035,86 +5035,83 @@ def api_send_message(request, conversation_id):
 
 
     try:
-
         texte = request.POST.get('texte', '').strip()
-
-        fichier = request.FILES.get('fichier')
-
-        
+        fichiers = request.FILES.getlist('fichiers') or request.FILES.getlist('fichier')
 
         # Validation renforcée du contenu
-
-        if not texte and not fichier:
-
+        if not texte and not fichiers:
             return JsonResponse({'error': 'Un message ou un fichier est requis'}, status=400)
 
-        
-
         if texte and len(texte) > 2000:
-
             return JsonResponse({'error': 'Le message ne peut pas dépasser 2000 caractères'}, status=400)
 
-            
-
         if request.user == conversation.parent:
-
             destinataire = conversation.professeur.user if conversation.professeur else None
-
         else:
-
             destinataire = conversation.parent
 
-            
-
         if not destinataire:
-
             return JsonResponse({'error': 'Destinataire introuvable (profil incomplet ou supprimé).'}, status=400)
 
-        
-
-        message = Message.objects.create(
-
-            conversation=conversation,
-
-            auteur=request.user,
-
-            destinataire=destinataire,
-
-            contenu_texte=texte,
-
-            contenu_media=fichier
-
-        )
-
-        
-
-        # Mettre à jour la conversation et le type_message
         from .choices import MessageType
 
-        prefix = ""
-        if fichier:
-            content_type = (getattr(fichier, 'content_type', '') or '').lower()
-            fname = (fichier.name or '').lower()
-            is_image = content_type.startswith('image/') or fname.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif'))
-            is_audio = content_type.startswith('audio/') or fname.endswith(('.webm', '.ogg', '.mp3', '.m4a', '.wav', '.aac'))
+        # Limite à 5 fichiers maximum par envoi
+        fichiers = fichiers[:5]
+        created_messages = []
 
-            if is_image:
-                message.type_message = MessageType.IMAGE
-                prefix = "📷 Photo"
-            elif is_audio:
-                message.type_message = MessageType.AUDIO
-                prefix = "🎙️ Note vocale"
+        if fichiers:
+            for idx, fichier in enumerate(fichiers):
+                content_type = (getattr(fichier, 'content_type', '') or '').lower()
+                fname = (fichier.name or '').lower()
+                is_image = content_type.startswith('image/') or fname.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif'))
+                is_audio = content_type.startswith('audio/') or fname.endswith(('.webm', '.ogg', '.mp3', '.m4a', '.wav', '.aac'))
+
+                if is_image:
+                    msg_type = MessageType.IMAGE
+                    prefix = "📷 Photo"
+                elif is_audio:
+                    msg_type = MessageType.AUDIO
+                    prefix = "🎙️ Note vocale"
+                else:
+                    msg_type = MessageType.DOCUMENT
+                    prefix = "📄 Fichier"
+
+                # Le texte est attaché au premier message s'il y a plusieurs photos
+                msg_caption = texte if idx == 0 else ""
+
+                msg = Message.objects.create(
+                    conversation=conversation,
+                    auteur=request.user,
+                    destinataire=destinataire,
+                    contenu_texte=msg_caption,
+                    contenu_media=fichier,
+                    type_message=msg_type
+                )
+                created_messages.append(msg)
+
+            last_msg = created_messages[-1]
+            if len(fichiers) > 1:
+                conv_preview = f"📷 {len(fichiers)} photos"
+                if texte:
+                    conv_preview += f" : {texte}"
             else:
-                message.type_message = MessageType.DOCUMENT
-                prefix = "📄 Fichier"
-            message.save(update_fields=['type_message'])
+                conv_preview = f"{prefix} {texte}" if texte else prefix
 
-            conversation.dernier_message_texte = f"{prefix} {texte}" if texte else prefix
+            conversation.dernier_message_texte = conv_preview
+            conversation.dernier_message_date = last_msg.date_envoi
+            conversation.dernier_message_auteur = request.user
         else:
+            msg = Message.objects.create(
+                conversation=conversation,
+                auteur=request.user,
+                destinataire=destinataire,
+                contenu_texte=texte,
+                type_message=MessageType.TEXTE
+            )
+            created_messages.append(msg)
             conversation.dernier_message_texte = texte
-
-        conversation.dernier_message_date = message.date_envoi
-        conversation.dernier_message_auteur = request.user
+            conversation.dernier_message_date = msg.date_envoi
+            conversation.dernier_message_auteur = request.user
 
         if request.user == conversation.parent:
             conversation.conversation_lue_par_prof = False
@@ -5123,25 +5120,37 @@ def api_send_message(request, conversation_id):
 
         conversation.save()
 
-        # Envoi d'email de notification au destinataire en arrière-plan
+        # Envoi d'email de notification en arrière-plan
         import threading
         from .utils_emails import send_new_message_email
-        email_preview = texte if texte else prefix
+        preview_text = conversation.dernier_message_texte
         threading.Thread(
             target=send_new_message_email,
-            args=(destinataire, request.user, email_preview, conversation.id)
+            args=(destinataire, request.user, preview_text, conversation.id)
         ).start()
 
-        file_url = message.contenu_media.url if message.contenu_media else None
-        file_name = message.contenu_media.name.split('/')[-1] if message.contenu_media else None
+        last_m = created_messages[-1]
+        file_url = last_m.contenu_media.url if last_m.contenu_media else None
+        file_name = last_m.contenu_media.name.split('/')[-1] if last_m.contenu_media else None
 
         return JsonResponse({
             'success': True,
-            'message_id': message.id,
-            'type_message': message.type_message,
+            'message_id': last_m.id,
+            'messages': [
+                {
+                    'id': m.id,
+                    'type_message': m.type_message,
+                    'fichier_url': m.contenu_media.url if m.contenu_media else None,
+                    'fichier_nom': m.contenu_media.name.split('/')[-1] if m.contenu_media else None,
+                    'text': m.contenu_texte,
+                    'date': timezone.localtime(m.date_envoi).strftime("%H:%M")
+                }
+                for m in created_messages
+            ],
+            'type_message': last_m.type_message,
             'fichier_url': file_url,
             'fichier_nom': file_name,
-            'date': timezone.localtime(message.date_envoi).strftime("%H:%M")
+            'date': timezone.localtime(last_m.date_envoi).strftime("%H:%M")
         })
 
         

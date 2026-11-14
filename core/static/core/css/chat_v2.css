@@ -277,6 +277,7 @@
 ======================================== */
 .chat-v2-input-area {
     flex-shrink: 0;
+    position: relative;
     background: var(--c-header-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -1176,4 +1177,131 @@
 
 .sent .audio-duration {
     color: rgba(255, 255, 255, 0.85);
+}
+
+
+/* ========================================
+   PRÉVISUALISATION DES PHOTOS AVANT ENVOI
+======================================== */
+.chat-photo-preview-bar {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--c-border);
+    padding: 0.5rem 0.85rem;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+    z-index: 45;
+    animation: slideUpPreview 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpPreview {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.photo-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.photo-preview-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.photo-preview-clear {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.15s;
+}
+
+.photo-preview-clear:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.photo-preview-list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+}
+
+.photo-preview-item {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.photo-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-preview-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(15, 23, 42, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.photo-preview-remove:hover {
+    background: #ef4444;
+}
+
+.photo-preview-add-more {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.photo-preview-add-more:hover {
+    border-color: #16a34a;
+    color: #16a34a;
+    background: #f0fdf4;
 }

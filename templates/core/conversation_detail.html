@@ -279,9 +279,18 @@
                 </div>
             </div>
 
+            <!-- Barre de prévisualisation des photos avant envoi (max 5) -->
+            <div id="photoPreviewBar" class="chat-photo-preview-bar" style="display: none;">
+                <div class="photo-preview-header">
+                    <span class="photo-preview-title" id="photoPreviewCount">Photos sélectionnées (0/5)</span>
+                    <button type="button" class="photo-preview-clear" onclick="clearPhotoSelection()">Annuler tout</button>
+                </div>
+                <div class="photo-preview-list" id="photoPreviewList"></div>
+            </div>
+
             <form id="chatForm" onsubmit="event.preventDefault();" style="display: contents;">
-                <!-- Champ masqué pour l'envoi de photos (seules les images) -->
-                <input type="file" id="fileInput" hidden accept="image/*">
+                <!-- Champ masqué pour l'envoi de photos (seules les images, jusqu'à 5) -->
+                <input type="file" id="fileInput" hidden accept="image/*" multiple>
                 
                 <!-- Bouton Photo (images uniquement) -->
                 <button type="button" class="c-action-media-btn" id="photoBtn" aria-label="Envoyer une photo" title="Envoyer une photo" onclick="document.getElementById('fileInput').click();">
