@@ -304,7 +304,7 @@ class Profile(models.Model):
 
                 return label
 
-        return "Standard"
+        return "Découverte"
 
 
 

@@ -2770,29 +2770,45 @@ def apprenant_dashboard(request):
 
 
 @login_required
-
 def gestion_plan(request):
-
-    from .models import Profile
-
-    
+    from .models import Profile, Engagement, Abonnement
+    from .choices import StatutGeneral, TypeAbonnement
 
     # Sécurité Rôle
-
     try:
-
         user_profile = request.user.profile
-
-        # Incrémenter les vues pour les statistiques de lancement (sauf comptes de test)
-
     except Profile.DoesNotExist:
-
         return redirect("finalisation_compte")
 
+    engagement_a_finaliser = Engagement.objects.filter(
+        parent_apprenant=request.user,
+        statut_general__in=[StatutGeneral.ESSAI_CONFIRME, StatutGeneral.ESSAI_REALISE]
+    ).order_by('-date_creation').first()
+
+    current_plan = user_profile.current_plan
+    is_access_plus = (current_plan == TypeAbonnement.ACCESS_PREMIUM)
+    latest_abonnement = request.user.abonnements.order_by('-id').first()
+
+    context = {
+        'user_profile': user_profile,
+        'current_plan': current_plan,
+        'is_access_plus': is_access_plus,
+        'latest_abonnement': latest_abonnement,
+        'engagement_a_finaliser': engagement_a_finaliser,
+    }
+
+    return render(request, "core/gestion_plan.html", context)
 
 
-    from .models import Engagement
+@login_required
+def explication_access_plus(request):
+    from .models import Profile, Engagement
     from .choices import StatutGeneral
+
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        return redirect("finalisation_compte")
 
     engagement_a_finaliser = Engagement.objects.filter(
         parent_apprenant=request.user,
@@ -2800,10 +2816,11 @@ def gestion_plan(request):
     ).order_by('-date_creation').first()
 
     context = {
+        'user_profile': user_profile,
         'engagement_a_finaliser': engagement_a_finaliser,
     }
 
-    return render(request, "core/gestion_plan.html", context)
+    return render(request, "core/explication_access_plus.html", context)
 
 
 

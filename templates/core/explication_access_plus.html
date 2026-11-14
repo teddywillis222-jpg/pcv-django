@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pass Access+ en détail - Prof Chez Vous{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dash-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-dark: #0f172a;
+        --text-gray: #64748b;
+        --primary: #16a34a;
+        --access-color: #f59e0b;
+        --access-dark: #b45309;
+        --access-light: #fffbeb;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
+    }
+
+    body {
+        background-color: var(--dash-bg);
+        margin: 0;
+        padding: 0;
+    }
+
+    .access-page {
+        width: 100%;
+        max-width: 680px;
+        margin: 1.5rem auto 4rem;
+        padding: 0 1rem;
+        color: var(--text-dark);
+    }
+
+    .back-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+        padding: 0.4rem 0.8rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        transition: all 0.2s ease;
+    }
+
+    .back-nav-link:hover {
+        color: var(--primary);
+        border-color: #cbd5e1;
+        background: #f8fafc;
+        text-decoration: none;
+    }
+
+    .access-hero {
+        margin-bottom: 2.25rem;
+        text-align: left;
+    }
+
+    .access-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.85rem;
+        background: #fef3c7;
+        color: #92400e;
+        font-weight: 800;
+        font-size: 0.82rem;
+        border-radius: 9999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.85rem;
+    }
+
+    .access-hero-title {
+        font-size: 1.85rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.25;
+        margin-bottom: 0.85rem;
+        text-align: left;
+    }
+
+    .access-hero-subtitle {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    .access-visual {
+        background: var(--card-bg);
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .access-visual-border::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background: var(--primary);
+    }
+
+    .access-section-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin: 2.5rem 0 0.75rem;
+        text-align: left;
+    }
+
+    .access-section-subtitle {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+
+    .access-feature-card {
+        background: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid var(--access-color);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    }
+
+    .access-feature-text {
+        font-size: 0.98rem;
+        color: var(--text-gray);
+        margin-bottom: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .access-feature-highlight {
+        font-weight: 700;
+        color: var(--access-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .access-pricing {
+        background: var(--access-light);
+        border: 2px solid #fde68a;
+        border-radius: 1.5rem;
+        padding: 2.25rem 1.5rem;
+        text-align: left;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .access-price-val {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--access-dark);
+        margin-bottom: 0.75rem;
+    }
+
+    .access-price-desc {
+        font-size: 0.98rem;
+        color: #92400e;
+        line-height: 1.5;
+        margin-bottom: 1.75rem;
+        font-weight: 500;
+    }
+
+    .btn-activate,
+    .btn-activate:hover,
+    .btn-activate:focus,
+    .btn-activate:active,
+    .btn-back,
+    .btn-back:hover,
+    .btn-back:focus,
+    .btn-back:active {
+        text-decoration: none !important;
+        outline: none;
+    }
+
+    .btn-activate {
+        display: block;
+        width: 100%;
+        padding: 1.15rem;
+        background: var(--access-color);
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 800;
+        border-radius: 1rem;
+        text-align: center;
+        text-decoration: none !important;
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
+        box-sizing: border-box;
+    }
+    
+    .btn-activate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(245, 158, 11, 0.35);
+        filter: brightness(1.03);
+        color: white;
+        text-decoration: none !important;
+    }
+
+    .btn-activate:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        filter: brightness(0.97);
+        text-decoration: none !important;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 1rem;
+        background: #ffffff;
+        color: #1e293b;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 1rem;
+        text-align: center;
+        text-decoration: none !important;
+        border: 1.5px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        box-sizing: border-box;
+    }
+    
+    .btn-back:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+        text-decoration: none !important;
+    }
+
+    /* Mock UI Elements */
+    .mock-progress-track { height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 1rem; }
+    .mock-progress-fill { height: 100%; width: 78%; background: var(--primary); border-radius: 999px; }
+    .mock-seance-label { display: block; font-size: 0.8rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
+    .mock-seance-box { background: #f8fafc; padding: 0.85rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.9rem; color: #334155; line-height: 1.5; }
+
+    @media (max-width: 600px) {
+        .access-hero-title { font-size: 1.6rem; }
+        .access-price-val { font-size: 1.75rem; }
+        .access-visual { padding: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="access-page">
+    <a href="{% url 'gestion_plan' %}" class="back-nav-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Retour à la gestion des formules
+    </a>
+
+    <div class="access-hero">
+        <div class="access-hero-badge">
+            ⭐ Tout savoir sur le Pass Access+
+        </div>
+        <h1 class="access-hero-title">Ne devinez plus ce qui est fait pendant les cours.</h1>
+        <p class="access-hero-subtitle">Suivez avec certitude et sérénité les acquis réels de votre enfant, séance après séance.</p>
+    </div>
+
+    <!-- Visual 1: Mockup Niveau de Maîtrise -->
+    <div class="access-visual access-visual-border" style="border-left: none;">
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 1.25rem;">Niveau de maîtrise des notions travaillées</h2>
+        
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1;">78 %</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #64748b;">28 / 36 points</div>
+        </div>
+        
+        <div class="mock-progress-track">
+            <div class="mock-progress-fill"></div>
+        </div>
+        
+        <div style="font-size: 0.9rem; color: #475569; font-weight: 700; margin-bottom: 0.25rem;">Depuis le début de l'accompagnement</div>
+        <div style="font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 1.25rem;">12 séances · 14 notions évaluées</div>
+
+        <div style="font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 2rem;">Cet indicateur est établi à partir des évaluations renseignées par le professeur.</div>
+
+        <h3 style="font-size: 0.95rem; font-weight: 800; color: #334155; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Répartition des notions</h3>
+        <p style="font-size: 0.8rem; color: #64748b; margin-top: -0.5rem; margin-bottom: 1rem;">Visualisez en un clin d'œil les acquis consolidés et les axes de travail.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">8</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">Maîtrisées</span>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #f59e0b; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">4</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">En cours</span>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #ef4444; border-radius: 0.75rem; padding: 0.75rem; text-align: center;">
+                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">2</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">À renforcer</span>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="access-section-title">Mais le suivi ne s'arrête pas à un simple pourcentage.</h2>
+    <h3 class="access-section-subtitle">Accédez au compte-rendu transparent de chaque séance.</h3>
+
+    <!-- Visual 2: Mockup Bilan de séance -->
+    <div class="access-visual">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem;">
+            <h2 style="font-weight: 900; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px; margin: 0;">Bilan du 14 Octobre</h2>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.5rem; border-radius: 20px; margin-bottom: 1rem;">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">83%</div>
+            <div style="margin-left: 1rem; font-size: 0.95rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
+        </div>
+        
+        <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; padding: 0 1rem; line-height: 1.4;">Ce pourcentage montre le niveau affiché par votre enfant sur l'ensemble des notions abordées ce jour de séance.</p>
+        
+        <div class="mock-seance-label">🎯 Objectifs de la séance</div>
+        <div class="mock-seance-box">Réviser les opérations sur les fractions et la résolution de problèmes à étapes multiples.</div>
+        
+        <div class="mock-seance-label">📚 Notions abordées</div>
+        <div style="display: grid; gap: 0.5rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 8px;">
+                <span style="font-size: 0.9rem; font-weight: 600;">Fractions</span>
+                <span style="font-weight: 800; color: var(--primary);">2/3</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 8px;">
+                <span style="font-size: 0.9rem; font-weight: 600;">Résolution de problèmes</span>
+                <span style="font-weight: 800; color: var(--primary);">3/3</span>
+            </div>
+        </div>
+
+        <div class="mock-seance-label">⚠️ Difficultés rencontrées</div>
+        <div class="mock-seance-box" style="background: #fef2f2; color: #991b1b;">Difficulté à simplifier les fractions avec des dénominateurs différents.</div>
+        
+        <div class="mock-seance-label">🏠 Tâches à domicile</div>
+        <div class="mock-seance-box">Refaire les exercices 4 et 5 page 12 du cahier d'activités.</div>
+    </div>
+
+    <h2 class="access-section-title">Cours terminé ? Recevez l'essentiel du bilan en 30 secondes sur votre téléphone.</h2>
+
+    <h2 class="access-section-title">Et ce n'est qu'une partie de ce que vous offre Access+</h2>
+
+    <!-- Carte 1 : Réassurance & Déroulement -->
+    <div class="access-feature-card" style="border-left-color: #16a34a;">
+        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
+            🎯 Vous avez déjà un cours d'essai programmé ?
+        </p>
+        <p class="access-feature-text" style="margin-bottom: 0;">
+            Profitez sereinement de votre séance : <strong>elle est 100% gratuite et sans engagement</strong>. Dès la fin de l'essai, vous recevrez une notification pour officialiser la collaboration si le professeur vous convient, et ainsi débloquer l'espace de suivi {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}.
+        </p>
+    </div>
+
+    <!-- Carte 2 : Anticipation & Flexibilité -->
+    <div class="access-feature-card" style="border-left-color: #f59e0b;">
+        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
+            🛡️ Et si le courant ne passe pas au premier essai ?
+        </p>
+        <p class="access-feature-text" style="margin-bottom: 0.75rem;">
+            Aucune mauvaise surprise : avec Access+, vous bénéficiez de notre <strong>garantie de remplacement</strong>. Vous pouvez programmer d'autres séances d'essai sans frais jusqu'à trouver le professeur idéal.
+        </p>
+        <div class="access-feature-highlight">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            Testez d'autres professeurs avant de fixer votre choix.
+        </div>
+    </div>
+
+    <!-- Carte 3 : Messagerie multimédia avancée -->
+    <div class="access-feature-card" style="border-left-color: #3b82f6;">
+        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
+            💬 Messagerie multimédia avancée
+        </p>
+        <p class="access-feature-text" style="margin-bottom: 0;">
+            Échangez sans aucune barrière avec le professeur : envoi de <strong>photos d'exercices</strong>, de copies corrigées, de <strong>notes vocales</strong> et de documents pédagogiques directement dans votre messagerie intégrée.
+        </p>
+    </div>
+
+    <!-- Bloc Tarification & Bouton d'action -->
+    <div class="access-pricing">
+        <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Pass Access+</div>
+        <div class="access-price-val">2 500 FCFA / mois</div>
+        <p class="access-price-desc">
+            0 % de commission sur les heures de cours versées directement au professeur. Le confort absolu pour sécuriser la réussite scolaire de votre enfant au meilleur coût.
+        </p>
+        
+        {% if engagement_a_finaliser %}
+            <a href="{% url 'finalisation_engagement' engagement_a_finaliser.id %}" class="btn-activate">
+                Activer Access+ &amp; Officialiser la collaboration
+            </a>
+        {% else %}
+            <a href="{% url 'payer_premium' %}" class="btn-activate">
+                Activer le Pass Access+ (2 500 FCFA / mois)
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Boutons de retour -->
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; margin-bottom: 2rem;">
+        <a href="{% url 'gestion_plan' %}" class="btn-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Voir toutes les formules
+        </a>
+        <a href="{% url 'post_signup_redirect' %}" class="btn-back" style="border: none; background: transparent; color: #64748b; box-shadow: none;">
+            Retourner dans mon tableau de bord
+        </a>
+    </div>
+</div>
+{% endblock %}

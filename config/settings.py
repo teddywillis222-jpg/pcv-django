@@ -392,7 +392,7 @@ MATIERES_FILE = os.path.join(BASE_DIR, 'config', 'matieres_structurees.json')
 
 # ParamÃ¨tres Premium
 
-PREMIUM_MONTHLY_PRICE = os.getenv('PREMIUM_MONTHLY_PRICE', '5000')
+PREMIUM_MONTHLY_PRICE = os.getenv('PREMIUM_MONTHLY_PRICE', '2500')
 
 PREMIUM_ENGAGEMENT_QUOTA = int(os.getenv('PREMIUM_ENGAGEMENT_QUOTA', '5'))
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Formule Access+ - Prof Chez Vous{% endblock %}
+{% block title %}Gestion de votre abonnement — Prof Chez Vous{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -9,415 +9,866 @@
         --dash-bg: #f8fafc;
         --card-bg: #ffffff;
         --text-dark: #0f172a;
-        --text-gray: #64748b;
+        --text-muted: #64748b;
         --primary: #16a34a;
+        --primary-dark: #15803d;
+        --primary-light: #f0fdf4;
         --access-color: #f59e0b;
         --access-dark: #b45309;
         --access-light: #fffbeb;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
+        --access-border: #fde68a;
+        --border-color: #e2e8f0;
+        --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+        --shadow-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.1);
     }
 
     body {
         background-color: var(--dash-bg);
         margin: 0;
         padding: 0;
-    }
-
-    .access-page {
-        width: 100%;
-        max-width: 680px;
-        margin: 2rem auto 4rem;
-        padding: 0 0.75rem;
         color: var(--text-dark);
+        font-family: 'Raleway', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .access-hero {
-        margin-bottom: 2.5rem;
-        text-align: left;
+    .plan-page-container {
+        width: 100%;
+        max-width: 960px;
+        margin: 2rem auto 5rem;
+        padding: 0 1rem;
+        box-sizing: border-box;
     }
 
-    .access-hero-title {
-        font-size: 1.85rem;
+    /* En-tête */
+    .plan-header {
+        text-align: center;
+        max-width: 720px;
+        margin: 0 auto 3rem;
+    }
+
+    .plan-header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        background: #ecfdf5;
+        color: #065f46;
+        font-size: 0.85rem;
+        font-weight: 800;
+        border-radius: 9999px;
+        border: 1px solid #a7f3d0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+    }
+
+    .plan-header-title {
+        font-size: 2.25rem;
         font-weight: 900;
         color: var(--text-dark);
         line-height: 1.25;
-        margin-bottom: 1rem;
-        text-align: left;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.85rem;
     }
 
-    .access-hero-subtitle {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #334155;
-        margin-bottom: 1.25rem;
-        line-height: 1.5;
-        text-align: left;
-    }
-
-    .access-text {
-        font-size: 1.05rem;
-        color: var(--text-gray);
+    .plan-header-subtitle {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text-muted);
         line-height: 1.6;
-        margin-bottom: 2rem;
-        text-align: left;
+        margin: 0;
     }
 
-    .access-visual {
+    /* Grille des 2 formules principales */
+    .plan-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        margin-bottom: 2.5rem;
+        align-items: stretch;
+    }
+
+    @media (min-width: 768px) {
+        .plan-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+    }
+
+    /* Carte de formule */
+    .plan-card {
         background: var(--card-bg);
         border-radius: 1.5rem;
-        padding: 1.5rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 3rem;
+        border: 1.5px solid var(--border-color);
+        box-shadow: var(--shadow-subtle);
+        padding: 2.25rem 1.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         position: relative;
-        overflow: hidden;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-sizing: border-box;
     }
-    
-    .access-visual-border::before {
-        content: '';
+
+    .plan-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    /* Formule Recommandée : Pass Access+ */
+    .plan-card.featured {
+        border: 2.5px solid var(--access-color);
+        background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+        box-shadow: 0 10px 35px -5px rgba(245, 158, 11, 0.18);
+        transform: scale(1.02);
+        z-index: 2;
+    }
+
+    @media (max-width: 767px) {
+        .plan-card.featured {
+            transform: none;
+        }
+    }
+
+    .plan-card.featured:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 16px 40px -4px rgba(245, 158, 11, 0.25);
+    }
+
+    @media (max-width: 767px) {
+        .plan-card.featured:hover {
+            transform: translateY(-4px);
+        }
+    }
+
+    /* Ruban vedette */
+    .featured-ribbon {
         position: absolute;
-        top: 0; left: 0; width: 4px; height: 100%;
-        background: var(--primary);
-    }
-
-    .access-section-title {
-        font-size: 1.35rem;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        font-size: 0.8rem;
         font-weight: 800;
-        color: var(--text-dark);
-        margin: 3rem 0 1rem;
-        text-align: left;
-    }
-
-    .access-section-subtitle {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #334155;
-        margin-bottom: 1rem;
-        text-align: left;
-    }
-
-    .access-feature-card {
-        background: var(--card-bg);
-        border-radius: 1rem;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        border: 1px solid #e2e8f0;
-        border-left: 4px solid var(--access-color);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-    }
-
-    .access-feature-text {
-        font-size: 1rem;
-        color: var(--text-gray);
-        margin-bottom: 0.75rem;
-        line-height: 1.5;
-    }
-
-    .access-feature-highlight {
-        font-weight: 700;
-        color: var(--access-dark);
+        padding: 0.35rem 1.15rem;
+        border-radius: 9999px;
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.95rem;
+        gap: 0.4rem;
     }
 
-    .access-pricing {
-        background: var(--access-light);
-        border: 2px solid #fde68a;
-        border-radius: 1.5rem;
-        padding: 2.5rem 1.5rem;
-        text-align: left;
-        margin-top: 3.5rem;
+    .current-plan-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 0.25rem 0.75rem;
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+        border-radius: 9999px;
+        margin-bottom: 0.75rem;
+        align-self: flex-start;
+    }
+
+    .plan-card-header {
         margin-bottom: 1.5rem;
     }
 
-    .access-price-val {
-        font-size: 2rem;
+    .plan-number {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.25rem;
+    }
+
+    .plan-title {
+        font-size: 1.55rem;
         font-weight: 900;
-        color: var(--access-dark);
+        color: var(--text-dark);
+        margin: 0 0 0.5rem 0;
+        line-height: 1.3;
+    }
+
+    .plan-card.featured .plan-title {
+        color: #92400e;
+    }
+
+    .plan-pitch {
+        font-size: 0.96rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    /* Bloc Prix */
+    .plan-price-box {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .plan-price {
+        font-size: 2.3rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.1;
+        display: flex;
+        align-items: baseline;
+        gap: 0.35rem;
+    }
+
+    .plan-card.featured .plan-price {
+        color: #b45309;
+    }
+
+    .plan-price-unit {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .plan-price-subtext {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #059669;
+        margin-top: 0.45rem;
+        line-height: 1.4;
+    }
+
+    /* Liste des fonctionnalités */
+    .plan-features-block {
+        flex-grow: 1;
+        margin-bottom: 2rem;
+    }
+
+    .plan-features-label {
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         margin-bottom: 1rem;
     }
 
-    .access-price-desc {
-        font-size: 1rem;
+    .plan-features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.95rem;
+    }
+
+    .plan-features-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        color: #334155;
+        line-height: 1.5;
+    }
+
+    .feature-icon-wrapper {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 9999px;
+        background: #ecfdf5;
+        color: #10b981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+    }
+
+    .plan-card.featured .feature-icon-wrapper {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .plan-conclusion-box {
+        background: #fffbeb;
+        border-left: 3.5px solid var(--access-color);
+        padding: 0.85rem 1rem;
+        border-radius: 0.75rem;
+        margin-top: 1.25rem;
+        font-size: 0.88rem;
+        font-weight: 600;
         color: #92400e;
         line-height: 1.5;
-        margin-bottom: 2rem;
-        font-weight: 500;
     }
 
-    .btn-activate,
-    .btn-activate:hover,
-    .btn-activate:focus,
-    .btn-activate:active,
-    .btn-back,
-    .btn-back:hover,
-    .btn-back:focus,
-    .btn-back:active {
-        text-decoration: none !important;
-        outline: none;
+    /* Actions */
+    .plan-card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: auto;
     }
 
-    .btn-activate {
-        display: block;
+    .btn-plan {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
         width: 100%;
-        padding: 1.25rem;
-        background: var(--access-color);
-        color: white;
-        font-size: 1.15rem;
-        font-weight: 800;
+        padding: 1.05rem 1.25rem;
         border-radius: 1rem;
+        font-size: 1rem;
+        font-weight: 800;
         text-align: center;
         text-decoration: none !important;
-        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
-        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         box-sizing: border-box;
+        border: none;
     }
-    
-    .btn-activate:hover {
+
+    .btn-plan-primary {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white !important;
+        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.28);
+    }
+
+    .btn-plan-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 25px rgba(245, 158, 11, 0.35);
-        filter: brightness(1.03);
-        color: white;
-        text-decoration: none !important;
+        box-shadow: 0 10px 24px rgba(245, 158, 11, 0.38);
+        filter: brightness(1.04);
+        color: white !important;
     }
 
-    .btn-activate:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
-        filter: brightness(0.97);
-        text-decoration: none !important;
+    .btn-plan-outline {
+        background: #ffffff;
+        color: #1e293b !important;
+        border: 1.5px solid var(--border-color);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
 
-    .btn-back {
+    .btn-plan-outline:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-plan-neutral {
+        background: #f1f5f9;
+        color: #475569 !important;
+        cursor: default;
+    }
+
+    .btn-text-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #b45309;
+        text-decoration: none !important;
+        padding: 0.4rem;
+        transition: color 0.2s ease;
+    }
+
+    .btn-text-link:hover {
+        color: #78350f;
+        text-decoration: underline !important;
+    }
+
+    /* Option Spécifique Complémentaire (Réservation à la carte) */
+    .addon-card {
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-subtle);
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .addon-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        font-weight: 800;
+        padding: 0.3rem 0.85rem;
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        border-radius: 9999px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.85rem;
+    }
+
+    .addon-header-flex {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 680px) {
+        .addon-header-flex {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+    }
+
+    .addon-title {
+        font-size: 1.35rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .addon-price {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #0f172a;
+        display: flex;
+        align-items: baseline;
+        gap: 0.35rem;
+    }
+
+    .addon-content-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        font-size: 0.94rem;
+        color: #334155;
+        line-height: 1.6;
+    }
+
+    .addon-subtle-condition {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: #0369a1;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        padding: 0.4rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .addon-economic-note {
+        margin-top: 0.75rem;
+        font-weight: 700;
+        color: #92400e;
+        font-size: 0.88rem;
+        background: #fef3c7;
+        padding: 0.65rem 0.85rem;
+        border-radius: 0.5rem;
+        border: 1px solid #fde68a;
+    }
+
+    /* Section Besoin d'aide */
+    .support-card {
+        background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+        border: 1.5px solid #bbf7d0;
+        border-radius: 1.5rem;
+        padding: 2rem 1.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: var(--shadow-subtle);
+        margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .support-card {
+            flex-direction: row;
+            justify-content: space-between;
+            text-align: left;
+            padding: 2.25rem 2.5rem;
+        }
+    }
+
+    .support-content {
+        max-width: 580px;
+        margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .support-content {
+            margin-bottom: 0;
+        }
+    }
+
+    .support-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #15803d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .support-title {
+        font-size: 1.35rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .support-desc {
+        font-size: 0.98rem;
+        color: #334155;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .btn-whatsapp-support {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.6rem;
-        width: 100%;
-        padding: 1.1rem;
-        background: #ffffff;
-        color: #1e293b;
-        font-size: 1.05rem;
-        font-weight: 700;
-        border-radius: 1rem;
-        text-align: center;
+        padding: 0.9rem 1.6rem;
+        background: #25D366;
+        color: white !important;
+        font-size: 1rem;
+        font-weight: 800;
+        border-radius: 9999px;
         text-decoration: none !important;
-        border: 1.5px solid #e2e8f0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-        box-sizing: border-box;
+        box-shadow: 0 6px 18px rgba(37, 211, 102, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
-    
-    .btn-back:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-        color: #0f172a;
+
+    .btn-whatsapp-support:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-        text-decoration: none !important;
+        box-shadow: 0 10px 24px rgba(37, 211, 102, 0.4);
+        filter: brightness(1.03);
+        color: white !important;
     }
 
-    .btn-back:active {
-        transform: translateY(0);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-        background: #f1f5f9;
-        text-decoration: none !important;
+    /* Bouton retour bas de page */
+    .page-footer-nav {
+        text-align: center;
+        margin-top: 1rem;
     }
 
-    /* Mock UI Elements */
-    .mock-progress-track { height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 1rem; }
-    .mock-progress-fill { height: 100%; width: 78%; background: var(--primary); border-radius: 999px; }
-    .mock-notion-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem; }
-    .mock-notion-name { font-size: 0.9rem; font-weight: 600; color: #334155; line-height: 1.3; }
-    .mock-notion-score { font-size: 0.9rem; font-weight: 800; color: #1e293b; background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; white-space: nowrap; margin-left: 0.5rem; }
-    .mock-seance-label { display: block; font-size: 0.8rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
-    .mock-seance-box { background: #f8fafc; padding: 0.85rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.9rem; color: #334155; line-height: 1.5; }
+    .btn-back-dashboard {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-color);
+        background: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+    .btn-back-dashboard:hover {
+        color: var(--primary);
+        border-color: #cbd5e1;
+        background: #f8fafc;
+        text-decoration: none;
+    }
 
     @media (max-width: 600px) {
-        .access-hero-title { font-size: 1.6rem; }
-        .access-price-val { font-size: 1.75rem; }
-        .access-visual { padding: 1.25rem; }
+        .plan-header-title {
+            font-size: 1.75rem;
+        }
+        .plan-price {
+            font-size: 2rem;
+        }
+        .plan-card, .addon-card {
+            padding: 1.5rem 1.25rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="access-page">
-    <div class="access-hero">
-        <h1 class="access-hero-title">Ne devinez plus ce qui est fait pendant les cours.</h1>
-        <p class="access-hero-subtitle">Suivez avec certitude et sérénité les acquis réels de votre enfant, séance après séance.</p>
-        {% comment "Masqué jusqu'à nouvel ordre" %}
-        <p class="access-text">Fini le flou des cours particuliers où vous payez sans savoir si votre enfant progresse vraiment. Grâce aux évaluations renseignées par le professeur après chaque séance, vous savez exactement ce qui est maîtrisé et ce qui doit être consolidé, bien avant le bulletin scolaire.</p>
-        {% endcomment %}
+<div class="plan-page-container">
+    
+    <!-- En-tête de la page -->
+    <header class="plan-header">
+        <div class="plan-header-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Accompagnement &amp; Réussite scolaire
+        </div>
+        <h1 class="plan-header-title">Gestion de votre abonnement — Prof Chez Vous</h1>
+        <p class="plan-header-subtitle">Choisissez la formule qui s'adapte le mieux à vos besoins d'accompagnement scolaire.</p>
+    </header>
+
+    <!-- Grille des 2 formules d'abonnement -->
+    <div class="plan-grid">
+        
+        <!-- ============================================== -->
+        <!-- 1. Plan Découverte (Gratuit)                    -->
+        <!-- ============================================== -->
+        <div class="plan-card">
+            <div>
+                {% if not is_access_plus %}
+                <div class="current-plan-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Votre formule actuelle
+                </div>
+                {% endif %}
+
+                <div class="plan-card-header">
+                    <div class="plan-number">1. Formule Gratuite</div>
+                    <h2 class="plan-title">Plan Découverte (Gratuit)</h2>
+                    <p class="plan-pitch">Idéal pour faire un premier pas et tester l'accompagnement de nos professeurs vérifiés.</p>
+                </div>
+
+                <div class="plan-price-box">
+                    <div class="plan-price">
+                        0 <span style="font-size: 1.4rem;">FCFA</span>
+                        <span class="plan-price-unit">/ mois</span>
+                    </div>
+                    <div class="plan-price-subtext" style="color: #64748b;">
+                        Sans engagement · Actif dès l'inscription
+                    </div>
+                </div>
+
+                <div class="plan-features-block">
+                    <div class="plan-features-label">Inclus dans ce plan :</div>
+                    <ul class="plan-features-list">
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Accès complet</strong> au catalogue des professeurs vérifiés à Cotonou et Abomey-Calavi.</span>
+                        </li>
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>1 premier essai offert</strong> pour évaluer un professeur avec votre enfant.</span>
+                        </li>
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Utilisation de la messagerie texte standard</strong> (pour poser le cadre et échanger l'essentiel).</span>
+                        </li>
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Statut :</strong> Plan actif par défaut à l'inscription.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="plan-card-actions">
+                {% if not is_access_plus %}
+                <div class="btn-plan btn-plan-neutral">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Plan actuellement actif
+                </div>
+                {% else %}
+                <form action="{% url 'downgrade_to_standard' %}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir repasser au Plan Découverte ? Vos avantages Access+ prendront fin.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-plan btn-plan-outline" style="color: #64748b !important;">
+                        Repasser au Plan Découverte
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- 2. Pass Access+ (L'Offre Recommandée)           -->
+        <!-- ============================================== -->
+        <div class="plan-card featured">
+            <div class="featured-ribbon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                L'Offre Recommandée
+            </div>
+
+            <div>
+                {% if is_access_plus %}
+                <div class="current-plan-pill" style="background: #fef3c7; color: #92400e; border-color: #fde68a;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Votre abonnement en cours
+                </div>
+                {% endif %}
+
+                <div class="plan-card-header" style="margin-top: 0.5rem;">
+                    <div class="plan-number" style="color: #b45309;">2. Abonnement Mensuel</div>
+                    <h2 class="plan-title">Pass Access+</h2>
+                    <p class="plan-pitch">Pour les parents qui veulent un suivi rigoureux, une communication fluide sans aucune barrière et une flexibilité totale.</p>
+                </div>
+
+                <div class="plan-price-box" style="border-bottom-color: #fde68a;">
+                    <div class="plan-price">
+                        2 500 <span style="font-size: 1.4rem;">FCFA</span>
+                        <span class="plan-price-unit">/ mois</span>
+                    </div>
+                    <div class="plan-price-subtext">
+                        0 % de commission sur les heures de cours versées directement au professeur
+                    </div>
+                </div>
+
+                <div class="plan-features-block">
+                    <div class="plan-features-label" style="color: #92400e;">Inclus dans ce plan :</div>
+                    <ul class="plan-features-list">
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Programmation illimitée des essais</strong></span>
+                        </li>
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Espace de suivi pédagogique complet</strong> (comptes-rendus détaillés, notions travaillées, suivi de la maîtrise des notions travaillées).</span>
+                        </li>
+                        <li class="plan-features-item">
+                            <span class="feature-icon-wrapper">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                            <span><strong>Messagerie multimédia avancée</strong> (envoi illimité de photos/fichiers et de notes vocales) pour une communication plus fluide.</span>
+                        </li>
+                    </ul>
+
+                    <div class="plan-conclusion-box">
+                        <strong>Le mot de la fin :</strong> Le confort absolu pour sécuriser la réussite scolaire de votre enfant au meilleur coût.
+                    </div>
+                </div>
+            </div>
+
+            <div class="plan-card-actions">
+                {% if is_access_plus %}
+                    <div class="btn-plan btn-plan-primary" style="background: #16a34a; box-shadow: none; cursor: default;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Abonnement Access+ Actif
+                    </div>
+                    {% if latest_abonnement and latest_abonnement.date_fin %}
+                    <div style="font-size: 0.8rem; color: #64748b; text-align: center; margin-top: -0.25rem;">
+                        Renouvellement le {{ latest_abonnement.date_fin|date:"d F Y" }}
+                    </div>
+                    {% endif %}
+                {% else %}
+                    {% if engagement_a_finaliser %}
+                        <a href="{% url 'finalisation_engagement' engagement_a_finaliser.id %}" class="btn-plan btn-plan-primary">
+                            <span>Activer Access+ &amp; Officialiser</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'payer_premium' %}" class="btn-plan btn-plan-primary">
+                            <span>Choisir le Pass Access+ (2 500 FCFA)</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Lien vers la page explicative détaillée -->
+                <a href="{% url 'explication_access_plus' %}" class="btn-text-link">
+                    Découvrir tous les avantages d'Access+ en détail
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Visual 1: Mockup Niveau de Maîtrise (Fidèle à suivi_engagement.html) -->
-    <div class="access-visual access-visual-border" style="border-left: none;">
-        <h2 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 1.25rem;">Niveau de maîtrise des notions travaillées</h2>
-        
-        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.75rem;">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1;">78 %</div>
-            <div style="font-size: 1.1rem; font-weight: 700; color: #64748b;">28 / 36 points</div>
-        </div>
-        
-        <div class="mock-progress-track">
-            <div class="mock-progress-fill"></div>
-        </div>
-        
-        <div style="font-size: 0.9rem; color: #475569; font-weight: 700; margin-bottom: 0.25rem;">Depuis le début de l'accompagnement</div>
-        <div style="font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 1.25rem;">12 séances · 14 notions évaluées</div>
-
-        <div style="font-size: 0.75rem; color: #94a3b8; font-style: italic; margin-bottom: 2rem;">Cet indicateur est établi à partir des évaluations renseignées par le professeur.</div>
-
-        <h3 style="font-size: 0.95rem; font-weight: 800; color: #334155; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Répartition des notions</h3>
-        <p style="font-size: 0.8rem; color: #64748b; margin-top: -0.5rem; margin-bottom: 1rem;">Cliquez sur une catégorie pour voir le détail des notions.</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 2rem;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #16a34a; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
-                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">8</span>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">Maîtrisées</span>
+    <!-- ============================================================ -->
+    <!-- Option Complémentaire : Réservation d'essai à la carte       -->
+    <!-- ============================================================ -->
+    <div class="addon-card">
+        <div class="addon-header-flex">
+            <div>
+                <div class="addon-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Option spécifique sans abonnement
+                </div>
+                <h2 class="addon-title">Réservation d'essai à la carte</h2>
             </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #f59e0b; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
-                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">4</span>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">En cours</span>
-            </div>
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-top: 3px solid #ef4444; border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer;">
-                <span style="font-size: 1.25rem; font-weight: 900; color: #1e293b; display: block; margin-bottom: 0.25rem;">2</span>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #64748b; line-height: 1.2;">À renforcer</span>
+            <div class="addon-price">
+                500 <span style="font-size: 1.1rem; font-weight: 700; color: #64748b;">FCFA / réservation ponctuelle d'essai</span>
             </div>
         </div>
 
-        {% comment "Masqué jusqu'à nouvel ordre" %}
-        <h3 style="font-size: 0.95rem; font-weight: 800; color: #ef4444; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">À renforcer</h3>
-        <div style="margin-bottom: 2rem;">
-            <div class="mock-notion-row" style="border-left: 4px solid #ef4444;">
-                <span class="mock-notion-name">Fractions</span>
-                <span class="mock-notion-score">2 / 3</span>
+        <div class="addon-content-box">
+            <div class="addon-subtle-condition">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                Disponible après réalisation de votre 1er essai offert
             </div>
-            <div class="mock-notion-row" style="border-left: 4px solid #ef4444;">
-                <span class="mock-notion-name">Résolution de problèmes</span>
-                <span class="mock-notion-score">1 / 3</span>
-            </div>
-        </div>
+            
+            <p style="margin: 0 0 0.75rem 0;">
+                <strong>Vous ne souhaitez pas vous abonner pour l'instant mais avez besoin d'un essai supplémentaire ?</strong>
+            </p>
+            <p style="margin: 0 0 0.75rem 0;">
+                <strong>Pourquoi ce choix :</strong> Permet d'avancer à votre propre rythme tout en garantissant l'engagement mutuel des familles et en respectant le temps précieux de nos enseignants vérifiés.
+            </p>
+            <p style="margin: 0; font-size: 0.9rem; color: #475569;">
+                <strong>Comment réserver :</strong> La réservation d'un cours d'essai supplémentaire s'effectue directement sur le profil du professeur de votre choix dans notre catalogue.
+            </p>
 
-        <h3 style="font-size: 0.95rem; font-weight: 800; color: #16a34a; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">Notions maîtrisées</h3>
-        <div style="margin-bottom: 1.5rem;">
-            <div class="mock-notion-row" style="border-left: 4px solid #16a34a;">
-                <span class="mock-notion-name">Addition avec retenue</span>
-                <span class="mock-notion-score">3 / 3</span>
-            </div>
-            <div class="mock-notion-row" style="border-left: 4px solid #16a34a;">
-                <span class="mock-notion-name">Multiplication</span>
-                <span class="mock-notion-score">3 / 3</span>
-            </div>
-            <div class="mock-notion-row" style="border-left: 4px solid #16a34a;">
-                <span class="mock-notion-name">Calcul mental</span>
-                <span class="mock-notion-score">3 / 3</span>
-            </div>
-        </div>
-        {% endcomment %}
-    </div>
-
-    <h2 class="access-section-title">Mais le suivi ne s'arrête pas à un simple pourcentage.</h2>
-    <h3 class="access-section-subtitle">Accédez au compte-rendu transparent de chaque séance.</h3>
-    {% comment "Masqué jusqu'à nouvel ordre" %}
-    <p class="access-text">Plus besoin de deviner ce qui s'est passé pendant les 2 heures de cours. Retrouvez les notions travaillées, les difficultés observées et les recommandations concrètes pour la maison. Vous disposez de repères précis pour accompagner votre enfant en toute sérénité, sans jamais être pris au dépourvu.</p>
-    {% endcomment %}
-
-    <!-- Visual 2: Mockup Bilan de séance (Fidèle à suivi_engagement.html sheet) -->
-    <div class="access-visual">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem;">
-            <h2 style="font-weight: 900; color: #1e293b; font-size: 1.4rem; letter-spacing: -0.5px; margin: 0;">Bilan du 14 Oct 2025</h2>
-        </div>
-        
-        <div style="display: flex; align-items: center; justify-content: center; background: #f0fdf4; padding: 1.5rem; border-radius: 20px; margin-bottom: 1rem;">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--primary);">83%</div>
-            <div style="margin-left: 1rem; font-size: 0.95rem; font-weight: 800; color: #166534; line-height: 1.3;">Taux de maîtrise des notions<br>de cette séance</div>
-        </div>
-        
-        <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; padding: 0 1rem; line-height: 1.4;">Ce pourcentage montre le niveau affiché par votre enfant sur l'ensemble des notions abordées ce jour de séance.</p>
-        
-        <div class="mock-seance-label">🎯 Objectifs de la séance</div>
-        <div class="mock-seance-box">Réviser les opérations sur les fractions et la résolution de problèmes à étapes multiples.</div>
-        
-        <div class="mock-seance-label">📚 Notions abordées</div>
-        <div style="display: grid; gap: 0.5rem; margin-bottom: 1rem;">
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 8px;">
-                <span style="font-size: 0.9rem; font-weight: 600;">Fractions</span>
-                <span style="font-weight: 800; color: var(--primary);">2/3</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 0.8rem 1rem; border-radius: 8px;">
-                <span style="font-size: 0.9rem; font-weight: 600;">Résolution de problèmes</span>
-                <span style="font-weight: 800; color: var(--primary);">3/3</span>
+            <div class="addon-economic-note">
+                💡 <strong>Conseil économique :</strong> Au-delà d'un seul essai supplémentaire, l'abonnement <strong>Pass Access+ (2 500 FCFA / mois)</strong> devient nettement plus avantageux et vous donne droit à des essais en illimité.
             </div>
         </div>
 
-        <div class="mock-seance-label">⚠️ Difficultés rencontrées</div>
-        <div class="mock-seance-box" style="background: #fef2f2; color: #991b1b;">Difficulté à simplifier les fractions avec des dénominateurs différents.</div>
-        
-        <div class="mock-seance-label">🏠 Tâches à domicile</div>
-        <div class="mock-seance-box">Refaire les exercices 4 et 5 page 12 du cahier d'activités.</div>
-    </div>
-
-    <h2 class="access-section-title">Cours terminé ? Recevez l'essentiel du bilan en 30 secondes sur votre téléphone.</h2>
-    {% comment "Masqué jusqu'à nouvel ordre" %}
-    <p class="access-text">Dès que le professeur clôture son bilan, vous recevez une notification directement sur votre téléphone.<br><br>En 30 secondes, même lors d'une journée de travail chargée, vous découvrez l'essentiel de ce que votre enfant a accompli.</p>
-    {% endcomment %}
-
-    <h2 class="access-section-title">Et ce n'est qu'une partie de ce que vous offre Access+</h2>
-
-    <!-- Carte 1 : Réassurance & Déroulement (Rappel automatique post-essai) -->
-    <div class="access-feature-card" style="border-left-color: #16a34a;">
-        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
-            🎯 Vous avez déjà un cours d'essai programmé ?
-        </p>
-        <p class="access-feature-text" style="margin-bottom: 0;">
-            Profitez sereinement de votre séance : <strong>elle est 100% gratuite et sans engagement</strong>. Dès la fin de l'essai, vous recevrez une notification pour officialiser la collaboration si le professeur vous convient, et ainsi débloquer l'espace de suivi {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}.
-        </p>
-    </div>
-
-    <!-- Carte 2 : Anticipation & Flexibilité (Garantie de remplacement) -->
-    <div class="access-feature-card" style="border-left-color: #f59e0b;">
-        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
-            🛡️ Et si le courant ne passe pas au premier essai ?
-        </p>
-        <p class="access-feature-text" style="margin-bottom: 0.75rem;">
-            Aucune mauvaise surprise : avec Access+, vous bénéficiez de notre <strong>garantie de remplacement</strong>. Vous pouvez programmer d'autres séances d'essai sans frais jusqu'à trouver le professeur idéal.
-        </p>
-        <div class="access-feature-highlight">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            Testez d'autres professeurs avant de fixer votre choix.
-        </div>
-    </div>
-
-    <!-- Bloc Tarification & Bouton d'action réintégré -->
-    <div class="access-pricing">
-        <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Formule Access+</div>
-        <div class="access-price-val">2 000 FCFA / mois</div>
-        <p class="access-price-desc">
-            Moins que le coût d'une seule heure de cours pour éliminer tous vos doutes et suivre avec précision chaque progrès {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}, séance après séance.
-        </p>
-        
-        {% if engagement_a_finaliser %}
-            <a href="{% url 'finalisation_engagement' engagement_a_finaliser.id %}" class="btn-activate">
-                Activer Access+ &amp; Officialiser la collaboration
+        <div style="text-align: right;">
+            <a href="{% url 'recherche' %}" class="btn-plan btn-plan-outline" style="display: inline-flex; width: auto; padding: 0.85rem 1.5rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Parcourir le catalogue des professeurs
             </a>
-        {% else %}
-            <a href="{% url 'post_signup_redirect' %}" class="btn-activate">
-                Activer Access+ dès maintenant
-            </a>
-        {% endif %}
+        </div>
     </div>
 
-    <!-- Bouton de retour dans l'espace -->
-    <div style="margin-top: 1.5rem; margin-bottom: 2rem;">
-        <a href="{% url 'post_signup_redirect' %}" class="btn-back">
+    <!-- ============================================== -->
+    <!-- 💡 Section : Besoin d'aide pour choisir ?       -->
+    <!-- ============================================== -->
+    <div class="support-card">
+        <div class="support-content">
+            <div class="support-badge">
+                💡 Orientation personnalisée
+            </div>
+            <h3 class="support-title">Besoin d'aide pour choisir ?</h3>
+            <p class="support-desc">
+                Notre équipe reste à votre entière disposition pour vous orienter vers la formule idéale pour votre foyer et la réussite de votre enfant.
+            </p>
+        </div>
+        <a href="https://wa.me/message/QROCDDNKZIXAE1?text=Bonjour%2C%20j%27aimerais%20avoir%20des%20conseils%20pour%20choisir%20la%20formule%20d%27abonnement%20adapt%C3%A9e%20sur%20Prof%20Chez%20Vous." target="_blank" class="btn-whatsapp-support">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+            Contacter notre équipe
+        </a>
+    </div>
+
+    <!-- Navigation retour -->
+    <div class="page-footer-nav">
+        <a href="{% url 'post_signup_redirect' %}" class="btn-back-dashboard">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Retourner dans mon espace
         </a>
     </div>
+
 </div>
 {% endblock %}

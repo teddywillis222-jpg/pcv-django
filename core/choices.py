@@ -13,8 +13,8 @@ class TypeAbonnement:
     STANDARD = "STANDARD"
     ACCESS_PREMIUM = "ACCESS_PREMIUM"
     CHOICES = [
-        (STANDARD, "Standard"),
-        (ACCESS_PREMIUM, "Access+Premium"),
+        (STANDARD, "Découverte"),
+        (ACCESS_PREMIUM, "Access+"),
     ]
 
 
