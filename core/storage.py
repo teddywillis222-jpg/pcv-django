@@ -23,7 +23,8 @@ class DynamicMediaCloudinaryStorage(MediaCloudinaryStorage):
 
         # Documents et archives bruts
         raw_exts = (
-            '.pdf', '.doc', '.docx', '.zip', '.txt', '.xls', '.xlsx', '.csv', '.rar'
+            '.pdf', '.doc', '.docx', '.zip', '.txt', '.xls', '.xlsx', '.csv', '.rar',
+            '.ppt', '.pptx', '.odt', '.rtf', '.7z', '.tar', '.gz'
         )
         if any(ext in name_lower for ext in raw_exts):
             return 'raw'

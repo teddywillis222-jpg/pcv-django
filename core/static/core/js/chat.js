@@ -11,6 +11,14 @@ function formatAudioTime(sec) {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
+function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '';
+    if (bytes < 1024) return bytes + ' octets';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
+}
+window.formatFileSize = formatFileSize;
+
 window.initAudioDuration = function(audio) {
     if (!audio) return;
     const player = audio.closest('.chat-audio-player');
@@ -256,13 +264,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const docInput     = document.getElementById('docInput');
     const docBtn       = document.getElementById('docBtn');
     const sendErrorBox = document.getElementById('chatSendError');
-    function formatFileSize(bytes) {
-        if (!bytes || isNaN(bytes)) return '';
-        if (bytes < 1024) return bytes + ' octets';
-        if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
-        return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
-    }
-
     const sendErrorTxt = document.getElementById('chatSendErrorText');
     const retryBtn     = document.getElementById('chatRetryBtn');
     const scrollBtn    = document.getElementById('scrollBottomBtn');
@@ -576,19 +577,27 @@ document.addEventListener('DOMContentLoaded', function () {
             emptyPlaceholder.style.display = 'none';
         }
 
-        // Créer les bulles optimistes
+        // Créer les bulles optimistes (sécurisé)
         const tempIds = [];
         if (photosToSend.length > 0) {
             photosToSend.forEach((file, idx) => {
                 const tempId = 'temp-' + Date.now() + '-' + idx;
                 tempIds.push(tempId);
                 const bubbleText = (idx === 0) ? text : '';
-                appendSentBubble(tempId, bubbleText, file, '…', payload ? payload.duration : null);
+                try {
+                    appendSentBubble(tempId, bubbleText, file, '…', payload ? payload.duration : null);
+                } catch (errBubble) {
+                    console.error('[Chat] Erreur création bulle optimiste:', errBubble);
+                }
             });
         } else {
             const tempId = 'temp-' + Date.now();
             tempIds.push(tempId);
-            appendSentBubble(tempId, text, null, '…');
+            try {
+                appendSentBubble(tempId, text, null, '…');
+            } catch (errBubble) {
+                console.error('[Chat] Erreur création bulle optimiste:', errBubble);
+            }
         }
 
         try {
@@ -632,6 +641,22 @@ document.addEventListener('DOMContentLoaded', function () {
                             const timeEl = tmpBubble.querySelector('.msg-time');
                             if (timeEl) timeEl.textContent = m.date || new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
                             tmpBubble.style.opacity = '1';
+
+                            // Rendre la carte document immédiatement cliquable et téléchargeable
+                            if (m.fichier_url) {
+                                const card = tmpBubble.querySelector('.msg-file-card');
+                                if (card && card.tagName !== 'A') {
+                                    const a = document.createElement('a');
+                                    a.className = card.className;
+                                    a.href = m.fichier_url;
+                                    a.target = '_blank';
+                                    a.setAttribute('download', '');
+                                    a.innerHTML = card.innerHTML + `<div class="msg-file-download-btn" title="Télécharger">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    </div>`;
+                                    card.parentNode.replaceChild(a, card);
+                                }
+                            }
                         }
                         if (m.id > config.lastMsgId) config.lastMsgId = m.id;
                     });
