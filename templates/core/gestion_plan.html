@@ -19,78 +19,67 @@
         --access-border: #fde68a;
         --border-color: #e2e8f0;
         --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-        --shadow-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.1);
+        --shadow-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.08);
     }
 
-    body {
+    html, body {
         background-color: var(--dash-bg);
         margin: 0;
         padding: 0;
         color: var(--text-dark);
         font-family: 'Raleway', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        overflow-x: hidden;
+        max-width: 100vw;
     }
 
     .plan-page-container {
         width: 100%;
         max-width: 960px;
-        margin: 2rem auto 5rem;
+        margin: 1.5rem auto 4.5rem;
         padding: 0 1rem;
         box-sizing: border-box;
+        overflow-x: hidden;
     }
 
-    /* En-tête */
+    /* En-tête aligné à gauche */
     .plan-header {
-        text-align: center;
-        max-width: 720px;
-        margin: 0 auto 3rem;
-    }
-
-    .plan-header-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.4rem 1rem;
-        background: #ecfdf5;
-        color: #065f46;
-        font-size: 0.85rem;
-        font-weight: 800;
-        border-radius: 9999px;
-        border: 1px solid #a7f3d0;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
+        text-align: left;
+        max-width: 100%;
+        margin: 0 0 2.25rem 0;
     }
 
     .plan-header-title {
-        font-size: 2.25rem;
+        font-size: 2.15rem;
         font-weight: 900;
         color: var(--text-dark);
         line-height: 1.25;
         letter-spacing: -0.5px;
-        margin-bottom: 0.85rem;
+        margin: 0 0 0.65rem 0;
+        text-align: left;
     }
 
     .plan-header-subtitle {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: var(--text-muted);
-        line-height: 1.6;
+        line-height: 1.55;
         margin: 0;
+        text-align: left;
     }
 
     /* Grille des 2 formules principales */
     .plan-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.75rem;
-        margin-bottom: 2.5rem;
+        gap: 1.5rem;
+        margin-bottom: 2.25rem;
         align-items: stretch;
     }
 
     @media (min-width: 768px) {
         .plan-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
+            gap: 1.75rem;
         }
     }
 
@@ -100,17 +89,18 @@
         border-radius: 1.5rem;
         border: 1.5px solid var(--border-color);
         box-shadow: var(--shadow-subtle);
-        padding: 2.25rem 1.75rem;
+        padding: 2rem 1.5rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         position: relative;
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         box-sizing: border-box;
+        max-width: 100%;
     }
 
     .plan-card:hover {
-        transform: translateY(-4px);
+        transform: translateY(-3px);
         box-shadow: var(--shadow-hover);
     }
 
@@ -118,47 +108,36 @@
     .plan-card.featured {
         border: 2.5px solid var(--access-color);
         background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
-        box-shadow: 0 10px 35px -5px rgba(245, 158, 11, 0.18);
-        transform: scale(1.02);
+        box-shadow: 0 8px 30px -4px rgba(245, 158, 11, 0.15);
         z-index: 2;
     }
 
-    @media (max-width: 767px) {
-        .plan-card.featured {
-            transform: none;
-        }
-    }
-
     .plan-card.featured:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 16px 40px -4px rgba(245, 158, 11, 0.25);
-    }
-
-    @media (max-width: 767px) {
-        .plan-card.featured:hover {
-            transform: translateY(-4px);
-        }
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px -4px rgba(245, 158, 11, 0.22);
     }
 
     /* Ruban vedette */
     .featured-ribbon {
         position: absolute;
-        top: -14px;
+        top: -13px;
         left: 50%;
         transform: translateX(-50%);
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         color: white;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 800;
-        padding: 0.35rem 1.15rem;
+        padding: 0.32rem 1.1rem;
         border-radius: 9999px;
-        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 0.4rem;
+        max-width: 90%;
+        box-sizing: border-box;
     }
 
     .current-plan-pill {
@@ -177,11 +156,11 @@
     }
 
     .plan-card-header {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
     }
 
     .plan-number {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 800;
         color: var(--text-muted);
         text-transform: uppercase;
@@ -190,10 +169,10 @@
     }
 
     .plan-title {
-        font-size: 1.55rem;
+        font-size: 1.5rem;
         font-weight: 900;
         color: var(--text-dark);
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.45rem 0;
         line-height: 1.3;
     }
 
@@ -202,7 +181,7 @@
     }
 
     .plan-pitch {
-        font-size: 0.96rem;
+        font-size: 0.95rem;
         font-weight: 500;
         color: var(--text-muted);
         line-height: 1.5;
@@ -212,12 +191,12 @@
     /* Bloc Prix */
     .plan-price-box {
         margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
+        padding-bottom: 1.35rem;
         border-bottom: 1px solid var(--border-color);
     }
 
     .plan-price {
-        font-size: 2.3rem;
+        font-size: 2.2rem;
         font-weight: 900;
         color: var(--text-dark);
         line-height: 1.1;
@@ -247,7 +226,7 @@
     /* Liste des fonctionnalités */
     .plan-features-block {
         flex-grow: 1;
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
 
     .plan-features-label {
@@ -256,7 +235,7 @@
         color: #475569;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
     }
 
     .plan-features-list {
@@ -265,14 +244,14 @@
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.95rem;
+        gap: 0.9rem;
     }
 
     .plan-features-item {
         display: flex;
         align-items: flex-start;
         gap: 0.75rem;
-        font-size: 0.95rem;
+        font-size: 0.94rem;
         color: #334155;
         line-height: 1.5;
     }
@@ -293,18 +272,6 @@
     .plan-card.featured .feature-icon-wrapper {
         background: #fef3c7;
         color: #d97706;
-    }
-
-    .plan-conclusion-box {
-        background: #fffbeb;
-        border-left: 3.5px solid var(--access-color);
-        padding: 0.85rem 1rem;
-        border-radius: 0.75rem;
-        margin-top: 1.25rem;
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: #92400e;
-        line-height: 1.5;
     }
 
     /* Actions */
@@ -336,12 +303,12 @@
     .btn-plan-primary {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         color: white !important;
-        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.28);
+        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.25);
     }
 
     .btn-plan-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(245, 158, 11, 0.38);
+        box-shadow: 0 10px 22px rgba(245, 158, 11, 0.35);
         filter: brightness(1.04);
         color: white !important;
     }
@@ -389,34 +356,35 @@
         background: #ffffff;
         border: 1.5px solid #e2e8f0;
         border-radius: 1.5rem;
-        padding: 2rem;
-        margin-bottom: 2.5rem;
+        padding: 1.75rem;
+        margin-bottom: 2.25rem;
         box-shadow: var(--shadow-subtle);
         box-sizing: border-box;
         position: relative;
+        max-width: 100%;
     }
 
     .addon-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 800;
-        padding: 0.3rem 0.85rem;
+        padding: 0.3rem 0.8rem;
         background: #f1f5f9;
         color: #334155;
         border: 1px solid #cbd5e1;
         border-radius: 9999px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 0.85rem;
+        margin-bottom: 0.75rem;
     }
 
     .addon-header-flex {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        gap: 0.5rem;
+        margin-bottom: 1.15rem;
     }
 
     @media (min-width: 680px) {
@@ -435,10 +403,11 @@
     }
 
     .addon-price {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 900;
         color: #0f172a;
         display: flex;
+        flex-wrap: wrap;
         align-items: baseline;
         gap: 0.35rem;
     }
@@ -452,6 +421,7 @@
         font-size: 0.94rem;
         color: #334155;
         line-height: 1.6;
+        box-sizing: border-box;
     }
 
     .addon-subtle-condition {
@@ -461,7 +431,7 @@
         color: #0369a1;
         background: #f0f9ff;
         border: 1px solid #bae6fd;
-        padding: 0.4rem 0.75rem;
+        padding: 0.35rem 0.75rem;
         border-radius: 0.5rem;
         font-size: 0.85rem;
         font-weight: 700;
@@ -479,26 +449,41 @@
         border: 1px solid #fde68a;
     }
 
+    .addon-action-wrap {
+        text-align: right;
+    }
+
+    @media (max-width: 640px) {
+        .addon-action-wrap {
+            text-align: stretch;
+        }
+        .addon-action-wrap .btn-plan {
+            width: 100%;
+        }
+    }
+
     /* Section Besoin d'aide */
     .support-card {
         background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
         border: 1.5px solid #bbf7d0;
         border-radius: 1.5rem;
-        padding: 2rem 1.75rem;
+        padding: 1.75rem;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
+        text-align: left;
         box-shadow: var(--shadow-subtle);
-        margin-bottom: 2.5rem;
+        margin-bottom: 2.25rem;
+        box-sizing: border-box;
+        max-width: 100%;
     }
 
     @media (min-width: 768px) {
         .support-card {
             flex-direction: row;
             justify-content: space-between;
-            text-align: left;
-            padding: 2.25rem 2.5rem;
+            align-items: center;
+            padding: 2rem 2.25rem;
         }
     }
 
@@ -510,6 +495,7 @@
     @media (min-width: 768px) {
         .support-content {
             margin-bottom: 0;
+            padding-right: 1.5rem;
         }
     }
 
@@ -517,23 +503,23 @@
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         font-weight: 800;
         color: #15803d;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.45rem;
     }
 
     .support-title {
-        font-size: 1.35rem;
+        font-size: 1.3rem;
         font-weight: 900;
         color: #0f172a;
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.45rem 0;
     }
 
     .support-desc {
-        font-size: 0.98rem;
+        font-size: 0.95rem;
         color: #334155;
         line-height: 1.5;
         margin: 0;
@@ -544,22 +530,31 @@
         align-items: center;
         justify-content: center;
         gap: 0.6rem;
-        padding: 0.9rem 1.6rem;
+        padding: 0.85rem 1.4rem;
         background: #25D366;
         color: white !important;
-        font-size: 1rem;
+        font-size: 0.98rem;
         font-weight: 800;
         border-radius: 9999px;
         text-decoration: none !important;
-        box-shadow: 0 6px 18px rgba(37, 211, 102, 0.3);
+        box-shadow: 0 6px 18px rgba(37, 211, 102, 0.28);
         transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-        white-space: nowrap;
-        flex-shrink: 0;
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        .btn-whatsapp-support {
+            width: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
     }
 
     .btn-whatsapp-support:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(37, 211, 102, 0.4);
+        box-shadow: 0 10px 22px rgba(37, 211, 102, 0.38);
         filter: brightness(1.03);
         color: white !important;
     }
@@ -594,13 +589,13 @@
 
     @media (max-width: 600px) {
         .plan-header-title {
-            font-size: 1.75rem;
+            font-size: 1.65rem;
         }
         .plan-price {
-            font-size: 2rem;
+            font-size: 1.9rem;
         }
-        .plan-card, .addon-card {
-            padding: 1.5rem 1.25rem;
+        .plan-card, .addon-card, .support-card {
+            padding: 1.35rem 1.15rem;
         }
     }
 </style>
@@ -609,12 +604,8 @@
 {% block content %}
 <div class="plan-page-container">
     
-    <!-- En-tête de la page -->
+    <!-- En-tête de la page (aligné à gauche, badge supprimé) -->
     <header class="plan-header">
-        <div class="plan-header-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            Accompagnement &amp; Réussite scolaire
-        </div>
         <h1 class="plan-header-title">Gestion de votre abonnement — Prof Chez Vous</h1>
         <p class="plan-header-subtitle">Choisissez la formule qui s'adapte le mieux à vos besoins d'accompagnement scolaire.</p>
     </header>
@@ -753,10 +744,6 @@
                             <span><strong>Messagerie multimédia avancée</strong> (envoi illimité de photos/fichiers et de notes vocales) pour une communication plus fluide.</span>
                         </li>
                     </ul>
-
-                    <div class="plan-conclusion-box">
-                        <strong>Le mot de la fin :</strong> Le confort absolu pour sécuriser la réussite scolaire de votre enfant au meilleur coût.
-                    </div>
                 </div>
             </div>
 
@@ -774,12 +761,12 @@
                 {% else %}
                     {% if engagement_a_finaliser %}
                         <a href="{% url 'finalisation_engagement' engagement_a_finaliser.id %}" class="btn-plan btn-plan-primary">
-                            <span>Activer Access+ &amp; Officialiser</span>
+                            <span>Activer Access+</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </a>
                     {% else %}
                         <a href="{% url 'payer_premium' %}" class="btn-plan btn-plan-primary">
-                            <span>Choisir le Pass Access+ (2 500 FCFA)</span>
+                            <span>Activer Access+</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </a>
                     {% endif %}
@@ -808,7 +795,7 @@
                 <h2 class="addon-title">Réservation d'essai à la carte</h2>
             </div>
             <div class="addon-price">
-                500 <span style="font-size: 1.1rem; font-weight: 700; color: #64748b;">FCFA / réservation ponctuelle d'essai</span>
+                500 <span style="font-size: 1.05rem; font-weight: 700; color: #64748b;">FCFA / réservation ponctuelle d'essai</span>
             </div>
         </div>
 
@@ -821,11 +808,8 @@
             <p style="margin: 0 0 0.75rem 0;">
                 <strong>Vous ne souhaitez pas vous abonner pour l'instant mais avez besoin d'un essai supplémentaire ?</strong>
             </p>
-            <p style="margin: 0 0 0.75rem 0;">
+            <p style="margin: 0;">
                 <strong>Pourquoi ce choix :</strong> Permet d'avancer à votre propre rythme tout en garantissant l'engagement mutuel des familles et en respectant le temps précieux de nos enseignants vérifiés.
-            </p>
-            <p style="margin: 0; font-size: 0.9rem; color: #475569;">
-                <strong>Comment réserver :</strong> La réservation d'un cours d'essai supplémentaire s'effectue directement sur le profil du professeur de votre choix dans notre catalogue.
             </p>
 
             <div class="addon-economic-note">
@@ -833,7 +817,7 @@
             </div>
         </div>
 
-        <div style="text-align: right;">
+        <div class="addon-action-wrap">
             <a href="{% url 'recherche' %}" class="btn-plan btn-plan-outline" style="display: inline-flex; width: auto; padding: 0.85rem 1.5rem;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 Parcourir le catalogue des professeurs
