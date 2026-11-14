@@ -14,8 +14,8 @@
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                 </svg>
             </button>
-            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="side-panel-close" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)" title="Fermer" aria-label="Fermer le profil">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
                     <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
             </button>
@@ -31,13 +31,14 @@
 </div>
 
 <style>
-.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.22s cubic-bezier(0, 0, 0.2, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .side-panel.active { right: 0; }
-.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease; }
 .side-panel-overlay.active { opacity: 1; visibility: visible; }
 .side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
-.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
-.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-close { background: #f1f5f9; border: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: background 0.15s ease, transform 0.1s ease; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; position: relative; z-index: 50; }
+.side-panel-close:hover { background: #e2e8f0; color: #0f172a; }
+.side-panel-close:active { transform: scale(0.92); background: #cbd5e1; }
 .side-panel-content { padding: 1.5rem; padding-bottom: 10rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 768px) {
@@ -67,12 +68,22 @@ function openTeacherProfile(teacherSlug) {
     loadTeacherProfile(teacherSlug);
 }
 
-function closeSidePanel() {
+function closeSidePanel(e) {
+    if (e) {
+        try { e.preventDefault(); e.stopPropagation(); } catch(err) {}
+    }
     const sidePanel = document.getElementById('sidePanel');
     const overlay = document.getElementById('sidePanelOverlay');
     
-    sidePanel.classList.remove('active');
-    overlay.classList.remove('active');
+    if (sidePanel) sidePanel.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    
+    try {
+        if (typeof unlockBodyScroll === 'function') unlockBodyScroll();
+        else document.body.style.overflow = '';
+    } catch(err) {
+        document.body.style.overflow = '';
+    }
     
     // Réinitialiser l'URL si sur la recherche
     if (window.location.pathname.includes('/professeur/')) {

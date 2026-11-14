@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfChezVous - Tableau de Bord Publicité & Disponibilité Professeurs</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+            <div>
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                        AUDIT OPÉRATIONNEL & MARKETING
+                    </span>
+                    <span class="text-xs text-slate-400">Date : 13 Novembre 2026</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">
+                    Disponibilité des Professeurs & <span class="gradient-text">Stratégie Publicitaire</span>
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">
+                    Analyse pré-lancement pour garantir l'adéquation 100% entre les promesses publicitaires et la capacité d'accueil réelle.
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="Audit_Disponibilite_Professeurs_Campagne_Pub.xlsx" download class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Télécharger l'Excel (.xlsx)
+                </a>
+            </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-6">
+                <div class="text-slate-400 text-xs uppercase font-semibold tracking-wider">Capacité Opérationnelle</div>
+                <div class="text-3xl font-black mt-2 text-white flex items-baseline gap-2">
+                    32 <span class="text-xs font-medium text-emerald-400">Professeurs Validés</span>
+                </div>
+                <div class="text-xs text-slate-400 mt-2">Sur 54 inscrits au total (22 profils incomplets écartés)</div>
+            </div>
+
+            <div class="glass-card p-6 border-indigo-500/30">
+                <div class="text-indigo-400 text-xs uppercase font-semibold tracking-wider">Levier Essai Gratuit</div>
+                <div class="text-3xl font-black mt-2 text-white flex items-baseline gap-2">
+                    87.5% <span class="text-xs font-medium text-indigo-300">(28 / 32 profs)</span>
+                </div>
+                <div class="text-xs text-slate-400 mt-2">Prêts pour l'argument pub : <em>"1er cours d'essai offert"</em></div>
+            </div>
+
+            <div class="glass-card p-6">
+                <div class="text-slate-400 text-xs uppercase font-semibold tracking-wider">Zone Géographique Forte</div>
+                <div class="text-3xl font-black mt-2 text-white flex items-baseline gap-2">
+                    Calavi & Cotonou
+                </div>
+                <div class="text-xs text-slate-400 mt-2">95% des rattachements de quartiers couverts</div>
+            </div>
+
+            <div class="glass-card p-6">
+                <div class="text-slate-400 text-xs uppercase font-semibold tracking-wider">Tarif Moyen Constaté</div>
+                <div class="text-3xl font-black mt-2 text-white flex items-baseline gap-2">
+                    2 750 <span class="text-xs font-medium text-slate-400">FCFA / heure</span>
+                </div>
+                <div class="text-xs text-slate-400 mt-2">Fourchette de 2 000 à 4 000 FCFA selon la classe</div>
+            </div>
+        </section>
+
+        <!-- Recommandations Stratégiques Alert Box -->
+        <section class="glass-card p-6 border-l-4 border-l-amber-500">
+            <div class="flex items-start gap-4">
+                <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-lg font-bold text-white">Stratégie Publicitaire Recommandée pour Garantir la Satisfaction Parentale</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-sm">
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20">
+                            <div class="text-emerald-400 font-bold mb-1">🎯 Cible Prioritaire Pub (Feu Vert)</div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Lancez les pubs sur <strong>Mathématiques, PCT et SVT</strong> pour les classes de <strong>3ème, 1ère et Terminale</strong> sur <strong>Abomey-Calavi et Cotonou</strong>. Vous avez une densité maximale pour honorer chaque demande.
+                            </p>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-indigo-500/20">
+                            <div class="text-indigo-400 font-bold mb-1">🎁 Tunnel d'Essai à l'Officialisation</div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Utilisez le slogan : <em>"Testez l'enseignant idéal chez vous : 1er cours d'essai offert pour évaluer son niveau avant d'officialiser."</em> Cela élimine la barrière psychologique des parents.
+                            </p>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-rose-500/20">
+                            <div class="text-rose-400 font-bold mb-1">⛔ Zones & Segments à Proscrire (Feu Rouge)</div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>N'élargissez pas</strong> les pubs aux villes de province (Parakou, Porto-Novo) ni aux matières rares (Philosophie seule, Musique). Vous n'avez pas de profs dispo pour ces demandes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Matières Chart -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-bold text-white mb-1">Professeurs par Matière Enseignée</h3>
+                <p class="text-xs text-slate-400 mb-4">Volume de professeurs disponibles pour chaque discipline</p>
+                <div class="h-64">
+                    <canvas id="subjectsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Quartiers Chart -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-bold text-white mb-1">Top 10 des Quartiers les Mieux Couverts</h3>
+                <p class="text-xs text-slate-400 mb-4">Rattachements des professeurs aux zones géographiques</p>
+                <div class="h-64">
+                    <canvas id="quartiersChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Simulator Tool -->
+        <section class="glass-card p-6 space-y-4">
+            <div>
+                <h3 class="text-xl font-bold text-white">Simulateur de Capacité Pré-Campagne</h3>
+                <p class="text-xs text-slate-400">Sélectionnez les critères d'une future publicité pour vérifier instantanément si la plateforme peut répondre aux parents.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Matière ciblée</label>
+                    <select id="simSubject" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" onchange="runSimulation()">
+                        <option value="ALL">Toutes les matières</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Zone Géographique</label>
+                    <select id="simZone" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" onchange="runSimulation()">
+                        <option value="ALL">Toutes les zones</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Option Essai Gratuit</label>
+                    <select id="simTrial" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" onchange="runSimulation()">
+                        <option value="ALL">Indifférent (Gratuit ou Payant)</option>
+                        <option value="YES">Exiger Essai Gratuit Actif</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Simulation Result Box -->
+            <div id="simResult" class="p-4 rounded-xl bg-slate-900/80 border border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <div class="text-xs text-slate-400 font-medium">Résultat de la simulation :</div>
+                    <div id="simCountText" class="text-lg font-bold text-white mt-1">Sélectionnez des critères pour simuler</div>
+                </div>
+                <div id="simBadge" class="px-4 py-2 rounded-lg font-semibold text-xs text-center">
+                    En attente
+                </div>
+            </div>
+        </section>
+
+        <!-- Table of Operational Teachers -->
+        <section class="glass-card p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white">Répertoire Détaillé des 32 Professeurs Opérationnels</h3>
+                    <p class="text-xs text-slate-400">Consultez les fiches actives pour le dispatching des leads générés par la publicité</p>
+                </div>
+                <input type="text" id="teacherSearch" placeholder="Rechercher nom, matière, quartier..." class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 w-full sm:w-64" onkeyup="filterTeachers()">
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="text-slate-400 uppercase bg-slate-800/60 border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">Professeur</th>
+                            <th class="p-3">Matière(s)</th>
+                            <th class="p-3">Classes d'Expertise</th>
+                            <th class="p-3">Quartiers Couverts</th>
+                            <th class="p-3 text-center">Essai Gratuit</th>
+                            <th class="p-3 text-right">Tarif Base</th>
+                            <th class="p-3 text-center">Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersTableBody" class="divide-y divide-slate-800/60">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-800">
+            ProfChezVous &bull; Audit de Pré-Lancement Publicitaire &bull; Données issues directement de la plateforme.
+        </footer>
+
+    </div>
+
+    <!-- Inject JSON Data -->
+    <script>
+        const AUDIT_DATA = {"total_teachers": 32, "teachers": [{"id": 35, "nom_complet": "ADJOVI Hermane", "prenom": "ADJOVI", "nom": "Hermane", "email": "hermaneadjovi1@gmail.com", "telephone": "+2290168712147", "matieres": ["Math\u00e9matiques"], "classes_enseignees": ["6\u00e8me", "5\u00e8me"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "2nde Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Hybride"], "villes": ["Cotonou"], "quartiers": ["Agla (Cotonou)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 2000.0, "tarifs_par_classe": {"3\u00e8me": 2500, "4\u00e8me": 2000, "2nde Scientifique": 3000}, "annees_experience": 2, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 79, "nom_complet": "AMIKPEMI Coffi Artus Bismarck", "prenom": "AMIKPEMI", "nom": "Coffi Artus Bismarck", "email": "bismarckamikpemi@gmail.com", "telephone": "+2290195582031", "matieres": ["Fran\u00e7ais"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire"], "classes_expertise": ["3\u00e8me", "Tle Litt\u00e9raire"], "modes": ["En ligne", "En ligne", "Chez l'\u00e9l\u00e8ve"], "villes": ["Abomey-Calavi"], "quartiers": ["Cococodji (Abomey-Calavi)", "Glo-Djigb\u00e9 (Abomey-Calavi)"], "nb_quartiers": 2, "essai_gratuit": true, "tarif_horaire_base": 2000.0, "tarifs_par_classe": {"3\u00e8me": 2000, "Tle Litt\u00e9raire": 3000}, "annees_experience": 10, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 6, "nom_complet": "HOUETONDJI BRUNEL PASCASIE LOKONON", "prenom": "HOUETONDJI", "nom": "BRUNEL PASCASIE LOKONON", "email": "brunelokonons@gmail.com", "telephone": "+2290161515938", "matieres": ["Svt"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "Tle Litt\u00e9raire", "2nde Scientifique"], "classes_expertise": ["3\u00e8me", "1\u00e8re Scientifique", "Tle Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Petit groupe"], "villes": ["Porto-Novo"], "quartiers": ["Tokpota-Porto-Novo (Porto-Novo)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "4\u00e8me": 3000, "5\u00e8me": 3000, "6\u00e8me": 3000, "Tle Litt\u00e9raire": 3000, "2nde Litt\u00e9raire": 3000, "Tle Scientifique": 3000, "1\u00e8re Litt\u00e9raire": 3000, "2nde Scientifique": 3000, "1\u00e8re Scientifique": 3000}, "annees_experience": 8, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 45, "nom_complet": "Mouhamadou ASSOUMA", "prenom": "Mouhamadou", "nom": "ASSOUMA", "email": "assoumamouha@gmail.com", "telephone": "+2290140934671", "matieres": ["R\u00e9daction administrative", "Compte-rendu proc\u00e8s-verbal rapport", "Informatique"], "classes_enseignees": [], "classes_expertise": ["2nde Technique", "1\u00e8re Technique", "Tle BAC Pro"], "modes": ["Chez l'\u00e9l\u00e8ve", "\u00c0 domicile (parent)", "THIRD_PLACE", "Hybride"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Agla (Cotonou)", "Arcon (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cit\u00e9 Houeyiho (Abomey-Calavi)", "Fifadji (Cotonou)", "Gb\u00e9gamey (Cotonou)", "Tankp\u00e8 (Abomey-Calavi)", "Togoudo (Abomey-Calavi)", "Zogbadj\u00e8 (Abomey-Calavi)"], "nb_quartiers": 11, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"Tle BAC Pro": 3000, "2nde Technique": 3000, "1\u00e8re Technique": 3000}, "annees_experience": 0, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 25, "nom_complet": "Cr\u00e9do PASSA", "prenom": "Cr\u00e9do", "nom": "PASSA", "email": "passacoovi@gmail.com", "telephone": "+2290161006843", "matieres": ["Math\u00e9matiques", "Anglais"], "classes_enseignees": [], "classes_expertise": ["4\u00e8me", "3\u00e8me", "5\u00e8me"], "modes": ["\u00c0 domicile (parent)", "Hybride", "Petit groupe", "Chez l'\u00e9l\u00e8ve"], "villes": ["Cotonou"], "quartiers": ["Abokicodji (Cotonou)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"3": 4000, "4": 3000, "5": 2500}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 28, "nom_complet": "ATTOTIN Lambert Abel", "prenom": "ATTOTIN", "nom": "Lambert Abel", "email": "attotinlambertabel@gmail.com", "telephone": "+2290166416834", "matieres": ["Math\u00e9matiques"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Scientifique"], "classes_expertise": ["3\u00e8me", "Tle Litt\u00e9raire", "Tle Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "THIRD_PLACE", "Petit groupe"], "villes": ["Abomey-Calavi"], "quartiers": ["Al\u00e8gl\u00e9ta (Abomey-Calavi)", "Atrokpocodji (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cococodji (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)", "D\u00e8koungb\u00e9 (Abomey-Calavi)", "Godomey Gare (Abomey-Calavi)", "Maria Gl\u00e9ta (Abomey-Calavi)"], "nb_quartiers": 10, "essai_gratuit": false, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"3\u00e8me": 2000, "Tle Litt\u00e9raire": 2500, "Tle Scientifique": 3000}, "annees_experience": 10, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 14, "nom_complet": "Ricardo NOUDOFININ", "prenom": "Ricardo", "nom": "NOUDOFININ", "email": "ricardonoudofinin7@gmail.com", "telephone": "+2290161414520", "matieres": ["Math\u00e9matiques"], "classes_enseignees": [], "classes_expertise": ["3\u00e8me", "Tle Litt\u00e9raire", "Tle Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Petit groupe"], "villes": ["Cotonou"], "quartiers": ["Cotonou (Cotonou)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "Tle Litt\u00e9raire": 3000, "Tle Scientifique": 3000}, "annees_experience": 4, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 60, "nom_complet": "SODOGBE Dylane Fred Oke S\u00e8tondji", "prenom": "SODOGBE", "nom": "Dylane Fred Oke S\u00e8tondji", "email": "sosodydy7@gmail.com", "telephone": "+2290150794272", "matieres": ["Math\u00e9matiques", "Pct"], "classes_enseignees": ["6\u00e8me"], "classes_expertise": ["5\u00e8me", "4\u00e8me", "3\u00e8me"], "modes": ["\u00c0 domicile (parent)"], "villes": ["Cotonou"], "quartiers": ["Akpakpa (Centre) (Cotonou)", "Akpakpa (Cotonou)", "Avotrou (Cotonou)", "Ay\u00e9lawadj\u00e8 (Cotonou)", "Cotonou (Cotonou)", "Dantokpa (Cotonou)"], "nb_quartiers": 6, "essai_gratuit": false, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 1500, "4\u00e8me": 1500, "5\u00e8me": 1500}, "annees_experience": 2, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 49, "nom_complet": "Mo\u00efse HOUNDAYI", "prenom": "Mo\u00efse", "nom": "HOUNDAYI", "email": "houndayimoise8@gmail.com", "telephone": "+2290151175516", "matieres": ["Pct"], "classes_enseignees": ["CM2", "6\u00e8me", "5\u00e8me", "2nde Scientifique", "Tle Scientifique"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "1\u00e8re Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Hybride"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Al\u00e8gl\u00e9ta (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cit\u00e9 Houeyiho (Abomey-Calavi)", "Parana (Abomey-Calavi)", "Sainte Rita (Cotonou)", "Tankp\u00e8 (Abomey-Calavi)", "Womey / Abomey-Calavi (Abomey-Calavi)"], "nb_quartiers": 9, "essai_gratuit": false, "tarif_horaire_base": 1500.0, "tarifs_par_classe": {"3\u00e8me": 2000, "4\u00e8me": 1500, "1\u00e8re Scientifique": 2500}, "annees_experience": 3, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 2, "nom_complet": "KPLOKE Anselme", "prenom": "KPLOKE", "nom": "Anselme", "email": "juliofab3@gmail.com", "telephone": "+2290161008846", "matieres": ["Fran\u00e7ais"], "classes_enseignees": [], "classes_expertise": ["3\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique", "Tle Litt\u00e9raire", "Tle Scientifique"], "modes": ["Hybride"], "villes": ["Cotonou"], "quartiers": ["Abokicodji (Cotonou)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 0.0, "tarifs_par_classe": {}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 18, "nom_complet": "HAZOUME S\u00e8do Lerocher Thank-god", "prenom": "HAZOUME", "nom": "S\u00e8do Lerocher Thank-god", "email": "lerocher471@gmail.com", "telephone": "+2290157085135", "matieres": ["Math\u00e9matiques", "Pct"], "classes_enseignees": ["6\u00e8me"], "classes_expertise": ["5\u00e8me", "4\u00e8me", "3\u00e8me"], "modes": ["Chez l'\u00e9l\u00e8ve", "Petit groupe"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Agla (Cotonou)", "Atrokpocodji (Abomey-Calavi)", "A\u00efdj\u00e8do (Cotonou)", "Centre Godomey (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)", "Fifadji (Cotonou)", "Haie Vive (Cotonou)", "M\u00e9rontin (Cotonou)", "Sainte Rita (Cotonou)", "Sik\u00e8codji (Cotonou)", "V\u00e8doko (Cotonou)", "Zogbo (Cotonou)"], "nb_quartiers": 12, "essai_gratuit": false, "tarif_horaire_base": 2000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "4\u00e8me": 2500, "5\u00e8me": 2500}, "annees_experience": 4, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 15, "nom_complet": "TOKPANOU Daniel", "prenom": "TOKPANOU", "nom": "Daniel", "email": "danielgwtokpanou@gmail.com", "telephone": "+2290158270052", "matieres": ["Math\u00e9matiques", "Pct", "R\u00e9sistance des mat\u00e9riaux"], "classes_enseignees": [], "classes_expertise": ["3\u00e8me", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "Tle Litt\u00e9raire", "Tle Scientifique"], "modes": ["Chez l'\u00e9l\u00e8ve", "THIRD_PLACE", "Petit groupe"], "villes": ["Sinend\u00e9"], "quartiers": ["Niaro/Sinend\u00e9 (Sinend\u00e9)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"TLE": 3500, "1ERE": 3000, "3EME": 2000}, "annees_experience": 6, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 12, "nom_complet": "DOUFARI Abdel Raquib", "prenom": "DOUFARI", "nom": "Abdel Raquib", "email": "wiliraquib@gmail.com", "telephone": "+2290194213935", "matieres": ["Pct"], "classes_enseignees": ["CI", "CE2", "CM1", "CM2", "6\u00e8me", "1\u00e8re Litt\u00e9raire", "Tle Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Scientifique", "Tle Scientifique"], "classes_expertise": ["5\u00e8me", "4\u00e8me", "3\u00e8me"], "modes": ["\u00c0 domicile (parent)", "Hybride"], "villes": ["Kandi"], "quartiers": ["Kandi (Kandi)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 1000.0, "tarifs_par_classe": {"3\u00e8me": 1500, "4\u00e8me": 1500, "5\u00e8me": 1000}, "annees_experience": 7, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 38, "nom_complet": "Y\u00e9malin Julien Kpossou", "prenom": "Y\u00e9malin", "nom": "Julien Kpossou", "email": "julienkpossou57@gmail.com", "telephone": "+2290152228998", "matieres": ["Math\u00e9matiques", "Pct"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "2nde Scientifique"], "classes_expertise": ["3\u00e8me", "1\u00e8re Scientifique", "Tle Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve"], "villes": ["Abomey-Calavi"], "quartiers": ["Agouako (Abomey-Calavi)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 25000.0, "tarifs_par_classe": {"3\u00e8me": 2500, "Tle Scientifique": 3000, "1\u00e8re Scientifique": 3000}, "annees_experience": 3, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 17, "nom_complet": "Mahougnon Wilfried AKOTONOU", "prenom": "Mahougnon", "nom": "Wilfried AKOTONOU", "email": "mahougnonwilfriedakotonou@gmail.com", "telephone": "+2290196564362", "matieres": ["Anglais"], "classes_enseignees": ["6\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "2nde Technique"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "Tle Litt\u00e9raire"], "modes": ["Chez l'\u00e9l\u00e8ve", "En ligne", "Hybride", "Petit groupe"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Agla (Cotonou)", "Agori (Abomey-Calavi)", "Akassato (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Tankp\u00e8 (Abomey-Calavi)", "Togba (Abomey-Calavi)", "Zogbadj\u00e8 (Abomey-Calavi)"], "nb_quartiers": 9, "essai_gratuit": false, "tarif_horaire_base": 7000.0, "tarifs_par_classe": {"3\u00e8me": 5000, "4\u00e8me": 3000, "Tle Litt\u00e9raire": 7000}, "annees_experience": 10, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 81, "nom_complet": "IDOHOU Adebayo", "prenom": "IDOHOU", "nom": "Adebayo", "email": "jafi3fois@gmail.com", "telephone": "+2290197371003", "matieres": ["Svt"], "classes_enseignees": ["2nde Scientifique", "4\u00e8me", "5\u00e8me", "6\u00e8me"], "classes_expertise": ["3\u00e8me", "Tle Scientifique", "1\u00e8re Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Hybride"], "villes": ["Abomey-Calavi"], "quartiers": ["Atrokpocodji (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cococodji (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)", "D\u00e8koungb\u00e9 (Abomey-Calavi)", "Godomey Gare (Abomey-Calavi)"], "nb_quartiers": 6, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "Tle Scientifique": 3000, "1\u00e8re Scientifique": 3000}, "annees_experience": 20, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 57, "nom_complet": "Karim Gouton", "prenom": "Karim", "nom": "Gouton", "email": "goutonkarim@gmail.com", "telephone": "+2290196791093", "matieres": ["Svt"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "Tle Litt\u00e9raire"], "classes_expertise": ["3\u00e8me", "Tle Scientifique", "2nde Scientifique"], "modes": ["Chez l'\u00e9l\u00e8ve", "Hybride"], "villes": ["Abomey-Calavi"], "quartiers": ["Al\u00e8gl\u00e9ta (Abomey-Calavi)", "Atrokpocodji (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cococodji (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)", "Fiy\u00e9gnon (Abomey-Calavi)", "Glo-Djigb\u00e9 (Abomey-Calavi)", "Godomey Gare (Abomey-Calavi)", "Hou\u00e8donou (Abomey-Calavi)", "Maria Gl\u00e9ta (Abomey-Calavi)"], "nb_quartiers": 12, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "Tle Scientifique": 3000, "2nde Scientifique": 3000}, "annees_experience": 11, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 33, "nom_complet": "Aristide GBEYI", "prenom": "Aristide", "nom": "GBEYI", "email": "mingnigbetoaristidegbeyi@gmail.com", "telephone": "+2290162421256", "matieres": ["Svt"], "classes_enseignees": ["3\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "Tle Litt\u00e9raire", "Tle Scientifique"], "classes_expertise": ["6\u00e8me", "5\u00e8me", "4\u00e8me"], "modes": ["\u00c0 domicile (parent)", "THIRD_PLACE"], "villes": ["Porto-Novo"], "quartiers": ["Dowa (Porto-Novo)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"TLE": 5000, "1ERE": 3000, "2NDE": 3000, "3EME": 3500, "4EME": 3000, "5EME": 3000, "6EME": 3000}, "annees_experience": 0, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 78, "nom_complet": "HOUEYOKON G. \u00c9loi", "prenom": "HOUEYOKON", "nom": "G. \u00c9loi", "email": "eloigbetonnougbo@gmail.com", "telephone": "+2290159520742", "matieres": ["Fran\u00e7ais"], "classes_enseignees": ["CI", "CP", "CE1", "CE2", "CM1", "CM2", "6\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "Tle Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "En ligne"], "villes": ["Porto-Novo"], "quartiers": ["Tokpota-Porto-Novo (Porto-Novo)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 2000.0, "tarifs_par_classe": {"3\u00e8me": 3000, "4\u00e8me": 2000, "Tle Litt\u00e9raire": 3500}, "annees_experience": 3, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 21, "nom_complet": "AKONHOUNKPAN Monel Phar\u00e8s", "prenom": "AKONHOUNKPAN", "nom": "Monel Phar\u00e8s", "email": "akres2009@gmail.com", "telephone": "+2290167390482", "matieres": ["Alphab\u00e9tisation", "Art oratoire", "Informatique"], "classes_enseignees": ["5\u00e8me", "4\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique"], "classes_expertise": ["6\u00e8me", "3\u00e8me", "Tle Litt\u00e9raire", "Tle Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "En ligne", "Hybride", "THIRD_PLACE", "Petit groupe"], "villes": ["Cotonou"], "quartiers": ["Agla (Cotonou)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 2000.0, "tarifs_par_classe": {"TLE": 4000, "1ERE": 3000, "2NDE": 3000, "3EME": 3000, "4EME": 3000, "5EME": 2000, "6EME": 2500}, "annees_experience": 10, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 32, "nom_complet": "GNANGA Fid\u00e8le", "prenom": "GNANGA", "nom": "Fid\u00e8le", "email": "gnangaf@gmail.com", "telephone": "+2290164657077", "matieres": ["Svt"], "classes_enseignees": ["3\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "Tle Litt\u00e9raire", "Tle Scientifique"], "classes_expertise": ["6\u00e8me", "5\u00e8me", "4\u00e8me"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Petit groupe"], "villes": ["Abomey-Calavi"], "quartiers": ["Akassato (Abomey-Calavi)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"Tle": 3000, "1ere": 3000, "2nde": 3000, "3eme": 3000, "4eme": 3000, "5eme": 3000, "6eme": 3000}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 9, "nom_complet": "Rodolphe AHISSOU", "prenom": "Rodolphe", "nom": "AHISSOU", "email": "ahissourodolphe7@gmail.com", "telephone": "+2290191945721", "matieres": ["Math\u00e9matiques", "Pct", "Dessin technique"], "classes_enseignees": [], "classes_expertise": ["3\u00e8me", "4\u00e8me", "5\u00e8me"], "modes": ["\u00c0 domicile (parent)", "En ligne", "Petit groupe"], "villes": ["Abomey-Calavi"], "quartiers": ["Agori (Abomey-Calavi)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 0.0, "tarifs_par_classe": {}, "annees_experience": 0, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 36, "nom_complet": "Victor DASSI", "prenom": "Victor", "nom": "DASSI", "email": "dassichola@gmail.com", "telephone": "+2290161679284", "matieres": ["Svt"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "3\u00e8me", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique"], "classes_expertise": ["4\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "Hybride"], "villes": ["S\u00e8m\u00e8-Kpodji"], "quartiers": ["Agblangandan (S\u00e8m\u00e8-Kpodji)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"4\u00e8me": 3000, "2nde Litt\u00e9raire": 3000, "2nde Scientifique": 3000}, "annees_experience": 7, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 55, "nom_complet": "ELEKOUN Abdoul", "prenom": "ELEKOUN", "nom": "Abdoul", "email": "ogniboa313@gmail.com", "telephone": "+2290144978981", "matieres": ["Fran\u00e7ais"], "classes_enseignees": ["4\u00e8me", "Tle Litt\u00e9raire"], "classes_expertise": ["3\u00e8me", "1\u00e8re Scientifique"], "modes": ["\u00c0 domicile (parent)", "En ligne"], "villes": ["Abomey-Calavi"], "quartiers": ["Akassato (Abomey-Calavi)", "Arcon (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)"], "nb_quartiers": 4, "essai_gratuit": true, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"3\u00e8me": 2500, "1\u00e8re Scientifique": 3000}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 43, "nom_complet": "LOUHA Mathias", "prenom": "LOUHA", "nom": "Mathias", "email": "louhamathias73@gmail.com", "telephone": "+2290197038988", "matieres": ["Fran\u00e7ais"], "classes_enseignees": ["6\u00e8me", "1\u00e8re Litt\u00e9raire", "Tle Litt\u00e9raire", "5\u00e8me"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "2nde Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "Hybride"], "villes": ["Abomey-Calavi"], "quartiers": ["Akassato (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)"], "nb_quartiers": 2, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"3\u00e8me": 5000, "4\u00e8me": 3000, "2nde Litt\u00e9raire": 4000}, "annees_experience": 3, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 10, "nom_complet": "Mamah chabi Jouvance", "prenom": "Mamah", "nom": "chabi Jouvance", "email": "jouvancemamahchabi@gmail.com", "telephone": "+2290144977136", "matieres": ["Anglais", "Pct", "Svt"], "classes_enseignees": ["3\u00e8me", "2nde Scientifique", "1\u00e8re Scientifique", "Tle Scientifique"], "classes_expertise": ["6\u00e8me", "5\u00e8me", "4\u00e8me"], "modes": ["Chez l'\u00e9l\u00e8ve"], "villes": ["Abomey-Calavi"], "quartiers": ["Bidossessi (Abomey-Calavi)"], "nb_quartiers": 1, "essai_gratuit": false, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"4\u00e8me": 2500, "5\u00e8me": 2500, "6\u00e8me": 2500}, "annees_experience": 1, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 26, "nom_complet": "Babylas Jean Francisco Serge DE SOUZA", "prenom": "Babylas", "nom": "Jean Francisco Serge DE SOUZA", "email": "babylas25@gmail.com", "telephone": "+2290197339727", "matieres": ["Anglais"], "classes_enseignees": [], "classes_expertise": ["3\u00e8me", "Tle Litt\u00e9raire", "Tle Scientifique", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique"], "modes": ["Hybride"], "villes": ["Ouidah"], "quartiers": ["Ouidah (Ouidah)"], "nb_quartiers": 1, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"TLE": 3000, "1ere": 3000, "3EME": 3000}, "annees_experience": 20, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 82, "nom_complet": "GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "prenom": "GNIMAGNON", "nom": " s\u00e8massa Laurencio Gilchrist", "email": "gilchrist192@gmail.com", "telephone": "+2290195551682", "matieres": ["Fran\u00e7ais"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "4\u00e8me", "1\u00e8re Litt\u00e9raire", "Tle Scientifique"], "classes_expertise": ["3\u00e8me", "2nde Litt\u00e9raire", "Tle Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "En ligne", "Petit groupe", "En ligne"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Agla (Cotonou)", "Atrokpocodji (Abomey-Calavi)", "A\u00efbatin (Cotonou)", "Bidossessi (Abomey-Calavi)", "Cit\u00e9 Houeyiho (Abomey-Calavi)", "Cococodji (Abomey-Calavi)", "Cocotomey (Abomey-Calavi)", "Cotonou (Cotonou)", "D\u00e8koungb\u00e9 (Abomey-Calavi)", "Fidjross\u00e8 (Cotonou)", "Fiy\u00e9gnon (Abomey-Calavi)", "Godomey Gare (Abomey-Calavi)", "H\u00eadomey (Abomey-Calavi)", "M\u00e9rontin (Cotonou)", "Tankp\u00e8 (Abomey-Calavi)", "Vodj\u00e8 (Cotonou)", "Womey / Abomey-Calavi (Abomey-Calavi)", "Zogbadj\u00e8 (Abomey-Calavi)", "Zogbo (Cotonou)", "Zone IITA (Abomey-Calavi)"], "nb_quartiers": 20, "essai_gratuit": true, "tarif_horaire_base": 2500.0, "tarifs_par_classe": {"3\u00e8me": 2500, "Tle Litt\u00e9raire": 3500, "2nde Litt\u00e9raire": 2500}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 20, "nom_complet": "DENADI Mawussi V\u00e9ronique", "prenom": "DENADI", "nom": "Mawussi V\u00e9ronique", "email": "mawussiveroniquedenadi@gmail.com", "telephone": "+2290195936112", "matieres": ["Anglais"], "classes_enseignees": ["6\u00e8me", "5\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "2nde Scientifique", "Tle Scientifique", "2nde Technique", "1\u00e8re Technique", "Tle Technique", "1\u00e8re ann\u00e9e CAP", "1\u00e8re ann\u00e9e BEP", "2\u00e8me ann\u00e9e BEP"], "classes_expertise": ["4\u00e8me", "3\u00e8me", "Tle Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "En ligne", "THIRD_PLACE", "Petit groupe"], "villes": ["Abomey-Calavi"], "quartiers": ["Agori (Abomey-Calavi)", "Akassato (Abomey-Calavi)", "Al\u00e8gl\u00e9ta (Abomey-Calavi)", "Arcon (Abomey-Calavi)", "Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "H\u00eavi\u00e9 (Abomey-Calavi)", "Maria Gl\u00e9ta (Abomey-Calavi)", "Tokan Abomey Calavi (Abomey-Calavi)"], "nb_quartiers": 9, "essai_gratuit": false, "tarif_horaire_base": 1000.0, "tarifs_par_classe": {"3\u00e8me": 2000, "4\u00e8me": 2000, "Tle Litt\u00e9raire": 3000}, "annees_experience": 5, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 61, "nom_complet": "Christ M\u00e9nad\u00e8le GBOHOUILI", "prenom": "Christ", "nom": "M\u00e9nad\u00e8le GBOHOUILI", "email": "gbohouilichristestla@gmail.com", "telephone": "+2290197528241", "matieres": ["Espagnol"], "classes_enseignees": ["4\u00e8me", "2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire"], "classes_expertise": ["Tle Litt\u00e9raire"], "modes": ["Chez l'\u00e9l\u00e8ve", "Hybride", "Petit groupe"], "villes": ["Abomey-Calavi", "Cotonou"], "quartiers": ["Agla (Cotonou)", "Akpakpa (Cotonou)", "Calavi Kpota (Abomey-Calavi)", "Centre Godomey (Abomey-Calavi)", "Cotonou (Cotonou)", "Fidjross\u00e8 (Cotonou)", "Suru L\u00e9r\u00e9 (Cotonou)", "Togoudo (Abomey-Calavi)"], "nb_quartiers": 8, "essai_gratuit": false, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"Tle Litt\u00e9raire": 3000}, "annees_experience": 1, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}, {"id": 1, "nom_complet": "LALODE G\u00e9ovanie Codjovi", "prenom": "LALODE", "nom": "G\u00e9ovanie Codjovi", "email": "teddywillis222@gmail.com", "telephone": "+2290164608148", "matieres": ["Alg\u00e8bre", "Math\u00e9matiques"], "classes_enseignees": ["5\u00e8me", "4\u00e8me", "3\u00e8me", "2nde Litt\u00e9raire"], "classes_expertise": ["1\u00e8re Litt\u00e9raire", "Tle Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "Chez l'\u00e9l\u00e8ve", "En ligne", "Hybride"], "villes": ["Abomey-Calavi", "Porto-Novo"], "quartiers": ["Adogb\u00e8ta (Porto-Novo)", "Hou\u00e8donou (Abomey-Calavi)", "Ou\u00e8do (Abomey-Calavi)", "Togba (Abomey-Calavi)"], "nb_quartiers": 4, "essai_gratuit": false, "tarif_horaire_base": 7000.0, "tarifs_par_classe": {"Tle Litt\u00e9raire": 7000, "1\u00e8re Litt\u00e9raire": 7000}, "annees_experience": 7, "score_fiabilite": 9, "note_initiale": 4.5, "a_video": false}, {"id": 44, "nom_complet": "LANKOUGBEDE Laris David Jesukpego", "prenom": "LANKOUGBEDE", "nom": "Laris David Jesukpego", "email": "lankougbededavid@gmail.com", "telephone": "+2290151781879", "matieres": ["Anglais"], "classes_enseignees": ["2nde Litt\u00e9raire", "1\u00e8re Litt\u00e9raire", "3\u00e8me"], "classes_expertise": ["6\u00e8me", "5\u00e8me", "Tle Litt\u00e9raire"], "modes": ["\u00c0 domicile (parent)", "En ligne", "Petit groupe"], "villes": ["Abomey-Calavi"], "quartiers": ["Bidossessi (Abomey-Calavi)", "Calavi Kpota (Abomey-Calavi)", "Tankp\u00e8 (Abomey-Calavi)", "Togba (Abomey-Calavi)"], "nb_quartiers": 4, "essai_gratuit": true, "tarif_horaire_base": 3000.0, "tarifs_par_classe": {"5\u00e8me": 3000, "6\u00e8me": 3000, "Tle Litt\u00e9raire": 3000}, "annees_experience": 3, "score_fiabilite": 0, "note_initiale": 4.5, "a_video": false}], "subjects": [["Math\u00e9matiques", 10], ["Pct", 8], ["Svt", 7], ["Fran\u00e7ais", 6], ["Anglais", 6], ["Informatique", 2], ["R\u00e9daction administrative", 1], ["Compte-rendu proc\u00e8s-verbal rapport", 1], ["R\u00e9sistance des mat\u00e9riaux", 1], ["Alphab\u00e9tisation", 1], ["Art oratoire", 1], ["Dessin technique", 1], ["Espagnol", 1], ["Alg\u00e8bre", 1]], "quartiers": [{"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "ATTOTIN Lambert Abel", "Mo\u00efse HOUNDAYI", "Mahougnon Wilfried AKOTONOU", "Karim Gouton", "ELEKOUN Abdoul", "Mamah chabi Jouvance", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "DENADI Mawussi V\u00e9ronique", "LANKOUGBEDE Laris David Jesukpego"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Fran\u00e7ais", "Informatique", "Math\u00e9matiques", "Pct", "R\u00e9daction administrative", "Svt"], "essai_gratuit_count": 5, "quartier": "Bidossessi"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "ATTOTIN Lambert Abel", "Mo\u00efse HOUNDAYI", "Mahougnon Wilfried AKOTONOU", "Karim Gouton", "ELEKOUN Abdoul", "DENADI Mawussi V\u00e9ronique", "Christ M\u00e9nad\u00e8le GBOHOUILI", "LANKOUGBEDE Laris David Jesukpego"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Espagnol", "Fran\u00e7ais", "Informatique", "Math\u00e9matiques", "Pct", "R\u00e9daction administrative", "Svt"], "essai_gratuit_count": 4, "quartier": "Calavi Kpota"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "ATTOTIN Lambert Abel", "Mo\u00efse HOUNDAYI", "HAZOUME S\u00e8do Lerocher Thank-god", "Mahougnon Wilfried AKOTONOU", "IDOHOU Adebayo", "Karim Gouton", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Espagnol", "Informatique", "Math\u00e9matiques", "Pct", "R\u00e9daction administrative", "Svt"], "essai_gratuit_count": 3, "quartier": "Centre Godomey"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "HAZOUME S\u00e8do Lerocher Thank-god", "IDOHOU Adebayo", "Karim Gouton", "LOUHA Mathias", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Pct", "Svt"], "essai_gratuit_count": 4, "quartier": "Cocotomey"}, {"ville": "Abomey-Calavi", "profs": ["Mahougnon Wilfried AKOTONOU", "GNANGA Fid\u00e8le", "ELEKOUN Abdoul", "LOUHA Mathias", "DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais", "Fran\u00e7ais", "Svt"], "essai_gratuit_count": 3, "quartier": "Akassato"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "HAZOUME S\u00e8do Lerocher Thank-god", "IDOHOU Adebayo", "Karim Gouton", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Pct", "Svt"], "essai_gratuit_count": 3, "quartier": "Atrokpocodji"}, {"ville": "Abomey-Calavi", "profs": ["AMIKPEMI Coffi Artus Bismarck", "ATTOTIN Lambert Abel", "IDOHOU Adebayo", "Karim Gouton", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Svt"], "essai_gratuit_count": 4, "quartier": "Cococodji"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "Mo\u00efse HOUNDAYI", "Mahougnon Wilfried AKOTONOU", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "LANKOUGBEDE Laris David Jesukpego"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Fran\u00e7ais", "Informatique", "Pct", "R\u00e9daction administrative"], "essai_gratuit_count": 3, "quartier": "Tankp\u00e8"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "Mo\u00efse HOUNDAYI", "Karim Gouton", "DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais", "Math\u00e9matiques", "Pct", "Svt"], "essai_gratuit_count": 1, "quartier": "Al\u00e8gl\u00e9ta"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "IDOHOU Adebayo", "Karim Gouton", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Svt"], "essai_gratuit_count": 3, "quartier": "Godomey Gare"}, {"ville": "Abomey-Calavi", "profs": ["Mahougnon Wilfried AKOTONOU", "Rodolphe AHISSOU", "DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais", "Dessin technique", "Math\u00e9matiques", "Pct"], "essai_gratuit_count": 1, "quartier": "Agori"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "ELEKOUN Abdoul", "DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Fran\u00e7ais", "Informatique", "R\u00e9daction administrative"], "essai_gratuit_count": 2, "quartier": "Arcon"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "Mo\u00efse HOUNDAYI", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Compte-rendu proc\u00e8s-verbal rapport", "Fran\u00e7ais", "Informatique", "Pct", "R\u00e9daction administrative"], "essai_gratuit_count": 2, "quartier": "Cit\u00e9 Houeyiho"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "IDOHOU Adebayo", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Svt"], "essai_gratuit_count": 2, "quartier": "D\u00e8koungb\u00e9"}, {"ville": "Abomey-Calavi", "profs": ["ATTOTIN Lambert Abel", "Karim Gouton", "DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais", "Math\u00e9matiques", "Svt"], "essai_gratuit_count": 1, "quartier": "Maria Gl\u00e9ta"}, {"ville": "Abomey-Calavi", "profs": ["Mahougnon Wilfried AKOTONOU", "LALODE G\u00e9ovanie Codjovi", "LANKOUGBEDE Laris David Jesukpego"], "matieres": ["Alg\u00e8bre", "Anglais", "Math\u00e9matiques"], "essai_gratuit_count": 1, "quartier": "Togba"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "Mahougnon Wilfried AKOTONOU", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Anglais", "Compte-rendu proc\u00e8s-verbal rapport", "Fran\u00e7ais", "Informatique", "R\u00e9daction administrative"], "essai_gratuit_count": 2, "quartier": "Zogbadj\u00e8"}, {"ville": "Abomey-Calavi", "profs": ["Karim Gouton", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Svt"], "essai_gratuit_count": 2, "quartier": "Fiy\u00e9gnon"}, {"ville": "Abomey-Calavi", "profs": ["AMIKPEMI Coffi Artus Bismarck", "Karim Gouton"], "matieres": ["Fran\u00e7ais", "Svt"], "essai_gratuit_count": 2, "quartier": "Glo-Djigb\u00e9"}, {"ville": "Abomey-Calavi", "profs": ["Karim Gouton", "LALODE G\u00e9ovanie Codjovi"], "matieres": ["Alg\u00e8bre", "Math\u00e9matiques", "Svt"], "essai_gratuit_count": 1, "quartier": "Hou\u00e8donou"}, {"ville": "Abomey-Calavi", "profs": ["Mouhamadou ASSOUMA", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Compte-rendu proc\u00e8s-verbal rapport", "Espagnol", "Informatique", "R\u00e9daction administrative"], "essai_gratuit_count": 1, "quartier": "Togoudo"}, {"ville": "Abomey-Calavi", "profs": ["Mo\u00efse HOUNDAYI", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Pct"], "essai_gratuit_count": 1, "quartier": "Womey / Abomey-Calavi"}, {"ville": "Abomey-Calavi", "profs": ["Y\u00e9malin Julien Kpossou"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Agouako"}, {"ville": "Abomey-Calavi", "profs": ["GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais"], "essai_gratuit_count": 1, "quartier": "H\u00eadomey"}, {"ville": "Abomey-Calavi", "profs": ["DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais"], "essai_gratuit_count": 0, "quartier": "H\u00eavi\u00e9"}, {"ville": "Abomey-Calavi", "profs": ["LALODE G\u00e9ovanie Codjovi"], "matieres": ["Alg\u00e8bre", "Math\u00e9matiques"], "essai_gratuit_count": 0, "quartier": "Ou\u00e8do"}, {"ville": "Abomey-Calavi", "profs": ["Mo\u00efse HOUNDAYI"], "matieres": ["Pct"], "essai_gratuit_count": 0, "quartier": "Parana"}, {"ville": "Abomey-Calavi", "profs": ["DENADI Mawussi V\u00e9ronique"], "matieres": ["Anglais"], "essai_gratuit_count": 0, "quartier": "Tokan Abomey Calavi"}, {"ville": "Abomey-Calavi", "profs": ["GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais"], "essai_gratuit_count": 1, "quartier": "Zone IITA"}, {"ville": "Cotonou", "profs": ["ADJOVI Hermane", "Mouhamadou ASSOUMA", "HAZOUME S\u00e8do Lerocher Thank-god", "Mahougnon Wilfried AKOTONOU", "AKONHOUNKPAN Monel Phar\u00e8s", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Alphab\u00e9tisation", "Anglais", "Art oratoire", "Compte-rendu proc\u00e8s-verbal rapport", "Espagnol", "Fran\u00e7ais", "Informatique", "Math\u00e9matiques", "Pct", "R\u00e9daction administrative"], "essai_gratuit_count": 4, "quartier": "Agla"}, {"ville": "Cotonou", "profs": ["Ricardo NOUDOFININ", "SODOGBE Dylane Fred Oke S\u00e8tondji", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Espagnol", "Fran\u00e7ais", "Math\u00e9matiques", "Pct"], "essai_gratuit_count": 1, "quartier": "Cotonou"}, {"ville": "Cotonou", "profs": ["Cr\u00e9do PASSA", "KPLOKE Anselme"], "matieres": ["Anglais", "Fran\u00e7ais", "Math\u00e9matiques"], "essai_gratuit_count": 2, "quartier": "Abokicodji"}, {"ville": "Cotonou", "profs": ["SODOGBE Dylane Fred Oke S\u00e8tondji", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Espagnol", "Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Akpakpa"}, {"ville": "Cotonou", "profs": ["GNIMAGNON  s\u00e8massa Laurencio Gilchrist", "Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Espagnol", "Fran\u00e7ais"], "essai_gratuit_count": 1, "quartier": "Fidjross\u00e8"}, {"ville": "Cotonou", "profs": ["Mouhamadou ASSOUMA", "HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Compte-rendu proc\u00e8s-verbal rapport", "Informatique", "Math\u00e9matiques", "Pct", "R\u00e9daction administrative"], "essai_gratuit_count": 1, "quartier": "Fifadji"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Pct"], "essai_gratuit_count": 1, "quartier": "M\u00e9rontin"}, {"ville": "Cotonou", "profs": ["Mo\u00efse HOUNDAYI", "HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Sainte Rita"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god", "GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais", "Math\u00e9matiques", "Pct"], "essai_gratuit_count": 1, "quartier": "Zogbo"}, {"ville": "Cotonou", "profs": ["SODOGBE Dylane Fred Oke S\u00e8tondji"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Akpakpa (Centre)"}, {"ville": "Cotonou", "profs": ["SODOGBE Dylane Fred Oke S\u00e8tondji"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Avotrou"}, {"ville": "Cotonou", "profs": ["SODOGBE Dylane Fred Oke S\u00e8tondji"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Ay\u00e9lawadj\u00e8"}, {"ville": "Cotonou", "profs": ["GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais"], "essai_gratuit_count": 1, "quartier": "A\u00efbatin"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "A\u00efdj\u00e8do"}, {"ville": "Cotonou", "profs": ["SODOGBE Dylane Fred Oke S\u00e8tondji"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Dantokpa"}, {"ville": "Cotonou", "profs": ["Mouhamadou ASSOUMA"], "matieres": ["Compte-rendu proc\u00e8s-verbal rapport", "Informatique", "R\u00e9daction administrative"], "essai_gratuit_count": 1, "quartier": "Gb\u00e9gamey"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Haie Vive"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "Sik\u00e8codji"}, {"ville": "Cotonou", "profs": ["Christ M\u00e9nad\u00e8le GBOHOUILI"], "matieres": ["Espagnol"], "essai_gratuit_count": 0, "quartier": "Suru L\u00e9r\u00e9"}, {"ville": "Cotonou", "profs": ["GNIMAGNON  s\u00e8massa Laurencio Gilchrist"], "matieres": ["Fran\u00e7ais"], "essai_gratuit_count": 1, "quartier": "Vodj\u00e8"}, {"ville": "Cotonou", "profs": ["HAZOUME S\u00e8do Lerocher Thank-god"], "matieres": ["Math\u00e9matiques", "Pct"], "essai_gratuit_count": 0, "quartier": "V\u00e8doko"}, {"ville": "Kandi", "profs": ["DOUFARI Abdel Raquib"], "matieres": ["Pct"], "essai_gratuit_count": 0, "quartier": "Kandi"}, {"ville": "Ouidah", "profs": ["Babylas Jean Francisco Serge DE SOUZA"], "matieres": ["Anglais"], "essai_gratuit_count": 1, "quartier": "Ouidah"}, {"ville": "Porto-Novo", "profs": ["HOUETONDJI BRUNEL PASCASIE LOKONON", "HOUEYOKON G. \u00c9loi"], "matieres": ["Fran\u00e7ais", "Svt"], "essai_gratuit_count": 1, "quartier": "Tokpota-Porto-Novo"}, {"ville": "Porto-Novo", "profs": ["LALODE G\u00e9ovanie Codjovi"], "matieres": ["Alg\u00e8bre", "Math\u00e9matiques"], "essai_gratuit_count": 0, "quartier": "Adogb\u00e8ta"}, {"ville": "Porto-Novo", "profs": ["Aristide GBEYI"], "matieres": ["Svt"], "essai_gratuit_count": 1, "quartier": "Dowa"}, {"ville": "Sinend\u00e9", "profs": ["TOKPANOU Daniel"], "matieres": ["Math\u00e9matiques", "Pct", "R\u00e9sistance des mat\u00e9riaux"], "essai_gratuit_count": 0, "quartier": "Niaro/Sinend\u00e9"}, {"ville": "S\u00e8m\u00e8-Kpodji", "profs": ["Victor DASSI"], "matieres": ["Svt"], "essai_gratuit_count": 1, "quartier": "Agblangandan"}], "classes": ["Primaire", "6\u00e8me", "5\u00e8me", "4\u00e8me", "3\u00e8me", "2nde Litt\u00e9raire", "2nde Scientifique", "1\u00e8re Litt\u00e9raire", "1\u00e8re Scientifique", "Tle Litt\u00e9raire", "Tle Scientifique"]};
+        
+        // Initialisation UI
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            populateFilters();
+            renderTeachersTable(AUDIT_DATA.teachers);
+            runSimulation();
+        });
+
+        function initCharts() {
+            // 1. Subjects Chart
+            const subCtx = document.getElementById('subjectsChart').getContext('2d');
+            const topSubjects = AUDIT_DATA.subjects.slice(0, 8);
+            new Chart(subCtx, {
+                type: 'bar',
+                data: {
+                    labels: topSubjects.map(s => s[0]),
+                    datasets: [{
+                        label: 'Nombre de professeurs',
+                        data: topSubjects.map(s => s[1]),
+                        backgroundColor: '#6366f1',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+
+            // 2. Quartiers Chart
+            const qCtx = document.getElementById('quartiersChart').getContext('2d');
+            const topQuartiers = AUDIT_DATA.quartiers.slice(0, 8);
+            new Chart(qCtx, {
+                type: 'bar',
+                data: {
+                    labels: topQuartiers.map(q => q.quartier + ' (' + q.ville + ')'),
+                    datasets: [{
+                        label: 'Profs disponibles',
+                        data: topQuartiers.map(q => q.profs.length),
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        function populateFilters() {
+            const subSelect = document.getElementById('simSubject');
+            AUDIT_DATA.subjects.forEach(([sub, cnt]) => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.textContent = `${sub} (${cnt} profs)`;
+                subSelect.appendChild(opt);
+            });
+
+            const zoneSelect = document.getElementById('simZone');
+            const zones = [...new Set(AUDIT_DATA.quartiers.map(q => q.ville))];
+            zones.forEach(z => {
+                const opt = document.createElement('option');
+                opt.value = z;
+                opt.textContent = `Commune : ${z}`;
+                zoneSelect.appendChild(opt);
+            });
+        }
+
+        function runSimulation() {
+            const selectedSub = document.getElementById('simSubject').value;
+            const selectedZone = document.getElementById('simZone').value;
+            const trialOnly = document.getElementById('simTrial').value === 'YES';
+
+            const filtered = AUDIT_DATA.teachers.filter(t => {
+                const matchSub = (selectedSub === 'ALL') || t.matieres.includes(selectedSub);
+                const matchZone = (selectedZone === 'ALL') || t.villes.includes(selectedZone);
+                const matchTrial = (!trialOnly) || t.essai_gratuit;
+                return matchSub && matchZone && matchTrial;
+            });
+
+            const count = filtered.length;
+            const countText = document.getElementById('simCountText');
+            const badge = document.getElementById('simBadge');
+
+            if (count >= 5) {
+                countText.innerHTML = `<span class="text-emerald-400">${count} Professeurs Disponibles</span> &bull; Capacité optimale pour lancer la publicité sans rupture !`;
+                badge.className = "px-4 py-2 rounded-lg font-bold text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+                badge.textContent = "FEU VERT POUR LA PUB";
+            } else if (count >= 2) {
+                countText.innerHTML = `<span class="text-amber-400">${count} Professeurs Disponibles</span> &bull; Capacité modérée, limitez le budget pub quotidien.`;
+                badge.className = "px-4 py-2 rounded-lg font-bold text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                badge.textContent = "BUDGET MODÉRÉ CONSEILLÉ";
+            } else {
+                countText.innerHTML = `<span class="text-rose-400">${count} Professeur Disponible</span> &bull; ⚠️ Risque majeur de générer des demandes non traitées !`;
+                badge.className = "px-4 py-2 rounded-lg font-bold text-xs bg-rose-500/20 text-rose-300 border border-rose-500/40";
+                badge.textContent = "CIBLAGE DÉCONSEILLÉ";
+            }
+        }
+
+        function renderTeachersTable(list) {
+            const tbody = document.getElementById('teachersTableBody');
+            tbody.innerHTML = '';
+
+            list.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 transition-colors";
+                
+                const trialBadge = t.essai_gratuit 
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">OUI</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-700 text-slate-300">NON</span>';
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-200">${t.nom_complet}</td>
+                    <td class="p-3 text-indigo-300">${t.matieres.join(', ')}</td>
+                    <td class="p-3 text-slate-300">${t.classes_expertise.join(', ') || t.classes_enseignees.slice(0,3).join(', ')}</td>
+                    <td class="p-3 text-slate-400 max-w-xs truncate" title="${t.quartiers.join(', ')}">${t.quartiers.slice(0, 2).join(', ')}${t.quartiers.length > 2 ? ' +'+(t.quartiers.length-2) : ''}</td>
+                    <td class="p-3 text-center">${trialBadge}</td>
+                    <td class="p-3 text-right font-mono text-slate-300">${t.tarif_horaire_base ? t.tarif_horaire_base.toLocaleString() + ' F' : '-'}</td>
+                    <td class="p-3 text-center">
+                        <a href="https://wa.me/${t.telephone.replace(/[^0-9]/g, '')}" target="_blank" class="text-emerald-400 hover:underline">WhatsApp</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTeachers() {
+            const q = document.getElementById('teacherSearch').value.toLowerCase();
+            const filtered = AUDIT_DATA.teachers.filter(t => {
+                const text = (t.nom_complet + ' ' + t.matieres.join(' ') + ' ' + t.quartiers.join(' ')).toLowerCase();
+                return text.includes(q);
+            });
+            renderTeachersTable(filtered);
+        }
+    </script>
+</body>
+</html>

@@ -4,13 +4,13 @@
 {% block title %}Sélection Sur Mesure - Prof Chez Vous
 <!-- CSS Side Panel -->
 <style>
-.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.22s cubic-bezier(0, 0, 0.2, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .side-panel.active { right: 0; }
 .side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .side-panel-overlay.active { opacity: 1; visibility: visible; }
 .side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
-.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
-.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-close { background: #f1f5f9; border: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: background 0.15s ease, transform 0.1s ease; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; position: relative; z-index: 50; }
+.side-panel-close:hover { background: #e2e8f0; color: #0f172a; } .side-panel-close:active { transform: scale(0.92); background: #cbd5e1; }
 .side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 768px) {
@@ -23,12 +23,12 @@
 </style>
 
 <!-- Side Panel Overlay -->
-<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)"></div>
 <div class="side-panel" id="sidePanel">
     <div class="side-panel-header">
         <h2 style="margin: 0; font-size: 1.25rem;">Profil du professeur</h2>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+            <button class="side-panel-close" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)" title="Fermer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
@@ -140,13 +140,13 @@ function closeSidePanel() {
 
 <!-- CSS Side Panel -->
 <style>
-.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.side-panel { position: fixed; top: 0; right: -100%; width: 480px; height: 100vh; background: #fff; z-index: 3000; box-shadow: -4px 0 24px rgba(0,0,0,0.1); display: flex; flex-direction: column; transition: right 0.22s cubic-bezier(0, 0, 0.2, 1); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .side-panel.active { right: 0; }
 .side-panel-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 2999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
 .side-panel-overlay.active { opacity: 1; visibility: visible; }
 .side-panel-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }
-.side-panel-close { background: transparent; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.3s ease; }
-.side-panel-close:hover { background: #f3f4f6; }
+.side-panel-close { background: #f1f5f9; border: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: background 0.15s ease, transform 0.1s ease; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; position: relative; z-index: 50; }
+.side-panel-close:hover { background: #e2e8f0; color: #0f172a; } .side-panel-close:active { transform: scale(0.92); background: #cbd5e1; }
 .side-panel-content { padding: 1.5rem; padding-bottom: 5rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 768px) {
@@ -159,12 +159,12 @@ function closeSidePanel() {
 </style>
 
 <!-- Side Panel Overlay -->
-<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+<div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)"></div>
 <div class="side-panel" id="sidePanel">
     <div class="side-panel-header">
         <h2 style="margin: 0; font-size: 1.25rem;">Profil du professeur</h2>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <button class="side-panel-close" onclick="closeSidePanel()" title="Fermer">
+            <button class="side-panel-close" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)" title="Fermer">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>

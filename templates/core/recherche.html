@@ -269,20 +269,34 @@ select.pcv-multi-select,
 }
 
 .side-panel-close {
-    background: transparent;
+    background: #f1f5f9;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     border-radius: 50%;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    color: #475569;
+    transition: background 0.15s ease, transform 0.1s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    position: relative;
+    z-index: 50;
 }
 
 .side-panel-close:hover {
-    background: #f3f4f6;
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.side-panel-close:active {
+    transform: scale(0.92);
+    background: #cbd5e1;
 }
 
 .side-panel-content {

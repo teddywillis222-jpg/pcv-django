@@ -1,0 +1,2476 @@
+{
+  "total_teachers": 32,
+  "teachers": [
+    {
+      "id": 35,
+      "nom_complet": "ADJOVI Hermane",
+      "prenom": "ADJOVI",
+      "nom": "Hermane",
+      "email": "hermaneadjovi1@gmail.com",
+      "telephone": "+2290168712147",
+      "matieres": [
+        "Mathématiques"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "2nde Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Hybride"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2000.0,
+      "tarifs_par_classe": {
+        "3ème": 2500,
+        "4ème": 2000,
+        "2nde Scientifique": 3000
+      },
+      "annees_experience": 2,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 79,
+      "nom_complet": "AMIKPEMI Coffi Artus Bismarck",
+      "prenom": "AMIKPEMI",
+      "nom": "Coffi Artus Bismarck",
+      "email": "bismarckamikpemi@gmail.com",
+      "telephone": "+2290195582031",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "2nde Littéraire",
+        "1ère Littéraire"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "En ligne",
+        "En ligne",
+        "Chez l'élève"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Cococodji (Abomey-Calavi)",
+        "Glo-Djigbé (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 2,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2000.0,
+      "tarifs_par_classe": {
+        "3ème": 2000,
+        "Tle Littéraire": 3000
+      },
+      "annees_experience": 10,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 6,
+      "nom_complet": "HOUETONDJI BRUNEL PASCASIE LOKONON",
+      "prenom": "HOUETONDJI",
+      "nom": "BRUNEL PASCASIE LOKONON",
+      "email": "brunelokonons@gmail.com",
+      "telephone": "+2290161515938",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "Tle Littéraire",
+        "2nde Scientifique"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "1ère Scientifique",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Porto-Novo"
+      ],
+      "quartiers": [
+        "Tokpota-Porto-Novo (Porto-Novo)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "4ème": 3000,
+        "5ème": 3000,
+        "6ème": 3000,
+        "Tle Littéraire": 3000,
+        "2nde Littéraire": 3000,
+        "Tle Scientifique": 3000,
+        "1ère Littéraire": 3000,
+        "2nde Scientifique": 3000,
+        "1ère Scientifique": 3000
+      },
+      "annees_experience": 8,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 45,
+      "nom_complet": "Mouhamadou ASSOUMA",
+      "prenom": "Mouhamadou",
+      "nom": "ASSOUMA",
+      "email": "assoumamouha@gmail.com",
+      "telephone": "+2290140934671",
+      "matieres": [
+        "Rédaction administrative",
+        "Compte-rendu procès-verbal rapport",
+        "Informatique"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "2nde Technique",
+        "1ère Technique",
+        "Tle BAC Pro"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "À domicile (parent)",
+        "THIRD_PLACE",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)",
+        "Arcon (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cité Houeyiho (Abomey-Calavi)",
+        "Fifadji (Cotonou)",
+        "Gbégamey (Cotonou)",
+        "Tankpè (Abomey-Calavi)",
+        "Togoudo (Abomey-Calavi)",
+        "Zogbadjè (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 11,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "Tle BAC Pro": 3000,
+        "2nde Technique": 3000,
+        "1ère Technique": 3000
+      },
+      "annees_experience": 0,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 25,
+      "nom_complet": "Crédo PASSA",
+      "prenom": "Crédo",
+      "nom": "PASSA",
+      "email": "passacoovi@gmail.com",
+      "telephone": "+2290161006843",
+      "matieres": [
+        "Mathématiques",
+        "Anglais"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "5ème"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Hybride",
+        "Petit groupe",
+        "Chez l'élève"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Abokicodji (Cotonou)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "3": 4000,
+        "4": 3000,
+        "5": 2500
+      },
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 28,
+      "nom_complet": "ATTOTIN Lambert Abel",
+      "prenom": "ATTOTIN",
+      "nom": "Lambert Abel",
+      "email": "attotinlambertabel@gmail.com",
+      "telephone": "+2290166416834",
+      "matieres": [
+        "Mathématiques"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "2nde Scientifique",
+        "1ère Scientifique"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "THIRD_PLACE",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Alègléta (Abomey-Calavi)",
+        "Atrokpocodji (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cococodji (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)",
+        "Dèkoungbé (Abomey-Calavi)",
+        "Godomey Gare (Abomey-Calavi)",
+        "Maria Gléta (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 10,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "3ème": 2000,
+        "Tle Littéraire": 2500,
+        "Tle Scientifique": 3000
+      },
+      "annees_experience": 10,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 14,
+      "nom_complet": "Ricardo NOUDOFININ",
+      "prenom": "Ricardo",
+      "nom": "NOUDOFININ",
+      "email": "ricardonoudofinin7@gmail.com",
+      "telephone": "+2290161414520",
+      "matieres": [
+        "Mathématiques"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "3ème",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Cotonou (Cotonou)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "Tle Littéraire": 3000,
+        "Tle Scientifique": 3000
+      },
+      "annees_experience": 4,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 60,
+      "nom_complet": "SODOGBE Dylane Fred Oke Sètondji",
+      "prenom": "SODOGBE",
+      "nom": "Dylane Fred Oke Sètondji",
+      "email": "sosodydy7@gmail.com",
+      "telephone": "+2290150794272",
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "classes_enseignees": [
+        "6ème"
+      ],
+      "classes_expertise": [
+        "5ème",
+        "4ème",
+        "3ème"
+      ],
+      "modes": [
+        "À domicile (parent)"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Akpakpa (Centre) (Cotonou)",
+        "Akpakpa (Cotonou)",
+        "Avotrou (Cotonou)",
+        "Ayélawadjè (Cotonou)",
+        "Cotonou (Cotonou)",
+        "Dantokpa (Cotonou)"
+      ],
+      "nb_quartiers": 6,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 1500,
+        "4ème": 1500,
+        "5ème": 1500
+      },
+      "annees_experience": 2,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 49,
+      "nom_complet": "Moïse HOUNDAYI",
+      "prenom": "Moïse",
+      "nom": "HOUNDAYI",
+      "email": "houndayimoise8@gmail.com",
+      "telephone": "+2290151175516",
+      "matieres": [
+        "Pct"
+      ],
+      "classes_enseignees": [
+        "CM2",
+        "6ème",
+        "5ème",
+        "2nde Scientifique",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "1ère Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Alègléta (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cité Houeyiho (Abomey-Calavi)",
+        "Parana (Abomey-Calavi)",
+        "Sainte Rita (Cotonou)",
+        "Tankpè (Abomey-Calavi)",
+        "Womey / Abomey-Calavi (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 9,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 1500.0,
+      "tarifs_par_classe": {
+        "3ème": 2000,
+        "4ème": 1500,
+        "1ère Scientifique": 2500
+      },
+      "annees_experience": 3,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 2,
+      "nom_complet": "KPLOKE Anselme",
+      "prenom": "KPLOKE",
+      "nom": "Anselme",
+      "email": "juliofab3@gmail.com",
+      "telephone": "+2290161008846",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "3ème",
+        "2nde Littéraire",
+        "2nde Scientifique",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "Hybride"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Abokicodji (Cotonou)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 0.0,
+      "tarifs_par_classe": {},
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 18,
+      "nom_complet": "HAZOUME Sèdo Lerocher Thank-god",
+      "prenom": "HAZOUME",
+      "nom": "Sèdo Lerocher Thank-god",
+      "email": "lerocher471@gmail.com",
+      "telephone": "+2290157085135",
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "classes_enseignees": [
+        "6ème"
+      ],
+      "classes_expertise": [
+        "5ème",
+        "4ème",
+        "3ème"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)",
+        "Atrokpocodji (Abomey-Calavi)",
+        "Aïdjèdo (Cotonou)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)",
+        "Fifadji (Cotonou)",
+        "Haie Vive (Cotonou)",
+        "Mérontin (Cotonou)",
+        "Sainte Rita (Cotonou)",
+        "Sikècodji (Cotonou)",
+        "Vèdoko (Cotonou)",
+        "Zogbo (Cotonou)"
+      ],
+      "nb_quartiers": 12,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 2000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "4ème": 2500,
+        "5ème": 2500
+      },
+      "annees_experience": 4,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 15,
+      "nom_complet": "TOKPANOU Daniel",
+      "prenom": "TOKPANOU",
+      "nom": "Daniel",
+      "email": "danielgwtokpanou@gmail.com",
+      "telephone": "+2290158270052",
+      "matieres": [
+        "Mathématiques",
+        "Pct",
+        "Résistance des matériaux"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "3ème",
+        "1ère Littéraire",
+        "1ère Scientifique",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "THIRD_PLACE",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Sinendé"
+      ],
+      "quartiers": [
+        "Niaro/Sinendé (Sinendé)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "TLE": 3500,
+        "1ERE": 3000,
+        "3EME": 2000
+      },
+      "annees_experience": 6,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 12,
+      "nom_complet": "DOUFARI Abdel Raquib",
+      "prenom": "DOUFARI",
+      "nom": "Abdel Raquib",
+      "email": "wiliraquib@gmail.com",
+      "telephone": "+2290194213935",
+      "matieres": [
+        "Pct"
+      ],
+      "classes_enseignees": [
+        "CI",
+        "CE2",
+        "CM1",
+        "CM2",
+        "6ème",
+        "1ère Littéraire",
+        "Tle Littéraire",
+        "2nde Scientifique",
+        "1ère Scientifique",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "5ème",
+        "4ème",
+        "3ème"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Hybride"
+      ],
+      "villes": [
+        "Kandi"
+      ],
+      "quartiers": [
+        "Kandi (Kandi)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 1000.0,
+      "tarifs_par_classe": {
+        "3ème": 1500,
+        "4ème": 1500,
+        "5ème": 1000
+      },
+      "annees_experience": 7,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 38,
+      "nom_complet": "Yémalin Julien Kpossou",
+      "prenom": "Yémalin",
+      "nom": "Julien Kpossou",
+      "email": "julienkpossou57@gmail.com",
+      "telephone": "+2290152228998",
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "2nde Scientifique"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "1ère Scientifique",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Agouako (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 25000.0,
+      "tarifs_par_classe": {
+        "3ème": 2500,
+        "Tle Scientifique": 3000,
+        "1ère Scientifique": 3000
+      },
+      "annees_experience": 3,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 17,
+      "nom_complet": "Mahougnon Wilfried AKOTONOU",
+      "prenom": "Mahougnon",
+      "nom": "Wilfried AKOTONOU",
+      "email": "mahougnonwilfriedakotonou@gmail.com",
+      "telephone": "+2290196564362",
+      "matieres": [
+        "Anglais"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "1ère Scientifique",
+        "2nde Technique"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "En ligne",
+        "Hybride",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)",
+        "Agori (Abomey-Calavi)",
+        "Akassato (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Tankpè (Abomey-Calavi)",
+        "Togba (Abomey-Calavi)",
+        "Zogbadjè (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 9,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 7000.0,
+      "tarifs_par_classe": {
+        "3ème": 5000,
+        "4ème": 3000,
+        "Tle Littéraire": 7000
+      },
+      "annees_experience": 10,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 81,
+      "nom_complet": "IDOHOU Adebayo",
+      "prenom": "IDOHOU",
+      "nom": "Adebayo",
+      "email": "jafi3fois@gmail.com",
+      "telephone": "+2290197371003",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "2nde Scientifique",
+        "4ème",
+        "5ème",
+        "6ème"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "Tle Scientifique",
+        "1ère Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Atrokpocodji (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cococodji (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)",
+        "Dèkoungbé (Abomey-Calavi)",
+        "Godomey Gare (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 6,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "Tle Scientifique": 3000,
+        "1ère Scientifique": 3000
+      },
+      "annees_experience": 20,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 57,
+      "nom_complet": "Karim Gouton",
+      "prenom": "Karim",
+      "nom": "Gouton",
+      "email": "goutonkarim@gmail.com",
+      "telephone": "+2290196791093",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "1ère Scientifique",
+        "Tle Littéraire"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "Tle Scientifique",
+        "2nde Scientifique"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Alègléta (Abomey-Calavi)",
+        "Atrokpocodji (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cococodji (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)",
+        "Fiyégnon (Abomey-Calavi)",
+        "Glo-Djigbé (Abomey-Calavi)",
+        "Godomey Gare (Abomey-Calavi)",
+        "Houèdonou (Abomey-Calavi)",
+        "Maria Gléta (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 12,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "Tle Scientifique": 3000,
+        "2nde Scientifique": 3000
+      },
+      "annees_experience": 11,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 33,
+      "nom_complet": "Aristide GBEYI",
+      "prenom": "Aristide",
+      "nom": "GBEYI",
+      "email": "mingnigbetoaristidegbeyi@gmail.com",
+      "telephone": "+2290162421256",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "3ème",
+        "2nde Littéraire",
+        "2nde Scientifique",
+        "1ère Littéraire",
+        "1ère Scientifique",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "6ème",
+        "5ème",
+        "4ème"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "THIRD_PLACE"
+      ],
+      "villes": [
+        "Porto-Novo"
+      ],
+      "quartiers": [
+        "Dowa (Porto-Novo)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "TLE": 5000,
+        "1ERE": 3000,
+        "2NDE": 3000,
+        "3EME": 3500,
+        "4EME": 3000,
+        "5EME": 3000,
+        "6EME": 3000
+      },
+      "annees_experience": 0,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 78,
+      "nom_complet": "HOUEYOKON G. Éloi",
+      "prenom": "HOUEYOKON",
+      "nom": "G. Éloi",
+      "email": "eloigbetonnougbo@gmail.com",
+      "telephone": "+2290159520742",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [
+        "CI",
+        "CP",
+        "CE1",
+        "CE2",
+        "CM1",
+        "CM2",
+        "6ème",
+        "2nde Littéraire",
+        "1ère Littéraire"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "En ligne"
+      ],
+      "villes": [
+        "Porto-Novo"
+      ],
+      "quartiers": [
+        "Tokpota-Porto-Novo (Porto-Novo)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2000.0,
+      "tarifs_par_classe": {
+        "3ème": 3000,
+        "4ème": 2000,
+        "Tle Littéraire": 3500
+      },
+      "annees_experience": 3,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 21,
+      "nom_complet": "AKONHOUNKPAN Monel Pharès",
+      "prenom": "AKONHOUNKPAN",
+      "nom": "Monel Pharès",
+      "email": "akres2009@gmail.com",
+      "telephone": "+2290167390482",
+      "matieres": [
+        "Alphabétisation",
+        "Art oratoire",
+        "Informatique"
+      ],
+      "classes_enseignees": [
+        "5ème",
+        "4ème",
+        "2nde Littéraire",
+        "2nde Scientifique",
+        "1ère Littéraire",
+        "1ère Scientifique"
+      ],
+      "classes_expertise": [
+        "6ème",
+        "3ème",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "En ligne",
+        "Hybride",
+        "THIRD_PLACE",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2000.0,
+      "tarifs_par_classe": {
+        "TLE": 4000,
+        "1ERE": 3000,
+        "2NDE": 3000,
+        "3EME": 3000,
+        "4EME": 3000,
+        "5EME": 2000,
+        "6EME": 2500
+      },
+      "annees_experience": 10,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 32,
+      "nom_complet": "GNANGA Fidèle",
+      "prenom": "GNANGA",
+      "nom": "Fidèle",
+      "email": "gnangaf@gmail.com",
+      "telephone": "+2290164657077",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "3ème",
+        "2nde Littéraire",
+        "2nde Scientifique",
+        "1ère Littéraire",
+        "1ère Scientifique",
+        "Tle Littéraire",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "6ème",
+        "5ème",
+        "4ème"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Akassato (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "Tle": 3000,
+        "1ere": 3000,
+        "2nde": 3000,
+        "3eme": 3000,
+        "4eme": 3000,
+        "5eme": 3000,
+        "6eme": 3000
+      },
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 9,
+      "nom_complet": "Rodolphe AHISSOU",
+      "prenom": "Rodolphe",
+      "nom": "AHISSOU",
+      "email": "ahissourodolphe7@gmail.com",
+      "telephone": "+2290191945721",
+      "matieres": [
+        "Mathématiques",
+        "Pct",
+        "Dessin technique"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "3ème",
+        "4ème",
+        "5ème"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "En ligne",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Agori (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 0.0,
+      "tarifs_par_classe": {},
+      "annees_experience": 0,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 36,
+      "nom_complet": "Victor DASSI",
+      "prenom": "Victor",
+      "nom": "DASSI",
+      "email": "dassichola@gmail.com",
+      "telephone": "+2290161679284",
+      "matieres": [
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "3ème",
+        "1ère Littéraire",
+        "1ère Scientifique"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "2nde Littéraire",
+        "2nde Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "Hybride"
+      ],
+      "villes": [
+        "Sèmè-Kpodji"
+      ],
+      "quartiers": [
+        "Agblangandan (Sèmè-Kpodji)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "4ème": 3000,
+        "2nde Littéraire": 3000,
+        "2nde Scientifique": 3000
+      },
+      "annees_experience": 7,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 55,
+      "nom_complet": "ELEKOUN Abdoul",
+      "prenom": "ELEKOUN",
+      "nom": "Abdoul",
+      "email": "ogniboa313@gmail.com",
+      "telephone": "+2290144978981",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [
+        "4ème",
+        "Tle Littéraire"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "1ère Scientifique"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "En ligne"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Akassato (Abomey-Calavi)",
+        "Arcon (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 4,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "3ème": 2500,
+        "1ère Scientifique": 3000
+      },
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 43,
+      "nom_complet": "LOUHA Mathias",
+      "prenom": "LOUHA",
+      "nom": "Mathias",
+      "email": "louhamathias73@gmail.com",
+      "telephone": "+2290197038988",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "1ère Littéraire",
+        "Tle Littéraire",
+        "5ème"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "2nde Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Akassato (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 2,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "3ème": 5000,
+        "4ème": 3000,
+        "2nde Littéraire": 4000
+      },
+      "annees_experience": 3,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 10,
+      "nom_complet": "Mamah chabi Jouvance",
+      "prenom": "Mamah",
+      "nom": "chabi Jouvance",
+      "email": "jouvancemamahchabi@gmail.com",
+      "telephone": "+2290144977136",
+      "matieres": [
+        "Anglais",
+        "Pct",
+        "Svt"
+      ],
+      "classes_enseignees": [
+        "3ème",
+        "2nde Scientifique",
+        "1ère Scientifique",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "6ème",
+        "5ème",
+        "4ème"
+      ],
+      "modes": [
+        "Chez l'élève"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Bidossessi (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "4ème": 2500,
+        "5ème": 2500,
+        "6ème": 2500
+      },
+      "annees_experience": 1,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 26,
+      "nom_complet": "Babylas Jean Francisco Serge DE SOUZA",
+      "prenom": "Babylas",
+      "nom": "Jean Francisco Serge DE SOUZA",
+      "email": "babylas25@gmail.com",
+      "telephone": "+2290197339727",
+      "matieres": [
+        "Anglais"
+      ],
+      "classes_enseignees": [],
+      "classes_expertise": [
+        "3ème",
+        "Tle Littéraire",
+        "Tle Scientifique",
+        "1ère Littéraire",
+        "1ère Scientifique"
+      ],
+      "modes": [
+        "Hybride"
+      ],
+      "villes": [
+        "Ouidah"
+      ],
+      "quartiers": [
+        "Ouidah (Ouidah)"
+      ],
+      "nb_quartiers": 1,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "TLE": 3000,
+        "1ere": 3000,
+        "3EME": 3000
+      },
+      "annees_experience": 20,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 82,
+      "nom_complet": "GNIMAGNON  sèmassa Laurencio Gilchrist",
+      "prenom": "GNIMAGNON",
+      "nom": " sèmassa Laurencio Gilchrist",
+      "email": "gilchrist192@gmail.com",
+      "telephone": "+2290195551682",
+      "matieres": [
+        "Français"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "4ème",
+        "1ère Littéraire",
+        "Tle Scientifique"
+      ],
+      "classes_expertise": [
+        "3ème",
+        "2nde Littéraire",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "En ligne",
+        "Petit groupe",
+        "En ligne"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)",
+        "Atrokpocodji (Abomey-Calavi)",
+        "Aïbatin (Cotonou)",
+        "Bidossessi (Abomey-Calavi)",
+        "Cité Houeyiho (Abomey-Calavi)",
+        "Cococodji (Abomey-Calavi)",
+        "Cocotomey (Abomey-Calavi)",
+        "Cotonou (Cotonou)",
+        "Dèkoungbé (Abomey-Calavi)",
+        "Fidjrossè (Cotonou)",
+        "Fiyégnon (Abomey-Calavi)",
+        "Godomey Gare (Abomey-Calavi)",
+        "Hêdomey (Abomey-Calavi)",
+        "Mérontin (Cotonou)",
+        "Tankpè (Abomey-Calavi)",
+        "Vodjè (Cotonou)",
+        "Womey / Abomey-Calavi (Abomey-Calavi)",
+        "Zogbadjè (Abomey-Calavi)",
+        "Zogbo (Cotonou)",
+        "Zone IITA (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 20,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 2500.0,
+      "tarifs_par_classe": {
+        "3ème": 2500,
+        "Tle Littéraire": 3500,
+        "2nde Littéraire": 2500
+      },
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 20,
+      "nom_complet": "DENADI Mawussi Véronique",
+      "prenom": "DENADI",
+      "nom": "Mawussi Véronique",
+      "email": "mawussiveroniquedenadi@gmail.com",
+      "telephone": "+2290195936112",
+      "matieres": [
+        "Anglais"
+      ],
+      "classes_enseignees": [
+        "6ème",
+        "5ème",
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "2nde Scientifique",
+        "Tle Scientifique",
+        "2nde Technique",
+        "1ère Technique",
+        "Tle Technique",
+        "1ère année CAP",
+        "1ère année BEP",
+        "2ème année BEP"
+      ],
+      "classes_expertise": [
+        "4ème",
+        "3ème",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "En ligne",
+        "THIRD_PLACE",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Agori (Abomey-Calavi)",
+        "Akassato (Abomey-Calavi)",
+        "Alègléta (Abomey-Calavi)",
+        "Arcon (Abomey-Calavi)",
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Hêvié (Abomey-Calavi)",
+        "Maria Gléta (Abomey-Calavi)",
+        "Tokan Abomey Calavi (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 9,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 1000.0,
+      "tarifs_par_classe": {
+        "3ème": 2000,
+        "4ème": 2000,
+        "Tle Littéraire": 3000
+      },
+      "annees_experience": 5,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 61,
+      "nom_complet": "Christ Ménadèle GBOHOUILI",
+      "prenom": "Christ",
+      "nom": "Ménadèle GBOHOUILI",
+      "email": "gbohouilichristestla@gmail.com",
+      "telephone": "+2290197528241",
+      "matieres": [
+        "Espagnol"
+      ],
+      "classes_enseignees": [
+        "4ème",
+        "2nde Littéraire",
+        "1ère Littéraire"
+      ],
+      "classes_expertise": [
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "Chez l'élève",
+        "Hybride",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Cotonou"
+      ],
+      "quartiers": [
+        "Agla (Cotonou)",
+        "Akpakpa (Cotonou)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Centre Godomey (Abomey-Calavi)",
+        "Cotonou (Cotonou)",
+        "Fidjrossè (Cotonou)",
+        "Suru Léré (Cotonou)",
+        "Togoudo (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 8,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "Tle Littéraire": 3000
+      },
+      "annees_experience": 1,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 1,
+      "nom_complet": "LALODE Géovanie Codjovi",
+      "prenom": "LALODE",
+      "nom": "Géovanie Codjovi",
+      "email": "teddywillis222@gmail.com",
+      "telephone": "+2290164608148",
+      "matieres": [
+        "Algèbre",
+        "Mathématiques"
+      ],
+      "classes_enseignees": [
+        "5ème",
+        "4ème",
+        "3ème",
+        "2nde Littéraire"
+      ],
+      "classes_expertise": [
+        "1ère Littéraire",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "Chez l'élève",
+        "En ligne",
+        "Hybride"
+      ],
+      "villes": [
+        "Abomey-Calavi",
+        "Porto-Novo"
+      ],
+      "quartiers": [
+        "Adogbèta (Porto-Novo)",
+        "Houèdonou (Abomey-Calavi)",
+        "Ouèdo (Abomey-Calavi)",
+        "Togba (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 4,
+      "essai_gratuit": false,
+      "tarif_horaire_base": 7000.0,
+      "tarifs_par_classe": {
+        "Tle Littéraire": 7000,
+        "1ère Littéraire": 7000
+      },
+      "annees_experience": 7,
+      "score_fiabilite": 9,
+      "note_initiale": 4.5,
+      "a_video": false
+    },
+    {
+      "id": 44,
+      "nom_complet": "LANKOUGBEDE Laris David Jesukpego",
+      "prenom": "LANKOUGBEDE",
+      "nom": "Laris David Jesukpego",
+      "email": "lankougbededavid@gmail.com",
+      "telephone": "+2290151781879",
+      "matieres": [
+        "Anglais"
+      ],
+      "classes_enseignees": [
+        "2nde Littéraire",
+        "1ère Littéraire",
+        "3ème"
+      ],
+      "classes_expertise": [
+        "6ème",
+        "5ème",
+        "Tle Littéraire"
+      ],
+      "modes": [
+        "À domicile (parent)",
+        "En ligne",
+        "Petit groupe"
+      ],
+      "villes": [
+        "Abomey-Calavi"
+      ],
+      "quartiers": [
+        "Bidossessi (Abomey-Calavi)",
+        "Calavi Kpota (Abomey-Calavi)",
+        "Tankpè (Abomey-Calavi)",
+        "Togba (Abomey-Calavi)"
+      ],
+      "nb_quartiers": 4,
+      "essai_gratuit": true,
+      "tarif_horaire_base": 3000.0,
+      "tarifs_par_classe": {
+        "5ème": 3000,
+        "6ème": 3000,
+        "Tle Littéraire": 3000
+      },
+      "annees_experience": 3,
+      "score_fiabilite": 0,
+      "note_initiale": 4.5,
+      "a_video": false
+    }
+  ],
+  "subjects": [
+    [
+      "Mathématiques",
+      10
+    ],
+    [
+      "Pct",
+      8
+    ],
+    [
+      "Svt",
+      7
+    ],
+    [
+      "Français",
+      6
+    ],
+    [
+      "Anglais",
+      6
+    ],
+    [
+      "Informatique",
+      2
+    ],
+    [
+      "Rédaction administrative",
+      1
+    ],
+    [
+      "Compte-rendu procès-verbal rapport",
+      1
+    ],
+    [
+      "Résistance des matériaux",
+      1
+    ],
+    [
+      "Alphabétisation",
+      1
+    ],
+    [
+      "Art oratoire",
+      1
+    ],
+    [
+      "Dessin technique",
+      1
+    ],
+    [
+      "Espagnol",
+      1
+    ],
+    [
+      "Algèbre",
+      1
+    ]
+  ],
+  "quartiers": [
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "ATTOTIN Lambert Abel",
+        "Moïse HOUNDAYI",
+        "Mahougnon Wilfried AKOTONOU",
+        "Karim Gouton",
+        "ELEKOUN Abdoul",
+        "Mamah chabi Jouvance",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist",
+        "DENADI Mawussi Véronique",
+        "LANKOUGBEDE Laris David Jesukpego"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Français",
+        "Informatique",
+        "Mathématiques",
+        "Pct",
+        "Rédaction administrative",
+        "Svt"
+      ],
+      "essai_gratuit_count": 5,
+      "quartier": "Bidossessi"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "ATTOTIN Lambert Abel",
+        "Moïse HOUNDAYI",
+        "Mahougnon Wilfried AKOTONOU",
+        "Karim Gouton",
+        "ELEKOUN Abdoul",
+        "DENADI Mawussi Véronique",
+        "Christ Ménadèle GBOHOUILI",
+        "LANKOUGBEDE Laris David Jesukpego"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Espagnol",
+        "Français",
+        "Informatique",
+        "Mathématiques",
+        "Pct",
+        "Rédaction administrative",
+        "Svt"
+      ],
+      "essai_gratuit_count": 4,
+      "quartier": "Calavi Kpota"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "ATTOTIN Lambert Abel",
+        "Moïse HOUNDAYI",
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "Mahougnon Wilfried AKOTONOU",
+        "IDOHOU Adebayo",
+        "Karim Gouton",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Espagnol",
+        "Informatique",
+        "Mathématiques",
+        "Pct",
+        "Rédaction administrative",
+        "Svt"
+      ],
+      "essai_gratuit_count": 3,
+      "quartier": "Centre Godomey"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "IDOHOU Adebayo",
+        "Karim Gouton",
+        "LOUHA Mathias",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Pct",
+        "Svt"
+      ],
+      "essai_gratuit_count": 4,
+      "quartier": "Cocotomey"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mahougnon Wilfried AKOTONOU",
+        "GNANGA Fidèle",
+        "ELEKOUN Abdoul",
+        "LOUHA Mathias",
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais",
+        "Français",
+        "Svt"
+      ],
+      "essai_gratuit_count": 3,
+      "quartier": "Akassato"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "IDOHOU Adebayo",
+        "Karim Gouton",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Pct",
+        "Svt"
+      ],
+      "essai_gratuit_count": 3,
+      "quartier": "Atrokpocodji"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "AMIKPEMI Coffi Artus Bismarck",
+        "ATTOTIN Lambert Abel",
+        "IDOHOU Adebayo",
+        "Karim Gouton",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Svt"
+      ],
+      "essai_gratuit_count": 4,
+      "quartier": "Cococodji"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "Moïse HOUNDAYI",
+        "Mahougnon Wilfried AKOTONOU",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist",
+        "LANKOUGBEDE Laris David Jesukpego"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Français",
+        "Informatique",
+        "Pct",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 3,
+      "quartier": "Tankpè"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "Moïse HOUNDAYI",
+        "Karim Gouton",
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais",
+        "Mathématiques",
+        "Pct",
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Alègléta"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "IDOHOU Adebayo",
+        "Karim Gouton",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Svt"
+      ],
+      "essai_gratuit_count": 3,
+      "quartier": "Godomey Gare"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mahougnon Wilfried AKOTONOU",
+        "Rodolphe AHISSOU",
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais",
+        "Dessin technique",
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Agori"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "ELEKOUN Abdoul",
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Français",
+        "Informatique",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Arcon"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "Moïse HOUNDAYI",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Compte-rendu procès-verbal rapport",
+        "Français",
+        "Informatique",
+        "Pct",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Cité Houeyiho"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "IDOHOU Adebayo",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Svt"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Dèkoungbé"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "ATTOTIN Lambert Abel",
+        "Karim Gouton",
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais",
+        "Mathématiques",
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Maria Gléta"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mahougnon Wilfried AKOTONOU",
+        "LALODE Géovanie Codjovi",
+        "LANKOUGBEDE Laris David Jesukpego"
+      ],
+      "matieres": [
+        "Algèbre",
+        "Anglais",
+        "Mathématiques"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Togba"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "Mahougnon Wilfried AKOTONOU",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Anglais",
+        "Compte-rendu procès-verbal rapport",
+        "Français",
+        "Informatique",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Zogbadjè"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Karim Gouton",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Svt"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Fiyégnon"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "AMIKPEMI Coffi Artus Bismarck",
+        "Karim Gouton"
+      ],
+      "matieres": [
+        "Français",
+        "Svt"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Glo-Djigbé"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Karim Gouton",
+        "LALODE Géovanie Codjovi"
+      ],
+      "matieres": [
+        "Algèbre",
+        "Mathématiques",
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Houèdonou"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Compte-rendu procès-verbal rapport",
+        "Espagnol",
+        "Informatique",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Togoudo"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Moïse HOUNDAYI",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Pct"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Womey / Abomey-Calavi"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Yémalin Julien Kpossou"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Agouako"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Hêdomey"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Hêvié"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "LALODE Géovanie Codjovi"
+      ],
+      "matieres": [
+        "Algèbre",
+        "Mathématiques"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Ouèdo"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "Moïse HOUNDAYI"
+      ],
+      "matieres": [
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Parana"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "DENADI Mawussi Véronique"
+      ],
+      "matieres": [
+        "Anglais"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Tokan Abomey Calavi"
+    },
+    {
+      "ville": "Abomey-Calavi",
+      "profs": [
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Zone IITA"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "ADJOVI Hermane",
+        "Mouhamadou ASSOUMA",
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "Mahougnon Wilfried AKOTONOU",
+        "AKONHOUNKPAN Monel Pharès",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Alphabétisation",
+        "Anglais",
+        "Art oratoire",
+        "Compte-rendu procès-verbal rapport",
+        "Espagnol",
+        "Français",
+        "Informatique",
+        "Mathématiques",
+        "Pct",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 4,
+      "quartier": "Agla"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Ricardo NOUDOFININ",
+        "SODOGBE Dylane Fred Oke Sètondji",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Espagnol",
+        "Français",
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Cotonou"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Crédo PASSA",
+        "KPLOKE Anselme"
+      ],
+      "matieres": [
+        "Anglais",
+        "Français",
+        "Mathématiques"
+      ],
+      "essai_gratuit_count": 2,
+      "quartier": "Abokicodji"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "SODOGBE Dylane Fred Oke Sètondji",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Espagnol",
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Akpakpa"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "GNIMAGNON  sèmassa Laurencio Gilchrist",
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Espagnol",
+        "Français"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Fidjrossè"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Mouhamadou ASSOUMA",
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Compte-rendu procès-verbal rapport",
+        "Informatique",
+        "Mathématiques",
+        "Pct",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Fifadji"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Mérontin"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Moïse HOUNDAYI",
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Sainte Rita"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god",
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français",
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Zogbo"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "SODOGBE Dylane Fred Oke Sètondji"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Akpakpa (Centre)"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "SODOGBE Dylane Fred Oke Sètondji"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Avotrou"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "SODOGBE Dylane Fred Oke Sètondji"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Ayélawadjè"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Aïbatin"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Aïdjèdo"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "SODOGBE Dylane Fred Oke Sètondji"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Dantokpa"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Mouhamadou ASSOUMA"
+      ],
+      "matieres": [
+        "Compte-rendu procès-verbal rapport",
+        "Informatique",
+        "Rédaction administrative"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Gbégamey"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Haie Vive"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Sikècodji"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "Christ Ménadèle GBOHOUILI"
+      ],
+      "matieres": [
+        "Espagnol"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Suru Léré"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "GNIMAGNON  sèmassa Laurencio Gilchrist"
+      ],
+      "matieres": [
+        "Français"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Vodjè"
+    },
+    {
+      "ville": "Cotonou",
+      "profs": [
+        "HAZOUME Sèdo Lerocher Thank-god"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Vèdoko"
+    },
+    {
+      "ville": "Kandi",
+      "profs": [
+        "DOUFARI Abdel Raquib"
+      ],
+      "matieres": [
+        "Pct"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Kandi"
+    },
+    {
+      "ville": "Ouidah",
+      "profs": [
+        "Babylas Jean Francisco Serge DE SOUZA"
+      ],
+      "matieres": [
+        "Anglais"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Ouidah"
+    },
+    {
+      "ville": "Porto-Novo",
+      "profs": [
+        "HOUETONDJI BRUNEL PASCASIE LOKONON",
+        "HOUEYOKON G. Éloi"
+      ],
+      "matieres": [
+        "Français",
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Tokpota-Porto-Novo"
+    },
+    {
+      "ville": "Porto-Novo",
+      "profs": [
+        "LALODE Géovanie Codjovi"
+      ],
+      "matieres": [
+        "Algèbre",
+        "Mathématiques"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Adogbèta"
+    },
+    {
+      "ville": "Porto-Novo",
+      "profs": [
+        "Aristide GBEYI"
+      ],
+      "matieres": [
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Dowa"
+    },
+    {
+      "ville": "Sinendé",
+      "profs": [
+        "TOKPANOU Daniel"
+      ],
+      "matieres": [
+        "Mathématiques",
+        "Pct",
+        "Résistance des matériaux"
+      ],
+      "essai_gratuit_count": 0,
+      "quartier": "Niaro/Sinendé"
+    },
+    {
+      "ville": "Sèmè-Kpodji",
+      "profs": [
+        "Victor DASSI"
+      ],
+      "matieres": [
+        "Svt"
+      ],
+      "essai_gratuit_count": 1,
+      "quartier": "Agblangandan"
+    }
+  ],
+  "classes": [
+    "Primaire",
+    "6ème",
+    "5ème",
+    "4ème",
+    "3ème",
+    "2nde Littéraire",
+    "2nde Scientifique",
+    "1ère Littéraire",
+    "1ère Scientifique",
+    "Tle Littéraire",
+    "Tle Scientifique"
+  ]
+}
