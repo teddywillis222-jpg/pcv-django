@@ -337,26 +337,62 @@
                 <!-- Champ masqué pour l'envoi de documents (PDF, Word, Excel, etc., max 10 Mo) -->
                 <input type="file" id="docInput" hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.odt,.csv" multiple>
 
+                <!-- Tooltip Incitation Pass Access+ (au clic sur icônes multimédia verrouillées) -->
+                <div id="accessPlusTooltip" class="access-plus-tooltip" style="display: none;" role="tooltip">
+                    <div class="apt-content">
+                        <span class="apt-icon" id="aptIcon">✨</span>
+                        <div class="apt-text-wrapper">
+                            <span class="apt-message" id="aptMessage"></span>
+                            <a href="{% url 'explication_access_plus' %}" class="apt-cta">Découvrir Access+</a>
+                        </div>
+                        <button type="button" class="apt-close-btn" aria-label="Fermer" onclick="closeAccessPlusTooltip(event)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="apt-arrow" id="aptArrow"></div>
+                </div>
+
                 <!-- Bouton Document / Trombone (max 10 Mo) -->
+                {% if can_upload_media %}
                 <button type="button" class="c-action-media-btn" id="docBtn" aria-label="Joindre un fichier" title="Joindre un document (max 10 Mo)" onclick="document.getElementById('docInput').click();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                     </svg>
                 </button>
+                {% else %}
+                <button type="button" class="c-action-media-btn is-locked" id="docBtn" aria-label="Joindre un fichier (Pass Access+)" title="Réservé au Pass Access+" data-locked="true" data-type="document" onclick="showAccessPlusTooltip('document', this);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </button>
+                {% endif %}
                 
                 <!-- Bouton Photo (images uniquement) -->
+                {% if can_upload_media %}
                 <button type="button" class="c-action-media-btn" id="photoBtn" aria-label="Envoyer une photo" title="Envoyer une photo" onclick="document.getElementById('fileInput').click();">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                         <circle cx="12" cy="13" r="4"/>
                     </svg>
                 </button>
+                {% else %}
+                <button type="button" class="c-action-media-btn is-locked" id="photoBtn" aria-label="Envoyer une photo (Pass Access+)" title="Réservé au Pass Access+" data-locked="true" data-type="image" onclick="showAccessPlusTooltip('image', this);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </button>
+                {% endif %}
 
                 <div class="c-input-wrapper" id="inputWrapper">
                     <textarea class="c-input-field" id="messageInput" rows="1" placeholder="Écrivez un message…"></textarea>
                 </div>
 
                 <!-- Bouton Audio (note vocale) -->
+                {% if can_upload_media %}
                 <button type="button" class="c-action-media-btn" id="audioBtn" aria-label="Message vocal" title="Enregistrer un vocal">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
@@ -365,6 +401,16 @@
                         <line x1="8" y1="23" x2="16" y2="23"/>
                     </svg>
                 </button>
+                {% else %}
+                <button type="button" class="c-action-media-btn is-locked" id="audioBtn" aria-label="Message vocal (Pass Access+)" title="Réservé au Pass Access+" data-locked="true" data-type="audio" onclick="showAccessPlusTooltip('audio', this);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                </button>
+                {% endif %}
 
                 <button type="submit" class="c-send-btn" aria-label="Envoyer" id="sendBtn">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform:rotate(45deg);margin-top:-2px;margin-left:-2px;">
@@ -566,7 +612,9 @@
         csrfToken: "{{ csrf_token }}",
         lastMsgId: parseInt("{% if messages %}{% with m=messages|last %}{{ m.id }}{% endwith %}{% else %}0{% endif %}") || 0,
         isBlocked: {{ is_blocked|yesno:"true,false" }},
-        isEligibleToFinalize: {{ is_eligible_to_finalize|yesno:"true,false" }}
+        isEligibleToFinalize: {{ is_eligible_to_finalize|yesno:"true,false" }},
+        canUploadMedia: {{ can_upload_media|yesno:"true,false" }},
+        accessPlusUrl: "{% url 'explication_access_plus' %}" 
     };
 
     function updateLayout() {

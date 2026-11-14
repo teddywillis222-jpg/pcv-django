@@ -315,6 +315,147 @@
     transform: scale(0.92);
 }
 
+/* --- ICÔNES MÉDIA VERROUILLÉES (Réservées Pass Access+) --- */
+.c-action-media-btn.is-locked {
+    opacity: 0.38;
+    filter: grayscale(1);
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.2s ease, filter 0.2s ease, transform 0.15s ease;
+}
+
+.c-action-media-btn.is-locked:hover {
+    opacity: 0.72;
+    filter: grayscale(0.3);
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.c-action-media-btn.is-locked:active {
+    transform: scale(0.92);
+}
+
+/* --- TOOLTIP ÉLÉGANT ACCESS+ --- */
+.access-plus-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 10px;
+    right: 10px;
+    max-width: 440px;
+    margin: 0 auto;
+    z-index: 1200;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.45), 0 4px 14px -2px rgba(22, 163, 74, 0.25);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    animation: aptFadeInUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes aptFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.apt-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.apt-icon {
+    font-size: 1.35rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.apt-text-wrapper {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.apt-message {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: #f8fafc;
+    font-weight: 500;
+}
+
+.apt-cta {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(22, 163, 74, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.apt-cta:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.5);
+    color: #ffffff !important;
+}
+
+.apt-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: #94a3b8;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background 0.15s, color 0.15s;
+    margin-top: -2px;
+    margin-right: -2px;
+}
+
+.apt-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Petite flèche indicatrice sous le tooltip */
+.apt-arrow {
+    position: absolute;
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    background: #1e293b;
+    border-right: 1px solid rgba(34, 197, 94, 0.4);
+    border-bottom: 1px solid rgba(34, 197, 94, 0.4);
+    transform: rotate(45deg);
+    left: 28px;
+    transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .c-input-wrapper {
     flex: 1;
     background: #f1f5f9;

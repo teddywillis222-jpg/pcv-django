@@ -3,6 +3,74 @@
  * Messagerie privée : envoi, polling, UI — Version refonte complète
  */
 
+// ── Tooltip Incitation Pass Access+ ──────────────────────────
+let aptTimeout = null;
+
+const aptMessages = {
+    image: {
+        icon: '🖼️',
+        text: 'Envoyez des photos en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.'
+    },
+    audio: {
+        icon: '🎙️',
+        text: 'Envoyez des notes vocales en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.'
+    },
+    document: {
+        icon: '📎',
+        text: 'Envoyez des fichiers et documents en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.'
+    }
+};
+
+window.showAccessPlusTooltip = function(type, targetEl) {
+    const tooltip = document.getElementById('accessPlusTooltip');
+    const msgEl = document.getElementById('aptMessage');
+    const iconEl = document.getElementById('aptIcon');
+    const arrowEl = document.getElementById('aptArrow');
+
+    if (!tooltip || !msgEl) return;
+
+    const info = aptMessages[type] || aptMessages.image;
+    msgEl.textContent = info.text;
+    if (iconEl) iconEl.textContent = info.icon;
+
+    tooltip.style.display = 'block';
+
+    if (arrowEl && targetEl) {
+        const btnRect = targetEl.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const centerBtn = (btnRect.left + btnRect.width / 2) - tooltipRect.left;
+        const clampedLeft = Math.max(16, Math.min(tooltipRect.width - 24, centerBtn - 6));
+        arrowEl.style.left = clampedLeft + 'px';
+    }
+
+    if (aptTimeout) clearTimeout(aptTimeout);
+    aptTimeout = setTimeout(() => {
+        window.closeAccessPlusTooltip();
+    }, 7000);
+};
+
+window.closeAccessPlusTooltip = function(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const tooltip = document.getElementById('accessPlusTooltip');
+    if (tooltip) tooltip.style.display = 'none';
+    if (aptTimeout) {
+        clearTimeout(aptTimeout);
+        aptTimeout = null;
+    }
+};
+
+document.addEventListener('click', (e) => {
+    const tooltip = document.getElementById('accessPlusTooltip');
+    if (tooltip && tooltip.style.display !== 'none') {
+        if (!tooltip.contains(e.target) && !e.target.closest('.c-action-media-btn.is-locked')) {
+            window.closeAccessPlusTooltip();
+        }
+    }
+});
+
 // ── Utilitaires Audio & Lightbox ─────────────────────────────
 function formatAudioTime(sec) {
     if (!sec || isNaN(sec) || !isFinite(sec)) return "0:00";
@@ -802,7 +870,35 @@ document.addEventListener('DOMContentLoaded', function () {
     if (audioBtn) {
         audioBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            if (audioBtn.dataset.locked === 'true' || audioBtn.classList.contains('is-locked')) {
+                if (window.showAccessPlusTooltip) {
+                    window.showAccessPlusTooltip('audio', audioBtn);
+                }
+                return;
+            }
             startAudioRecording();
+        });
+    }
+
+    const photoBtnEl = document.getElementById('photoBtn');
+    if (photoBtnEl && (photoBtnEl.dataset.locked === 'true' || photoBtnEl.classList.contains('is-locked'))) {
+        photoBtnEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.showAccessPlusTooltip) {
+                window.showAccessPlusTooltip('image', photoBtnEl);
+            }
+        });
+    }
+
+    const docBtnEl = document.getElementById('docBtn');
+    if (docBtnEl && (docBtnEl.dataset.locked === 'true' || docBtnEl.classList.contains('is-locked'))) {
+        docBtnEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.showAccessPlusTooltip) {
+                window.showAccessPlusTooltip('document', docBtnEl);
+            }
         });
     }
 

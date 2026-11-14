@@ -4790,6 +4790,8 @@ def conversation_detail(request, conversation_id):
     from .models import Profile
 
     is_user_prof = (user_role == Profile.ROLE_PROF) or (conversation.professeur and request.user == conversation.professeur.user)
+    is_special_user = bool(request.user.email and request.user.email.strip().lower() == 'c0645546@gmail.com')
+    can_upload_media = bool(is_user_prof or is_special_user or is_premium)
 
 
 
@@ -4962,6 +4964,8 @@ def conversation_detail(request, conversation_id):
         "is_user_prof": is_user_prof,
 
         "is_premium": is_premium,
+        "is_special_user": is_special_user,
+        "can_upload_media": can_upload_media,
 
         "ROLE_PROF": Role.ROLE_PROF,
 
@@ -5071,6 +5075,17 @@ def api_send_message(request, conversation_id):
             return JsonResponse({'error': 'Destinataire introuvable (profil incomplet ou supprimé).'}, status=400)
 
         from .choices import MessageType
+
+        # Vérification des autorisations d'envoi de médias (Pass Access+ ou Prof ou spécial)
+        is_user_prof = (user_role == 'PROF') or (hasattr(request.user, 'profile') and request.user.profile.role == 'PROF') or (conversation.professeur and request.user == conversation.professeur.user) or hasattr(request.user, 'teacher_profile')
+        is_special_user = bool(request.user.email and request.user.email.strip().lower() == 'c0645546@gmail.com')
+        is_premium = hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM
+        can_upload_media = bool(is_user_prof or is_special_user or is_premium)
+
+        if fichiers and not can_upload_media:
+            return JsonResponse({
+                'error': "L'envoi de photos, fichiers et notes vocales est réservé aux abonnés du Pass Access+ (2 500 F/mois)."
+            }, status=403)
 
         # Limite à 5 fichiers maximum par envoi et 10 Mo max par fichier
         fichiers = fichiers[:5]
