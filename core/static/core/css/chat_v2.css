@@ -908,7 +908,8 @@
 /* Suppression de l'arrière-plan vert/gris pour les médias : confondu à la page blanche */
 .msg-bubble.has-media,
 .msg-bubble:has(.msg-image-wrap),
-.msg-bubble:has(.chat-audio-player) {
+.msg-bubble:has(.chat-audio-player),
+.msg-bubble:has(.msg-file-card) {
     background: #ffffff !important;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
@@ -917,8 +918,7 @@
 
 /* Photo seule sans texte : aucun fond ni encadrement de bulle, posée directement sur la page */
 .msg-bubble.has-image.media-only,
-.msg-bubble.media-only:has(.msg-image-wrap),
-.msg-bubble:has(.msg-image-wrap):not(:has(.msg-content)) {
+.msg-bubble.media-only:has(.msg-image-wrap) {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -926,8 +926,7 @@
 }
 
 .msg-bubble.has-image.media-only .msg-image-wrap,
-.msg-bubble.media-only:has(.msg-image-wrap) .msg-image-wrap,
-.msg-bubble:has(.msg-image-wrap):not(:has(.msg-content)) .msg-image-wrap {
+.msg-bubble.media-only:has(.msg-image-wrap) .msg-image-wrap {
     margin-bottom: 0 !important;
 }
 
@@ -1389,6 +1388,253 @@
 }
 
 .photo-preview-add-more:hover {
+    border-color: #16a34a;
+    color: #16a34a;
+    background: #f0fdf4;
+}
+
+/* ========================================
+   DOCUMENTS & FICHIERS JOINTS
+======================================== */
+.msg-file-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 0.35rem;
+    text-decoration: none !important;
+    color: var(--c-text);
+    transition: background 0.15s ease, border-color 0.15s ease;
+    min-width: 200px;
+    max-width: 290px;
+}
+
+.msg-file-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.msg-file-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.msg-file-icon.pdf {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.msg-file-icon.word {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.msg-file-icon.excel {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.msg-file-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.msg-file-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.msg-file-meta {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-top: 1px;
+}
+
+.msg-file-download-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.msg-file-card:hover .msg-file-download-btn {
+    color: var(--c-accent);
+    transform: translateY(1px);
+}
+
+.msg-bubble.has-document,
+.msg-bubble:has(.msg-file-card) {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    color: var(--c-text) !important;
+    padding: 0.55rem 0.65rem 0.35rem 0.65rem !important;
+}
+
+.msg-bubble.has-document.sent,
+.msg-bubble.sent:has(.msg-file-card) {
+    border-bottom-right-radius: 4px;
+}
+
+.msg-bubble.has-document.received,
+.msg-bubble.received:has(.msg-file-card) {
+    border-bottom-left-radius: 4px;
+}
+
+.msg-bubble.has-document .msg-time,
+.msg-bubble:has(.msg-file-card) .msg-time {
+    color: #64748b !important;
+    font-size: 0.68rem;
+    font-weight: 500;
+}
+
+.msg-bubble.has-document.sent .msg-tick,
+.msg-bubble.sent:has(.msg-file-card) .msg-tick {
+    stroke: #9ca3af !important;
+}
+
+.msg-bubble.has-document.sent .msg-tick.read,
+.msg-bubble.sent:has(.msg-file-card) .msg-tick.read {
+    stroke: #3b82f6 !important;
+}
+
+/* Prévisualisation des documents avant envoi */
+.doc-preview-list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+}
+
+.doc-preview-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    flex-shrink: 0;
+    max-width: 190px;
+}
+
+.doc-preview-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.doc-preview-icon.pdf {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.doc-preview-icon.word {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.doc-preview-icon.excel {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.doc-preview-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-preview-name {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.doc-preview-size {
+    font-size: 0.68rem;
+    color: #64748b;
+}
+
+.doc-preview-remove {
+    background: rgba(15, 23, 42, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 0;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+
+.doc-preview-remove:hover {
+    background: #ef4444;
+}
+
+.doc-preview-add-more {
+    height: 42px;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.doc-preview-add-more:hover {
     border-color: #16a34a;
     color: #16a34a;
     background: #f0fdf4;

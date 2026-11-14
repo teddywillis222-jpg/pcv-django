@@ -5055,8 +5055,16 @@ def api_send_message(request, conversation_id):
 
         from .choices import MessageType
 
-        # Limite à 5 fichiers maximum par envoi
+        # Limite à 5 fichiers maximum par envoi et 10 Mo max par fichier
         fichiers = fichiers[:5]
+        MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 Mo
+        for f_check in fichiers:
+            if f_check.size > MAX_FILE_SIZE:
+                taille_mo = round(f_check.size / (1024 * 1024), 1)
+                return JsonResponse({
+                    'error': f"Le fichier « {f_check.name} » ({taille_mo} Mo) dépasse la limite autorisée de 10 Mo."
+                }, status=400)
+
         created_messages = []
 
         if fichiers:
@@ -5091,9 +5099,9 @@ def api_send_message(request, conversation_id):
 
             last_msg = created_messages[-1]
             if len(fichiers) > 1:
-                conv_preview = f"📷 {len(fichiers)} photos"
-                if texte:
-                    conv_preview += f" : {texte}"
+                has_docs = any(not (getattr(f, 'content_type', '').startswith('image/') or (f.name or '').lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif'))) for f in fichiers)
+                badge = f"📁 {len(fichiers)} fichiers" if has_docs else f"📷 {len(fichiers)} photos"
+                conv_preview = f"{badge} : {texte}" if texte else badge
             else:
                 conv_preview = f"{prefix} {texte}" if texte else prefix
 

@@ -253,7 +253,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const input        = document.getElementById('messageInput');
     const chatForm     = document.getElementById('chatForm');
     const fileInput    = document.getElementById('fileInput');
+    const docInput     = document.getElementById('docInput');
+    const docBtn       = document.getElementById('docBtn');
     const sendErrorBox = document.getElementById('chatSendError');
+    function formatFileSize(bytes) {
+        if (!bytes || isNaN(bytes)) return '';
+        if (bytes < 1024) return bytes + ' octets';
+        if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
+    }
+
     const sendErrorTxt = document.getElementById('chatSendErrorText');
     const retryBtn     = document.getElementById('chatRetryBtn');
     const scrollBtn    = document.getElementById('scrollBottomBtn');
@@ -416,20 +425,144 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // ── Gestion de la sélection multiple de documents (max 5, max 10 Mo) ──
+    let selectedDocs = [];
+
+    window.clearDocSelection = function() {
+        selectedDocs = [];
+        const bar = document.getElementById('docPreviewBar');
+        if (bar) bar.style.display = 'none';
+        if (docInput) docInput.value = '';
+        const list = document.getElementById('docPreviewList');
+        if (list) list.innerHTML = '';
+    };
+
+    window.removeSelectedDoc = function(idx) {
+        if (idx >= 0 && idx < selectedDocs.length) {
+            selectedDocs.splice(idx, 1);
+            if (selectedDocs.length === 0) {
+                clearDocSelection();
+            } else {
+                renderDocPreviews();
+            }
+        }
+    };
+
+    function renderDocPreviews() {
+        const bar = document.getElementById('docPreviewBar');
+        const list = document.getElementById('docPreviewList');
+        const countEl = document.getElementById('docPreviewCount');
+        if (!bar || !list) return;
+
+        if (selectedDocs.length === 0) {
+            bar.style.display = 'none';
+            list.innerHTML = '';
+            return;
+        }
+
+        bar.style.display = 'block';
+        if (countEl) countEl.textContent = `Documents sélectionnés (${selectedDocs.length}/5)`;
+        list.innerHTML = '';
+
+        selectedDocs.forEach((file, index) => {
+            const item = document.createElement('div');
+            item.className = 'doc-preview-item';
+
+            const ext = (file.name || '').split('.').pop().toLowerCase();
+            let iconClass = '';
+            if (ext === 'pdf') iconClass = 'pdf';
+            else if (['doc', 'docx', 'odt'].includes(ext)) iconClass = 'word';
+            else if (['xls', 'xlsx', 'csv'].includes(ext)) iconClass = 'excel';
+
+            const icon = document.createElement('div');
+            icon.className = `doc-preview-icon ${iconClass}`;
+            icon.textContent = ext.substring(0, 4) || 'DOC';
+
+            const details = document.createElement('div');
+            details.className = 'doc-preview-details';
+            const name = document.createElement('span');
+            name.className = 'doc-preview-name';
+            name.textContent = file.name;
+            const size = document.createElement('span');
+            size.className = 'doc-preview-size';
+            size.textContent = formatFileSize(file.size);
+            details.appendChild(name);
+            details.appendChild(size);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'doc-preview-remove';
+            removeBtn.innerHTML = '×';
+            removeBtn.title = 'Retirer ce document';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                removeSelectedDoc(index);
+            };
+
+            item.appendChild(icon);
+            item.appendChild(details);
+            item.appendChild(removeBtn);
+            list.appendChild(item);
+        });
+
+        if (selectedDocs.length < 5) {
+            const addMoreBtn = document.createElement('button');
+            addMoreBtn.type = 'button';
+            addMoreBtn.className = 'doc-preview-add-more';
+            addMoreBtn.innerHTML = '+ Ajouter';
+            addMoreBtn.title = 'Ajouter d\'autres documents (max 5)';
+            addMoreBtn.onclick = () => {
+                if (docInput) docInput.click();
+            };
+            list.appendChild(addMoreBtn);
+        }
+    }
+
+    if (docInput) {
+        docInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                const MAX_DOC_SIZE = 10 * 1024 * 1024; // 10 Mo
+                let oversized = [];
+                Array.from(this.files).forEach(f => {
+                    if (f.size > MAX_DOC_SIZE) {
+                        oversized.push(`« ${f.name} » (${(f.size / (1024*1024)).toFixed(1)} Mo)`);
+                    } else if (selectedDocs.length < 5) {
+                        const exists = selectedDocs.some(d => d.name === f.name && d.size === f.size);
+                        if (!exists) selectedDocs.push(f);
+                    }
+                });
+
+                if (oversized.length > 0) {
+                    alert("Limite de taille dépassée (max 10 Mo par fichier) :\n" + oversized.join('\n'));
+                }
+                if (this.files.length > 5 || selectedDocs.length >= 5) {
+                    if (this.files.length > 5) {
+                        alert("Vous ne pouvez sélectionner que 5 documents maximum par envoi.");
+                    }
+                }
+
+                renderDocPreviews();
+                if (input) input.focus();
+                docInput.value = '';
+            }
+        });
+    }
+
     // ── Envoi de message ─────────────────────────────────────
     async function submitMessage(payload = null) {
         if (!chatForm || !input) return;
         const text = payload ? payload.text : input.value.trim();
         const singleFile = payload ? payload.file : null;
-        const photosToSend = (payload && payload.files) ? payload.files : (singleFile ? [singleFile] : [...selectedPhotos]);
+        const photosToSend = (payload && payload.files) ? payload.files : (singleFile ? [singleFile] : [...selectedPhotos, ...selectedDocs]);
 
         if (!text && photosToSend.length === 0) return;
 
         const sendBtn = document.getElementById('sendBtn') || chatForm.querySelector('.btn-send');
         if (sendBtn) sendBtn.disabled = true;
 
-        // Vider la sélection photo et masquer la prévisualisation immédiatement
+        // Vider la sélection photo et document et masquer les prévisualisations immédiatement
         clearPhotoSelection();
+        clearDocSelection();
 
         // Vider l'input texte immédiatement (UX optimiste)
         if (!payload) {
@@ -723,12 +856,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     // (les anciens audios uploadés avec resource_type='image' ont /image/ dans leur URL)
                     const isAud = msg.fichier_url && (msg.type_message === 'AUDIO' || /\.(webm|ogg|mp3|m4a|wav|aac)(\?|$)/i.test(msg.fichier_url));
                     const isImg = !isAud && msg.fichier_url && (msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url));
+                    const isDoc = !isAud && !isImg && msg.fichier_url;
 
                     let bubbleClasses = 'msg-bubble received';
                     if (msg.fichier_url) {
                         bubbleClasses += ' has-media';
                         if (isImg) bubbleClasses += ' has-image';
                         if (isAud) bubbleClasses += ' has-audio';
+                        if (isDoc) bubbleClasses += ' has-document';
                         if (!msg.text) bubbleClasses += ' media-only';
                     }
 
@@ -760,10 +895,25 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <audio src="${msg.fichier_url}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
                             </div>`;
                         } else {
-                            html += `<div class="msg-file">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                                <a href="${msg.fichier_url}" target="_blank" style="color:inherit; text-decoration:none;">${msg.fichier_nom || 'Fichier joint'}</a>
-                            </div>`;
+                            const fname = msg.fichier_nom || 'Document joint';
+                            const ext = fname.split('.').pop().toLowerCase();
+                            let iconClass = '';
+                            if (ext === 'pdf') iconClass = 'pdf';
+                            else if (['doc', 'docx', 'odt'].includes(ext)) iconClass = 'word';
+                            else if (['xls', 'xlsx', 'csv'].includes(ext)) iconClass = 'excel';
+
+                            html += `<a href="${msg.fichier_url}" target="_blank" download class="msg-file-card">
+                                <div class="msg-file-icon ${iconClass}">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                </div>
+                                <div class="msg-file-info">
+                                    <span class="msg-file-name">${escapeHtml(fname)}</span>
+                                    <span class="msg-file-meta">Document joint</span>
+                                </div>
+                                <div class="msg-file-download-btn" title="Télécharger">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                </div>
+                            </a>`;
                         }
                     }
                     if (msg.is_locked) {
@@ -901,13 +1051,16 @@ function appendSentBubble(id, text, file, time, durationSec) {
 
     let isImg = false;
     let isAud = false;
+    let isDoc = false;
     let bubbleClasses = 'msg-bubble sent';
     if (file) {
         bubbleClasses += ' has-media';
         isImg = file.type && file.type.startsWith('image/');
         isAud = (file.type && file.type.startsWith('audio/')) || /\.(webm|ogg|mp3|m4a|wav|aac)$/i.test(file.name);
+        isDoc = !isImg && !isAud;
         if (isImg) bubbleClasses += ' has-image';
         if (isAud) bubbleClasses += ' has-audio';
+        if (isDoc) bubbleClasses += ' has-document';
         if (!text) bubbleClasses += ' media-only';
     }
 
@@ -947,9 +1100,21 @@ function appendSentBubble(id, text, file, time, durationSec) {
                 <audio src="${blobUrl}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
             </div>`;
         } else {
-            html += `<div class="msg-file">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                ${escapeHtml(file.name)}
+            const ext = (file.name || '').split('.').pop().toLowerCase();
+            let iconClass = '';
+            if (ext === 'pdf') iconClass = 'pdf';
+            else if (['doc', 'docx', 'odt'].includes(ext)) iconClass = 'word';
+            else if (['xls', 'xlsx', 'csv'].includes(ext)) iconClass = 'excel';
+            const sizeStr = formatFileSize(file.size);
+
+            html += `<div class="msg-file-card">
+                <div class="msg-file-icon ${iconClass}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div class="msg-file-info">
+                    <span class="msg-file-name">${escapeHtml(file.name)}</span>
+                    <span class="msg-file-meta">${sizeStr ? sizeStr + ' • ' : ''}Document</span>
+                </div>
             </div>`;
         }
     }
