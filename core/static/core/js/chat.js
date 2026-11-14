@@ -3,6 +3,176 @@
  * Messagerie privée : envoi, polling, UI — Version refonte complète
  */
 
+// ── Utilitaires Audio & Lightbox ─────────────────────────────
+function formatAudioTime(sec) {
+    if (!sec || isNaN(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+window.initAudioDuration = function(audio) {
+    if (!audio) return;
+    const player = audio.closest('.chat-audio-player');
+    if (!player) return;
+    const durEl = player.querySelector('.audio-duration');
+    if (durEl && audio.duration && !isNaN(audio.duration) && audio.duration !== Infinity) {
+        durEl.textContent = formatAudioTime(audio.duration);
+    }
+};
+
+window.toggleAudio = function(btn) {
+    const player = btn.closest('.chat-audio-player');
+    if (!player) return;
+    const audio = player.querySelector('audio');
+    if (!audio) return;
+
+    const playIcon = btn.querySelector('.icon-play');
+    const pauseIcon = btn.querySelector('.icon-pause');
+
+    if (audio.paused) {
+        // Stopper tous les autres audios qui tournent
+        document.querySelectorAll('.chat-audio-player audio').forEach(a => {
+            if (a !== audio && !a.paused) {
+                a.pause();
+                const otherBtn = a.closest('.chat-audio-player')?.querySelector('.audio-play-btn');
+                if (otherBtn) {
+                    const p = otherBtn.querySelector('.icon-play');
+                    const pa = otherBtn.querySelector('.icon-pause');
+                    if (p) p.style.display = 'block';
+                    if (pa) pa.style.display = 'none';
+                }
+            }
+        });
+
+        audio.play().then(() => {
+            if (playIcon) playIcon.style.display = 'none';
+            if (pauseIcon) pauseIcon.style.display = 'block';
+        }).catch(e => console.error('[Audio] Erreur lecture:', e));
+    } else {
+        audio.pause();
+        if (playIcon) playIcon.style.display = 'block';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+    }
+};
+
+window.updateAudioProgress = function(audio) {
+    const player = audio.closest('.chat-audio-player');
+    if (!player) return;
+    const prog = player.querySelector('.audio-progress');
+    const durEl = player.querySelector('.audio-duration');
+    if (audio.duration && !isNaN(audio.duration)) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        if (prog) prog.style.width = pct + '%';
+        if (durEl) {
+            durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(audio.duration)}`;
+        }
+    }
+};
+
+window.onAudioEnded = function(audio) {
+    const player = audio.closest('.chat-audio-player');
+    if (!player) return;
+    const prog = player.querySelector('.audio-progress');
+    const durEl = player.querySelector('.audio-duration');
+    const btn = player.querySelector('.audio-play-btn');
+    if (prog) prog.style.width = '0%';
+    if (durEl && audio.duration) durEl.textContent = formatAudioTime(audio.duration);
+    if (btn) {
+        const playIcon = btn.querySelector('.icon-play');
+        const pauseIcon = btn.querySelector('.icon-pause');
+        if (playIcon) playIcon.style.display = 'block';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+    }
+};
+
+window.seekAudio = function(e, bar) {
+    const player = bar.closest('.chat-audio-player');
+    if (!player) return;
+    const audio = player.querySelector('audio');
+    if (!audio || !audio.duration) return;
+    const rect = bar.getBoundingClientRect();
+    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    audio.currentTime = pos * audio.duration;
+};
+
+window.openLightbox = function(src) {
+    const box = document.getElementById('imageLightbox');
+    const img = document.getElementById('lightboxImg');
+    if (box && img) {
+        img.src = src;
+        box.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.closeLightbox = function(e) {
+    const box = document.getElementById('imageLightbox');
+    if (box) {
+        box.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+};
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') window.closeLightbox();
+});
+
+// ── Compression d'image Haute Fidélité (Client) ──────────────
+async function compressImage(file, maxDim = 1920, quality = 0.88) {
+    if (!file || !file.type || !file.type.startsWith('image/')) return file;
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+    if (file.size < 300 * 1024) return file; // Moins de 300 Ko = déjà optimal
+
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const mimeType = 'image/webp';
+                canvas.toBlob((blob) => {
+                    if (!blob || blob.size >= file.size) {
+                        resolve(file);
+                    } else {
+                        const newName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+                        const compressedFile = new File([blob], newName, {
+                            type: mimeType,
+                            lastModified: Date.now()
+                        });
+                        resolve(compressedFile);
+                    }
+                }, mimeType, quality);
+            };
+            img.onerror = () => resolve(file);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log('[Chat] Initialisation...');
 
@@ -176,14 +346,146 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ── Fichier joint : feedback ─────────────────────────────
+    // ── Photo : Compression haute fidélité & Envoi immédiat ──
     if (fileInput) {
-        fileInput.addEventListener('change', function () {
-            if (this.files.length > 0 && input) {
-                input.placeholder = `📎 ${this.files[0].name} — Ajouter un message…`;
-            } else if (input) {
-                input.placeholder = 'Écrivez un message…';
+        fileInput.addEventListener('change', async function () {
+            if (this.files.length > 0) {
+                const rawFile = this.files[0];
+                if (input) input.placeholder = 'Optimisation de la photo…';
+                try {
+                    // Compression haute fidélité (Full HD 1920px max, qualité 0.88)
+                    const compressedFile = await compressImage(rawFile, 1920, 0.88);
+                    const textVal = input ? input.value.trim() : '';
+                    await submitMessage({ file: compressedFile, text: textVal });
+                } catch (err) {
+                    console.error('[Chat] Erreur compression:', err);
+                    await submitMessage({ file: rawFile, text: input ? input.value.trim() : '' });
+                } finally {
+                    fileInput.value = '';
+                    if (input) input.placeholder = 'Écrivez un message…';
+                }
             }
+        });
+    }
+
+    // ── Enregistreur Audio (Notes Vocales) ─────────────────────
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recTimerInterval = null;
+    let recSeconds = 0;
+    let activeStream = null;
+
+    const audioBtn = document.getElementById('audioBtn');
+    const recordBar = document.getElementById('audioRecordBar');
+    const recTimerEl = document.getElementById('recTimer');
+    const cancelRecBtn = document.getElementById('cancelRecBtn');
+    const sendRecBtn = document.getElementById('sendRecBtn');
+
+    function formatTimer(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function stopMediaTracks() {
+        if (activeStream) {
+            activeStream.getTracks().forEach(t => t.stop());
+            activeStream = null;
+        }
+        if (recTimerInterval) {
+            clearInterval(recTimerInterval);
+            recTimerInterval = null;
+        }
+        recSeconds = 0;
+    }
+
+    async function startAudioRecording() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("L'enregistrement vocal requiert l'accès au micro et une connexion sécurisée (HTTPS).");
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            activeStream = stream;
+            audioChunks = [];
+
+            let mimeType = 'audio/webm;codecs=opus';
+            if (!window.MediaRecorder || !MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : (MediaRecorder.isTypeSupported('audio/ogg') ? 'audio/ogg' : '');
+            }
+
+            const options = mimeType ? { mimeType } : {};
+            mediaRecorder = new MediaRecorder(stream, options);
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) {
+                    audioChunks.push(e.data);
+                }
+            };
+
+            mediaRecorder.start(250);
+
+            // Basculer l'UI vers le mode enregistrement
+            if (chatForm) chatForm.style.display = 'none';
+            if (recordBar) recordBar.style.display = 'flex';
+
+            recSeconds = 0;
+            if (recTimerEl) recTimerEl.textContent = '0:00';
+            recTimerInterval = setInterval(() => {
+                recSeconds++;
+                if (recTimerEl) recTimerEl.textContent = formatTimer(recSeconds);
+            }, 1000);
+
+        } catch (err) {
+            console.error('[Audio] Erreur accès micro:', err);
+            alert("Impossible d'accéder au microphone. Veuillez autoriser l'accès au micro dans votre navigateur.");
+        }
+    }
+
+    if (audioBtn) {
+        audioBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            startAudioRecording();
+        });
+    }
+
+    if (cancelRecBtn) {
+        cancelRecBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.onstop = null;
+                mediaRecorder.stop();
+            }
+            stopMediaTracks();
+            audioChunks = [];
+            if (recordBar) recordBar.style.display = 'none';
+            if (chatForm) chatForm.style.display = 'contents';
+        });
+    }
+
+    if (sendRecBtn) {
+        sendRecBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+
+            mediaRecorder.onstop = async () => {
+                const mime = mediaRecorder.mimeType || 'audio/webm';
+                const blob = new Blob(audioChunks, { type: mime });
+                const ext = mime.includes('mp4') ? '.m4a' : (mime.includes('ogg') ? '.ogg' : '.webm');
+                const audioFile = new File([blob], `vocal_${Date.now()}${ext}`, { type: mime });
+
+                stopMediaTracks();
+                audioChunks = [];
+                if (recordBar) recordBar.style.display = 'none';
+                if (chatForm) chatForm.style.display = 'contents';
+
+                if (blob.size > 0) {
+                    await submitMessage({ file: audioFile, text: '' });
+                }
+            };
+
+            mediaRecorder.stop();
         });
     }
 
@@ -223,11 +525,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     bubble.setAttribute('data-id', msg.id);
 
                     let html = '';
-                    if (msg.file_name) {
-                        html += `<div class="msg-file">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                            ${msg.file_name}
-                        </div>`;
+                    if (msg.fichier_url) {
+                        const isImg = msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url);
+                        const isAud = msg.type_message === 'AUDIO' || /\.(webm|ogg|mp3|m4a|wav|aac)(\?|$)/i.test(msg.fichier_url);
+
+                        if (isImg) {
+                            html += `<div class="msg-image-wrap">
+                                <img src="${msg.fichier_url}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
+                            </div>`;
+                        } else if (isAud) {
+                            html += `<div class="chat-audio-player" data-src="${msg.fichier_url}">
+                                <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
+                                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                </button>
+                                <div class="audio-track-wrap">
+                                    <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
+                                        <div class="audio-progress"></div>
+                                    </div>
+                                    <span class="audio-duration">--:--</span>
+                                </div>
+                                <audio src="${msg.fichier_url}" preload="none" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                            </div>`;
+                        } else {
+                            html += `<div class="msg-file">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                <a href="${msg.fichier_url}" target="_blank" style="color:inherit; text-decoration:none;">${msg.fichier_nom || 'Fichier joint'}</a>
+                            </div>`;
+                        }
                     }
                     if (msg.is_locked) {
                         const paymentLink = config.urls && config.urls.paymentUrl ? `<a href="${config.urls.paymentUrl}" style="color:var(--c-accent); font-weight:600; text-decoration: none;">Procéder au paiement</a>` : `<button type="button" onclick="showPaymentModal()" style="color:var(--c-accent); font-weight:600; background:none; border:none; padding:0; cursor:pointer; font-size: inherit; font-family: inherit;">Procéder au paiement</button>`;
@@ -356,10 +681,35 @@ function appendSentBubble(id, text, file, time) {
 
     let html = '';
     if (file) {
-        html += `<div class="msg-file">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            ${escapeHtml(file.name)}
-        </div>`;
+        const isImg = file.type && file.type.startsWith('image/');
+        const isAud = (file.type && file.type.startsWith('audio/')) || /\.(webm|ogg|mp3|m4a|wav|aac)$/i.test(file.name);
+
+        if (isImg) {
+            const blobUrl = URL.createObjectURL(file);
+            html += `<div class="msg-image-wrap">
+                <img src="${blobUrl}" class="chat-img-thumb" alt="Photo" onclick="openLightbox(this.src)">
+            </div>`;
+        } else if (isAud) {
+            const blobUrl = URL.createObjectURL(file);
+            html += `<div class="chat-audio-player" data-src="${blobUrl}">
+                <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
+                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <div class="audio-track-wrap">
+                    <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
+                        <div class="audio-progress"></div>
+                    </div>
+                    <span class="audio-duration">--:--</span>
+                </div>
+                <audio src="${blobUrl}" preload="none" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+            </div>`;
+        } else {
+            html += `<div class="msg-file">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                ${escapeHtml(file.name)}
+            </div>`;
+        }
     }
     if (text) {
         html += `<div class="msg-content">${escapeHtml(text)}</div>`;

@@ -602,11 +602,13 @@ def validate_matieres_recherchees_max_5(value):
 class MessageType:
     TEXTE = "TEXTE"
     IMAGE = "IMAGE"
+    AUDIO = "AUDIO"
     DOCUMENT = "DOCUMENT"
     SYSTEME = "SYSTEME"
     CHOICES = [
         (TEXTE, "Texte"),
         (IMAGE, "Image"),
+        (AUDIO, "Audio"),
         (DOCUMENT, "Document"),
         (SYSTEME, "Système"),
     ]

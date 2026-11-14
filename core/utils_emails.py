@@ -129,7 +129,13 @@ def get_full_url(path):
         domain = Site.objects.get_current().domain
     except Exception:
         domain = "profchezvousapp.com"
-    protocol = "https" if not settings.DEBUG else "http"
+    domain = domain.strip().replace("http://", "").replace("https://", "").rstrip("/")
+    if "localhost" in domain or "127.0.0.1" in domain:
+        protocol = "http"
+    else:
+        protocol = "https"
+    if not path.startswith("/"):
+        path = "/" + path
     return f"{protocol}://{domain}{path}"
 
 def send_teacher_approved_email(user, teacher_profile):
@@ -310,16 +316,39 @@ def send_essai_confirmed_email(parent_user, engagement):
 
     from django.urls import reverse
     from .models import Conversation
+    from .choices import ConversationStatus
 
-    # Lien direct vers la conversation créée pour cet essai
+    # Récupération ou création garantie de la conversation privée pour cet essai
     conversation = getattr(engagement, 'conversation', None)
-    if not conversation:
+    if not conversation and engagement.professeur and engagement.parent_apprenant:
         conversation = Conversation.objects.filter(
             professeur=engagement.professeur,
             parent=engagement.parent_apprenant
         ).first()
 
+    if not conversation and engagement.professeur and engagement.parent_apprenant:
+        conversation = Conversation.objects.create(
+            professeur=engagement.professeur,
+            parent=engagement.parent_apprenant,
+            statut_conversation=ConversationStatus.ENGAGEMENT_EN_COURS,
+            engagement_actif=engagement
+        )
+
     if conversation:
+        # S'assurer que les deux participants font bien partie du ManyToMany
+        if engagement.professeur and engagement.professeur.user:
+            conversation.participants.add(engagement.professeur.user)
+        if engagement.parent_apprenant:
+            conversation.participants.add(engagement.parent_apprenant)
+
+        if not conversation.engagement_actif:
+            conversation.engagement_actif = engagement
+            conversation.save(update_fields=['engagement_actif'])
+
+        if engagement.conversation_id != conversation.id:
+            engagement.conversation = conversation
+            engagement.save(update_fields=['conversation'])
+
         conversation_url = get_full_url(reverse("conversation_detail", kwargs={"conversation_id": conversation.id}))
     else:
         conversation_url = get_full_url(reverse("messagerie"))
@@ -402,7 +431,7 @@ L'équipe Prof Chez Vous"""
         <p style="font-size: 15px; margin-top: 0;">Échangez dès maintenant avec le professeur pour confirmer le lieu exact de l'essai et préparer votre rendez-vous.</p>
         
         <div style="margin: 25px 0;">
-            <a href="{conversation_url}" style="background-color: #16a34a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
+            <a href="{conversation_url}" target="_blank" rel="noopener noreferrer" style="background-color: #16a34a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block;">
                 💬 Échanger avec le professeur
             </a>
         </div>

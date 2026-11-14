@@ -4441,9 +4441,11 @@ def api_engagement_action(request, engagement_id):
 
                 )
 
-                # Ajouter les participants au ManyToMany
-
-                conversation.participants.add(engagement.professeur.user, engagement.parent_apprenant)
+            # Toujours garantir l'ajout des participants au ManyToMany
+            if engagement.professeur and engagement.professeur.user:
+                conversation.participants.add(engagement.professeur.user)
+            if engagement.parent_apprenant:
+                conversation.participants.add(engagement.parent_apprenant)
 
             
 
@@ -4628,13 +4630,15 @@ def conversation_detail(request, conversation_id):
 
     
 
-    # Sécurité stricte: Vérification que l'utilisateur est bien participant
-
+    # Sécurité: Vérification que l'utilisateur est bien participant
     if request.user not in conversation.participants.all():
-
-        django_messages.error(request, "Accès non autorisé à cette conversation.")
-
-        return redirect("messagerie")
+        is_user_prof = hasattr(request.user, 'teacher_profile') and conversation.professeur == request.user.teacher_profile
+        is_user_parent = (conversation.parent == request.user)
+        if is_user_prof or is_user_parent:
+            conversation.participants.add(request.user)
+        else:
+            django_messages.error(request, "Accès non autorisé à cette conversation.")
+            return redirect("messagerie")
 
     
 
@@ -5084,58 +5088,60 @@ def api_send_message(request, conversation_id):
 
         
 
-        # Mettre à jour la conversation
+        # Mettre à jour la conversation et le type_message
+        from .choices import MessageType
 
+        prefix = ""
         if fichier:
+            content_type = (getattr(fichier, 'content_type', '') or '').lower()
+            fname = (fichier.name or '').lower()
+            is_image = content_type.startswith('image/') or fname.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif'))
+            is_audio = content_type.startswith('audio/') or fname.endswith(('.webm', '.ogg', '.mp3', '.m4a', '.wav', '.aac'))
 
-            is_image = fichier.content_type.startswith('image/')
-
-            prefix = "ðŸ“· Photo" if is_image else "ðŸ“„ Fichier"
+            if is_image:
+                message.type_message = MessageType.IMAGE
+                prefix = "📷 Photo"
+            elif is_audio:
+                message.type_message = MessageType.AUDIO
+                prefix = "🎙️ Note vocale"
+            else:
+                message.type_message = MessageType.DOCUMENT
+                prefix = "📄 Fichier"
+            message.save(update_fields=['type_message'])
 
             conversation.dernier_message_texte = f"{prefix} {texte}" if texte else prefix
-
         else:
-
             conversation.dernier_message_texte = texte
 
         conversation.dernier_message_date = message.date_envoi
-
         conversation.dernier_message_auteur = request.user
 
-        
-
         if request.user == conversation.parent:
-
             conversation.conversation_lue_par_prof = False
-
         else:
-
             conversation.conversation_lue_par_parent = False
 
-            
-
         conversation.save()
-
-        
 
         # Envoi d'email de notification au destinataire en arrière-plan
         import threading
         from .utils_emails import send_new_message_email
+        email_preview = texte if texte else prefix
         threading.Thread(
             target=send_new_message_email,
-            args=(destinataire, request.user, message.contenu_texte, conversation.id)
+            args=(destinataire, request.user, email_preview, conversation.id)
         ).start()
 
-        
+        file_url = message.contenu_media.url if message.contenu_media else None
+        file_name = message.contenu_media.name.split('/')[-1] if message.contenu_media else None
 
         return JsonResponse({
-
             'success': True,
-
             'message_id': message.id,
-
+            'type_message': message.type_message,
+            'fichier_url': file_url,
+            'fichier_nom': file_name,
             'date': timezone.localtime(message.date_envoi).strftime("%H:%M")
-
         })
 
         
@@ -5275,23 +5281,15 @@ def api_fetch_new_messages(request, conversation_id):
         
 
         messages_data.append({
-
             'id': msg.id,
-
             'text': texte,
-
+            'type_message': msg.type_message,
             'fichier_url': file_url,
-
             'fichier_nom': file_name,
-
             'date': timezone.localtime(msg.date_envoi).strftime("%H:%M"),
-
             'is_mine': msg.auteur == request.user,
-
             'lu': msg.lu,
-
             'is_locked': is_locked
-
         })
 
         
