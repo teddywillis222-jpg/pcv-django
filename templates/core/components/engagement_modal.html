@@ -327,10 +327,10 @@
                     💡 Et si vous pouviez mesurer concrètement chaque progrès de <span id="eng_success_enfant_name">votre enfant</span> ?
                 </h4>
                 <p style="font-size: 0.88rem; color: #78350f; margin: 0 0 0.85rem 0; line-height: 1.55; font-weight: 500;">
-                    Grâce à Access+, recevez le compte-rendu du professeur après chaque cours, suivez sa maîtrise des notions abordées et assurez-lui un encadrement solide.
+                    Grâce à Access+, recevez le compte-rendu du professeur après chaque cours, suivez la maîtrise des notions abordées avec <span id="eng_success_enfant_name_sub">votre enfant</span> et assurez-lui un encadrement solide.
                 </p>
                 <ul style="font-size: 0.86rem; color: #78350f; margin: 0 0 0.85rem 0; padding-left: 1.25rem; line-height: 1.55;">
-                    <li style="margin-bottom: 0.45rem;"><strong>📊 Espace de suivi en temps réel :</strong> bilans de chaque cours, notions assimilées et points à retravailler.</li>
+                    <li style="margin-bottom: 0.45rem;"><strong>📊 Espace de suivi en temps réel :</strong> bilans de chaque cours, notions maîtrisées et points à retravailler.</li>
                     <li style="margin-bottom: 0.45rem;"><strong>🛡️ Garantie de remplacement :</strong> changez de professeur sans frais si besoin.</li>
                     <li><strong>⚡ Assistance prioritaire 7j/7 :</strong> une équipe à vos côtés à chaque étape.</li>
                 </ul>
@@ -367,7 +367,7 @@
                     Grâce à Access+, reçois le compte-rendu du professeur après chaque cours, suis ta maîtrise des notions abordées et profite d'un encadrement solide.
                 </p>
                 <ul style="font-size: 0.86rem; color: #78350f; margin: 0 0 0.85rem 0; padding-left: 1.25rem; line-height: 1.55;">
-                    <li style="margin-bottom: 0.45rem;"><strong>📊 Espace de suivi en temps réel :</strong> bilans de chaque cours, notions assimilées et points à retravailler.</li>
+                    <li style="margin-bottom: 0.45rem;"><strong>📊 Espace de suivi en temps réel :</strong> bilans de chaque cours, notions maîtrisées et points à retravailler.</li>
                     <li style="margin-bottom: 0.45rem;"><strong>🛡️ Garantie de remplacement :</strong> change de professeur sans frais si besoin.</li>
                     <li><strong>⚡ Assistance prioritaire 7j/7 :</strong> une équipe à tes côtés à chaque étape.</li>
                 </ul>
@@ -1076,6 +1076,8 @@ async function submitEngagement(event, btnId) {
                     document.getElementById('eng_success_enfant_name_btn').textContent = childName;
                     const ctaChild = document.getElementById('eng_success_cta_child_parent');
                     if (ctaChild) ctaChild.textContent = childName;
+                    const subChild = document.getElementById('eng_success_enfant_name_sub');
+                    if (subChild) subChild.textContent = childName;
                     document.getElementById('btn_go_dashboard_parent_secondary').href = '/parent/dashboard/';
                     document.getElementById('eng_success_essai_parent').style.display = 'block';
                 } else {
