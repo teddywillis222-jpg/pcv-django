@@ -14,7 +14,7 @@
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                 </svg>
             </button>
-            <button class="side-panel-close" onclick="closeSidePanel(event)" onpointerdown="closeSidePanel(event)" title="Fermer" aria-label="Fermer le profil">
+            <button class="side-panel-close" onclick="closeSidePanel(event)"  title="Fermer" aria-label="Fermer le profil">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
                     <path d="M18 6L6 18M6 6l12 12"/>
                 </svg>
@@ -68,6 +68,16 @@ function openTeacherProfile(teacherSlug) {
     loadTeacherProfile(teacherSlug);
 }
 
+function absorbGhostClicks() {
+    const shield = document.createElement('div');
+    shield.setAttribute('aria-hidden', 'true');
+    shield.style.cssText = 'position: fixed; inset: 0; z-index: 99999; background: transparent; pointer-events: auto;';
+    document.body.appendChild(shield);
+    setTimeout(function() {
+        if (shield.parentNode) shield.parentNode.removeChild(shield);
+    }, 280);
+}
+
 function closeSidePanel(e) {
     if (e) {
         try { e.preventDefault(); e.stopPropagation(); } catch(err) {}
@@ -92,6 +102,8 @@ function closeSidePanel(e) {
             history.pushState({}, '', '/recherche/');
         }
     }
+    
+    absorbGhostClicks();
 }
 
 async function loadTeacherProfile(teacherSlug) {
