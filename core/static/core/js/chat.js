@@ -645,18 +645,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (msg.id > config.lastMsgId) config.lastMsgId = msg.id;
                     if (document.querySelector(`.msg-bubble[data-id="${msg.id}"]`)) return;
 
+                    const isImg = msg.fichier_url && (msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url));
+                    const isAud = msg.fichier_url && (msg.type_message === 'AUDIO' || /\.(webm|ogg|mp3|m4a|wav|aac)(\?|$)/i.test(msg.fichier_url));
+
+                    let bubbleClasses = 'msg-bubble received';
+                    if (msg.fichier_url) {
+                        bubbleClasses += ' has-media';
+                        if (isImg) bubbleClasses += ' has-image';
+                        if (isAud) bubbleClasses += ' has-audio';
+                        if (!msg.text) bubbleClasses += ' media-only';
+                    }
+
                     const bubble = document.createElement('div');
-                    bubble.className = 'msg-bubble received';
+                    bubble.className = bubbleClasses;
                     bubble.setAttribute('data-id', msg.id);
 
                     let html = '';
                     if (msg.fichier_url) {
-                        const isImg = msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url);
-                        const isAud = msg.type_message === 'AUDIO' || /\.(webm|ogg|mp3|m4a|wav|aac)(\?|$)/i.test(msg.fichier_url);
-
                         if (isImg) {
                             html += `<div class="msg-image-wrap">
                                 <img src="${msg.fichier_url}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
+                                ${!msg.text ? `<div class="msg-meta msg-meta-overlay">
+                                    <span class="msg-time">${msg.date}</span>
+                                </div>` : ''}
                             </div>`;
                         } else if (isAud) {
                             html += `<div class="chat-audio-player" data-src="${msg.fichier_url}">
@@ -687,7 +698,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     } else if (msg.text) {
                         html += `<div class="msg-content">${escapeHtml(msg.text)}</div>`;
                     }
-                    html += `<div class="msg-meta"><span class="msg-time">${msg.date}</span></div>`;
+                    if (msg.text || isAud || !isImg) {
+                        html += `<div class="msg-meta"><span class="msg-time">${msg.date}</span></div>`;
+                    }
                     bubble.innerHTML = html;
 
                     if (container) container.appendChild(bubble);
@@ -798,21 +811,36 @@ function appendSentBubble(id, text, file, time) {
     const container = document.getElementById('messagesList');
     if (!container) return;
 
+    let isImg = false;
+    let isAud = false;
+    let bubbleClasses = 'msg-bubble sent';
+    if (file) {
+        bubbleClasses += ' has-media';
+        isImg = file.type && file.type.startsWith('image/');
+        isAud = (file.type && file.type.startsWith('audio/')) || /\.(webm|ogg|mp3|m4a|wav|aac)$/i.test(file.name);
+        if (isImg) bubbleClasses += ' has-image';
+        if (isAud) bubbleClasses += ' has-audio';
+        if (!text) bubbleClasses += ' media-only';
+    }
+
     const bubble = document.createElement('div');
-    bubble.className = 'msg-bubble sent';
+    bubble.className = bubbleClasses;
     bubble.setAttribute('data-id', id);
     bubble.style.opacity = '0.75';
     bubble.style.transition = 'opacity 0.2s';
 
     let html = '';
     if (file) {
-        const isImg = file.type && file.type.startsWith('image/');
-        const isAud = (file.type && file.type.startsWith('audio/')) || /\.(webm|ogg|mp3|m4a|wav|aac)$/i.test(file.name);
-
         if (isImg) {
             const blobUrl = URL.createObjectURL(file);
             html += `<div class="msg-image-wrap">
                 <img src="${blobUrl}" class="chat-img-thumb" alt="Photo" onclick="openLightbox(this.src)">
+                ${!text ? `<div class="msg-meta msg-meta-overlay">
+                    <span class="msg-time">${time}</span>
+                    <svg class="msg-tick" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                </div>` : ''}
             </div>`;
         } else if (isAud) {
             const blobUrl = URL.createObjectURL(file);
@@ -839,12 +867,14 @@ function appendSentBubble(id, text, file, time) {
     if (text) {
         html += `<div class="msg-content">${escapeHtml(text)}</div>`;
     }
-    html += `<div class="msg-meta">
-        <span class="msg-time">${time}</span>
-        <svg class="msg-tick" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 6 9 17l-5-5"/>
-        </svg>
-    </div>`;
+    if (text || isAud || !isImg) {
+        html += `<div class="msg-meta">
+            <span class="msg-time">${time}</span>
+            <svg class="msg-tick" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5"/>
+            </svg>
+        </div>`;
+    }
     bubble.innerHTML = html;
     container.appendChild(bubble);
     scrollToBottom();
