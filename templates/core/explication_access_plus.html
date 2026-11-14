@@ -18,10 +18,12 @@
         --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.05);
     }
 
-    body {
+    html, body {
         background-color: var(--dash-bg);
         margin: 0;
         padding: 0;
+        overflow-x: hidden;
+        max-width: 100vw;
     }
 
     .access-page {
@@ -30,6 +32,8 @@
         margin: 1.5rem auto 4rem;
         padding: 0 1rem;
         color: var(--text-dark);
+        box-sizing: border-box;
+        overflow-x: hidden;
     }
 
     .back-nav-link {
@@ -103,6 +107,7 @@
         margin-bottom: 2.5rem;
         position: relative;
         overflow: hidden;
+        box-sizing: border-box;
     }
     
     .access-visual-border::before {
@@ -126,6 +131,7 @@
         color: #334155;
         margin-bottom: 1rem;
         text-align: left;
+        line-height: 1.5;
     }
 
     .access-feature-card {
@@ -136,13 +142,24 @@
         border: 1px solid #e2e8f0;
         border-left: 4px solid var(--access-color);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        box-sizing: border-box;
+    }
+
+    .access-feature-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.45rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
     }
 
     .access-feature-text {
-        font-size: 0.98rem;
+        font-size: 0.96rem;
         color: var(--text-gray);
-        margin-bottom: 0.75rem;
-        line-height: 1.5;
+        margin-bottom: 0.65rem;
+        line-height: 1.55;
     }
 
     .access-feature-highlight {
@@ -151,7 +168,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
     }
 
     .access-pricing {
@@ -162,6 +179,7 @@
         text-align: left;
         margin-top: 3rem;
         margin-bottom: 1.5rem;
+        box-sizing: border-box;
     }
 
     .access-price-val {
@@ -175,14 +193,18 @@
         font-size: 0.98rem;
         color: #92400e;
         line-height: 1.5;
-        margin-bottom: 1.75rem;
-        font-weight: 500;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
     }
 
     .btn-activate,
     .btn-activate:hover,
     .btn-activate:focus,
     .btn-activate:active,
+    .btn-secondary-wa,
+    .btn-secondary-wa:hover,
+    .btn-secondary-wa:focus,
+    .btn-secondary-wa:active,
     .btn-back,
     .btn-back:hover,
     .btn-back:focus,
@@ -220,6 +242,39 @@
         box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
         filter: brightness(0.97);
         text-decoration: none !important;
+    }
+
+    .btn-secondary-wa {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.95rem 1.25rem;
+        margin-top: 0.75rem;
+        background: #ffffff;
+        color: #15803d;
+        font-size: 1rem;
+        font-weight: 800;
+        border-radius: 1rem;
+        border: 1.5px solid #86efac;
+        box-shadow: 0 2px 6px rgba(22, 163, 74, 0.08);
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .btn-secondary-wa:hover {
+        background: #f0fdf4;
+        border-color: #4ade80;
+        color: #166534;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+        text-decoration: none !important;
+    }
+
+    .btn-secondary-wa:active {
+        transform: translateY(0);
     }
 
     .btn-back {
@@ -267,10 +322,12 @@
 
 {% block content %}
 <div class="access-page">
+    {% comment "Masqué jusqu'à nouvel ordre" %}
     <a href="{% url 'gestion_plan' %}" class="back-nav-link">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         Retour à la gestion des formules
     </a>
+    {% endcomment %}
 
     <div class="access-hero">
         <div class="access-hero-badge">
@@ -318,7 +375,7 @@
     </div>
 
     <h2 class="access-section-title">Mais le suivi ne s'arrête pas à un simple pourcentage.</h2>
-    <h3 class="access-section-subtitle">Accédez au compte-rendu transparent de chaque séance.</h3>
+    <h3 class="access-section-subtitle">Recevez et accédez au compte-rendu transparent de chaque séance pour rester au courant de ses acquis et de ses difficultés.</h3>
 
     <!-- Visual 2: Mockup Bilan de séance -->
     <div class="access-visual">
@@ -355,42 +412,38 @@
         <div class="mock-seance-box">Refaire les exercices 4 et 5 page 12 du cahier d'activités.</div>
     </div>
 
+    {% comment "Masqué jusqu'à nouvel ordre" %}
     <h2 class="access-section-title">Cours terminé ? Recevez l'essentiel du bilan en 30 secondes sur votre téléphone.</h2>
+    {% endcomment %}
 
     <h2 class="access-section-title">Et ce n'est qu'une partie de ce que vous offre Access+</h2>
 
-    <!-- Carte 1 : Réassurance & Déroulement -->
-    <div class="access-feature-card" style="border-left-color: #16a34a;">
-        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
-            🎯 Vous avez déjà un cours d'essai programmé ?
+    <!-- Bloc 1 : Messagerie avancée (photos, fichiers et notes vocales) -->
+    <div class="access-feature-card" style="border-left-color: #2563eb;">
+        <div class="access-feature-title">
+            💬 Messagerie multimédia avancée
+        </div>
+        <p class="access-feature-text" style="margin-bottom: 0.5rem;">
+            Échangez sans aucune barrière avec l'enseignant : envoi illimité de <strong>photos d'exercices</strong>, de copies corrigées, de <strong>documents &amp; fichiers</strong> et de <strong>notes vocales</strong> directement dans votre fil de messagerie.
         </p>
-        <p class="access-feature-text" style="margin-bottom: 0;">
-            Profitez sereinement de votre séance : <strong>elle est 100% gratuite et sans engagement</strong>. Dès la fin de l'essai, vous recevrez une notification pour officialiser la collaboration si le professeur vous convient, et ainsi débloquer l'espace de suivi {% if request.user.profile.role == 'APPRENANT' %}de vos cours{% else %}de votre enfant{% endif %}.
-        </p>
-    </div>
-
-    <!-- Carte 2 : Anticipation & Flexibilité -->
-    <div class="access-feature-card" style="border-left-color: #f59e0b;">
-        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
-            🛡️ Et si le courant ne passe pas au premier essai ?
-        </p>
-        <p class="access-feature-text" style="margin-bottom: 0.75rem;">
-            Aucune mauvaise surprise : avec Access+, vous bénéficiez de notre <strong>garantie de remplacement</strong>. Vous pouvez programmer d'autres séances d'essai sans frais jusqu'à trouver le professeur idéal.
-        </p>
-        <div class="access-feature-highlight">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            Testez d'autres professeurs avant de fixer votre choix.
+        <div class="access-feature-highlight" style="color: #1d4ed8;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Une communication réactive et fluide au quotidien, sans rupture.
         </div>
     </div>
 
-    <!-- Carte 3 : Messagerie multimédia avancée -->
-    <div class="access-feature-card" style="border-left-color: #3b82f6;">
-        <p class="access-feature-text" style="font-weight: 800; color: #1e293b; margin-bottom: 0.35rem;">
-            💬 Messagerie multimédia avancée
+    <!-- Bloc 2 : Programmation d'essais illimitée & flexibilité -->
+    <div class="access-feature-card" style="border-left-color: #f59e0b;">
+        <div class="access-feature-title">
+            🎯 Programmation illimitée des essais &amp; flexibilité totale
+        </div>
+        <p class="access-feature-text" style="margin-bottom: 0.5rem;">
+            Trouvez l'enseignant idéal en toute sérénité. Vous bénéficiez de la <strong>programmation illimitée de séances d'essai</strong> sans frais supplémentaires : idéal pour <strong>tester des professeurs avant de fixer votre choix</strong> ou pour <strong>remplacer un professeur</strong> qui ne conviendrait finalement pas.
         </p>
-        <p class="access-feature-text" style="margin-bottom: 0;">
-            Échangez sans aucune barrière avec le professeur : envoi de <strong>photos d'exercices</strong>, de copies corrigées, de <strong>notes vocales</strong> et de documents pédagogiques directement dans votre messagerie intégrée.
-        </p>
+        <div class="access-feature-highlight">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Zéro risque, liberté totale pour sécuriser l'accompagnement.
+        </div>
     </div>
 
     <!-- Bloc Tarification & Bouton d'action -->
@@ -398,7 +451,7 @@
         <div style="font-size: 1.15rem; font-weight: 900; color: var(--access-dark); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1.5px;">Pass Access+</div>
         <div class="access-price-val">2 500 FCFA / mois</div>
         <p class="access-price-desc">
-            0 % de commission sur les heures de cours versées directement au professeur. Le confort absolu pour sécuriser la réussite scolaire de votre enfant au meilleur coût.
+            0 % de commission sur les heures de cours versées directement au professeur.
         </p>
         
         {% if engagement_a_finaliser %}
@@ -410,6 +463,14 @@
                 Activer le Pass Access+ (2 500 FCFA / mois)
             </a>
         {% endif %}
+
+        <!-- Bouton secondaire : Nous écrire pour en savoir plus via WhatsApp -->
+        <a href="https://wa.me/message/QROCDDNKZIXAE1?text=Bonjour%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20la%20formule%20Pass%20Access%2B%20de%20Prof%20Chez%20Vous." target="_blank" class="btn-secondary-wa">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+            <span>Nous écrire pour en savoir plus</span>
+        </a>
     </div>
 
     <!-- Boutons de retour -->
