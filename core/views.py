@@ -5063,15 +5063,15 @@ def api_send_message(request, conversation_id):
             for idx, fichier in enumerate(fichiers):
                 content_type = (getattr(fichier, 'content_type', '') or '').lower()
                 fname = (fichier.name or '').lower()
-                is_image = content_type.startswith('image/') or fname.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif'))
-                is_audio = content_type.startswith('audio/') or fname.endswith(('.webm', '.ogg', '.mp3', '.m4a', '.wav', '.aac'))
+                is_audio = content_type.startswith('audio/') or fname.endswith(('.webm', '.ogg', '.mp3', '.m4a', '.wav', '.aac')) or 'vocal_' in fname
+                is_image = not is_audio and (content_type.startswith('image/') or fname.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')))
 
-                if is_image:
-                    msg_type = MessageType.IMAGE
-                    prefix = "📷 Photo"
-                elif is_audio:
+                if is_audio:
                     msg_type = MessageType.AUDIO
                     prefix = "🎙️ Note vocale"
+                elif is_image:
+                    msg_type = MessageType.IMAGE
+                    prefix = "📷 Photo"
                 else:
                     msg_type = MessageType.DOCUMENT
                     prefix = "📄 Fichier"

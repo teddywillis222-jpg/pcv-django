@@ -5,7 +5,7 @@
 
 // ── Utilitaires Audio & Lightbox ─────────────────────────────
 function formatAudioTime(sec) {
-    if (!sec || isNaN(sec)) return "0:00";
+    if (!sec || isNaN(sec) || !isFinite(sec)) return "0:00";
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
     return `${m}:${s < 10 ? '0' : ''}${s}`;
@@ -18,47 +18,29 @@ window.initAudioDuration = function(audio) {
     const durEl = player.querySelector('.audio-duration');
     if (!durEl) return;
 
-    function setDurDisplay(d) {
-        durEl.textContent = formatAudioTime(d);
-    }
-
-    const d = audio.duration;
-    if (d && !isNaN(d) && isFinite(d) && d > 0) {
-        // Durée immédiatement disponible (fichier mp3 ou fichier déjà bufferisé)
-        setDurDisplay(d);
+    // 1. Extraire la durée depuis le nom du fichier ou l'URL (ex: vocal_123456_8s.webm)
+    const src = audio.src || audio.getAttribute('src') || '';
+    const match = src.match(/_(\d+)s(?:\.|\/|$|\?)/i);
+    if (match) {
+        durEl.textContent = formatAudioTime(parseInt(match[1], 10));
         return;
     }
 
-    // Pour les fichiers webm/MediaRecorder : duration = Infinity ou NaN
-    // Technique "seek-to-end" : le navigateur ajuste currentTime à la vraie durée
-    if (!isFinite(d)) {
-        const savedTime = audio.currentTime;
-        // Désactiver les événements pendant le seek
-        audio._seekingForDuration = true;
-        audio.currentTime = 1e101; // Seek à "l'infini" → le navigateur se cale à la fin réelle
-
-        const onTimeUpdate = function() {
-            if (audio._seekingForDuration) {
-                audio._seekingForDuration = false;
-                const realDur = audio.currentTime;
-                if (realDur > 0) {
-                    setDurDisplay(realDur);
-                }
-                // Remettre au début sans déclencher l'animation de progression
-                audio.removeEventListener('timeupdate', onTimeUpdate);
-                setTimeout(() => { audio.currentTime = 0; }, 0);
-            }
-        };
-        audio.addEventListener('timeupdate', onTimeUpdate);
-        // Timeout de sécurité si le seek échoue
-        setTimeout(() => {
-            if (audio._seekingForDuration) {
-                audio._seekingForDuration = false;
-                audio.removeEventListener('timeupdate', onTimeUpdate);
-                try { audio.currentTime = 0; } catch(e) {}
-            }
-        }, 2000);
+    // 2. Si audio.duration est déjà fini et valide
+    const d = audio.duration;
+    if (d && !isNaN(d) && isFinite(d) && d > 0) {
+        durEl.textContent = formatAudioTime(d);
+        return;
     }
+
+    // 3. Écouter les événements natifs de chargement
+    const onLoaded = function() {
+        if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 0) {
+            durEl.textContent = formatAudioTime(audio.duration);
+        }
+    };
+    audio.addEventListener('loadedmetadata', onLoaded, { once: true });
+    audio.addEventListener('durationchange', onLoaded);
 };
 
 window.toggleAudio = function(btn) {
@@ -85,10 +67,29 @@ window.toggleAudio = function(btn) {
             }
         });
 
-        audio.play().then(() => {
-            if (playIcon) playIcon.style.display = 'none';
-            if (pauseIcon) pauseIcon.style.display = 'block';
-        }).catch(e => console.error('[Audio] Erreur lecture:', e));
+        // Si l'audio est arrivé au bout ou anormalement positionné, repartir du début
+        if (audio.ended || (audio.duration && isFinite(audio.duration) && audio.currentTime >= audio.duration) || audio.currentTime > 9999) {
+            audio.currentTime = 0;
+        }
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                if (playIcon) playIcon.style.display = 'none';
+                if (pauseIcon) pauseIcon.style.display = 'block';
+            }).catch(e => {
+                console.warn('[Audio] Première tentative de lecture échouée, reset et retry...', e);
+                audio.currentTime = 0;
+                audio.play().then(() => {
+                    if (playIcon) playIcon.style.display = 'none';
+                    if (pauseIcon) pauseIcon.style.display = 'block';
+                }).catch(err => {
+                    console.error('[Audio] Échec lecture audio:', err);
+                    if (playIcon) playIcon.style.display = 'block';
+                    if (pauseIcon) pauseIcon.style.display = 'none';
+                });
+            });
+        }
     } else {
         audio.pause();
         if (playIcon) playIcon.style.display = 'block';
@@ -97,22 +98,28 @@ window.toggleAudio = function(btn) {
 };
 
 window.updateAudioProgress = function(audio) {
-    // Ne pas mettre à jour pendant le seek interne pour calcul de durée
-    if (audio._seekingForDuration) return;
     const player = audio.closest('.chat-audio-player');
     if (!player) return;
     const prog = player.querySelector('.audio-progress');
     const durEl = player.querySelector('.audio-duration');
     const dur = audio.duration;
-    if (dur && !isNaN(dur) && isFinite(dur)) {
-        const pct = (audio.currentTime / dur) * 100;
+
+    let totalDur = null;
+    const src = audio.src || audio.getAttribute('src') || '';
+    const match = src.match(/_(\d+)s(?:\.|\/|$|\?)/i);
+    if (match) {
+        totalDur = parseInt(match[1], 10);
+    } else if (dur && !isNaN(dur) && isFinite(dur) && dur > 0) {
+        totalDur = dur;
+    }
+
+    if (totalDur && totalDur > 0) {
+        const pct = Math.min(100, (audio.currentTime / totalDur) * 100);
         if (prog) prog.style.width = pct + '%';
-        if (durEl) durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(dur)}`;
+        if (durEl) durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(totalDur)}`;
     } else {
-        // Durée toujours inconnue pendant lecture : afficher le temps courant seul
-        if (durEl && audio.currentTime > 0) {
-            durEl.textContent = formatAudioTime(audio.currentTime);
-        }
+        if (prog && audio.currentTime > 0) prog.style.width = '30%';
+        if (durEl && audio.currentTime > 0) durEl.textContent = formatAudioTime(audio.currentTime);
     }
 };
 
@@ -123,12 +130,15 @@ window.onAudioEnded = function(audio) {
     const durEl = player.querySelector('.audio-duration');
     const btn = player.querySelector('.audio-play-btn');
     if (prog) prog.style.width = '0%';
-    if (durEl) {
-        const dur = audio.duration;
-        if (dur && !isNaN(dur) && isFinite(dur)) {
-            durEl.textContent = formatAudioTime(dur);
-        }
+
+    const src = audio.src || audio.getAttribute('src') || '';
+    const match = src.match(/_(\d+)s(?:\.|\/|$|\?)/i);
+    if (match) {
+        if (durEl) durEl.textContent = formatAudioTime(parseInt(match[1], 10));
+    } else if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+        if (durEl) durEl.textContent = formatAudioTime(audio.duration);
     }
+
     if (btn) {
         const playIcon = btn.querySelector('.icon-play');
         const pauseIcon = btn.querySelector('.icon-pause');
@@ -141,10 +151,22 @@ window.seekAudio = function(e, bar) {
     const player = bar.closest('.chat-audio-player');
     if (!player) return;
     const audio = player.querySelector('audio');
-    if (!audio || !audio.duration) return;
+    if (!audio) return;
+
+    let totalDur = null;
+    const src = audio.src || audio.getAttribute('src') || '';
+    const match = src.match(/_(\d+)s(?:\.|\/|$|\?)/i);
+    if (match) {
+        totalDur = parseInt(match[1], 10);
+    } else if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+        totalDur = audio.duration;
+    }
+
+    if (!totalDur || totalDur <= 0) return;
+
     const rect = bar.getBoundingClientRect();
     const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    audio.currentTime = pos * audio.duration;
+    audio.currentTime = pos * totalDur;
 };
 
 window.openLightbox = function(src) {
@@ -428,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const tempId = 'temp-' + Date.now() + '-' + idx;
                 tempIds.push(tempId);
                 const bubbleText = (idx === 0) ? text : '';
-                appendSentBubble(tempId, bubbleText, file, '…');
+                appendSentBubble(tempId, bubbleText, file, '…', payload ? payload.duration : null);
             });
         } else {
             const tempId = 'temp-' + Date.now();
@@ -649,7 +671,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const mime = mediaRecorder.mimeType || 'audio/webm';
                 const blob = new Blob(audioChunks, { type: mime });
                 const ext = mime.includes('mp4') ? '.m4a' : (mime.includes('ogg') ? '.ogg' : '.webm');
-                const audioFile = new File([blob], `vocal_${Date.now()}${ext}`, { type: mime });
+                const durSeconds = Math.max(1, recSeconds);
+                const audioFile = new File([blob], `vocal_${Date.now()}_${durSeconds}s${ext}`, { type: mime });
 
                 stopMediaTracks();
                 audioChunks = [];
@@ -657,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (chatForm) chatForm.style.display = 'contents';
 
                 if (blob.size > 0) {
-                    await submitMessage({ file: audioFile, text: '' });
+                    await submitMessage({ file: audioFile, text: '', duration: durSeconds });
                 }
             };
 
@@ -872,7 +895,7 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
-function appendSentBubble(id, text, file, time) {
+function appendSentBubble(id, text, file, time, durationSec) {
     const container = document.getElementById('messagesList');
     if (!container) return;
 
@@ -909,6 +932,7 @@ function appendSentBubble(id, text, file, time) {
             </div>`;
         } else if (isAud) {
             const blobUrl = URL.createObjectURL(file);
+            const durText = durationSec ? formatAudioTime(durationSec) : '--:--';
             html += `<div class="chat-audio-player" data-src="${blobUrl}">
                 <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
                     <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -918,7 +942,7 @@ function appendSentBubble(id, text, file, time) {
                     <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
                         <div class="audio-progress"></div>
                     </div>
-                    <span class="audio-duration">--:--</span>
+                    <span class="audio-duration">${durText}</span>
                 </div>
                 <audio src="${blobUrl}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
             </div>`;
