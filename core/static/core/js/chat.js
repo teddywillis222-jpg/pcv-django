@@ -16,8 +16,30 @@ window.initAudioDuration = function(audio) {
     const player = audio.closest('.chat-audio-player');
     if (!player) return;
     const durEl = player.querySelector('.audio-duration');
-    if (durEl && audio.duration && !isNaN(audio.duration) && audio.duration !== Infinity) {
-        durEl.textContent = formatAudioTime(audio.duration);
+    if (!durEl) return;
+
+    function trySetDuration() {
+        const d = audio.duration;
+        if (d && !isNaN(d) && isFinite(d) && d > 0) {
+            durEl.textContent = formatAudioTime(d);
+            return true;
+        }
+        return false;
+    }
+
+    if (!trySetDuration()) {
+        // Fallback : écouter durationchange (fichiers webm/MediaRecorder avec Infinity)
+        audio.addEventListener('durationchange', function handler() {
+            if (trySetDuration()) {
+                audio.removeEventListener('durationchange', handler);
+            }
+        });
+        // Fallback 2 : lors du premier chargement effectif
+        audio.addEventListener('loadeddata', function handler() {
+            if (trySetDuration()) {
+                audio.removeEventListener('loadeddata', handler);
+            }
+        });
     }
 };
 
@@ -61,11 +83,15 @@ window.updateAudioProgress = function(audio) {
     if (!player) return;
     const prog = player.querySelector('.audio-progress');
     const durEl = player.querySelector('.audio-duration');
-    if (audio.duration && !isNaN(audio.duration)) {
-        const pct = (audio.currentTime / audio.duration) * 100;
+    const dur = audio.duration;
+    if (dur && !isNaN(dur) && isFinite(dur)) {
+        const pct = (audio.currentTime / dur) * 100;
         if (prog) prog.style.width = pct + '%';
-        if (durEl) {
-            durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(audio.duration)}`;
+        if (durEl) durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(dur)}`;
+    } else {
+        // Durée inconnue (webm Infinity) : afficher uniquement le temps courant
+        if (durEl && audio.currentTime > 0) {
+            durEl.textContent = formatAudioTime(audio.currentTime);
         }
     }
 };
@@ -77,7 +103,12 @@ window.onAudioEnded = function(audio) {
     const durEl = player.querySelector('.audio-duration');
     const btn = player.querySelector('.audio-play-btn');
     if (prog) prog.style.width = '0%';
-    if (durEl && audio.duration) durEl.textContent = formatAudioTime(audio.duration);
+    if (durEl) {
+        const dur = audio.duration;
+        if (dur && !isNaN(dur) && isFinite(dur)) {
+            durEl.textContent = formatAudioTime(dur);
+        }
+    }
     if (btn) {
         const playIcon = btn.querySelector('.icon-play');
         const pauseIcon = btn.querySelector('.icon-pause');
@@ -645,8 +676,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (msg.id > config.lastMsgId) config.lastMsgId = msg.id;
                     if (document.querySelector(`.msg-bubble[data-id="${msg.id}"]`)) return;
 
-                    const isImg = msg.fichier_url && (msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url));
+                    // AUDIO a la priorité absolue pour éviter le conflit avec les URLs Cloudinary
+                    // (les anciens audios uploadés avec resource_type='image' ont /image/ dans leur URL)
                     const isAud = msg.fichier_url && (msg.type_message === 'AUDIO' || /\.(webm|ogg|mp3|m4a|wav|aac)(\?|$)/i.test(msg.fichier_url));
+                    const isImg = !isAud && msg.fichier_url && (msg.type_message === 'IMAGE' || msg.fichier_url.includes('/image/') || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(msg.fichier_url));
 
                     let bubbleClasses = 'msg-bubble received';
                     if (msg.fichier_url) {
@@ -681,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </div>
                                     <span class="audio-duration">--:--</span>
                                 </div>
-                                <audio src="${msg.fichier_url}" preload="none" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                                <audio src="${msg.fichier_url}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
                             </div>`;
                         } else {
                             html += `<div class="msg-file">
@@ -855,7 +888,7 @@ function appendSentBubble(id, text, file, time) {
                     </div>
                     <span class="audio-duration">--:--</span>
                 </div>
-                <audio src="${blobUrl}" preload="none" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                <audio src="${blobUrl}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
             </div>`;
         } else {
             html += `<div class="msg-file">

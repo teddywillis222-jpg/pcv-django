@@ -189,10 +189,24 @@
             </div>
             {% endif %}
 
-            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}{% if msg.contenu_media %} has-media{% if msg.type_message == 'IMAGE' or 'image' in msg.contenu_media.url %} has-image{% elif msg.type_message == 'AUDIO' or '.webm' in msg.contenu_media.url or '.ogg' in msg.contenu_media.url or '.mp3' in msg.contenu_media.url or '.m4a' in msg.contenu_media.url or '.wav' in msg.contenu_media.url or 'audio' in msg.contenu_media.url %} has-audio{% endif %}{% if not msg.contenu_texte %} media-only{% endif %}{% endif %}" data-id="{{ msg.id }}">
+            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}{% if msg.contenu_media %} has-media{% if msg.type_message == 'AUDIO' or '.webm' in msg.contenu_media.url or '.ogg' in msg.contenu_media.url or '.mp3' in msg.contenu_media.url or '.m4a' in msg.contenu_media.url or '.wav' in msg.contenu_media.url %} has-audio{% elif msg.type_message == 'IMAGE' or 'image' in msg.contenu_media.url %} has-image{% endif %}{% if not msg.contenu_texte %} media-only{% endif %}{% endif %}" data-id="{{ msg.id }}">
                 {% if msg.contenu_media %}
                     <div class="msg-media-container" {% if msg.contenu_texte %}style="margin-bottom:0.5rem;"{% endif %}>
-                        {% if msg.type_message == 'IMAGE' or "image" in msg.contenu_media.url %}
+                        {% if msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url %}
+                            <div class="chat-audio-player" data-src="{{ msg.contenu_media.url }}">
+                                <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
+                                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                </button>
+                                <div class="audio-track-wrap">
+                                    <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
+                                        <div class="audio-progress"></div>
+                                    </div>
+                                    <span class="audio-duration">--:--</span>
+                                </div>
+                                <audio src="{{ msg.contenu_media.url }}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                            </div>
+                        {% elif msg.type_message == 'IMAGE' or "image" in msg.contenu_media.url %}
                             <div class="msg-image-wrap">
                                 <img src="{{ msg.contenu_media.url }}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
                                 {% if not msg.contenu_texte %}
@@ -212,20 +226,6 @@
                                 </div>
                                 {% endif %}
                             </div>
-                        {% elif msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url or "audio" in msg.contenu_media.url %}
-                            <div class="chat-audio-player" data-src="{{ msg.contenu_media.url }}">
-                                <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
-                                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                                </button>
-                                <div class="audio-track-wrap">
-                                    <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
-                                        <div class="audio-progress"></div>
-                                    </div>
-                                    <span class="audio-duration">--:--</span>
-                                </div>
-                                <audio src="{{ msg.contenu_media.url }}" preload="none" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
-                            </div>
                         {% else %}
                             <a href="{{ msg.contenu_media.url }}" target="_blank" style="color:var(--c-accent); text-decoration:underline; font-weight:600;">📁 Fichier joint</a>
                         {% endif %}
@@ -234,7 +234,8 @@
                 
                 {{ msg.contenu_texte|linebreaksbr }}
                 
-                {% if msg.contenu_texte or msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url or "audio" in msg.contenu_media.url or not msg.contenu_media %}
+                {# Meta (heure + coche) : toujours sauf image seule sans texte (elle a la pastille overlay) #}
+                {% if not msg.contenu_media or msg.type_message == 'AUDIO' or msg.contenu_texte or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url %}
                 <div class="msg-meta">
                     <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
                     {% if msg.auteur == request.user %}
