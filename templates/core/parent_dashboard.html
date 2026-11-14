@@ -1357,7 +1357,8 @@
 
     function showSection(sectionId) {
         document.querySelectorAll('.dash-section').forEach(s => s.style.display = 'none');
-        document.getElementById(sectionId).style.display = 'block';
+        const target = document.getElementById(sectionId);
+        if (target) target.style.display = 'block';
 
         // Update active state in nav
         document.querySelectorAll('.nav-item, .sidebar-menu-item').forEach(item => {
@@ -1366,6 +1367,11 @@
                 item.classList.add('active');
             }
         });
+
+        // Remonter en haut de page pour que la nouvelle section soit immédiatement visible
+        setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
     }
 
     // Auto-open section from URL hash (e.g. /parent/dashboard/#favoris-section)

@@ -46,7 +46,7 @@
                 {{ eng.matiere }} • {{ eng.get_classe_display }}
             </p>
         </div>
-        <span class="badge-status {% if eng.statut_general == 'EN_ATTENTE' %}status-pending{% elif eng.statut_general == 'CONFIRME' or eng.statut_general == 'FINALISE' %}status-active{% else %}status-inactive{% endif %}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px; text-transform: uppercase;">
+        <span class="badge-status {% if status_class %}{{ status_class }}{% else %}{{ eng.teacher_status_badge_class }}{% endif %}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px; text-transform: uppercase;">
             {% if eng.type_engagement == 'ESSAI' %}
                 {{ eng.essai_status_label }}
             {% else %}
@@ -67,7 +67,7 @@
             <div>
                 <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">💻 Mode</span>
                 <span style="color: var(--dash-text-dark); font-weight: 600;">
-                    {{ eng.get_mode_de_cours_display }}
+                    {{ eng.mode_de_cours_label }}
                     {% if eng.mode_de_cours == 'ONLINE' and eng.plateforme_visio_preferee %}
                         ({{ eng.plateforme_visio_preferee }})
                     {% endif %}

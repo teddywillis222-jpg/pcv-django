@@ -6685,7 +6685,7 @@ def api_engagement_details(request, engagement_id):
 
         'classe': engagement.get_classe_display(),
 
-        'mode': engagement.get_mode_de_cours_display(),
+        'mode': engagement.mode_de_cours_label,
 
         'mode_raw': engagement.mode_de_cours,
 

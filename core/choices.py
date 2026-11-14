@@ -238,6 +238,8 @@ class CourseMode:
         (LIEU_TIERS, "Lieu tiers (bibliothèque, centre éducatif)"),
         (GROUPE_RESTREINT, "Cours en groupe restreint"),
         (A_DISTANCE, "À distance (téléphone, audio)"),
+        ("a_domicile", "À domicile"),
+        ("en_ligne", "En ligne (visioconférence)"),
     ]
     VALUES = [c[0] for c in CHOICES]
 

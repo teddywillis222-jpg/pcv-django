@@ -47,7 +47,7 @@
             </p>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
-            <span class="eng-status-badge {{ status_class }}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
+            <span class="eng-status-badge {% if status_class %}{{ status_class }}{% else %}{{ eng.status_badge_class }}{% endif %}" style="font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.6rem; border-radius: 8px;">
                 {% if eng.type_engagement == 'ESSAI' %}
                     {{ eng.essai_status_label }}
                 {% else %}
@@ -69,7 +69,7 @@
             <div>
                 <span style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">💻 Mode</span>
                 <span style="color: var(--text-dark); font-weight: 600;">
-                    {{ eng.get_mode_de_cours_display }}
+                    {{ eng.mode_de_cours_label }}
                     {% if eng.mode_de_cours == 'ONLINE' and eng.plateforme_visio_preferee %}
                         ({{ eng.plateforme_visio_preferee }})
                     {% endif %}
@@ -178,6 +178,5 @@
             </div>
 
         </div>
-    </div>
     </div>
 </div>

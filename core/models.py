@@ -2385,6 +2385,41 @@ class Engagement(models.Model):
 
 
 
+    @property
+    def mode_de_cours_label(self):
+        mapping = {
+            'a_domicile': 'À domicile',
+            'en_ligne': 'En ligne (visioconférence)',
+            'PARENT_HOME': 'Présentiel chez le parent',
+            'APPRENANT_HOME': "Présentiel chez l'apprenant",
+            'ONLINE': 'En ligne (visioconférence)',
+            'HYBRID': 'Hybride (Présentiel + En ligne)',
+            'THIRD_PLACE': 'Lieu tiers',
+            'SMALL_GROUP': 'Cours en groupe restreint',
+            'DISTANCE': 'À distance',
+        }
+        return mapping.get(self.mode_de_cours) or self.get_mode_de_cours_display() or self.mode_de_cours or "Non précisé"
+
+    @property
+    def status_badge_class(self):
+        st = self.statut_general
+        if st in ['EN_ATTENTE', 'ESSAI_PROGRAMME']:
+            return 'badge-attente'
+        elif st in ['CONFIRME', 'ESSAI_CONFIRME', 'FINALISE', 'ENGAGEMENT_FINALISE', 'ESSAI_REALISE', 'EN_COURS']:
+            return 'badge-actif'
+        elif st in ['REFUSE', 'ANNULE']:
+            return 'badge-refuse'
+        return 'badge-termine'
+
+    @property
+    def teacher_status_badge_class(self):
+        st = self.statut_general
+        if st in ['EN_ATTENTE', 'ESSAI_PROGRAMME']:
+            return 'status-pending'
+        elif st in ['CONFIRME', 'ESSAI_CONFIRME', 'FINALISE', 'ENGAGEMENT_FINALISE', 'ESSAI_REALISE', 'EN_COURS']:
+            return 'status-active'
+        return 'status-inactive'
+
     def save(self, *args, **kwargs):
 
         self.matiere = clean_subjects(self.matiere)
