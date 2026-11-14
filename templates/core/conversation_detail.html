@@ -259,6 +259,7 @@
             </div>
         {% endfor %}
 
+
     </main>
 
     <!-- Flèche flottante de retour en bas -->
@@ -704,4 +705,14 @@
     </div>
 
 <script src="{% static 'core/js/chat.js' %}?v={% now 'U' %}"></script>
+
+<script>
+// Initialisation des lecteurs audio existants dans le DOM (messages historiques)
+document.querySelectorAll('.chat-audio-player audio').forEach(function(audio) {
+    audio.load();
+    audio.addEventListener('loadedmetadata', function() {
+        initAudioDuration(this);
+    }, { once: true });
+});
+</script>
 {% endblock %}

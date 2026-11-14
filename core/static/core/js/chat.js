@@ -18,28 +18,46 @@ window.initAudioDuration = function(audio) {
     const durEl = player.querySelector('.audio-duration');
     if (!durEl) return;
 
-    function trySetDuration() {
-        const d = audio.duration;
-        if (d && !isNaN(d) && isFinite(d) && d > 0) {
-            durEl.textContent = formatAudioTime(d);
-            return true;
-        }
-        return false;
+    function setDurDisplay(d) {
+        durEl.textContent = formatAudioTime(d);
     }
 
-    if (!trySetDuration()) {
-        // Fallback : écouter durationchange (fichiers webm/MediaRecorder avec Infinity)
-        audio.addEventListener('durationchange', function handler() {
-            if (trySetDuration()) {
-                audio.removeEventListener('durationchange', handler);
+    const d = audio.duration;
+    if (d && !isNaN(d) && isFinite(d) && d > 0) {
+        // Durée immédiatement disponible (fichier mp3 ou fichier déjà bufferisé)
+        setDurDisplay(d);
+        return;
+    }
+
+    // Pour les fichiers webm/MediaRecorder : duration = Infinity ou NaN
+    // Technique "seek-to-end" : le navigateur ajuste currentTime à la vraie durée
+    if (!isFinite(d)) {
+        const savedTime = audio.currentTime;
+        // Désactiver les événements pendant le seek
+        audio._seekingForDuration = true;
+        audio.currentTime = 1e101; // Seek à "l'infini" → le navigateur se cale à la fin réelle
+
+        const onTimeUpdate = function() {
+            if (audio._seekingForDuration) {
+                audio._seekingForDuration = false;
+                const realDur = audio.currentTime;
+                if (realDur > 0) {
+                    setDurDisplay(realDur);
+                }
+                // Remettre au début sans déclencher l'animation de progression
+                audio.removeEventListener('timeupdate', onTimeUpdate);
+                setTimeout(() => { audio.currentTime = 0; }, 0);
             }
-        });
-        // Fallback 2 : lors du premier chargement effectif
-        audio.addEventListener('loadeddata', function handler() {
-            if (trySetDuration()) {
-                audio.removeEventListener('loadeddata', handler);
+        };
+        audio.addEventListener('timeupdate', onTimeUpdate);
+        // Timeout de sécurité si le seek échoue
+        setTimeout(() => {
+            if (audio._seekingForDuration) {
+                audio._seekingForDuration = false;
+                audio.removeEventListener('timeupdate', onTimeUpdate);
+                try { audio.currentTime = 0; } catch(e) {}
             }
-        });
+        }, 2000);
     }
 };
 
@@ -79,6 +97,8 @@ window.toggleAudio = function(btn) {
 };
 
 window.updateAudioProgress = function(audio) {
+    // Ne pas mettre à jour pendant le seek interne pour calcul de durée
+    if (audio._seekingForDuration) return;
     const player = audio.closest('.chat-audio-player');
     if (!player) return;
     const prog = player.querySelector('.audio-progress');
@@ -89,7 +109,7 @@ window.updateAudioProgress = function(audio) {
         if (prog) prog.style.width = pct + '%';
         if (durEl) durEl.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(dur)}`;
     } else {
-        // Durée inconnue (webm Infinity) : afficher uniquement le temps courant
+        // Durée toujours inconnue pendant lecture : afficher le temps courant seul
         if (durEl && audio.currentTime > 0) {
             durEl.textContent = formatAudioTime(audio.currentTime);
         }
@@ -737,6 +757,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     bubble.innerHTML = html;
 
                     if (container) container.appendChild(bubble);
+
+                    // Après injection dans le DOM, forcer le chargement audio
+                    // (innerHTML ne déclenche pas automatiquement le chargement des ressources audio)
+                    const audioEl = bubble.querySelector('audio');
+                    if (audioEl) {
+                        audioEl.load();
+                        // Initialiser la durée après chargement des métadonnées
+                        audioEl.addEventListener('loadedmetadata', function() {
+                            initAudioDuration(this);
+                        }, { once: true });
+                    }
+
                     hasNew = true;
                 });
                 
@@ -910,6 +942,16 @@ function appendSentBubble(id, text, file, time) {
     }
     bubble.innerHTML = html;
     container.appendChild(bubble);
+
+    // Forcer le chargement audio après injection pour que le play fonctionne immédiatement
+    const sentAudioEl = bubble.querySelector('audio');
+    if (sentAudioEl) {
+        sentAudioEl.load();
+        sentAudioEl.addEventListener('loadedmetadata', function() {
+            initAudioDuration(this);
+        }, { once: true });
+    }
+
     scrollToBottom();
 }
 
