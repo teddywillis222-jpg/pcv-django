@@ -167,16 +167,11 @@
                         onclick="ouvrirModaleNouvelEssai({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, '{{ teacher.classes_enseignees|join:","|escapejs }}');">
                         🚀 Programmer mon essai
                     </button>
-                    <button type="button" class="btn-demande-engagement"
-                        style="width: 100%; margin-top: 0.65rem; padding: 0.85rem 1rem; font-size: 0.95rem; border-radius: 10px;
-                               background: #f8fafc; color: #334155; border: 1.5px solid #cbd5e1; font-weight: 700; cursor: pointer;
-                               display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-                               transition: all 0.2s ease;"
-                        onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';"
-                        onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';"
-                        onclick="openEngagementForm({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:","|escapejs }}');">
-                        🤝 Demander un engagement standard
-                    </button>
+                    <!-- Indicateur discret sous le bouton pour les non abonnés ayant déjà épuisé leur essai offert -->
+                    <div style="margin-top: 0.45rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem; color: #94a3b8; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.2px;">
+                        <span style="font-size: 0.82rem; opacity: 0.85;">ℹ️</span>
+                        <span>Essai offert utilisé</span>
+                    </div>
                 {% endif %}
             {% endif %}
         {% elif not user.is_authenticated %}
