@@ -459,9 +459,15 @@
                 Activer Access+ &amp; Officialiser la collaboration
             </a>
         {% else %}
-            <a href="{% url 'payer_premium' %}" class="btn-activate">
-                Activer le Pass Access+ (2 500 FCFA / mois)
-            </a>
+            {% if user.is_authenticated %}
+                <button type="button" class="btn-activate" onclick="lancerSouscriptionAccessPlusMomo()" style="border: none; cursor: pointer; width: 100%;">
+                    Activer le Pass Access+ (2 500 FCFA / mois)
+                </button>
+            {% else %}
+                <a href="{% url 'account_login' %}?next={% url 'explication_access_plus' %}" class="btn-activate">
+                    Activer le Pass Access+ (2 500 FCFA / mois)
+                </a>
+            {% endif %}
         {% endif %}
 
         <!-- Bouton secondaire : Nous écrire pour en savoir plus via WhatsApp -->
@@ -484,4 +490,26 @@
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function lancerSouscriptionAccessPlusMomo() {
+    if (typeof ouvrirPaiementMomo === 'function') {
+        ouvrirPaiementMomo({
+            type: 'ACCESS_PLUS',
+            titre: "Souscription au Pass Access+",
+            subtitle: "Confirmez votre compte Mobile Money pour recevoir la demande sur votre téléphone.",
+            amountDisplay: "100 FCFA",
+            testTag: "(Tarif test actif — Valeur réelle : 2 500 F)",
+            submitLabel: "Payer 100 FCFA via Mobile Money",
+            onSuccess: function() {
+                window.location.href = "{% url 'parent_dashboard' %}";
+            }
+        });
+    } else {
+        alert("Le module de paiement Mobile Money n'a pas pu être chargé. Veuillez recharger la page.");
+    }
+}
+</script>
 {% endblock %}
