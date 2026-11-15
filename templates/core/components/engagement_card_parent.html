@@ -1,7 +1,25 @@
 <div class="engagement-card" style="background: white; border-radius: 20px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;">
     
-    <!-- Encart rectangulaire des actions rapides -->
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+    <!-- Ligne supérieure : Photo du professeur (à gauche) & Options d'accès rapide (à droite) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+        <div class="eng-card-prof-avatar-wrap" style="display: flex; align-items: center;">
+            {% if eng.professeur and eng.professeur.photo_de_profil %}
+                <a href="{% url 'professeur_detail' eng.professeur.slug %}" title="Voir le profil de Prof. {{ eng.professeur.prenom }}" style="display: inline-block; text-decoration: none;">
+                    <img src="{{ eng.professeur.photo_de_profil.url }}" alt="Prof. {{ eng.professeur.prenom }}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.06); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';">
+                </a>
+            {% elif eng.professeur %}
+                <a href="{% url 'professeur_detail' eng.professeur.slug %}" title="Voir le profil de Prof. {{ eng.professeur.prenom }}" style="display: inline-block; text-decoration: none;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; border: 2px solid #bfdbfe; box-shadow: 0 2px 6px rgba(37,99,235,0.08); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';">
+                        {{ eng.professeur.prenom|slice:":1"|upper }}
+                    </div>
+                </a>
+            {% else %}
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: #f8fafc; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid #e2e8f0;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+            {% endif %}
+        </div>
+
         <div style="display: flex; gap: 0.4rem; background: #f8fafc; padding: 0.4rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
             
             {% if eng.conversation %}

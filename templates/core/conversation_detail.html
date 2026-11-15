@@ -32,7 +32,7 @@
                 {% elif other_profile.photo_profil %}
                     <img src="{{ other_profile.photo_profil.url }}" class="c-avatar-img" alt="Avatar">
                 {% else %}
-                    <div class="c-avatar-initial">{{ other_participant.first_name|slice:":1"|upper }}</div>
+                    <div class="c-avatar-initial">{{ display_initial }}</div>
                 {% endif %}
                 <div class="c-online-dot"></div>
             </div>

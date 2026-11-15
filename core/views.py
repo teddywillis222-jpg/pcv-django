@@ -593,11 +593,23 @@ def messagerie(request):
 
             
 
-            # Initiale basée sur le prénom de l'utilisateur parent
-
+            # Initiale basée sur le nom de chaque parent (ou apprenant)
+            parent_name = ""
             if conv.parent:
+                if hasattr(conv.parent, 'parent') and conv.parent.parent.nom:
+                    parent_name = conv.parent.parent.nom.strip()
+                elif hasattr(conv.parent, 'apprenant') and conv.parent.apprenant.nom:
+                    parent_name = conv.parent.apprenant.nom.strip()
+                
+                if not parent_name:
+                    if conv.parent.last_name:
+                        parent_name = conv.parent.last_name.strip()
+                    elif conv.parent.first_name:
+                        parent_name = conv.parent.first_name.strip()
+                    elif conv.parent.username:
+                        parent_name = conv.parent.username.strip()
 
-                display_initial = conv.parent.first_name[0] if conv.parent.first_name else conv.parent.username[0]
+            display_initial = parent_name[0].upper() if parent_name else "P" 
 
             
 
@@ -4931,13 +4943,29 @@ def conversation_detail(request, conversation_id):
 
 
 
+    display_initial = "?"
+    if other_role == Role.ROLE_PROF:
+        display_initial = conversation.professeur.prenom[0].upper() if conversation.professeur and conversation.professeur.prenom else (conversation.professeur.nom[0].upper() if conversation.professeur and conversation.professeur.nom else "P")
+    elif other_user:
+        parent_name = ""
+        if hasattr(other_user, 'parent') and other_user.parent.nom:
+            parent_name = other_user.parent.nom.strip()
+        elif hasattr(other_user, 'apprenant') and other_user.apprenant.nom:
+            parent_name = other_user.apprenant.nom.strip()
+        if not parent_name:
+            if other_user.last_name:
+                parent_name = other_user.last_name.strip()
+            elif other_user.first_name:
+                parent_name = other_user.first_name.strip()
+            elif other_user.username:
+                parent_name = other_user.username.strip()
+        display_initial = parent_name[0].upper() if parent_name else "P"
+
     from .choices import ClassLevel, CourseMode, DureeSeance, FrequenceHebdomadaire, PeriodeEngagement
 
-
-
     return render(request, "core/conversation_detail.html", {
-
         "conversation": conversation,
+        "display_initial": display_initial,
 
         "messages": chat_messages,
 
