@@ -95,11 +95,13 @@
 
     <!-- ===== Boutons d'action ===== -->
     <div style="margin-bottom: 1.25rem;">
+        {% if can_schedule_trial or not user.is_authenticated %}
         <!-- Charte d'essai reassurance banner: shown only on teacher profile / side panel -->
         <div class="charte-banner" role="note" aria-label="Charte d'essai">
             <span class="charte-icon">🛡️</span>
             <span class="charte-text">Ce professeur(e) adhère à la charte d'essai gratuit</span>
         </div>
+        {% endif %}
         {% if user.is_authenticated and user.profile.role != 'PROF' %}
             {% if existing_engagement %}
                 {% if existing_engagement.statut_general == 'ESSAI_PROGRAMME' or existing_engagement.statut_general == 'EN_ATTENTE' %}
@@ -148,7 +150,7 @@
                               box-shadow: 0 3px 10px rgba(13,148,136,0.2); transition: all 0.25s;">
                         💬 Rejoindre la conversation
                     </a>
-                {% elif can_schedule_trial %}
+                {% elif can_schedule_trial or is_premium %}
                     <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
                                    background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
                                    box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
@@ -157,10 +159,24 @@
                         🚀 Programmer mon essai
                     </button>
                 {% else %}
-                    <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 1rem; border-radius: 12px; text-align: center;">
-                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem;">Vous avez déjà utilisé votre essai gratuit</p>
-                        <p style="color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0;">Chaque compte bénéficie d'un seul essai gratuit à vie.</p>
-                    </div>
+                    <!-- Essai gratuit déjà utilisé : le bouton reste visible et ouvre la modale spéciale au clic -->
+                    <button class="btn-reserver-essai" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 12px;
+                                   background: #f59e0b; color: white; border: none; font-weight: 700; cursor: pointer;
+                                   box-shadow: 0 3px 10px rgba(245,158,11,0.2); transition: all 0.25s ease;"
+                        onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"
+                        onclick="ouvrirModaleNouvelEssai({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ teacher.essai_gratuit_actif|yesno:'true,false' }}, '{{ teacher.classes_enseignees|join:","|escapejs }}');">
+                        🚀 Programmer mon essai
+                    </button>
+                    <button type="button" class="btn-demande-engagement"
+                        style="width: 100%; margin-top: 0.65rem; padding: 0.85rem 1rem; font-size: 0.95rem; border-radius: 10px;
+                               background: #f8fafc; color: #334155; border: 1.5px solid #cbd5e1; font-weight: 700; cursor: pointer;
+                               display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+                               transition: all 0.2s ease;"
+                        onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8';"
+                        onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#cbd5e1';"
+                        onclick="openEngagementForm({{ teacher.id }}, '{{ teacher.prenom|escapejs }} {{ teacher.nom|escapejs }}', '{{ teacher.matiere_enseignee|escapejs }}', {{ is_parent|yesno:'true,false' }}, {{ is_premium|yesno:'true,false' }}, window.currentChildren || [], window.currentExistingEngagement || null, '{{ teacher.classes_enseignees|join:","|escapejs }}');">
+                        🤝 Demander un engagement standard
+                    </button>
                 {% endif %}
             {% endif %}
         {% elif not user.is_authenticated %}

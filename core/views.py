@@ -3407,17 +3407,24 @@ def professeur_detail(request, teacher_slug):
 
             is_premium = True
 
-        elif hasattr(request.user, 'profile'):
-
-            essais_utilises = request.user.engagements_client.filter(
-
-                type_engagement=EngagementType.ESSAI
-
-            ).count()
-
-            if essais_utilises >= 1:
-
-                can_schedule_trial = False
+        if hasattr(request.user, 'profile'):
+            if is_premium:
+                can_schedule_trial = True
+            else:
+                from .models import TransactionSebPay
+                essais_payes = TransactionSebPay.objects.filter(
+                    user=request.user,
+                    type_transaction='ESSAI_UNITAIRE',
+                    statut__in=['approved', 'success', 'successful']
+                ).count()
+                quota_autorise = 1 + essais_payes
+                essais_utilises = request.user.engagements_client.filter(
+                    type_engagement=EngagementType.ESSAI
+                ).exclude(
+                    statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
+                ).count()
+                if essais_utilises >= quota_autorise:
+                    can_schedule_trial = False
 
 
 
@@ -3790,17 +3797,25 @@ def api_teacher_profile(request, teacher_slug):
 
                     is_premium = True
 
-                elif hasattr(request.user, 'profile'):
+                if hasattr(request.user, 'profile'):
 
-                    essais_utilises = request.user.engagements_client.filter(
-
-                        type_engagement=EngagementType.ESSAI
-
-                    ).count()
-
-                    if essais_utilises >= 1:
-
-                        can_schedule_trial = False
+                    if is_premium:
+                        can_schedule_trial = True
+                    else:
+                        from .models import TransactionSebPay
+                        essais_payes = TransactionSebPay.objects.filter(
+                            user=request.user,
+                            type_transaction='ESSAI_UNITAIRE',
+                            statut__in=['approved', 'success', 'successful']
+                        ).count()
+                        quota_autorise = 1 + essais_payes
+                        essais_utilises = request.user.engagements_client.filter(
+                            type_engagement=EngagementType.ESSAI
+                        ).exclude(
+                            statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
+                        ).count()
+                        if essais_utilises >= quota_autorise:
+                            can_schedule_trial = False
 
 
 
@@ -4079,13 +4094,25 @@ def api_engagement(request):
 
             # Vérifier le quota d'essai uniquement lors d'une NOUVELLE création (pas une mise à jour)
             if type_eng == EngagementType.ESSAI:
-                essais_utilises = request.user.engagements_client.filter(
-                    type_engagement=EngagementType.ESSAI
-                ).exclude(
-                    statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-                ).count()
-                if essais_utilises >= 1:
-                    return JsonResponse({'error': 'Vous avez déjà utilisé votre essai gratuit.'}, status=400)
+                is_premium = False
+                if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
+                    is_premium = True
+
+                if not is_premium:
+                    from .models import TransactionSebPay
+                    essais_payes = TransactionSebPay.objects.filter(
+                        user=request.user,
+                        type_transaction='ESSAI_UNITAIRE',
+                        statut__in=['approved', 'success', 'successful']
+                    ).count()
+                    quota_autorise = 1 + essais_payes
+                    essais_utilises = request.user.engagements_client.filter(
+                        type_engagement=EngagementType.ESSAI
+                    ).exclude(
+                        statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
+                    ).count()
+                    if essais_utilises >= quota_autorise:
+                        return JsonResponse({'error': 'Vous avez déjà utilisé tous vos essais disponibles. Veuillez activer le Pass Access+ ou réserver un nouvel essai.'}, status=400)
 
             engagement = Engagement(
 
@@ -7835,6 +7862,64 @@ def finaliser_engagement_et_activer_access_plus(engagement, user, montant=30):
 
 @login_required
 @require_POST
+def api_initier_sebpay_universel(request):
+    """
+    Endpoint universel pour déclencher une collecte Mobile Money SebPay (Push USSD) :
+    - type_transaction='ACCESS_PLUS' (Pass Access+)
+    - type_transaction='ESSAI_UNITAIRE' (Réservation d'un essai unitaire)
+    """
+    from .services import initier_collecte_sebpay
+    from django.urls import reverse
+    from django.conf import settings
+
+    type_transaction = request.POST.get('type_transaction', 'ACCESS_PLUS').strip()
+    phone = request.POST.get('phone', '').strip()
+    operator = request.POST.get('operator', 'mtn').strip().lower()
+
+    if not phone:
+        return JsonResponse({'success': False, 'message': "Veuillez renseigner un numéro Mobile Money."}, status=400)
+
+    callback_url = request.build_absolute_uri(reverse('sebpay_webhook'))
+
+    test_mode = getattr(settings, 'SEBPAY_TEST_MODE', True)
+    if test_mode:
+        montant = getattr(settings, 'SEBPAY_TEST_AMOUNT', 100)
+    else:
+        if type_transaction == 'ACCESS_PLUS':
+            montant = getattr(settings, 'PRIX_PASS_ACCESS_PLUS', 2500)
+        elif type_transaction == 'ESSAI_UNITAIRE':
+            montant = getattr(settings, 'PRIX_ESSAI_UNITAIRE', 500)
+        else:
+            montant = getattr(settings, 'SEBPAY_AMOUNT', 100)
+
+    try:
+        txn_obj, response_data = initier_collecte_sebpay(
+            user=request.user,
+            engagement=None,
+            phone=phone,
+            operator=operator,
+            callback_url=callback_url,
+            montant=montant,
+            type_transaction=type_transaction
+        )
+        return JsonResponse({
+            'success': True,
+            'external_reference': txn_obj.external_reference,
+            'transaction_id': txn_obj.transaction_id,
+            'montant': int(txn_obj.montant),
+            'telephone': txn_obj.telephone,
+            'operateur': txn_obj.operateur,
+            'type_transaction': type_transaction,
+            'test_mode': test_mode,
+            'message': "Demande de paiement envoyée sur votre téléphone."
+        })
+    except Exception as e:
+        logger.error(f"Erreur dans api_initier_sebpay_universel: {str(e)}", exc_info=True)
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+@login_required
+@require_POST
 def api_initier_sebpay(request, engagement_id):
     """
     Enregistre les données de l'engagement (comme brouillon sans le finaliser)
@@ -7947,22 +8032,33 @@ def api_verifier_statut_sebpay(request, external_reference):
 
     # Si approuvé
     if txn.statut in ['approved', 'success', 'successful']:
-        eng = finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
-
         enfant_prenom = ""
-        if eng and eng.enfants_concernes.exists():
-            enfant_prenom = eng.enfants_concernes.first().prenom
-        elif hasattr(txn.user, 'parent') and txn.user.parent.enfants.exists():
-            enfant_prenom = txn.user.parent.enfants.first().prenom
-
-        suivi_url = reverse('suivi_engagement', args=[eng.id]) if eng else reverse('parent_dashboard')
+        suivi_url = ""
+        
+        if txn.type_transaction == 'ACCESS_PLUS':
+            eng = finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
+            if eng and eng.enfants_concernes.exists():
+                enfant_prenom = eng.enfants_concernes.first().prenom
+            elif hasattr(txn.user, 'parent') and txn.user.parent.enfants.exists():
+                enfant_prenom = txn.user.parent.enfants.first().prenom
+            suivi_url = reverse('suivi_engagement', args=[eng.id]) if eng else reverse('parent_dashboard')
+            message = "Votre formule Pass Access+ est activée pour 30 jours ! 🎉"
+        elif txn.type_transaction == 'ESSAI_UNITAIRE':
+            eng = None
+            if hasattr(txn.user, 'parent') and txn.user.parent.enfants.exists():
+                enfant_prenom = txn.user.parent.enfants.first().prenom
+            message = "Votre séance d'essai a été réservée avec succès ! 🎉"
+        else:
+            eng = None
+            message = "Votre paiement a été validé avec succès !"
 
         return JsonResponse({
             'success': True,
             'status': 'approved',
+            'type_transaction': txn.type_transaction,
             'enfant_prenom': enfant_prenom,
             'suivi_url': suivi_url,
-            'message': "Votre paiement a été validé avec succès !"
+            'message': message
         })
 
     # Si rejeté
@@ -8033,7 +8129,10 @@ def sebpay_webhook(request):
         if status in ['approved', 'success', 'successful'] and not txn.date_validation:
             from django.utils import timezone
             txn.date_validation = timezone.now()
-            finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
+            if txn.type_transaction == 'ACCESS_PLUS':
+                finaliser_engagement_et_activer_access_plus(txn.engagement, txn.user, montant=int(txn.montant))
+            elif txn.type_transaction == 'ESSAI_UNITAIRE':
+                pass
 
         txn.save()
         logger.info(f"Webhook SebPay traité avec succès pour txn {txn.id} (ref: {txn.external_reference}, statut: {status})")

@@ -286,7 +286,7 @@ def detect_benin_operator(phone_number):
     return 'mtn'
 
 
-def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url=None):
+def initier_collecte_sebpay(user, engagement=None, phone="", operator=None, callback_url=None, montant=None, type_transaction='ACCESS_PLUS'):
     """
     Initie une demande de paiement direct Mobile Money via l'API SebPay Collections.
     Envoie un Push USSD direct sur le téléphone de l'utilisateur.
@@ -294,7 +294,8 @@ def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url
     public_key = getattr(settings, 'SEBPAY_PUBLIC_KEY', '') or os.environ.get('SEBPAY_PUBLIC_KEY', '')
     secret_key = getattr(settings, 'SEBPAY_SECRET_KEY', '') or os.environ.get('SEBPAY_SECRET_KEY', '')
     api_url = getattr(settings, 'SEBPAY_API_URL', 'https://newapi.sebpay.bj/api/v1')
-    montant = getattr(settings, 'SEBPAY_AMOUNT', 30)
+    if montant is None:
+        montant = getattr(settings, 'SEBPAY_AMOUNT', 100)
 
     if not public_key or not secret_key:
         logger.error("Clés d'API SebPay manquantes (SEBPAY_PUBLIC_KEY ou SEBPAY_SECRET_KEY).")
@@ -311,7 +312,8 @@ def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url
         operator_clean = detected_op
 
     # Référence externe unique
-    ext_ref = f"PCV-ACC-{engagement.id if engagement else user.id}-{int(time.time())}"
+    prefix = "ACC" if type_transaction == 'ACCESS_PLUS' else ("ESS" if type_transaction == 'ESSAI_UNITAIRE' else "PAY")
+    ext_ref = f"PCV-{prefix}-{engagement.id if engagement else user.id}-{int(time.time())}"
 
     headers = {
         "X-Public-Key": public_key,
@@ -386,6 +388,7 @@ def initier_collecte_sebpay(user, engagement, phone, operator=None, callback_url
             montant=montant,
             telephone=phone_to_use,
             operateur=operator_clean,
+            type_transaction=type_transaction,
             statut='pending',
             raw_response=json.dumps(response_data)
         )

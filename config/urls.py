@@ -138,6 +138,7 @@ urlpatterns = [
 
     # SebPay (Access+ et Finalisation)
     path("api/engagement/<int:engagement_id>/initier-sebpay/", core_views.api_initier_sebpay, name="api_initier_sebpay"),
+    path("api/sebpay/initier/", core_views.api_initier_sebpay_universel, name="api_initier_sebpay_universel"),
     path("api/sebpay/check-status/<str:external_reference>/", core_views.api_verifier_statut_sebpay, name="api_verifier_statut_sebpay"),
     path("paiement/sebpay/webhook/", core_views.sebpay_webhook, name="sebpay_webhook"),
 

@@ -498,5 +498,9 @@ SITE_DOMAIN = os.getenv('SITE_DOMAIN', 'profchezvousapp.com')
 SEBPAY_PUBLIC_KEY = os.getenv('SEBPAY_PUBLIC_KEY', '')
 SEBPAY_SECRET_KEY = os.getenv('SEBPAY_SECRET_KEY', '')
 SEBPAY_API_URL = os.getenv('SEBPAY_API_URL', 'https://newapi.sebpay.bj/api/v1')
-# Montant de test temporaire (30 FCFA jusqu'à nouvel ordre)
-SEBPAY_AMOUNT = int(os.getenv('SEBPAY_AMOUNT', '30'))
+# Montants et tarification SebPay
+SEBPAY_TEST_MODE = os.getenv('SEBPAY_TEST_MODE', 'True').lower() in ('true', '1', 'yes')
+SEBPAY_TEST_AMOUNT = int(os.getenv('SEBPAY_TEST_AMOUNT', '100'))
+SEBPAY_AMOUNT = int(os.getenv('SEBPAY_AMOUNT', '100' if SEBPAY_TEST_MODE else '2500'))
+PRIX_PASS_ACCESS_PLUS = 2500
+PRIX_ESSAI_UNITAIRE = 500

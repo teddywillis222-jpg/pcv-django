@@ -2870,6 +2870,7 @@ class TransactionSebPay(models.Model):
     """
     TYPE_TRANSACTION_CHOICES = [
         ('ACCESS_PLUS', 'Souscription Access+'),
+        ('ESSAI_UNITAIRE', 'Essai Unitaire (500 F)'),
         ('AUTRE', 'Autre'),
     ]
     type_transaction = models.CharField(
