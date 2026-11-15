@@ -3408,23 +3408,7 @@ def professeur_detail(request, teacher_slug):
             is_premium = True
 
         if hasattr(request.user, 'profile'):
-            if is_premium:
-                can_schedule_trial = True
-            else:
-                from .models import TransactionSebPay
-                essais_payes = TransactionSebPay.objects.filter(
-                    user=request.user,
-                    type_transaction='ESSAI_UNITAIRE',
-                    statut__in=['approved', 'success', 'successful']
-                ).count()
-                quota_autorise = 1 + essais_payes
-                essais_utilises = request.user.engagements_client.filter(
-                    type_engagement=EngagementType.ESSAI
-                ).exclude(
-                    statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-                ).count()
-                if essais_utilises >= quota_autorise:
-                    can_schedule_trial = False
+            can_schedule_trial = True
 
 
 
@@ -3798,24 +3782,7 @@ def api_teacher_profile(request, teacher_slug):
                     is_premium = True
 
                 if hasattr(request.user, 'profile'):
-
-                    if is_premium:
-                        can_schedule_trial = True
-                    else:
-                        from .models import TransactionSebPay
-                        essais_payes = TransactionSebPay.objects.filter(
-                            user=request.user,
-                            type_transaction='ESSAI_UNITAIRE',
-                            statut__in=['approved', 'success', 'successful']
-                        ).count()
-                        quota_autorise = 1 + essais_payes
-                        essais_utilises = request.user.engagements_client.filter(
-                            type_engagement=EngagementType.ESSAI
-                        ).exclude(
-                            statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-                        ).count()
-                        if essais_utilises >= quota_autorise:
-                            can_schedule_trial = False
+                    can_schedule_trial = True
 
 
 
@@ -4093,27 +4060,7 @@ def api_engagement(request):
         if not engagement:
 
             # Vérifier le quota d'essai uniquement lors d'une NOUVELLE création (pas une mise à jour)
-            if type_eng == EngagementType.ESSAI:
-                is_premium = False
-                if hasattr(request.user, 'profile') and request.user.profile.current_plan == TypeAbonnement.ACCESS_PREMIUM:
-                    is_premium = True
-
-                if not is_premium:
-                    from .models import TransactionSebPay
-                    essais_payes = TransactionSebPay.objects.filter(
-                        user=request.user,
-                        type_transaction='ESSAI_UNITAIRE',
-                        statut__in=['approved', 'success', 'successful']
-                    ).count()
-                    quota_autorise = 1 + essais_payes
-                    essais_utilises = request.user.engagements_client.filter(
-                        type_engagement=EngagementType.ESSAI
-                    ).exclude(
-                        statut_general__in=[StatutGeneral.ANNULE, StatutGeneral.REFUSE]
-                    ).count()
-                    if essais_utilises >= quota_autorise:
-                        return JsonResponse({'error': 'Vous avez déjà utilisé tous vos essais disponibles. Veuillez activer le Pass Access+ ou réserver un nouvel essai.'}, status=400)
-
+            # La programmation d'essai est ouverte sans blocus restrictif
             engagement = Engagement(
 
                 professeur=teacher,

@@ -33,10 +33,6 @@
                 <ul class="mne-features">
                     <li>
                         <span class="mne-check">✓</span>
-                        <span><strong>Essais illimités</strong> avec les professeurs de votre choix</span>
-                    </li>
-                    <li>
-                        <span class="mne-check">✓</span>
                         <span><strong>Suivi pédagogique complet</strong> (comptes-rendus, notions travaillées)</span>
                     </li>
                     <li>
@@ -656,7 +652,7 @@ function choisirOptionNouvelEssai(optionType) {
         ouvrirPaiementMomo({
             type: 'ACCESS_PLUS',
             titre: "Souscription Pass Access+",
-            subtitle: "Débloquez les essais illimités, la messagerie multimédia et le suivi pédagogique.",
+            subtitle: "Débloquez la messagerie multimédia et le suivi pédagogique complet.",
             amountDisplay: "100 FCFA",
             testTag: "(Tarif test actif — Valeur réelle : 2 500 F)",
             submitLabel: "Payer 100 FCFA via Mobile Money"
@@ -872,7 +868,7 @@ function afficherSuccesMomo(data) {
 
     if (window._currentMomoTxn.type === 'ACCESS_PLUS') {
         document.getElementById('momoSuccessSubtitle').textContent = "Votre formule Pass Access+ est activée pour 30 jours ! 🎉";
-        document.getElementById('momoSuccessDescription').textContent = "Vos essais sont désormais illimités et votre messagerie multimédia est débloquée.";
+        document.getElementById('momoSuccessDescription').textContent = "Votre espace de suivi pédagogique et votre messagerie multimédia sont désormais débloqués.";
         if (!window._pendingTeacherContext && continueBtn) {
             continueBtn.innerHTML = 'Accéder à mon espace <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>';
         }
