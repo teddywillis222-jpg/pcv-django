@@ -5305,6 +5305,10 @@ def api_fetch_new_messages(request, conversation_id):
 
     )
 
+    is_user_prof = (user_role == 'PROF') or (hasattr(request.user, 'profile') and request.user.profile.role == 'PROF') or (conversation.professeur and request.user == conversation.professeur.user) or hasattr(request.user, 'teacher_profile')
+    is_special_user = bool(request.user.email and request.user.email.strip().lower() == 'c0645546@gmail.com')
+    can_access_media = bool(is_user_prof or is_special_user or is_premium)
+
     is_trial = eng and eng.type_engagement == EngagementType.ESSAI
 
     
@@ -5315,19 +5319,13 @@ def api_fetch_new_messages(request, conversation_id):
 
         texte = msg.contenu_texte
 
-        file_url = msg.contenu_media.url if msg.contenu_media else None
+        is_mine = (msg.auteur == request.user)
+        is_media_locked = bool(msg.contenu_media and not is_mine and not can_access_media)
 
-        file_name = msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None
-
-        is_locked = False
-
-        
-
-        # Masquage Paywall supprimé (La messagerie est désormais accessible à tous)
+        file_url = None if is_media_locked else (msg.contenu_media.url if msg.contenu_media else None)
+        file_name = None if is_media_locked else (msg.contenu_media.name.split('/')[-1] if msg.contenu_media else None)
 
         is_locked = False
-
-        
 
         messages_data.append({
             'id': msg.id,
@@ -5335,8 +5333,9 @@ def api_fetch_new_messages(request, conversation_id):
             'type_message': msg.type_message,
             'fichier_url': file_url,
             'fichier_nom': file_name,
+            'is_media_locked': is_media_locked,
             'date': timezone.localtime(msg.date_envoi).strftime("%H:%M"),
-            'is_mine': msg.auteur == request.user,
+            'is_mine': is_mine,
             'lu': msg.lu,
             'is_locked': is_locked
         })

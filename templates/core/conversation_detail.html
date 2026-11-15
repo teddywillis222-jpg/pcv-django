@@ -189,56 +189,89 @@
             </div>
             {% endif %}
 
-            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}{% if msg.contenu_media %} has-media{% if msg.type_message == 'AUDIO' or '.webm' in msg.contenu_media.url or '.ogg' in msg.contenu_media.url or '.mp3' in msg.contenu_media.url or '.m4a' in msg.contenu_media.url or '.wav' in msg.contenu_media.url %} has-audio{% elif msg.type_message == 'IMAGE' or 'image' in msg.contenu_media.url and msg.type_message != 'DOCUMENT' %} has-image{% else %} has-document{% endif %}{% if not msg.contenu_texte %} media-only{% endif %}{% endif %}" data-id="{{ msg.id }}">
+            <div class="msg-bubble {% if msg.auteur == request.user %}sent{% else %}received{% endif %}{% if msg.contenu_media %} has-media{% if msg.auteur != request.user and not can_upload_media %} has-locked-media{% elif msg.type_message == 'AUDIO' or '.webm' in msg.contenu_media.url or '.ogg' in msg.contenu_media.url or '.mp3' in msg.contenu_media.url or '.m4a' in msg.contenu_media.url or '.wav' in msg.contenu_media.url %} has-audio{% elif msg.type_message == 'IMAGE' or 'image' in msg.contenu_media.url and msg.type_message != 'DOCUMENT' %} has-image{% else %} has-document{% endif %}{% if not msg.contenu_texte %} media-only{% endif %}{% endif %}" data-id="{{ msg.id }}">
                 {% if msg.contenu_media %}
                     <div class="msg-media-container" {% if msg.contenu_texte %}style="margin-bottom:0.4rem;"{% endif %}>
-                        {% if msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url %}
-                            <div class="chat-audio-player" data-src="{{ msg.contenu_media.url }}">
-                                <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
-                                    <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                    <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                                </button>
-                                <div class="audio-track-wrap">
-                                    <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
-                                        <div class="audio-progress"></div>
-                                    </div>
-                                    <span class="audio-duration">--:--</span>
+                        {% if msg.auteur != request.user and not can_upload_media %}
+                            {# Encadré média verrouillé pour utilisateur non abonné (Pass Access+) #}
+                            {% if msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url %}
+                            <div class="msg-media-locked-card">
+                                <div class="msg-media-locked-header">
+                                    <span class="msg-media-locked-icon">🎙️</span>
+                                    <span class="msg-media-locked-title">Note vocale</span>
                                 </div>
-                                <audio src="{{ msg.contenu_media.url }}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                                <p class="msg-media-locked-text">Vous avez reçu une note vocale. Écoutez et envoyez des audios en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.</p>
+                                <a href="{% url 'explication_access_plus' %}" class="msg-media-locked-cta">Découvrir Access+</a>
                             </div>
-                        {% elif msg.type_message == 'IMAGE' or "image" in msg.contenu_media.url and msg.type_message != 'DOCUMENT' %}
-                            <div class="msg-image-wrap">
-                                <img src="{{ msg.contenu_media.url }}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
-                                {% if not msg.contenu_texte %}
-                                <div class="msg-meta msg-meta-overlay">
-                                    <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
-                                    {% if msg.auteur == request.user %}
-                                        {% if msg.lu %}
-                                        <svg class="msg-tick read" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                            <polyline points="18 6 11 13 8 10"/><polyline points="22 6 15 13 12 10"/>
-                                        </svg>
-                                        {% else %}
-                                        <svg class="msg-tick" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M20 6 9 17l-5-5"/>
-                                        </svg>
+                            {% elif msg.type_message == 'IMAGE' or "image" in msg.contenu_media.url and msg.type_message != 'DOCUMENT' %}
+                            <div class="msg-media-locked-card">
+                                <div class="msg-media-locked-header">
+                                    <span class="msg-media-locked-icon">🖼️</span>
+                                    <span class="msg-media-locked-title">Photo</span>
+                                </div>
+                                <p class="msg-media-locked-text">Vous avez reçu une photo. Consultez et envoyez des photos en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.</p>
+                                <a href="{% url 'explication_access_plus' %}" class="msg-media-locked-cta">Découvrir Access+</a>
+                            </div>
+                            {% else %}
+                            <div class="msg-media-locked-card">
+                                <div class="msg-media-locked-header">
+                                    <span class="msg-media-locked-icon">📎</span>
+                                    <span class="msg-media-locked-title">Document</span>
+                                </div>
+                                <p class="msg-media-locked-text">Vous avez reçu un document. Consultez et envoyez des fichiers en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.</p>
+                                <a href="{% url 'explication_access_plus' %}" class="msg-media-locked-cta">Découvrir Access+</a>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            {# Affichage normal pour utilisateur autorisé #}
+                            {% if msg.type_message == 'AUDIO' or ".webm" in msg.contenu_media.url or ".ogg" in msg.contenu_media.url or ".mp3" in msg.contenu_media.url or ".m4a" in msg.contenu_media.url or ".wav" in msg.contenu_media.url %}
+                                <div class="chat-audio-player" data-src="{{ msg.contenu_media.url }}">
+                                    <button type="button" class="audio-play-btn" aria-label="Écouter" onclick="toggleAudio(this)">
+                                        <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                        <svg class="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                    </button>
+                                    <div class="audio-track-wrap">
+                                        <div class="audio-waveform-bar" onclick="seekAudio(event, this)">
+                                            <div class="audio-progress"></div>
+                                        </div>
+                                        <span class="audio-duration">--:--</span>
+                                    </div>
+                                    <audio src="{{ msg.contenu_media.url }}" preload="metadata" onloadedmetadata="initAudioDuration(this)" ontimeupdate="updateAudioProgress(this)" onended="onAudioEnded(this)"></audio>
+                                </div>
+                            {% elif msg.type_message == 'IMAGE' or "image" in msg.contenu_media.url and msg.type_message != 'DOCUMENT' %}
+                                <div class="msg-image-wrap">
+                                    <img src="{{ msg.contenu_media.url }}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
+                                    {% if not msg.contenu_texte %}
+                                    <div class="msg-meta msg-meta-overlay">
+                                        <span class="msg-time">{{ msg.date_envoi|date:"H:i" }}</span>
+                                        {% if msg.auteur == request.user %}
+                                            {% if msg.lu %}
+                                            <svg class="msg-tick read" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="18 6 11 13 8 10"/><polyline points="22 6 15 13 12 10"/>
+                                            </svg>
+                                            {% else %}
+                                            <svg class="msg-tick" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M20 6 9 17l-5-5"/>
+                                            </svg>
+                                            {% endif %}
                                         {% endif %}
+                                    </div>
                                     {% endif %}
                                 </div>
-                                {% endif %}
-                            </div>
-                        {% else %}
-                            <a href="{{ msg.contenu_media.url }}" target="_blank" download class="msg-file-card">
-                                <div class="msg-file-icon {% if '.pdf' in msg.contenu_media.url %}pdf{% elif '.doc' in msg.contenu_media.url %}word{% elif '.xls' in msg.contenu_media.url or '.csv' in msg.contenu_media.url %}excel{% endif %}">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                                </div>
-                                <div class="msg-file-info">
-                                    <span class="msg-file-name">{{ msg.contenu_media.name|cut:"media/messages/media/"|cut:"messages/media/"|cut:"media/" }}</span>
-                                    <span class="msg-file-meta">Document joint</span>
-                                </div>
-                                <div class="msg-file-download-btn" title="Télécharger">
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                </div>
-                            </a>
+                            {% else %}
+                                <a href="{{ msg.contenu_media.url }}" target="_blank" download class="msg-file-card">
+                                    <div class="msg-file-icon {% if '.pdf' in msg.contenu_media.url %}pdf{% elif '.doc' in msg.contenu_media.url %}word{% elif '.xls' in msg.contenu_media.url or '.csv' in msg.contenu_media.url %}excel{% endif %}">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    </div>
+                                    <div class="msg-file-info">
+                                        <span class="msg-file-name">{{ msg.contenu_media.name|cut:"media/messages/media/"|cut:"messages/media/"|cut:"media/" }}</span>
+                                        <span class="msg-file-meta">Document joint</span>
+                                    </div>
+                                    <div class="msg-file-download-btn" title="Télécharger">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    </div>
+                                </a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 {% endif %}

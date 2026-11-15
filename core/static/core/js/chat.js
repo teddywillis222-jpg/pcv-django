@@ -980,7 +980,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const isDoc = !isAud && !isImg && msg.fichier_url;
 
                     let bubbleClasses = 'msg-bubble received';
-                    if (msg.fichier_url) {
+                    if (msg.is_media_locked) {
+                        bubbleClasses += ' has-media has-locked-media';
+                    } else if (msg.fichier_url) {
                         bubbleClasses += ' has-media';
                         if (isImg) bubbleClasses += ' has-image';
                         if (isAud) bubbleClasses += ' has-audio';
@@ -993,7 +995,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     bubble.setAttribute('data-id', msg.id);
 
                     let html = '';
-                    if (msg.fichier_url) {
+                    if (msg.is_media_locked) {
+                        let icon = '📎';
+                        let lockedTitle = 'Document';
+                        let lockedMsg = 'Vous avez reçu un document. Consultez et envoyez des fichiers en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.';
+                        if (msg.type_message === 'AUDIO') {
+                            icon = '🎙️';
+                            lockedTitle = 'Note vocale';
+                            lockedMsg = 'Vous avez reçu une note vocale. Écoutez et envoyez des audios en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.';
+                        } else if (msg.type_message === 'IMAGE') {
+                            icon = '🖼️';
+                            lockedTitle = 'Photo';
+                            lockedMsg = 'Vous avez reçu une photo. Consultez et envoyez des photos en illimité avec le Pass Access+ (2 500 F/mois) et plus encore.';
+                        }
+                        const accessUrl = config.accessPlusUrl || '/mon-plan/access-plus/';
+                        html += `<div class="msg-media-locked-card">
+                            <div class="msg-media-locked-header">
+                                <span class="msg-media-locked-icon">${icon}</span>
+                                <span class="msg-media-locked-title">${lockedTitle}</span>
+                            </div>
+                            <p class="msg-media-locked-text">${lockedMsg}</p>
+                            <a href="${accessUrl}" class="msg-media-locked-cta">Découvrir Access+</a>
+                        </div>`;
+                    } else if (msg.fichier_url) {
                         if (isImg) {
                             html += `<div class="msg-image-wrap">
                                 <img src="${msg.fichier_url}" class="chat-img-thumb" alt="Photo" loading="lazy" onclick="openLightbox(this.src)">
